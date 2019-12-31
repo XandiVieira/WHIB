@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/surround_paddings"
+    android:layout_margin="@dimen/surround_margins"
+    tools:context="com.relyon.whib.SettingsActivity"
+    android:background="@color/lightGrey"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="10dp"
+        android:layout_margin="@dimen/surround_margins">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/back_arrow"
+            android:layout_gravity="left"
+            android:layout_weight="0.5"
+            android:padding="10dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings"
+            android:textSize="@dimen/subtitle"
+            android:lineSpacingExtra="@dimen/text_spacing"
+            android:fontFamily="@font/baloo"
+            android:layout_marginLeft="20dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_weight="9"/>
+
+        <ImageView
+            android:id="@+id/menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/settings_icon"
+            android:layout_gravity="right"
+            android:layout_marginTop="@dimen/right_margin"
+            android:layout_marginLeft="@dimen/right_margin"
+            android:layout_weight="0.5"
+            android:padding="10dp"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="-5dp"
+        android:background="@color/colorAccent"/>
+
+    <include layout="@layout/activity_tabs_settings"
+        android:layout_margin="3dp"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent" />
+
+</LinearLayout>

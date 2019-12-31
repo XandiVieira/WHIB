@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:alpha="70"
+    android:background="@color/colorAccent"
+    android:elevation="@dimen/elevation1"
+    android:orientation="vertical"
+    android:padding="@dimen/surround_paddings">
+
+    <ImageView
+        android:id="@+id/closeIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/close_icon"
+        android:layout_gravity="end" />
+
+    <EditText
+        android:id="@+id/commentBox"
+        android:layout_width="@dimen/edit_text_width"
+        android:layout_height="@dimen/edit_text_height"
+        android:background="@drawable/rounded_white"
+        android:hint="@string/comment_hint"
+        android:gravity="top"
+        android:maxLength="240"
+        android:layout_marginHorizontal="25dp"
+        android:padding="@dimen/right_margin"/>
+
+    <TextView
+        android:id="@+id/counter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textSize="@dimen/normal_text"
+        android:layout_gravity="end"
+        android:textColor="@color/black"
+        android:fontFamily="@font/baloo"
+        android:layout_marginHorizontal="25dp"/>
+
+    <Button
+        android:id="@+id/commentButton"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_gravity="center"
+        android:background="@drawable/rounded_grey"
+        android:elevation="@dimen/elevation1"
+        android:fontFamily="@font/baloo"
+        android:paddingHorizontal="20dp"
+        android:text="Comentar"
+        android:textColor="@color/black"
+        android:textSize="@dimen/big_text" />
+</LinearLayout>

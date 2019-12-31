@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="center"
+    android:alpha="100"
+    android:background="@drawable/rounded_white"
+    android:elevation="@dimen/elevation1"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_horizontal"
+    app:layout_constraintCircleRadius="30dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:text="@string/not_extra_yet"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/big_text"
+            android:layout_weight="1"
+            android:lineSpacingExtra="@dimen/text_spacing"/>
+
+        <ImageView
+            android:id="@+id/closeIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/close_icon"
+            android:layout_weight="9"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/surround_margins"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/logo70" />
+
+        <TextView
+            android:layout_width="75dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="@dimen/negative"
+            android:layout_marginTop="10dp"
+            android:background="@color/colorPrimaryDark"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:text="extra"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/title" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/baloo"
+        android:gravity="center"
+        android:text="@string/get_extra"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/subtitle"
+        android:lineSpacingExtra="@dimen/text_spacing"/>
+
+    <Button
+        android:id="@+id/advantagesButton"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_gravity="center"
+        android:background="@drawable/rounded_accent"
+        android:elevation="@dimen/elevation1"
+        android:fontFamily="@font/baloo"
+        android:padding="@dimen/padding_horizontal"
+        android:text="Conferir vantagens"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/normal_text" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/right_margin"
+        android:background="@android:color/darker_gray" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/baloo"
+        android:text="@string/extra_price"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/title" />
+
+    <Button
+        android:id="@+id/continueButton"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/rounded_accent"
+        android:elevation="@dimen/elevation1"
+        android:fontFamily="@font/baloo"
+        android:text="Continuar"
+        android:textColor="@color/white"
+        android:textSize="@dimen/subtitle" />
+</LinearLayout>

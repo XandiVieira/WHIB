@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "583896521816",
+    "firebase_url": "https://whib-relyon.firebaseio.com",
+    "project_id": "whib-relyon",
+    "storage_bucket": "whib-relyon.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:583896521816:android:081a9f4802fde487",
+        "android_client_info": {
+          "package_name": "com.relyon.whib"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "583896521816-orjob71faab0aok5sgdnjt5fggd8o0pf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.relyon.whib",
+            "certificate_hash": "4f6edf6b989746a012d434a0ba10b175c118b0d6"
+          }
+        },
+        {
+          "client_id": "583896521816-q1bao5s3ktmicts5hh9p25qslcfdviup.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcmWnw9GF5FIcK23eju8Uy8P3lKwYhu8Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "583896521816-q1bao5s3ktmicts5hh9p25qslcfdviup.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

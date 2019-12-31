@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/phrase1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:lineSpacingExtra="-10sp"
+        android:text="@string/slogan"
+        android:textAllCaps="false"
+        android:textColor="@color/darkGrey"
+        android:textSize="@dimen/title"
+        app:fontFamily="@font/baloo"
+        android:textColorHighlight="@color/colorAccent"
+        android:shadowColor="@color/colorAccent"
+        android:textColorHint="@color/colorAccent"
+        android:textColorLink="@color/colorAccent"/>
+
+</LinearLayout>

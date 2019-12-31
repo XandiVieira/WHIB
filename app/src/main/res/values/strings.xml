@@ -1,0 +1,86 @@
+<resources>
+    <string name="app_name">WHIB</string>
+    <string name="app_name_complete">What Happens In Brazil?</string>
+    <string name="nao_postamos">Não postamos nada no Facebook</string>
+    <string name="ao_entrar">Ao entrar, você concorda com nossos</string>
+    <string name="termos"><u>termos de serviço</u></string>
+    <string name="politica_de_privacidade">e <u>politica de privacidade</u></string>
+    <string name="welcome">Bem Vindo</string>
+    <string name="cancel_login">Operação cancelada</string>
+    <string name="error_login">Falha na conexão</string>
+    <string name="logout">Sair</string>
+    <string name="firebase_error_login">Erro Firebase</string>
+    <string name="facebook_app_id">419501825567313</string>
+    <string name="fb_login_protocol_scheme">fb419501825567313</string>
+
+    <string name="frase1"><u>Aprenda e seja ouvido sobre os assuntos mais debatidos do momento</u></string>
+    <string name="frase2"><u>Quem disse que assuntos polêmicos não podem ser debatidos pacificamente?</u></string>
+    <string name="frase3"><u>Procurava um lugar para dar sua opinião e ser ouvido sem intolerância?</u></string>
+    <string name="slogan">Debates polêmicos com menos emoção, mais argumentos</string>
+    <string name="not_extra_yet">Ops! Você ainda não é um assinante da versão extra.</string>
+    <string name="get_extra">Assine a versão extra e tenha acesso a diversos recursos</string>
+    <string name="extra_price">R$5,00 /mês</string>
+
+    <string name="main_server">Servidor principal</string>
+    <string name="secondary_server">Servidores secundários</string>
+    <string name="main_subject">Assunto principal</string>
+    <string name="subject">Assunto 1</string>
+    <string name="tl_title">O que você pensa sobre...</string>
+    <string name="leave_comment">Entre para o debate. Deixe seu comentário</string>
+    <string name="comment_hint">Deixe aqui seu comentário...</string>
+    <string name="group_full">Ops! Este grupo já está lotado!</string>
+    <string name="joke_text">Não concordar com um usuário não é motivo para denunciá-lo!</string>
+    <string name="reported">Você está sendo reportado no lugar!</string>
+    <string name="reason">Motivo!</string>
+    <string name="reason_explanation">O WHIB presa pela fácil identificação e reconhecimento entre os usuários e para isso é necessário que os mesmos possuam uma identidade bem definida!</string>
+    <string name="disable_notifications">Desativar notificações!</string>
+    <string name="disable_notifications_explanation">Ao desativar as notificações você não será informado dos novos debates!</string>
+    <string name="delete_account">Você quer mesmo deletar sua conta?</string>
+    <string name="delete_account_explanation">Ao deletar sua conta todos os seus registros serão perdidos!</string>
+    <string name="wait_your_time">Espere sua vez...</string>
+
+    <string name="exit_icon">Icone sair</string>
+    <string name="right_arrow_icon">Icone seta direita</string>
+    <string name="chose_next_subject">Escolha o próximo assunto</string>
+    <string name="back_icon">Icone seta esquerda</string>
+
+    <string name="sair">sair</string>
+    <string name="signinas">Sign in as</string>
+    <string name="activated">activated</string>
+    <string name="server1">Servidor #1</string>
+    <string name="store">Loja</string>
+    <string name="settings">Configurações</string>
+    <string name="about">Sobre</string>
+    <string name="profile">Perfil</string>
+    <string name="rate">Avaliar!</string>
+    <string name="group">Grupo</string>
+    <string name="free">Livre</string>
+    <string name="time">Tempo</string>
+    <string name="audio">Áudio</string>
+    <string name="cancel">CANCELAR</string>
+    <string name="delete"><u>DELETAR</u></string>
+    <string name="jump_time">Pular vez</string>
+    <string name="whose_time">Vez de</string>
+    <string name="support">Apoiar</string>
+    <string name="report">Report</string>
+    <string name="follow">Seguir</string>
+    <string name="version">Versão 1.0.0</string>
+    <string name="delete_account_text">Deletar conta!</string>
+    <string name="title_activity_tabs_settings">tabs_settings</string>
+    <string name="action_settings">Settings</string>
+    <string name="adjustments">Ajustes</string>
+    <string name="sound">Som</string>
+    <string name="vibration">Vibração</string>
+    <string name="notifications">Notificações</string>
+    <string name="show_photo">Mostrar Foto</string>
+    <string name="sign_whib_extra">Assinar WHIB extra</string>
+    <string name="title_extra">Tenha acesso a diversos recursos exclusivos com o WHIB extra</string>
+    <string name="preferences">Preferências</string>
+    <string name="whib_extra">WHIB extra</string>
+    <string name="servers">Servidores</string>
+
+    <string-array name="menu_settings">
+        <item>Preferências</item>
+        <item>WHIB extra</item>
+    </string-array>
+</resources>

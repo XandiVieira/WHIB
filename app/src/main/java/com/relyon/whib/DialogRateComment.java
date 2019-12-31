@@ -1,0 +1,123 @@
+package com.relyon.whib;
+
+import android.app.Dialog;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.RatingBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.relyon.whib.modelo.Comment;
+import com.relyon.whib.modelo.Group;
+import com.relyon.whib.modelo.GroupTempInfo;
+import com.relyon.whib.modelo.Participation;
+import com.relyon.whib.modelo.Question;
+import com.relyon.whib.modelo.User;
+import com.relyon.whib.modelo.Util;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+public class DialogRateComment extends Dialog implements
+        View.OnClickListener {
+
+    private AppCompatActivity c;
+    public Dialog d;
+    private Button rate;
+    private Button cancel;
+    public RatingBar ratingBar;
+    public TextView ratingTV;
+    public float rating;
+    public Comment comment;
+    public int position;
+    public List<Comment> commentList;
+
+    public DialogRateComment(AppCompatActivity a, float rating, Comment comment, int position, ArrayList<Comment> elementos) {
+        super(a);
+        this.c = a;
+        this.rating = rating;
+        this.comment = comment;
+        this.position = position;
+        this.commentList = elementos;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.rate_comment_dialog);
+        rate = findViewById(R.id.rate_Button);
+        cancel = findViewById(R.id.cancel_button);
+        ratingBar = findViewById(R.id.ratingBar);
+        ratingTV = findViewById(R.id.ratingTV);
+        cancel.setOnClickListener(this);
+        ratingTV.setText(String.valueOf(rating));
+        rate.setOnClickListener(this);
+        ratingBar.setRating(rating);
+
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                ratingTV.setText(String.valueOf(rating));
+                ratingBar.setRating(rating);
+            }
+        });
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.rate_Button:
+                confirmRate();
+                break;
+            case R.id.cancel_button:
+                c.closeContextMenu();
+                break;
+            default:
+                break;
+        }
+        dismiss();
+    }
+
+    private void confirmRate() {
+        comment.setNumberOfRatings(comment.getNumberOfRatings()+1);
+        comment.setSumOfRatings(comment.getSumOfRatings()+rating);
+        comment.setRating(comment.getSumOfRatings()/comment.getNumberOfRatings());
+        comment.getAlreadyRatedList().add(Util.getUser().getUserUID());
+        Toast.makeText(getContext(), "Avaliação confirmada!", Toast.LENGTH_SHORT).show();
+        int i=0;
+        for (int j=0; j<commentList.size(); j++){
+            if (commentList.get(j).isAGroup()){
+                i++;
+            }
+        }
+        if(comment.getNumberOfRatings()>=10 && comment.getRating()>=3.5){
+            comment.setAGroup(true);
+            if(comment.getGroup()==null){
+                createNewGroup(i+1);
+            }
+        }
+        Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).setValue(comment);
+    }
+
+    private void createNewGroup(int i) {
+        List<String> userUIDList = new ArrayList<String>();
+        userUIDList.add(Util.getUser().getUserUID());
+        List<User> users = new ArrayList<>();
+        users.add(Util.getUser());
+        GroupTempInfo groupTempInfo = new GroupTempInfo(users, false);
+        Group group = new Group(UUID.randomUUID().toString(), comment.getSubject().getSubjectUID(), i, Util.getServer().getTempInfo().getNumber(),
+                groupTempInfo, "text", new ArrayList<Question>(), userUIDList,
+                new ArrayList<Participation>(), false, comment.getCommentUID());
+        comment.setGroup(group);
+        //Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("commentGroup").setValue(group);
+        sendNotification();
+    }
+
+    private void sendNotification() {
+    }
+}

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="@dimen/surround_paddings"
+    android:windowSoftInputMode="adjustNothing|adjustResize">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/surround_margins"
+        android:orientation="horizontal"
+        android:padding="@dimen/surround_paddings">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_weight="0.5"
+            android:padding="10dp"
+            app:srcCompat="@drawable/back_arrow"/>
+
+        <TextView
+            android:id="@+id/serverRoom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/surround_margins"
+            android:layout_weight="9"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:lineSpacingExtra="@dimen/text_spacing"
+            android:text="Server 0 - Sala 0"
+            android:textSize="@dimen/subtitle"/>
+
+        <ImageView
+            android:id="@+id/leaveGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginLeft="@dimen/right_margin"
+            android:layout_marginTop="@dimen/right_margin"
+            android:layout_weight="0.5"
+            android:padding="10dp"
+            app:srcCompat="@drawable/exit_icon"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="-5dp"
+        android:background="@color/colorAccent"/>
+
+    <TextView
+        android:id="@+id/subject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/baloo"
+        android:gravity="center"
+        android:lineSpacingExtra="@dimen/text_spacing"
+        android:text="@string/subject"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/subtitle"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/rounded_grey"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_grey"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rvArgument"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/surround_margins"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_primary_double"
+                    android:divider="@color/colorAccent"
+                    android:dividerHeight="1.3dp"
+                    android:padding="9dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="9"
+                    android:background="@drawable/rounded_white"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/surround_paddings">
+
+                    <EditText
+                        android:id="@+id/inputMessage"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginHorizontal="@dimen/surround_margins"
+                        android:layout_weight="7"
+                        android:autofillHints="@string/wait_your_time"
+                        android:background="@drawable/rounded_grey"
+                        android:fontFamily="@font/baloo"
+                        android:hint="@string/wait_your_time"
+                        android:inputType="text"
+                        android:paddingLeft="@dimen/padding_horizontal" />
+
+                    <LinearLayout
+                        android:id="@+id/sendView"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/surround_margins"
+                        android:background="@drawable/rounded_accent_circle"
+                        android:elevation="@dimen/elevation1"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="@dimen/surround_paddings"
+                        android:src="@drawable/pencil_icon">
+
+                        <ImageView
+                            android:id="@+id/sendIcon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            app:srcCompat="@mipmap/send_icon"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/signinas"
+        android:textSize="@dimen/subtitle"
+        android:textColor="@color/colorPrimaryDark"
+        android:fontFamily="@font/baloo"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/adm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_primary_dark_circle"
+            android:layout_margin="3dp">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/profile_icon"
+                android:layout_gravity="center"
+                android:text="@string/profile"
+                android:contentDescription="@string/profile" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ADM"
+                android:textSize="@dimen/title"
+                android:textColor="@color/colorAccent"
+                android:fontFamily="@font/baloo"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/extra"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_accent"
+            android:layout_margin="3dp">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/profile_icon"
+                android:layout_gravity="center"
+                android:text="@string/profile"
+                android:contentDescription="@string/profile" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Extra"
+                android:textSize="@dimen/title"
+                android:textColor="@color/colorPrimaryDark"
+                android:fontFamily="@font/baloo"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/standard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_grey"
+            android:layout_margin="3dp">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/profile_icon"
+                android:layout_gravity="center"
+                android:text="@string/profile"
+                android:contentDescription="@string/profile" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Standard"
+                android:textSize="@dimen/title"
+                android:textColor="@color/colorPrimaryDark"
+                android:fontFamily="@font/baloo"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
