@@ -1,6 +1,8 @@
 package com.relyon.whib;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -117,7 +119,26 @@ public class AdapterAdmServer extends BaseAdapter {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Util.mServerDatabaseRef.child(admServerList.get(position).getServerUID()).child("subject").child("title").setValue(input.getText().toString());
+                Util.mServerDatabaseRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        ArrayList<Server> helperList =  new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Server server = snapshot.getValue(Server.class);
+                            if (server != null && server.getSubject() != null && server.getSubject().getTitle() != null && server.getSubject().getTitle().equals(admServerList.get(position).getSubject().getTitle())) {
+                                helperList.add(server);
+                            }
+                        }
+                        for (Server server : helperList){
+                            Util.mServerDatabaseRef.child(server.getServerUID()).child("subject").child("title").setValue(input.getText().toString());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -48,6 +48,9 @@ public class ControlAdminActivity extends AppCompatActivity {
         Util.getmServerDatabaseRef().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                serverListComplete = new ArrayList<>();
+                subjectsAdded = new ArrayList<>();
+                serverListFiltered = new ArrayList<>();
                 for (DataSnapshot snap : dataSnapshot.getChildren()) {
                     serverListComplete.add(snap.getValue(Server.class));
                 }
