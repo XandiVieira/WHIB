@@ -127,9 +127,9 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
 
     private void createNewServer() {
         Subject subject2 = elementos.get(0).getSubject();
-        ServerTempInfo serverTempInfo2 = new ServerTempInfo(0, true, Util.getNumberOfServers() + 1);
+        ServerTempInfo serverTempInfo2 = new ServerTempInfo(0,true, Util.getNumberOfServers() + 1);
         Timeline tl = new Timeline(null, subject2, null);
-        Server server = new Server(UUID.randomUUID().toString(), elementos.get(0).getType(), serverTempInfo2, subject2, tl);
+        Server server = new Server(UUID.randomUUID().toString(), serverTempInfo2, subject2, tl);
         Util.mServerDatabaseRef.child(server.getServerUID()).setValue(server);
         Util.setNumberOfServers(Util.getNumberOfServers() + 1);
     }

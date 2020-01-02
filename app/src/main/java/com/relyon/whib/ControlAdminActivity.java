@@ -1,10 +1,14 @@
 package com.relyon.whib;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -74,29 +78,57 @@ public class ControlAdminActivity extends AppCompatActivity {
         createServer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createServers();
+                callDialog();
             }
         });
     }
 
-    private void createServers() {
-        ArrayList<Server> serverList = new ArrayList<>();
-        for (int i = 0; i < Util.subjectList.size(); i++) {
-            if (!Util.subjectList.get(i).equals("")) {
-                Subject subject2 = new Subject(UUID.randomUUID().toString(), Util.subjectList.get(i),
-                        getCurrentDate(), setNewPopularity(), true);
-                ServerTempInfo serverTempInfo2 = new ServerTempInfo(0, true, serverList.size() + 1);
-                String type;
-                if (i == 0) {
-                    type = "main";
-                } else {
-                    type = "secondary";
-                }
-                Timeline tl = new Timeline(null, subject2, null);
-                serverList.add(new Server(UUID.randomUUID().toString(), type, serverTempInfo2, subject2, tl));
-                Util.getmServerDatabaseRef().child(serverList.get(i).getType()).child(serverList.get(i).getServerUID()).setValue(serverList.get(i));
+    private void callDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Novo servidor");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                createServer(input.getText().toString());
             }
-        }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void createServer(String newSubject) {
+        final Subject subject = new Subject(UUID.randomUUID().toString(), newSubject,
+                getCurrentDate(), setNewPopularity(), true);
+        final List<Server> serverList = new ArrayList<>();
+        Util.getmServerDatabaseRef().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                    Server server = snap.getValue(Server.class);
+                    serverList.add(server);
+                }
+                Timeline tl = new Timeline(null, subject, null);
+                ServerTempInfo serverTempInfo = new ServerTempInfo(0, true, serverList.size() + 1);
+                Server server = new Server(UUID.randomUUID().toString(), serverTempInfo, subject, tl);
+                Util.mServerDatabaseRef.child(server.getServerUID()).setValue(server);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private String getCurrentDate() {

@@ -83,19 +83,19 @@ public class TimelineActivity extends AppCompatActivity {
                 //registering popup with OnMenuItemClickListener
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
-                        if (item.getTitle().equals("Configurações")) {
+                        if (item.getTitle().equals(getString(R.string.settings))) {
                             Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
                             startActivity(intent);
                             return true;
-                        } else if (item.getTitle().equals("Loja")) {
+                        } else if (item.getTitle().equals(getString(R.string.store))) {
                             Intent intent = new Intent(getApplicationContext(), StoreActivity.class);
                             startActivity(intent);
                             return true;
-                        } else if (item.getTitle().equals("Perfil")) {
+                        } else if (item.getTitle().equals(getString(R.string.profile))) {
                             Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
                             startActivity(intent);
                             return true;
-                        } else if (item.getTitle().equals("Sobre")) {
+                        } else if (item.getTitle().equals(getString(R.string.about))) {
                             Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
                             startActivity(intent);
                             return true;

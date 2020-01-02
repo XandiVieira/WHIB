@@ -20,7 +20,7 @@ public class RecyclerViewServerGroupAdapter extends RecyclerView.Adapter<Recycle
     private ArrayList<ArrayList> elementos;
     private ArrayList<String> subjects;
 
-    public RecyclerViewServerGroupAdapter(@NonNull Context context, ArrayList<ArrayList> elementos, ArrayList<String> subjects) {
+    RecyclerViewServerGroupAdapter(@NonNull Context context, ArrayList<ArrayList> elementos, ArrayList<String> subjects) {
         this.context = context;
         this.elementos = elementos;
         this.subjects = subjects;

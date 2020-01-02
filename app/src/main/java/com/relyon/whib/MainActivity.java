@@ -39,20 +39,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
+import static com.relyon.whib.modelo.Util.getCurrentDate;
+import static com.relyon.whib.modelo.Util.setNewPopularity;
+
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseUser fbUser;
     private User user;
-    private DatabaseReference mUserDatabaseRef, mServerDatabaseRef, mGroupDatabaseRef, mAdvantagesDatabaseRef;
+    private DatabaseReference mUserDatabaseRef;
+    private DatabaseReference mServerDatabaseRef;
     private FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-
-    // Remote Config keys
-    private static final String MAIN = "main_subject";
-    private static final String SUB2 = "second_subject";
-    private static final String SUB3 = "third_subject";
-    private static final String SUB4 = "fourth_subject";
-    private static final String SUB5 = "fifth_subject";
-    private static final String SUB6 = "sixth_subject";
 
     //Layout elements
     private ArrayList<String> subjectList;
@@ -60,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<ArrayList> serverGroupList;
     private ProgressBar progressBar;
 
-    private RecyclerView recyclerViewSec;
+    private RecyclerView recyclerViewServers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        this.recyclerViewSec = findViewById(R.id.recyclerViewSec);
+        this.recyclerViewServers = findViewById(R.id.recyclerViewSec);
         this.progressBar = findViewById(R.id.progressBar);
         Button choseSubjectButton = findViewById(R.id.choseSubjectButton);
 
@@ -93,29 +89,6 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseRemoteConfig.setConfigSettingsAsync(new FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(3600L).build());
         //Retrieving the subjects
         getSubjects();
-
-        /*HashMap<String, Object> defaults = new HashMap<>();
-        //defaults.put(MAIN, "Sérgio Moro, vilão ou herói?");
-        mFirebaseRemoteConfig.setDefaults(defaults);
-
-        final Task<Void> fetch = mFirebaseRemoteConfig.fetch(0);
-        fetch.addOnSuccessListener(this, new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                mFirebaseRemoteConfig.activateFetched();
-            }
-        });*/
-
-
-        /*-----------------------------------------*/
-
-        /*GroupTempInfo groupTempInfo = new GroupTempInfo(new ArrayList<User>(), false);
-        Group group = new Group(UUID.randomUUID().toString(), "91efb909-79a7-49dd-a928-30409f8ddf28", 0, 1,
-                groupTempInfo, "text", new ArrayList<Question>(), new ArrayList<String>(),
-                new ArrayList<Participation>(), false, null);
-        Util.mServerDatabaseRef.child("main").child("510637a5-6f7b-4097-b0d8-dc0b60b5d856").child("timeline").child("commentList").child("-LVLcSxO30s8e20gZ8fh").child("commentGroup").setValue(group);
-
-        /*------------------------------------------*/
 
         choseSubjectButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,70 +115,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void getSubjects() {
         setSubjects();
-        /*//mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults);
-
-        long cacheExpiration = 3600; // 1 hour in seconds.
-        // If your app is using developer mode, cacheExpiration is set to 0, so each fetch will
-        // retrieve values from the service.
-        if (mFirebaseRemoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
-            cacheExpiration = 0;
-        }
-
-        // cacheExpirationSeconds is set to cacheExpiration here, indicating the next fetch request
-// will use fetch data from the Remote Config service, rather than cached parameter values,
-// if cached parameter values are more than cacheExpiration seconds old.
-// See Best Practices in the README for more information.
-        mFirebaseRemoteConfig.fetch(cacheExpiration)
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            // After config data is successfully fetched, it must be activated before newly fetched
-                            // values are returned.
-                            mFirebaseRemoteConfig.activateFetched();
-                        }
-                        setSubjects();
-                    }
-                });*/
     }
 
     private void setSubjects() {
         //createServers();
         setServers();
-        /*if (!mFirebaseRemoteConfig.getString(MAIN).equals("")) {
-            subjectList.add(mFirebaseRemoteConfig.getString(MAIN));
-        }
-        if (!mFirebaseRemoteConfig.getString(SUB2).equals("")) {
-            subjectList.add(mFirebaseRemoteConfig.getString(SUB2));
-        }
-        if (!mFirebaseRemoteConfig.getString(SUB3).equals("")) {
-            subjectList.add(mFirebaseRemoteConfig.getString(SUB3));
-        }
-        if (!mFirebaseRemoteConfig.getString(SUB4).equals("")) {
-            subjectList.add(mFirebaseRemoteConfig.getString(SUB4));
-        }
-        if (!mFirebaseRemoteConfig.getString(SUB5).equals("")) {
-            subjectList.add(mFirebaseRemoteConfig.getString(SUB5));
-        }
-        if (!mFirebaseRemoteConfig.getString(SUB6).equals("")) {
-            subjectList.add(mFirebaseRemoteConfig.getString(SUB6));
-        }
-
-        /*final Task<Void> fetch = mFirebaseRemoteConfig.fetch(0);
-        fetch.addOnSuccessListener(this, new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                mFirebaseRemoteConfig.activateFetched();
-                if (subjectList.size() > 1) {
-                    serverSecVet = new ArrayList[subjectList.size() - 1];
-                }
-
-                //createServers();
-
-                //Fill servers
-                setServers();
-            }
-        });*/
     }
 
     private void createServers() {
@@ -222,35 +136,11 @@ public class MainActivity extends AppCompatActivity {
                 Subject subject2 = new Subject(UUID.randomUUID().toString(), subjectList.get(i),
                         getCurrentDate(), setNewPopularity(), true);
                 ServerTempInfo serverTempInfo2 = new ServerTempInfo(0, true, serverList.size() + 1);
-                String type;
-                if (i == 0) {
-                    type = "main";
-                } else {
-                    type = "secondary";
-                }
                 Timeline tl = new Timeline(null, subject2, null);
-                serverList.add(new Server(UUID.randomUUID().toString(), type, serverTempInfo2, subject2, tl));
+                serverList.add(new Server(UUID.randomUUID().toString(), serverTempInfo2, subject2, tl));
                 mServerDatabaseRef.child(serverList.get(i).getServerUID()).setValue(serverList.get(i));
             }
         }
-    }
-
-    private Popularity setNewPopularity() {
-
-        return new Popularity(0, 0, 1);
-    }
-
-    private String getCurrentDate() {
-
-        SimpleDateFormat dateFormat_hora = new SimpleDateFormat("yyyy/MM/dd - HH:mm:ss");
-
-        Date data = new Date();
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(data);
-        Date data_atual = cal.getTime();
-
-        return dateFormat_hora.format(data_atual);
     }
 
     private void setServers() {
@@ -288,75 +178,14 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
-        /*mServerDatabaseRef.child("secondary").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                serverList = new ArrayList<>();
-                for (int i = 0; i < subjectList.size() - 1; i++) {
-                    serverSecVet[i] = new ArrayList<>();
-                }
-                for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                    serverList.add(snap.getValue(Server.class));
-                }
-
-                for (int i = 0; i < serverList.size(); i++) {
-                    if (serverList.get(i).getSubject().getTitle().equals(mFirebaseRemoteConfig.getString(SUB2))) {
-                        serverSecVet[0].add(serverList.get(i));
-                    }
-                    if (serverList.get(i).getSubject().getTitle().equals(mFirebaseRemoteConfig.getString(SUB3))) {
-                        serverSecVet[1].add(serverList.get(i));
-                    }
-                    if (serverList.get(i).getSubject().getTitle().equals(mFirebaseRemoteConfig.getString(SUB4))) {
-                        serverSecVet[2].add(serverList.get(i));
-                    }
-                    if (serverList.get(i).getSubject().getTitle().equals(mFirebaseRemoteConfig.getString(SUB5))) {
-                        serverSecVet[3].add(serverList.get(i));
-                    }
-                    if (serverList.get(i).getSubject().getTitle().equals(mFirebaseRemoteConfig.getString(SUB6))) {
-                        serverSecVet[4].add(serverList.get(i));
-                    }
-                }
-                for (int i = 0; i < serverSecVet.length; i++) {
-                    ArrayList<Server> listaServer = serverSecVet[i];
-                    if (listaServer.size() > 0) {
-                        if (!listaServer.get(0).getSubject().getTitle().equals(mFirebaseRemoteConfig.getString(listaConst.get(i + 1)))) {
-                            for (int k = 0; k < listaServer.size(); k++) {
-                                if (k == 0) {
-                                    listaServer.set(k, new Server(listaServer.get(k).getServerUID(), listaServer.get(k).getType(), listaServer.get(k).getSubject().getTitle(), 1));
-                                    Util.getmServerDatabaseRef().child("secondary").child(listaServer.get(k).getServerUID()).setValue(listaServer.get(k));
-                                } else {
-                                    Util.getmServerDatabaseRef().child("secondary").child(listaServer.get(k).getServerUID()).setValue(null);
-                                }
-                            }
-                        }
-                    }
-                }
-                //initRecyclerViewGroup(serverGroupList.get(i));
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
     }
-
-    /*private void initRecyclerView() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerViewMain = findViewById(R.id.recyclerViewMain);
-        recyclerViewMain.setLayoutManager(layoutManager);
-        RecyclerViewServerAdapter adapter = new RecyclerViewServerAdapter(this, serverMainList);
-        recyclerViewMain.setAdapter(adapter);
-    }*/
 
     private void initRecyclerViewGroup() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerViewSec = findViewById(R.id.recyclerViewSec);
-        recyclerViewSec.setLayoutManager(layoutManager);
+        recyclerViewServers = findViewById(R.id.recyclerViewSec);
+        recyclerViewServers.setLayoutManager(layoutManager);
         RecyclerViewServerGroupAdapter adapter = new RecyclerViewServerGroupAdapter(this, serverGroupList, subjectList);
-        recyclerViewSec.setAdapter(adapter);
+        recyclerViewServers.setAdapter(adapter);
     }
 
     //Initiate Firebase instances
@@ -366,8 +195,8 @@ public class MainActivity extends AppCompatActivity {
         DatabaseReference mDatabaseRef = mFirebaseDatabase.getReference();
         mUserDatabaseRef = mDatabaseRef.child("user");
         mServerDatabaseRef = mDatabaseRef.child("server");
-        mGroupDatabaseRef = mDatabaseRef.child("group");
-        mAdvantagesDatabaseRef = mDatabaseRef.child("advantage");
+        DatabaseReference mGroupDatabaseRef = mDatabaseRef.child("group");
+        DatabaseReference mAdvantagesDatabaseRef = mDatabaseRef.child("advantage");
         Util.setmDatabaseRef(mDatabaseRef);
         Util.setmUserDatabaseRef(mUserDatabaseRef);
         Util.setmServerDatabaseRef(mServerDatabaseRef);

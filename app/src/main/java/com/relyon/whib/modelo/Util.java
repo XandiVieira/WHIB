@@ -145,6 +145,11 @@ public class Util {
         Util.subjectList = subjectList;
     }
 
+    public static Popularity setNewPopularity() {
+
+        return new Popularity(0, 0, 1);
+    }
+
     public static String getCurrentDate() {
 
         SimpleDateFormat dateFormat_hora = new SimpleDateFormat("yyyy/MM/dd - HH:mm:ss");
