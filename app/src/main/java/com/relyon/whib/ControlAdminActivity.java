@@ -36,6 +36,7 @@ public class ControlAdminActivity extends AppCompatActivity {
     private ArrayList<Server> serverListFiltered;
     private List<String> subjectsAdded;
     private AppCompatActivity activity;
+    private boolean update;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +95,7 @@ public class ControlAdminActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                update = true;
                 createServer(input.getText().toString());
             }
         });
@@ -114,14 +116,17 @@ public class ControlAdminActivity extends AppCompatActivity {
         Util.getmServerDatabaseRef().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                    Server server = snap.getValue(Server.class);
-                    serverList.add(server);
-                }
-                Timeline tl = new Timeline(null, subject, null);
-                ServerTempInfo serverTempInfo = new ServerTempInfo(0, true, serverList.size() + 1);
-                Server server = new Server(UUID.randomUUID().toString(), serverTempInfo, subject, tl);
-                Util.mServerDatabaseRef.child(server.getServerUID()).setValue(server);
+               if (update){
+                   for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                       Server server = snap.getValue(Server.class);
+                       serverList.add(server);
+                   }
+                   Timeline tl = new Timeline(null, subject, null);
+                   ServerTempInfo serverTempInfo = new ServerTempInfo(0, true, serverList.size() + 1);
+                   Server server = new Server(UUID.randomUUID().toString(), serverTempInfo, subject, tl);
+                   update = false;
+                   Util.mServerDatabaseRef.child(server.getServerUID()).setValue(server);
+               }
             }
 
             @Override
