@@ -18,22 +18,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Server;
-import com.relyon.whib.modelo.ServerTempInfo;
-import com.relyon.whib.modelo.Subject;
-import com.relyon.whib.modelo.Timeline;
 import com.relyon.whib.modelo.Util;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import static com.relyon.whib.modelo.Util.getCurrentDate;
-import static com.relyon.whib.modelo.Util.setNewPopularity;
 
 public class AdapterAdmServer extends BaseAdapter {
 
     private final ArrayList<Server> admServerList;
     private final AppCompatActivity act;
+    private boolean update;
 
     AdapterAdmServer(ArrayList<Server> admServerList, AppCompatActivity act) {
         this.admServerList = admServerList;
@@ -64,6 +57,30 @@ public class AdapterAdmServer extends BaseAdapter {
         ImageButton deleteButton = view.findViewById(R.id.delete);
         subjectTitle.setText(server.getSubject().getTitle());
 
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                update = true;
+                Util.mServerDatabaseRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Server server = snapshot.getValue(Server.class);
+                            if (update && server != null && server.getSubject().getTitle().equals(admServerList.get(position).getSubject().getTitle())) {
+                                Util.getmServerDatabaseRef().child(server.getServerUID()).removeValue();
+                            }
+                        }
+                        update = false;
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
+
         disableSwitch.setChecked(server.getTempInfo().isActivated());
 
         if (disableSwitch.isChecked()) {
@@ -82,6 +99,7 @@ public class AdapterAdmServer extends BaseAdapter {
         disableSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                update = true;
                 if (isChecked) {
                     disableSwitch.setText("Ativo");
                 } else {
@@ -93,10 +111,11 @@ public class AdapterAdmServer extends BaseAdapter {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Server server1 = snapshot.getValue(Server.class);
-                            if (server1.getSubject().getTitle().equals(server.getSubject().getTitle())) {
+                            if (update && server1 != null && server1.getSubject().getTitle().equals(server.getSubject().getTitle())) {
                                 Util.mServerDatabaseRef.child(server1.getServerUID()).child("tempInfo").child("activated").setValue(server.getTempInfo().isActivated());
                             }
                         }
+                        update = false;
                     }
 
                     @Override

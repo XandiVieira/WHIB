@@ -9,6 +9,7 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -30,7 +31,6 @@ import java.util.UUID;
 
 public class ControlAdminActivity extends AppCompatActivity {
 
-    private Button createServer;
     private ListView admServerList;
     private List<Server> serverListComplete;
     private ArrayList<Server> serverListFiltered;
@@ -74,7 +74,7 @@ public class ControlAdminActivity extends AppCompatActivity {
 
             }
         });
-        createServer = findViewById(R.id.createServerButton);
+        Button createServer = findViewById(R.id.createServerButton);
 
         createServer.setOnClickListener(new View.OnClickListener() {
             @Override
