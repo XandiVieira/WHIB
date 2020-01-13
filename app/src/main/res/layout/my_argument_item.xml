@@ -1,43 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/argumentLayout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="4dp"
+    android:layout_gravity="end"
+    android:gravity="end"
     android:layout_margin="@dimen/surround_margins"
     android:background="@drawable/square_white"
+    android:elevation="7dp"
     android:orientation="vertical"
-    android:elevation="7dp">
+    android:padding="4dp">
 
     <TextView
         android:id="@+id/userName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/baloo"
         android:layout_gravity="center"
+        android:fontFamily="@font/baloo"
         android:gravity="center"
-        android:textSize="@dimen/very_small_text"
-        android:textColor="@color/colorPrimaryDark" />
+        android:text="username"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/very_small_text" />
 
     <TextView
         android:id="@+id/argument"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:fontFamily="@font/baloo"
-        android:layout_gravity="start"
-        android:lineSpacingExtra="@dimen/text_spacing"
         android:gravity="start"
-        android:textSize="@dimen/small_text"
-        android:textColor="@color/black" />
+        android:lineSpacingExtra="@dimen/text_spacing"
+        android:text="bla bla bla  bla blabla bla blablabl blabla bla"
+        android:textColor="@color/black"
+        android:textSize="@dimen/small_text" />
 
     <TextView
         android:id="@+id/time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/text_spacing"
         android:fontFamily="@font/baloo"
-        android:layout_gravity="end"
         android:gravity="end"
-        android:textSize="@dimen/very_small_text"
-        android:textColor="@color/colorPrimaryDark" />
+        android:text="now"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/very_small_text" />
 </LinearLayout>

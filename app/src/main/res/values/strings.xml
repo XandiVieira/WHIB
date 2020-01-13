@@ -78,6 +78,12 @@
     <string name="preferences">Preferências</string>
     <string name="whib_extra">WHIB extra</string>
     <string name="servers">Servidores</string>
+    <string name="arroba">\@</string>
+    <string name="rating">Média</string>
+    <string name="valuations">Avaliações</string>
+    <string name="reports">Denúncias</string>
+    <string name="sent">Feitas</string>
+    <string name="received">Recebidas</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

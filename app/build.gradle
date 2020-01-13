@@ -35,7 +35,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:17.0.0' //Cloud storage
     //implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1' //Crashlytics
     implementation 'com.google.firebase:firebase-inappmessaging:17.2.0' //inapp messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:17.2.0' //inapp messaging display
+    implementation 'com.google.firebase:firebase-inappmessaging-display:17.2.0'
+    //inapp messaging display
     implementation 'com.google.firebase:firebase-perf:17.0.2' //performance
     implementation 'com.google.firebase:firebase-database:17.0.0' //Realtime databae
     implementation 'com.google.firebase:firebase-config:17.0.0' //Remote config

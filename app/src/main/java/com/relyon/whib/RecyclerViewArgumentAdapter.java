@@ -26,7 +26,7 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.argument_item, parent, false);
+        View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.my_argument_item, parent, false);
         return new ViewHolder(rowView);
     }
 
@@ -36,7 +36,10 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
         holder.userName.setText(elementos.get(position).getAuthorsName());
         holder.time.setText(elementos.get(position).getTime());
         if(Util.getUser().getUserUID().equals(elementos.get(position).getAuthorsUID())){
-            holder.argumentLayout.setBackgroundResource(R.color.lightGrey);
+            holder.argumentLayout.setBackgroundResource(R.color.white);
+        }else {
+            holder.argumentLayout.setGravity(0);
+            holder.argumentLayout.setBackgroundResource(R.color.colorPrimary);
         }
     }
 

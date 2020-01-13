@@ -27,13 +27,8 @@ import java.util.Date;
 
 public class GroupActivity extends AppCompatActivity {
 
-    private ImageView back;
-    private TextView serverRoom;
-    private TextView subject;
     private RecyclerView rvArgument;
     private EditText inputMessage;
-    private LinearLayout sendView;
-    private ImageView leaveGroup;
     private ArrayList<Argument> argumentList;
     private AppCompatActivity activity;
 
@@ -44,13 +39,13 @@ public class GroupActivity extends AppCompatActivity {
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         activity = this;
-        back = findViewById(R.id.back);
-        serverRoom = findViewById(R.id.serverRoom);
-        subject = findViewById(R.id.subject);
+        ImageView back = findViewById(R.id.back);
+        TextView serverRoom = findViewById(R.id.serverRoom);
+        TextView subject = findViewById(R.id.subject);
         rvArgument = findViewById(R.id.rvArgument);
         inputMessage = findViewById(R.id.inputMessage);
-        sendView = findViewById(R.id.sendView);
-        leaveGroup = findViewById(R.id.leaveGroup);
+        LinearLayout sendView = findViewById(R.id.sendView);
+        ImageView leaveGroup = findViewById(R.id.leaveGroup);
 
         Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline")
                 .child("commentList").child(Util.getGroup().getCommentUID()).child("group").child("argumentList").addValueEventListener(new ValueEventListener() {
@@ -115,11 +110,11 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void sendMessage() {
-        if(Util.getGroup().getMode().equals("Áudio")){
+        if (Util.getGroup().getMode().equals("Áudio")) {
             createNewArgument("audio", null);
-        }else if(Util.getGroup().getMode().equals("Text")){
+        } else if (Util.getGroup().getMode().equals("text")) {
             createNewArgument("text", null);
-        }else if(Util.getGroup().getMode().equals("Time")){
+        } else if (Util.getGroup().getMode().equals("Time")) {
             createNewArgument("time", null);
         }
         inputMessage.setText("");
@@ -144,19 +139,19 @@ public class GroupActivity extends AppCompatActivity {
                 .child("group").child("argumentList").push().setValue(argument);
     }
 
-    private void leaveGroup(){
-        for (int i=0; i<Util.getComment().getGroup().getUserListUID().size(); i++){
-            if(Util.getComment().getGroup().getUserListUID().get(i).equals(Util.getUser().getUserUID())){
+    private void leaveGroup() {
+        for (int i = 0; i < Util.getComment().getGroup().getUserListUID().size(); i++) {
+            if (Util.getComment().getGroup().getUserListUID().get(i).equals(Util.getUser().getUserUID())) {
                 Util.getComment().getGroup().getUserListUID().remove(i);
                 Util.getUser().getTempInfo().setCurrentGroup(null);
             }
         }
-        if(Util.getComment().getGroup().getUserListUID().isEmpty()){
+        if (Util.getComment().getGroup().getUserListUID().isEmpty()) {
             Util.setComment(null);
             Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("tempInfo").child("currentGroup").setValue(null);
             Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline")
                     .child("commentList").child(Util.getGroup().getCommentUID()).setValue(null);
-        }else {
+        } else {
             Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("tempInfo").child("currentGroup").setValue(null);
             Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline")
                     .child("commentList").child(Util.getGroup().getCommentUID())
