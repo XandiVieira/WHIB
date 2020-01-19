@@ -1,5 +1,6 @@
 package com.relyon.whib;
 
+import android.animation.Animator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,9 +12,12 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -28,7 +32,9 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 public class LoginActivity extends AppCompatActivity implements Runnable {
 
@@ -37,6 +43,9 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
     private ProgressBar progressBar;
+    private ImageView logo;
+    private ArrayList<Techniques> techniques = new ArrayList<>();
+    private Random random = new Random();
 
     /**
      * The number of pages (wizard steps) to show in this demo.
@@ -53,10 +62,10 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
     public void run() {
 
         //Esse métedo será execultado a cada período, ponha aqui a sua lógica
-        if(mPager.getCurrentItem()==3){
+        if (mPager.getCurrentItem() == 3) {
             mPager.setCurrentItem(0);
-        }else{
-            mPager.setCurrentItem(mPager.getCurrentItem()+1);
+        } else {
+            mPager.setCurrentItem(mPager.getCurrentItem() + 1);
         }
 
         Handler handler = new Handler(); //contador de tempo
@@ -74,6 +83,8 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
         callbackManager = CallbackManager.Factory.create();
 
         loginButton = findViewById(R.id.login_button);
+
+        logo = findViewById(R.id.logo);
 
         loginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
 
@@ -115,6 +126,33 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
 
         Handler handler = new Handler(); //contador de tempo
         handler.postDelayed(this, 4000); //o exemplo 2000 = 2 segundos
+
+        techniques.addAll(Arrays.asList(Techniques.values()));
+        callAnimation(random.nextInt(techniques.size()));
+    }
+
+    private void callAnimation(final int i) {
+        YoYo.with(techniques.get(i)).duration(7000).withListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                callAnimation(random.nextInt(techniques.size()));
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        }).repeat(0).playOn(logo);
     }
 
     private void handleFacebookAccessToken(AccessToken accessToken) {
@@ -164,7 +202,7 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed();
-        }else {
+        } else {
             // Otherwise, select the previous step.
             mPager.setCurrentItem(mPager.getCurrentItem() - 1);
         }
@@ -181,7 +219,7 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
 
         @Override
         public Fragment getItem(int position) {
-            switch (position){
+            switch (position) {
                 case 0:
                     return new FragmentSlide1();
 
