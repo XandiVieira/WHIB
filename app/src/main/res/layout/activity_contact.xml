@@ -36,7 +36,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginHorizontal="3dp">
 
         <TextView
             android:layout_width="match_parent"
@@ -46,7 +47,7 @@
             android:gravity="center"
             android:text="@string/consult_faq"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="22sp" />
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/bt_faq"
@@ -69,7 +70,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginHorizontal="3dp">
 
         <TextView
             android:layout_width="match_parent"
@@ -79,12 +81,12 @@
             android:gravity="center"
             android:text="@string/did_not_find_answer"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="22sp" />
+            android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp">
+            android:layout_margin="7dp">
 
             <EditText
                 android:id="@+id/complaint"
@@ -113,7 +115,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginHorizontal="5dp"
+        android:layout_marginHorizontal="3dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
@@ -125,7 +127,7 @@
             android:gravity="center"
             android:text="@string/answer_soon"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="22sp" />
+            android:textSize="18sp" />
 
         <ImageView
             android:layout_width="wrap_content"
