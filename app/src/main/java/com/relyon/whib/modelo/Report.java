@@ -1,20 +1,20 @@
 package com.relyon.whib.modelo;
 
-public class Complaint {
+public class Report {
 
     private String userSenderUID;
     private String userReceiverUID;
     private String reason;
     private String explanation;
 
-    public Complaint(String userSenderUID, String userReceiverUID, String reason, String explanation) {
+    public Report(String userSenderUID, String userReceiverUID, String reason, String explanation) {
         this.userSenderUID = userSenderUID;
         this.userReceiverUID = userReceiverUID;
         this.reason = reason;
         this.explanation = explanation;
     }
 
-    public Complaint() {
+    public Report() {
     }
 
     public String getUserSenderUID() {

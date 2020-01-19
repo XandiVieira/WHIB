@@ -10,19 +10,15 @@ import com.relyon.whib.modelo.Util;
 
 public class AdmChoosingActivity extends AppCompatActivity {
 
-    private LinearLayout adm;
-    private LinearLayout extra;
-    private LinearLayout standard;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_adm_choosing);
 
-        adm = findViewById(R.id.adm);
-        extra = findViewById(R.id.extra);
-        standard = findViewById(R.id.standard);
+        LinearLayout adm = findViewById(R.id.adm);
+        LinearLayout extra = findViewById(R.id.extra);
+        LinearLayout standard = findViewById(R.id.standard);
 
         adm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,7 +43,7 @@ public class AdmChoosingActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Util.getUser().setExtra(false);
                 Util.getmUserDatabaseRef().child(Util.getUser().getUserUID()).setValue(Util.getUser());
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
                 startActivity(intent);
             }
         });

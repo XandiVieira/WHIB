@@ -1,7 +1,6 @@
 package com.relyon.whib;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,11 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.ListView;
 
-import com.relyon.whib.modelo.Advantage;
-import com.relyon.whib.modelo.Util;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -25,14 +21,8 @@ import java.util.ArrayList;
 
 public class TabWhibExtra extends Fragment {
 
-    private FrameLayout mFramePerfil;
-
-    private TabPreferences tabPreferences;
-    private TabWhibExtra tabWhibExtra;
-
     private ListView resourceLV;
     private ArrayList<Advantage> advantages;
-    private Context context;
 
     @Override
     public void onAttach(final Activity activity) {
@@ -43,9 +33,6 @@ public class TabWhibExtra extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_whib_extra, container, false);
-
-        tabPreferences = new TabPreferences();
-        tabWhibExtra = new TabWhibExtra();
 
         resourceLV = rootView.findViewById(R.id.resourceLV);
 

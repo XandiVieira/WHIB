@@ -82,8 +82,19 @@
     <string name="rating">Média</string>
     <string name="valuations">Avaliações</string>
     <string name="reports">Denúncias</string>
-    <string name="sent">Feitas</string>
-    <string name="received">Recebidas</string>
+    <string name="sent">Feitas:</string>
+    <string name="received">Recebidas:</string>
+    <string name="about_us">Sobre nós</string>
+    <string name="faq">FAQ</string>
+    <string name="terms_and_privacy_policy">Termos de uso e Política de privacidade</string>
+    <string name="contact_us">Fale conosco</string>
+    <string name="something_wrong">Algo de errado? Dúvidas? nos conte!</string>
+    <string name="use_terms">Termos de uso</string>
+    <string name="privacy_policy">Política de privacidade</string>
+    <string name="our_goal">Objetivo</string>
+    <string name="our_mission">Missão</string>
+    <string name="mission">Ser um provedor de discussões  saudáveis sobre os assuntos mais  comentados do momento e assim  proporcionar que todos aprendam  e se  tornem mais informados e  tolerantes sobre tudo...</string>
+    <string name="goal">O app WHIB foi criado com o intuito  de...</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

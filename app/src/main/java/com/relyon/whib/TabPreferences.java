@@ -1,7 +1,6 @@
 package com.relyon.whib;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,29 +12,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.FrameLayout;
 
-import com.relyon.whib.modelo.Util;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.relyon.whib.modelo.Util;
 
 public class TabPreferences extends Fragment {
 
-    private FrameLayout mFramePerfil;
-
-    private TabPreferences tabPreferences;
-    private TabWhibExtra tabWhibExtra;
-
-    private Context mContext;
-    public FirebaseUser user;
     private CheckBox checkSound, checkVibration, checkShowPhoto, checkNotifications;
-    private Button delete_acc, logout;
 
     @Override
     public void onAttach(final Activity activity) {
         super.onAttach(activity);
-        mContext = activity;
     }
 
     @Override
@@ -43,15 +31,12 @@ public class TabPreferences extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_preferences, container, false);
 
-        tabPreferences = new TabPreferences();
-        tabWhibExtra = new TabWhibExtra();
-
         checkSound = rootView.findViewById(R.id.checkSound);
         checkVibration = rootView.findViewById(R.id.checkVibration);
         checkShowPhoto = rootView.findViewById(R.id.checkShowPhoto);
         checkNotifications = rootView.findViewById(R.id.checkNotifications);
-        delete_acc = rootView.findViewById(R.id.delete_acc);
-        logout = rootView.findViewById(R.id.logout);
+        Button delete_acc = rootView.findViewById(R.id.delete_acc);
+        Button logout = rootView.findViewById(R.id.logout);
 
         if(Util.getUser().getPreferences().isNotification()){
             checkNotifications.setChecked(true);

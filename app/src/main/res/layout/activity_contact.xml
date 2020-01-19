@@ -3,9 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lightGrey"
     android:orientation="vertical"
-    tools:context="com.relyon.whib.SettingsActivity">
+    tools:context=".ContactActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,21 +26,8 @@
             android:layout_weight="1"
             android:fontFamily="@font/baloo"
             android:gravity="center"
-            android:text="@string/settings"
+            android:text="@string/contact_us"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="26sp" />
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="-5dp"
-        android:background="@color/colorAccent" />
-
-    <include
-        layout="@layout/activity_tabs_settings"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="3dp"
-        android:visibility="visible" />
 </LinearLayout>

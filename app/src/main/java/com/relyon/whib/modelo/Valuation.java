@@ -4,7 +4,7 @@ public class Valuation {
 
     private double goodPercentage;
     private double badPercentage;
-    private double regularPercentage;
+    private double mediumPercentage;
     private int goodQtd;
     private int badQtd;
     private int regularQtd;
@@ -13,7 +13,7 @@ public class Valuation {
     public Valuation(double goodPercentage, double badPercentage, double regularPercentage, int goodQtd, int badQtd, int regularQtd) {
         this.goodPercentage = goodPercentage;
         this.badPercentage = badPercentage;
-        this.regularPercentage = regularPercentage;
+        this.mediumPercentage = regularPercentage;
         this.goodQtd = goodQtd;
         this.badQtd = badQtd;
         this.regularQtd = regularQtd;
@@ -47,12 +47,12 @@ public class Valuation {
         this.badPercentage = badPercentage;
     }
 
-    public double getRegularPercentage() {
-        return regularPercentage;
+    public double getMediumPercentage() {
+        return mediumPercentage;
     }
 
-    public void setRegularPercentage(double regularPercentage) {
-        this.regularPercentage = regularPercentage;
+    public void setMediumPercentage(double mediumPercentage) {
+        this.mediumPercentage = mediumPercentage;
     }
 
     public int getGoodQtd() {

@@ -9,7 +9,7 @@ public class User {
     private String photoPath;
     private UserTempInfo tempInfo;
     private Valuation valuation;
-    private List<Complaint> complaintList;
+    private List<Report> reportList;
     private List<User> following;
     private boolean blocked;
     private boolean firstTime;
@@ -25,17 +25,18 @@ public class User {
     private double totalInPurchase;
     private int purchases;
     private Preferences preferences;
+    private String nickName;
 
     public User() {
     }
 
-    public User(String userUID, String userName, String photoPath, UserTempInfo tempInfo, Valuation valuation, List<Complaint> complaintList, List<User> following, boolean blocked, boolean firstTime, boolean extra, List<String> groupsUIDList, float rating, History history, int followers, List<Doubts> pendingDoubts, List<Item> itemsListUID, boolean changedName, boolean changedPhoto, double totalInPurchase, int purchases, Preferences preferences) {
+    public User(String userUID, String userName, String photoPath, UserTempInfo tempInfo, Valuation valuation, List<Report> reportList, List<User> following, boolean blocked, boolean firstTime, boolean extra, List<String> groupsUIDList, float rating, History history, int followers, List<Doubts> pendingDoubts, List<Item> itemsListUID, boolean changedName, boolean changedPhoto, double totalInPurchase, int purchases, Preferences preferences, String nickName) {
         this.userUID = userUID;
         this.userName = userName;
         this.photoPath = photoPath;
         this.tempInfo = tempInfo;
         this.valuation = valuation;
-        this.complaintList = complaintList;
+        this.reportList = reportList;
         this.following = following;
         this.blocked = blocked;
         this.firstTime = firstTime;
@@ -51,6 +52,7 @@ public class User {
         this.totalInPurchase = totalInPurchase;
         this.purchases = purchases;
         this.preferences = preferences;
+        this.nickName = nickName;
     }
 
     public String getUserUID() {
@@ -93,12 +95,12 @@ public class User {
         this.valuation = valuation;
     }
 
-    public List<Complaint> getComplaintList() {
-        return complaintList;
+    public List<Report> getReportList() {
+        return reportList;
     }
 
-    public void setComplaintList(List<Complaint> complaintList) {
-        this.complaintList = complaintList;
+    public void setReportList(List<Report> reportList) {
+        this.reportList = reportList;
     }
 
     public List<User> getFollowing() {
@@ -220,4 +222,13 @@ public class User {
     public void setPreferences(Preferences preferences) {
         this.preferences = preferences;
     }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
 }

@@ -22,7 +22,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
-import com.relyon.whib.modelo.Popularity;
 import com.relyon.whib.modelo.Preferences;
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.ServerTempInfo;
@@ -33,10 +32,7 @@ import com.relyon.whib.modelo.UserTempInfo;
 import com.relyon.whib.modelo.Util;
 import com.relyon.whib.modelo.Valuation;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.UUID;
 
 import static com.relyon.whib.modelo.Util.getCurrentDate;
@@ -236,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
         user = new User(fbUser.getUid(), fbUser.getDisplayName(), photoPath,
                 setUserTempInfo(), setUserValuation(), null, null, false, true,
                 false, null, (float) 0.0, null, 0, null, null,
-                false, false, 0, 0, setUserPreferences());
+                false, false, 0, 0, setUserPreferences(), null);
 
         Util.setUser(user);
         mUserDatabaseRef.child(fbUser.getUid()).setValue(user);
