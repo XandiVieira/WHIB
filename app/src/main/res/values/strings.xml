@@ -95,6 +95,13 @@
     <string name="our_mission">Missão</string>
     <string name="mission">Ser um provedor de discussões  saudáveis sobre os assuntos mais  comentados do momento e assim  proporcionar que todos aprendam  e se  tornem mais informados e  tolerantes sobre tudo...</string>
     <string name="goal">O app WHIB foi criado com o intuito  de...</string>
+    <string name="history">Histórico</string>
+    <string name="consult_faq">Sua dúvida pode já ter sido respondida Consulte nosso FAQ</string>
+    <string name="frequent_questions">Perguntas Frequentes</string>
+    <string name="did_not_find_answer">Não encontrou respostas para suas dúvidas? Pergunte aqui!</string>
+    <string name="tell_your_problem">Nos conte a respeito do seu problema para que possamos te ajudar</string>
+    <string name="send">Enviar</string>
+    <string name="answer_soon">Em breve responderemos sua requisição Sua resposta estará aqui mesmo nesta!</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

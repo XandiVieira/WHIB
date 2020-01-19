@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
         android:orientation="horizontal"
-        android:padding="5dp">
+        android:paddingHorizontal="5dp">
 
         <ImageView
             android:id="@+id/back"
@@ -32,16 +32,10 @@
             android:textSize="26sp" />
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="-5dp"
-        android:background="@color/colorAccent" />
-
     <include
         layout="@layout/activity_tabs_settings"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="3dp"
+        android:layout_margin="2dp"
         android:visibility="visible" />
 </LinearLayout>

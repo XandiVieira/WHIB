@@ -121,12 +121,12 @@ public class MainActivity extends AppCompatActivity {
     private void createServers() {
         ArrayList<Server> serverList = new ArrayList<>();
         subjectList = new ArrayList<>();
-        subjectList.add("Imposto sobre Bitcoin");
+        subjectList.add("Terceira Guerra Mundial");
         subjectList.add("Gestões irresponsáveis em clubes de futebol");
-        subjectList.add("Metas de ano novo");
-        subjectList.add("Festas de fim de ano e consumismo");
-        subjectList.add("Calendário da Premier League");
-        subjectList.add("22 mil em chocolate");
+        subjectList.add("Erros do ENEM");
+        subjectList.add("Nazismo na política brasileira");
+        subjectList.add("Vestibulares e ingressos em Universidades");
+        subjectList.add("Começo de temporada no futebol brasileiro");
         for (int i = 0; i < subjectList.size(); i++) {
             if (!subjectList.get(i).equals("")) {
                 Subject subject2 = new Subject(UUID.randomUUID().toString(), subjectList.get(i),
