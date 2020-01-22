@@ -1,7 +1,6 @@
 package com.relyon.whib;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +26,7 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         this.parent = parent;
-        rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.my_argument_item, parent, false);
+        rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.argument_sent_item, parent, false);
         return new ViewHolder(rowView);
     }
 
@@ -35,9 +34,9 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
     public void onBindViewHolder(final RecyclerViewArgumentAdapter.ViewHolder holder, final int position) {
         holder.text.setText(elementos.get(position).getText());
         if (Util.getUser().getUserUID().equals(elementos.get(position).getAuthorsUID())) {
-            rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.my_argument_item, parent, false);
+            rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.argument_sent_item, parent, false);
         } else {
-            rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.their_argument_item, parent, false);
+            rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.argument_received_item, parent, false);
             holder.userName.setText(elementos.get(position).getAuthorsName());
         }
         holder.time.setText(elementos.get(position).getTime());

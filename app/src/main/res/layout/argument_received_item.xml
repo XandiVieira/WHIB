@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/argumentLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="start"
+    android:layout_margin="@dimen/surround_margins"
+    android:background="@drawable/square_white"
+    android:gravity="start"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:elevation="7dp"
+        android:orientation="vertical"
+        android:padding="7dp">
+
+        <TextView
+            android:id="@+id/userName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:text="username"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/very_small_text" />
+
+        <TextView
+            android:id="@+id/argument"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:fontFamily="@font/baloo"
+            android:gravity="start"
+            android:lineSpacingExtra="@dimen/text_spacing"
+            android:text="bla bla bla  bla blabla bla blablabl blabla bla"
+            android:textColor="@color/black"
+            android:textSize="@dimen/small_text" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/text_spacing"
+            android:fontFamily="@font/baloo"
+            android:gravity="end"
+            android:text="now"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/very_small_text" />
+    </LinearLayout>
+</LinearLayout>
