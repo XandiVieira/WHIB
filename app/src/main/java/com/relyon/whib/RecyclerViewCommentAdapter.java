@@ -142,12 +142,12 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView text;
-        TextView ratingTV;
-        ImageView photo;
-        RatingBar ratingBar;
-        LinearLayout bg;
-        TextView userName;
+        private TextView text;
+        private TextView ratingTV;
+        private ImageView photo;
+        private RatingBar ratingBar;
+        private LinearLayout bg;
+        private TextView userName;
 
         ViewHolder(View rowView) {
             super(rowView);

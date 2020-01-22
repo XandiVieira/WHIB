@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -23,7 +22,7 @@
             android:layout_gravity="left"
             android:layout_weight="0.5"
             android:padding="10dp"
-            app:srcCompat="@drawable/back_arrow"/>
+            app:srcCompat="@drawable/back_arrow" />
 
         <TextView
             android:id="@+id/serverRoom"
@@ -36,7 +35,7 @@
             android:gravity="center"
             android:lineSpacingExtra="@dimen/text_spacing"
             android:text="Server 0 - Sala 0"
-            android:textSize="@dimen/subtitle"/>
+            android:textSize="@dimen/subtitle" />
 
         <ImageView
             android:id="@+id/leaveGroup"
@@ -47,7 +46,7 @@
             android:layout_marginTop="@dimen/right_margin"
             android:layout_weight="0.5"
             android:padding="10dp"
-            app:srcCompat="@drawable/exit_icon"/>
+            app:srcCompat="@drawable/exit_icon" />
 
     </LinearLayout>
 
@@ -55,7 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_marginTop="-5dp"
-        android:background="@color/colorAccent"/>
+        android:background="@color/colorAccent" />
 
     <TextView
         android:id="@+id/subject"
@@ -67,7 +66,7 @@
         android:lineSpacingExtra="@dimen/text_spacing"
         android:text="@string/subject"
         android:textColor="@color/colorPrimaryDark"
-        android:textSize="@dimen/subtitle"/>
+        android:textSize="@dimen/subtitle" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -84,7 +83,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:orientation="vertical">
@@ -98,7 +97,7 @@
                     android:background="@drawable/rounded_primary_double"
                     android:divider="@color/colorAccent"
                     android:dividerHeight="1.3dp"
-                    android:padding="9dp"/>
+                    android:padding="9dp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -139,7 +138,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            app:srcCompat="@mipmap/send_icon"/>
+                            app:srcCompat="@mipmap/send_icon" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
