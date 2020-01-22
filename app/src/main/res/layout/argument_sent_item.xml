@@ -11,10 +11,13 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
         android:background="@drawable/rounded_primary_dark"
         android:elevation="7dp"
         android:orientation="vertical"
-        android:padding="7dp">
+        android:paddingHorizontal="7dp"
+        android:paddingVertical="4dp">
 
         <TextView
             android:id="@+id/argument"
