@@ -1,23 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/argumentLayout"
+    android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="end"
+    android:layout_gravity="bottom"
+    android:gravity="bottom"
     android:layout_margin="@dimen/surround_margins"
-    android:gravity="end"
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/argumentLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
-        android:background="@drawable/rounded_primary_dark"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:background="@drawable/square_primary_dark"
         android:elevation="7dp"
         android:orientation="vertical"
         android:paddingHorizontal="7dp"
         android:paddingVertical="4dp">
+
+        <TextView
+            android:id="@+id/userName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:text="username"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/very_small_text"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/argument"

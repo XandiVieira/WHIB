@@ -150,8 +150,9 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void initRecyclerViewComment() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
         rvComments = findViewById(R.id.rvComments);
+        layoutManager.setStackFromEnd(true);
         rvComments.setLayoutManager(layoutManager);
         RecyclerViewCommentAdapter adapter = new RecyclerViewCommentAdapter(getApplicationContext(), commentList, activity);
 

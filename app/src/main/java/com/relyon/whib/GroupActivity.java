@@ -57,6 +57,7 @@ public class GroupActivity extends AppCompatActivity {
                     argumentList.add(argument);
                 }
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
+                layoutManager.setStackFromEnd(true);
                 rvArgument.setLayoutManager(layoutManager);
                 RecyclerViewArgumentAdapter adapter = new RecyclerViewArgumentAdapter(getApplicationContext(), argumentList);
                 rvArgument.setAdapter(adapter);
