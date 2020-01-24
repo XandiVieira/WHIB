@@ -25,9 +25,9 @@
     <string name="secondary_server">Servidores secundários</string>
     <string name="main_subject">Assunto principal</string>
     <string name="subject">Assunto 1</string>
-    <string name="tl_title">O que você pensa sobre...</string>
+    <string name="tl_title">O que você pensa sobre…</string>
     <string name="leave_comment">Entre para o debate. Deixe seu comentário</string>
-    <string name="comment_hint">Deixe aqui seu comentário...</string>
+    <string name="comment_hint">Deixe aqui seu comentário…</string>
     <string name="group_full">Ops! Este grupo já está lotado!</string>
     <string name="joke_text">Não concordar com um usuário não é motivo para denunciá-lo!</string>
     <string name="reported">Você está sendo reportado no lugar!</string>
@@ -37,7 +37,7 @@
     <string name="disable_notifications_explanation">Ao desativar as notificações você não será informado dos novos debates!</string>
     <string name="delete_account">Você quer mesmo deletar sua conta?</string>
     <string name="delete_account_explanation">Ao deletar sua conta todos os seus registros serão perdidos!</string>
-    <string name="wait_your_time">Espere sua vez...</string>
+    <string name="wait_your_time">Espere sua vez…</string>
 
     <string name="exit_icon">Icone sair</string>
     <string name="right_arrow_icon">Icone seta direita</string>
@@ -62,7 +62,7 @@
     <string name="jump_time">Pular vez</string>
     <string name="whose_time">Vez de</string>
     <string name="support">Apoiar</string>
-    <string name="report">Report</string>
+    <string name="report">Reportar</string>
     <string name="follow">Seguir</string>
     <string name="version">Versão 1.0.0</string>
     <string name="delete_account_text">Deletar conta!</string>
@@ -93,8 +93,8 @@
     <string name="privacy_policy">Política de privacidade</string>
     <string name="our_goal">Objetivo</string>
     <string name="our_mission">Missão</string>
-    <string name="mission">Ser um provedor de discussões  saudáveis sobre os assuntos mais  comentados do momento e assim  proporcionar que todos aprendam  e se  tornem mais informados e  tolerantes sobre tudo...</string>
-    <string name="goal">O app WHIB foi criado com o intuito  de...</string>
+    <string name="mission">Ser um provedor de discussões  saudáveis sobre os assuntos mais  comentados do momento e assim  proporcionar que todos aprendam  e se  tornem mais informados e  tolerantes sobre tudo…</string>
+    <string name="goal">O app WHIB foi criado com o intuito  de…</string>
     <string name="history">Histórico</string>
     <string name="consult_faq">Sua dúvida pode já ter sido respondida Consulte nosso FAQ</string>
     <string name="frequent_questions">Perguntas Frequentes</string>
@@ -102,6 +102,12 @@
     <string name="tell_your_problem">Nos conte a respeito do seu problema para que possamos te ajudar</string>
     <string name="send">Enviar</string>
     <string name="answer_soon">Em breve responderemos sua requisição Sua resposta estará aqui mesmo nesta!</string>
+    <string name="report_user">Denunciar Usuário</string>
+    <string name="what_reason">Qual o motivo?</string>
+    <string name="do_no_agree">Não concordo com o que foi dito</string>
+    <string name="personal_attacks">O usuário se utiliza de ataques pessoais</string>
+    <string name="bad_behave">Comportamento tóxico ou inadequado</string>
+    <string name="tell_us_more">Conte-nos um pouco a respeito…</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

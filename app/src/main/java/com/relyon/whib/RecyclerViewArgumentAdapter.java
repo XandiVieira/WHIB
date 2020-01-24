@@ -26,7 +26,7 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.argument_sent_item, parent, false);
+        View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.argument_item, parent, false);
         return new ViewHolder(rowView);
     }
 
@@ -57,6 +57,7 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
 
         private LinearLayout layout;
         private LinearLayout argumentLayout;
+        private TextView argument;
         private TextView text;
         private TextView time;
         private TextView userName;
@@ -68,6 +69,7 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
             text = rowView.findViewById(R.id.argument);
             time = rowView.findViewById(R.id.time);
             userName = rowView.findViewById(R.id.userName);
+            argument = rowView.findViewById(R.id.argument);
         }
     }
 }

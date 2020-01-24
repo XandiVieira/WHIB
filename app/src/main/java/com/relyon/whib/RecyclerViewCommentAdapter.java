@@ -112,6 +112,17 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                 goToGroup(elementos.get(position));
             }
         });
+        holder.text.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                return openReportDialog(elementos.get(position));
+            }
+        });
+    }
+
+    private boolean openReportDialog(Comment comment) {
+        new DialogReport(activity, comment).show();
+        return true;
     }
 
     private void goToGroup(Comment comment) {

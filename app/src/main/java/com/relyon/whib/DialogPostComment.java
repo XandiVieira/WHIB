@@ -1,5 +1,6 @@
 package com.relyon.whib;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -25,16 +26,15 @@ import java.util.Date;
 public class DialogPostComment extends Dialog implements
         View.OnClickListener {
 
-    private AppCompatActivity c;
+    private Activity c;
     public Dialog d;
     private Button comment;
-    public ImageView closeIcon;
-    public EditText commentBox;
-    public TextView counter;
+    private EditText commentBox;
+    private TextView counter;
     private int caractCounter;
     public Subject subject;
 
-    public DialogPostComment(AppCompatActivity a, Subject subjectObj) {
+    public DialogPostComment(Activity a, Subject subjectObj) {
         super(a);
         this.c = a;
         this.subject = subjectObj;
@@ -47,7 +47,7 @@ public class DialogPostComment extends Dialog implements
         setContentView(R.layout.post_comment_dialog);
         comment = findViewById(R.id.commentButton);
         commentBox = findViewById(R.id.commentBox);
-        closeIcon = findViewById(R.id.closeIcon);
+        ImageView closeIcon = findViewById(R.id.closeIcon);
         counter = findViewById(R.id.counter);
         closeIcon.setOnClickListener(this);
         comment.setOnClickListener(this);
@@ -104,7 +104,7 @@ public class DialogPostComment extends Dialog implements
         String current_time = dateFormat_time.format(data_atual);
         Sending sending = new Sending("text", current_date, Util.getUser().getUserName(), Util.getUser().getUserUID(), subject);
         Comment comment = new Comment(commentBox.getText().toString(), (float) 0.0, Util.getUser().getPhotoPath(), current_time, 0, (float) 0.0, sending, false, null);
-        if(validateComment()) {
+        if (validateComment()) {
             Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").push().setValue(comment);
             Toast.makeText(getContext(), "Comentário postado!", Toast.LENGTH_SHORT).show();
             // Clear input box
@@ -114,11 +114,11 @@ public class DialogPostComment extends Dialog implements
 
     private boolean validateComment() {
 
-        if(commentBox.getText().length()<50){
+        if (commentBox.getText().length() < 50) {
             Toast.makeText(getContext(), "O comentário deve possuir pelo menos 50 caracteres!", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if(commentBox.getText().length()>240){
+        if (commentBox.getText().length() > 240) {
             Toast.makeText(getContext(), "O comentário deve possuir no máximo 250 caracteres!", Toast.LENGTH_SHORT).show();
             return false;
         }

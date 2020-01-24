@@ -167,7 +167,7 @@ public class GroupActivity extends AppCompatActivity {
     private void backToMainScreen() {
         Util.getUser().getTempInfo().setCurrentServer(null);
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
         finish();
+        startActivity(intent);
     }
 }
