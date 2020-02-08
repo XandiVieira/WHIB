@@ -5,12 +5,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 
-public class DeleteAccountDialog extends Dialog {
+public class DialogDeleteAccount extends Dialog {
 
     private AppCompatActivity a;
     public Dialog d;
 
-    public DeleteAccountDialog(AppCompatActivity a) {
+    public DialogDeleteAccount(AppCompatActivity a) {
         super(a);
         this.a = a;
     }

@@ -108,6 +108,11 @@
     <string name="personal_attacks">O usuário se utiliza de ataques pessoais</string>
     <string name="bad_behave">Comportamento tóxico ou inadequado</string>
     <string name="tell_us_more">Conte-nos um pouco a respeito…</string>
+    <string name="not_reason">Não concordar com um usuário não é motivo para denunciá-lo!</string>
+    <string name="reverse_report">Você está sendo reportado no lugar!</string>
+    <string name="other">Outro</string>
+    <string name="report_sent">A sua denúncia foi enviada com sucesso!</string>
+    <string name="cant_report_own_comment">Você não pode reportar seu próprio comentário!</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

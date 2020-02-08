@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -48,6 +49,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
     private void openRatingDialog(float rating, int position) {
         DialogRateComment cdd = new DialogRateComment(activity, rating, elementos.get(position), position, elementos);
+        cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         cdd.show();
     }
 
@@ -115,13 +117,20 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         holder.text.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                return openReportDialog(elementos.get(position));
+                if (!comment.getAuthorsUID().equals(Util.getUser().getUserUID())){
+                    return openReportDialog(elementos.get(position));
+                }else {
+                    Toast.makeText(context, context.getString(R.string.cant_report_own_comment), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
             }
         });
     }
 
     private boolean openReportDialog(Comment comment) {
-        new DialogReport(activity, comment).show();
+        DialogReport dialogReport = new DialogReport(activity, comment);
+        dialogReport.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogReport.show();
         return true;
     }
 

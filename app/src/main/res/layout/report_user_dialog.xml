@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/rounded_white"
+    android:layout_marginHorizontal="15dp"
     android:elevation="@dimen/elevation1"
     android:padding="5dp"
     app:cardCornerRadius="25dp">
@@ -11,6 +11,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/rounded_white"
         android:orientation="vertical"
         android:padding="5dp">
 
@@ -109,6 +110,23 @@
             android:layout_marginVertical="5dp"
             android:background="@color/colorAccent" />
 
+        <TextView
+            android:id="@+id/reason4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:text="@string/other"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/small_text" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="5dp"
+            android:background="@color/colorAccent" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -125,7 +143,7 @@
                 android:fontFamily="@font/baloo"
                 android:hint="@string/tell_us_more"
                 android:padding="5dp"
-                android:textSize="@dimen/very_small_text" />
+                android:textSize="@dimen/small_text" />
 
             <Button
                 android:id="@+id/report_button"

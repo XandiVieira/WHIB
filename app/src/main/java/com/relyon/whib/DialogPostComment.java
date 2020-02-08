@@ -3,7 +3,6 @@ package com.relyon.whib;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -122,7 +121,6 @@ public class DialogPostComment extends Dialog implements
             Toast.makeText(getContext(), "O comentário deve possuir no máximo 250 caracteres!", Toast.LENGTH_SHORT).show();
             return false;
         }
-
         return true;
     }
 }

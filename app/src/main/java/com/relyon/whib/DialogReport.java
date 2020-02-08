@@ -1,7 +1,11 @@
 package com.relyon.whib;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
@@ -10,17 +14,28 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Comment;
+import com.relyon.whib.modelo.Report;
+import com.relyon.whib.modelo.User;
+import com.relyon.whib.modelo.Util;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DialogReport extends Dialog {
 
     private EditText inputReport;
-    private TextView reason1, reason2, reason3;
+    private TextView reason1, reason2, reason3, reason4;
     private String reason;
     private Comment comment;
+    public AppCompatActivity a;
 
-    public DialogReport(AppCompatActivity a, Comment comment) {
+    DialogReport(AppCompatActivity a, Comment comment) {
         super(a);
+        this.a = a;
         this.comment = comment;
     }
 
@@ -28,18 +43,25 @@ public class DialogReport extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.report_user);
+        setContentView(R.layout.report_user_dialog);
         Button report = findViewById(R.id.report_button);
         reason1 = findViewById(R.id.reason1);
         reason2 = findViewById(R.id.reason2);
         reason3 = findViewById(R.id.reason3);
+        reason4 = findViewById(R.id.reason4);
         inputReport = findViewById(R.id.input_report);
 
         report.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (reason != null) {
-                    sendReport(inputReport.getText().toString(), reason);
+                    if (reason.equals(reason1.getText().toString())) {
+                        dismiss();
+                        ViewDialog alert = new ViewDialog();
+                        alert.showDialog(a);
+                    } else {
+                        sendReport(inputReport.getText().toString(), reason);
+                    }
                 } else {
                     Toast.makeText(getContext(), "Selecione uma das razões anteriores!", Toast.LENGTH_LONG).show();
                 }
@@ -49,10 +71,11 @@ public class DialogReport extends Dialog {
         reason1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                reason = reason2.getText().toString();
+                reason = reason1.getText().toString();
                 reason1.setBackground(getContext().getResources().getDrawable(R.color.colorPrimary));
                 reason2.setBackground(getContext().getResources().getDrawable(R.color.white));
                 reason3.setBackground(getContext().getResources().getDrawable(R.color.white));
+                reason4.setBackground(getContext().getResources().getDrawable(R.color.white));
             }
         });
 
@@ -63,6 +86,7 @@ public class DialogReport extends Dialog {
                 reason1.setBackground(getContext().getResources().getDrawable(R.color.white));
                 reason2.setBackground(getContext().getResources().getDrawable(R.color.colorPrimary));
                 reason3.setBackground(getContext().getResources().getDrawable(R.color.white));
+                reason4.setBackground(getContext().getResources().getDrawable(R.color.white));
             }
         });
 
@@ -73,13 +97,61 @@ public class DialogReport extends Dialog {
                 reason1.setBackground(getContext().getResources().getDrawable(R.color.white));
                 reason2.setBackground(getContext().getResources().getDrawable(R.color.white));
                 reason3.setBackground(getContext().getResources().getDrawable(R.color.colorPrimary));
+                reason4.setBackground(getContext().getResources().getDrawable(R.color.white));
+            }
+        });
+
+        reason4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reason = reason4.getText().toString();
+                reason1.setBackground(getContext().getResources().getDrawable(R.color.white));
+                reason2.setBackground(getContext().getResources().getDrawable(R.color.white));
+                reason3.setBackground(getContext().getResources().getDrawable(R.color.white));
+                reason4.setBackground(getContext().getResources().getDrawable(R.color.colorPrimary));
             }
         });
     }
 
-    private void sendReport(String explanation, String reason) {
+    public class ViewDialog {
 
-        dismiss();
-        Toast.makeText(getContext(), "A sua denúncia foi enviada com sucesso!", Toast.LENGTH_SHORT).show();
+        void showDialog(Activity activity) {
+            final Dialog dialog = new Dialog(activity);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setCancelable(true);
+            dialog.setContentView(R.layout.reverse_report_dialog);
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            }
+            dialog.show();
+        }
+    }
+
+    private void sendReport(String explanation, String reason) {
+        final Report report = new Report(Util.getUser().getUserUID(), comment.getAuthorsUID(), reason, explanation);
+        Util.getmUserDatabaseRef().child(comment.getAuthorsUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user2 = dataSnapshot.getValue(User.class);
+                if (user2 != null) {
+                    if (user2.getReportList() != null) {
+                        user2.getReportList().add(report);
+                    } else {
+                        List<Report> reportList = new ArrayList<>();
+                        reportList.add(report);
+                        user2.setReportList(reportList);
+                        Util.getmUserDatabaseRef().child(comment.getAuthorsUID()).setValue(user2);
+                    }
+                    dismiss();
+                    Toast.makeText(getContext(), getContext().getString(R.string.report_sent), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                dismiss();
+                Toast.makeText(getContext(), getContext().getString(R.string.report_sent), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
