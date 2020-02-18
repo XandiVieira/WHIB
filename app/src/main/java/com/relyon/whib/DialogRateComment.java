@@ -2,6 +2,7 @@ package com.relyon.whib;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
@@ -10,6 +11,9 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Group;
 import com.relyon.whib.modelo.GroupTempInfo;
@@ -27,21 +31,16 @@ public class DialogRateComment extends Dialog implements
 
     private AppCompatActivity c;
     public Dialog d;
-    private Button rate;
-    private Button cancel;
-    public RatingBar ratingBar;
-    public TextView ratingTV;
+    private TextView ratingTV;
     public float rating;
     public Comment comment;
-    public int position;
-    public List<Comment> commentList;
+    private List<Comment> commentList;
 
-    public DialogRateComment(AppCompatActivity a, float rating, Comment comment, int position, ArrayList<Comment> elementos) {
+    DialogRateComment(AppCompatActivity a, float rating, Comment comment, int position, ArrayList<Comment> elementos) {
         super(a);
         this.c = a;
         this.rating = rating;
         this.comment = comment;
-        this.position = position;
         this.commentList = elementos;
     }
 
@@ -50,9 +49,9 @@ public class DialogRateComment extends Dialog implements
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.rate_comment_dialog);
-        rate = findViewById(R.id.rate_Button);
-        cancel = findViewById(R.id.cancel_button);
-        ratingBar = findViewById(R.id.ratingBar);
+        Button rate = findViewById(R.id.rate_Button);
+        Button cancel = findViewById(R.id.cancel_button);
+        RatingBar ratingBar = findViewById(R.id.ratingBar);
         ratingTV = findViewById(R.id.ratingTV);
         cancel.setOnClickListener(this);
         ratingTV.setText(String.valueOf(rating));
@@ -84,28 +83,45 @@ public class DialogRateComment extends Dialog implements
     }
 
     private void confirmRate() {
-        comment.setNumberOfRatings(comment.getNumberOfRatings()+1);
-        comment.setSumOfRatings(comment.getSumOfRatings()+rating);
-        comment.setRating(comment.getSumOfRatings()/comment.getNumberOfRatings());
+        comment.setNumberOfRatings(comment.getNumberOfRatings() + 1);
+        comment.setSumOfRatings(comment.getSumOfRatings() + rating);
+        comment.setRating(comment.getSumOfRatings() / comment.getNumberOfRatings());
         comment.getAlreadyRatedList().add(Util.getUser().getUserUID());
         Toast.makeText(getContext(), "Avaliação confirmada!", Toast.LENGTH_SHORT).show();
-        int i=0;
-        for (int j=0; j<commentList.size(); j++){
-            if (commentList.get(j).isAGroup()){
+        int i = 0;
+        for (int j = 0; j < commentList.size(); j++) {
+            if (commentList.get(j).isAGroup()) {
                 i++;
             }
         }
-        if(comment.getNumberOfRatings()>=10 && comment.getRating()>=3.5){
+        if (comment.getNumberOfRatings() >= 10 && comment.getRating() >= 3.5) {
             comment.setAGroup(true);
-            if(comment.getGroup()==null){
-                createNewGroup(i+1);
+            if (comment.getGroup() == null) {
+                createNewGroup(i + 1);
             }
         }
         Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).setValue(comment);
+        Util.mUserDatabaseRef.child(comment.getAuthorsUID()).child("rating").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Float valuation = dataSnapshot.getValue(Float.class);
+                if (valuation == null || valuation == 0) {
+                    valuation = comment.getRating();
+                } else {
+                    valuation = (valuation + comment.getRating()) / 2;
+                }
+                Util.mUserDatabaseRef.child(comment.getAuthorsUID()).child("rating").setValue(valuation);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void createNewGroup(int i) {
-        List<String> userUIDList = new ArrayList<String>();
+        List<String> userUIDList = new ArrayList<>();
         userUIDList.add(Util.getUser().getUserUID());
         List<User> users = new ArrayList<>();
         users.add(Util.getUser());

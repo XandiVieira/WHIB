@@ -162,7 +162,7 @@
                         android:layout_gravity="center"
                         android:fontFamily="@font/baloo"
                         android:gravity="center"
-                        android:text="4.0"
+                        android:text="0.00"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="18sp" />
                 </LinearLayout>

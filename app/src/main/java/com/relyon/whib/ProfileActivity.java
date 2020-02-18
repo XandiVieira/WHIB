@@ -60,10 +60,9 @@ public class ProfileActivity extends AppCompatActivity {
                 .into(photo);
 
         usernamme.setText(user.getUserName());
-        ratingBar.setNumStars((int) user.getRating());
-        ratingBar.setProgress((int) user.getRating());
-        ratingBar.setEnabled(false);
-        rating.setText(String.valueOf(user.getRating()));
+        ratingBar.setProgress((int) (user.getRating() * 2));
+        ratingBar.setIsIndicator(true);
+        rating.setText(String.format("%.2f", user.getRating()));
         goodValuation.setText(user.getValuation().getGoodPercentage() + "%");
         mediumValuation.setText(user.getValuation().getMediumPercentage() + "%");
         badValuation.setText(user.getValuation().getBadPercentage() + "%");

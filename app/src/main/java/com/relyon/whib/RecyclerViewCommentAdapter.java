@@ -76,7 +76,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                if (user.isExtra()) {
+                if (user != null && user.isExtra()) {
                     LayerDrawable stars = (LayerDrawable) holder.ratingBar.getProgressDrawable();
                     stars.getDrawable(2).setColorFilter(Color.parseColor("#AFC2D5"), PorterDuff.Mode.SRC_ATOP);
                     holder.bg.setBackgroundResource(R.drawable.rounded_accent_double);
@@ -117,9 +117,9 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         holder.text.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (!comment.getAuthorsUID().equals(Util.getUser().getUserUID())){
+                if (!comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
                     return openReportDialog(elementos.get(position));
-                }else {
+                } else {
                     Toast.makeText(context, context.getString(R.string.cant_report_own_comment), Toast.LENGTH_SHORT).show();
                     return false;
                 }
