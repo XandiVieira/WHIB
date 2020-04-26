@@ -4,98 +4,98 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/surround_paddings"
     android:layout_margin="@dimen/surround_margins"
-    tools:context="com.relyon.whib.MainActivity"
     android:background="@color/lightGrey"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="@dimen/surround_paddings"
+    tools:context="com.relyon.whib.MainActivity">
 
     <LinearLayout
         android:id="@+id/header"
-        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:gravity="center"
-            android:onClick="profile">
+            android:onClick="profile"
+            android:orientation="vertical">
 
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                app:srcCompat="@drawable/profile_icon"
                 android:layout_gravity="end"
+                android:layout_weight="1"
+                android:contentDescription="@string/profile"
                 android:onClick="profile"
                 android:text="@string/profile"
-                android:layout_weight="1"
-                android:contentDescription="@string/profile" />
+                app:srcCompat="@drawable/profile_icon" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/text_spacing"
-                android:text="@string/profile"
                 android:gravity="center"
-                android:textSize="@dimen/small_text"
-                android:onClick="profile" />
+                android:onClick="profile"
+                android:text="@string/profile"
+                android:textSize="@dimen/small_text" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/mainServer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/servers"
-            android:textSize="@dimen/subtitle"
-            android:textColor="@color/colorPrimaryDark"
+            android:layout_weight="9"
             android:fontFamily="@font/baloo"
             android:gravity="center"
-            android:layout_weight="9"/>
+            android:text="@string/servers"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/subtitle" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:gravity="center"
-            android:onClick="logout">
+            android:onClick="logout"
+            android:orientation="vertical">
 
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                app:srcCompat="@drawable/exit_icon"
                 android:layout_gravity="end"
+                android:layout_weight="1"
+                android:contentDescription="@string/exit_icon"
                 android:onClick="logout"
                 android:text="@string/logout"
-                android:layout_weight="1"
-                android:contentDescription="@string/exit_icon" />
+                app:srcCompat="@drawable/exit_icon" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/text_spacing"
-                android:text="@string/sair"
                 android:gravity="center"
-                android:textSize="@dimen/small_text"
-                android:onClick="logout" />
+                android:onClick="logout"
+                android:text="@string/sair"
+                android:textSize="@dimen/small_text" />
         </LinearLayout>
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/body"
-        android:layout_weight="9"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="9"
         android:orientation="vertical">
 
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="@color/colorAccent"/>
+            android:background="@color/colorAccent" />
 
         <LinearLayout
             android:id="@+id/secondaryServersLayout"
@@ -107,7 +107,7 @@
                 android:id="@+id/recyclerViewSec"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"/>
+                android:orientation="vertical" />
 
         </LinearLayout>
 
@@ -115,25 +115,25 @@
 
     <LinearLayout
         android:id="@+id/footer"
-        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <Button
             android:id="@+id/choseSubjectButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/surround_margins"
             android:background="@drawable/rounded_accent_square"
-            android:text="@string/chose_next_subject"
-            android:textSize="@dimen/normal_text"
+            android:elevation="@dimen/elevation1"
             android:fontFamily="@font/baloo"
             android:gravity="center"
-            android:layout_gravity="center"
-            android:textAlignment="center"
-            android:layout_marginTop="@dimen/surround_margins"
             android:paddingHorizontal="15dp"
-            android:elevation="@dimen/elevation1" />
+            android:text="@string/chose_next_subject"
+            android:textAlignment="center"
+            android:textSize="@dimen/normal_text" />
     </LinearLayout>
 
 </LinearLayout>

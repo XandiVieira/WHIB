@@ -3,7 +3,6 @@ package com.relyon.whib;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +15,6 @@ import com.facebook.login.LoginManager;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -195,11 +193,13 @@ public class MainActivity extends AppCompatActivity {
         mServerDatabaseRef = mDatabaseRef.child("server");
         DatabaseReference mGroupDatabaseRef = mDatabaseRef.child("group");
         DatabaseReference mAdvantagesDatabaseRef = mDatabaseRef.child("advantage");
+        DatabaseReference mReportsDatabaseRef = mDatabaseRef.child("report");
         Util.setmDatabaseRef(mDatabaseRef);
         Util.setmUserDatabaseRef(mUserDatabaseRef);
         Util.setmServerDatabaseRef(mServerDatabaseRef);
         Util.setmGroupDatabaseRef(mGroupDatabaseRef);
         Util.setmAdvantagesDatabaseRef(mAdvantagesDatabaseRef);
+        Util.setmReportDatabaseRef(mReportsDatabaseRef);
     }
 
     //Get user from Firebase Database
@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
         user = new User(fbUser.getUid(), fbUser.getDisplayName(), photoPath,
                 setUserTempInfo(), setUserValuation(), null, null, false, true,
                 false, null, (float) 0.0, null, 0, null, null,
-                false, false, 0, 0, setUserPreferences(), null);
+                false, false, 0, 0, setUserPreferences(), null, false);
 
         Util.setUser(user);
         mUserDatabaseRef.child(fbUser.getUid()).setValue(user);
@@ -244,7 +244,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void callTour() {
-
         user.setFirstTime(false);
     }
 
@@ -283,7 +282,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void profile(View view) {
-        Intent intent = new Intent(this, AdmChoosingActivity.class);
+        Intent intent;
+        if (Util.getUser().isAdmin()) {
+            intent = new Intent(this, AdmChoosingActivity.class);
+        } else {
+            intent = new Intent(this, ProfileActivity.class);
+        }
         startActivity(intent);
     }
 

@@ -6,12 +6,14 @@ public class Report {
     private String userReceiverUID;
     private String reason;
     private String explanation;
+    private String text;
 
-    public Report(String userSenderUID, String userReceiverUID, String reason, String explanation) {
+    public Report(String userSenderUID, String userReceiverUID, String reason, String explanation, String text) {
         this.userSenderUID = userSenderUID;
         this.userReceiverUID = userReceiverUID;
         this.reason = reason;
         this.explanation = explanation;
+        this.text = text;
     }
 
     public Report() {
@@ -47,5 +49,13 @@ public class Report {
 
     public void setExplanation(String explanation) {
         this.explanation = explanation;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

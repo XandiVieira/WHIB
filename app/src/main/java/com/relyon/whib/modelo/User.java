@@ -26,11 +26,12 @@ public class User {
     private int purchases;
     private Preferences preferences;
     private String nickName;
+    private boolean isAdmin;
 
     public User() {
     }
 
-    public User(String userUID, String userName, String photoPath, UserTempInfo tempInfo, Valuation valuation, List<Report> reportList, List<User> following, boolean blocked, boolean firstTime, boolean extra, List<String> groupsUIDList, float rating, History history, int followers, List<Doubts> pendingDoubts, List<Item> itemsListUID, boolean changedName, boolean changedPhoto, double totalInPurchase, int purchases, Preferences preferences, String nickName) {
+    public User(String userUID, String userName, String photoPath, UserTempInfo tempInfo, Valuation valuation, List<Report> reportList, List<User> following, boolean blocked, boolean firstTime, boolean extra, List<String> groupsUIDList, float rating, History history, int followers, List<Doubts> pendingDoubts, List<Item> itemsListUID, boolean changedName, boolean changedPhoto, double totalInPurchase, int purchases, Preferences preferences, String nickName, boolean isAdmin) {
         this.userUID = userUID;
         this.userName = userName;
         this.photoPath = photoPath;
@@ -53,6 +54,7 @@ public class User {
         this.purchases = purchases;
         this.preferences = preferences;
         this.nickName = nickName;
+        this.isAdmin = isAdmin;
     }
 
     public String getUserUID() {
@@ -231,4 +233,11 @@ public class User {
         this.nickName = nickName;
     }
 
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
 }

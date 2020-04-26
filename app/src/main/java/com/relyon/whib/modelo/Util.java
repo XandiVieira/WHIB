@@ -17,6 +17,7 @@ public class Util {
     public static DatabaseReference mServerDatabaseRef;
     public static DatabaseReference mGroupDatabaseRef;
     public static DatabaseReference mAdvantagesDatabaseRef;
+    public static DatabaseReference mReportDatabaseRef;
     public static int numberOfServers;
     public static Subject subject;
     public static Server server;
@@ -122,6 +123,14 @@ public class Util {
 
     public static void setmAdvantagesDatabaseRef(DatabaseReference mAdvantagesDatabaseRef) {
         Util.mAdvantagesDatabaseRef = mAdvantagesDatabaseRef;
+    }
+
+    public static DatabaseReference getmReportDatabaseRef() {
+        return mReportDatabaseRef;
+    }
+
+    public static void setmReportDatabaseRef(DatabaseReference mReportDatabaseRef) {
+        Util.mReportDatabaseRef = mReportDatabaseRef;
     }
 
     public static void setDelete(boolean delete) {

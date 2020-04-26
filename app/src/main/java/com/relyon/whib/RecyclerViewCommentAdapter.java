@@ -117,7 +117,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         holder.text.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (!comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
+                if (comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
                     return openReportDialog(elementos.get(position));
                 } else {
                     Toast.makeText(context, context.getString(R.string.cant_report_own_comment), Toast.LENGTH_SHORT).show();

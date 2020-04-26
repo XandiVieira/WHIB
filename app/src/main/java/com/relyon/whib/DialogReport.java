@@ -24,6 +24,7 @@ import com.relyon.whib.modelo.Util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class DialogReport extends Dialog {
 
@@ -63,7 +64,7 @@ public class DialogReport extends Dialog {
                         sendReport(inputReport.getText().toString(), reason);
                     }
                 } else {
-                    Toast.makeText(getContext(), "Selecione uma das razões anteriores!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), a.getString(R.string.select_a_reason), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -128,7 +129,7 @@ public class DialogReport extends Dialog {
     }
 
     private void sendReport(String explanation, String reason) {
-        final Report report = new Report(Util.getUser().getUserUID(), comment.getAuthorsUID(), reason, explanation);
+        final Report report = new Report(Util.getUser().getUserUID(), comment.getAuthorsUID(), reason, explanation, comment.getText());
         Util.getmUserDatabaseRef().child(comment.getAuthorsUID()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -140,8 +141,9 @@ public class DialogReport extends Dialog {
                         List<Report> reportList = new ArrayList<>();
                         reportList.add(report);
                         user2.setReportList(reportList);
-                        Util.getmUserDatabaseRef().child(comment.getAuthorsUID()).setValue(user2);
                     }
+                    Util.getmUserDatabaseRef().child(comment.getAuthorsUID()).setValue(user2);
+                    Util.getmReportDatabaseRef().child(UUID.randomUUID().toString()).setValue(report);
                     dismiss();
                     Toast.makeText(getContext(), getContext().getString(R.string.report_sent), Toast.LENGTH_SHORT).show();
                 }
