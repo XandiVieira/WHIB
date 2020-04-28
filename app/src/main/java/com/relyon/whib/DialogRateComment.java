@@ -2,14 +2,15 @@ package com.relyon.whib;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,9 +35,9 @@ public class DialogRateComment extends Dialog implements
     private TextView ratingTV;
     public float rating;
     public Comment comment;
-    private List<Comment> commentList;
+    private List<Object> commentList;
 
-    DialogRateComment(AppCompatActivity a, float rating, Comment comment, int position, ArrayList<Comment> elementos) {
+    DialogRateComment(AppCompatActivity a, float rating, Comment comment, int position, ArrayList<Object> elementos) {
         super(a);
         this.c = a;
         this.rating = rating;
@@ -90,8 +91,11 @@ public class DialogRateComment extends Dialog implements
         Toast.makeText(getContext(), "Avaliação confirmada!", Toast.LENGTH_SHORT).show();
         int i = 0;
         for (int j = 0; j < commentList.size(); j++) {
-            if (commentList.get(j).isAGroup()) {
-                i++;
+            if (commentList.get(j) instanceof Comment) {
+                Comment comment = (Comment) commentList.get(j);
+                if (comment.isAGroup()) {
+                    i++;
+                }
             }
         }
         if (comment.getNumberOfRatings() >= 10 && comment.getRating() >= 3.5) {

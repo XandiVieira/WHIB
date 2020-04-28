@@ -3,15 +3,16 @@ package com.relyon.whib;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,34 +39,34 @@ public class TabPreferences extends Fragment {
         Button delete_acc = rootView.findViewById(R.id.delete_acc);
         Button logout = rootView.findViewById(R.id.logout);
 
-        if(Util.getUser().getPreferences().isNotification()){
+        if (Util.getUser().getPreferences().isNotification()) {
             checkNotifications.setChecked(true);
-        }else{
+        } else {
             checkNotifications.setChecked(false);
         }
 
-        if(Util.getUser().getPreferences().isShowPhoto()){
+        if (Util.getUser().getPreferences().isShowPhoto()) {
             checkShowPhoto.setChecked(true);
-        }else{
+        } else {
             checkShowPhoto.setChecked(false);
         }
 
-        if(Util.getUser().getPreferences().isSound()){
+        if (Util.getUser().getPreferences().isSound()) {
             checkSound.setChecked(true);
-        }else{
+        } else {
             checkSound.setChecked(false);
         }
 
-        if(Util.getUser().getPreferences().isVibration()){
+        if (Util.getUser().getPreferences().isVibration()) {
             checkVibration.setChecked(true);
-        }else{
+        } else {
             checkVibration.setChecked(false);
         }
 
         checkNotifications.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(checkNotifications.isChecked()){
+                if (checkNotifications.isChecked()) {
                     Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("notification").setValue(true);
                 }
             }
@@ -74,7 +75,7 @@ public class TabPreferences extends Fragment {
         checkShowPhoto.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(checkShowPhoto.isChecked()){
+                if (checkShowPhoto.isChecked()) {
                     Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("showPhoto").setValue(true);
                 }
             }
@@ -83,7 +84,7 @@ public class TabPreferences extends Fragment {
         checkSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(checkSound.isChecked()){
+                if (checkSound.isChecked()) {
                     Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("sound").setValue(true);
                 }
             }
@@ -92,7 +93,7 @@ public class TabPreferences extends Fragment {
         checkVibration.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(checkVibration.isChecked()){
+                if (checkVibration.isChecked()) {
                     Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("vibration").setValue(true);
                 }
             }
@@ -110,7 +111,7 @@ public class TabPreferences extends Fragment {
             public void onClick(View v) {
                 DialogConfirmDeleteAcc cdd = new DialogConfirmDeleteAcc(getActivity());
                 cdd.show();
-                if(Util.getDelete()){
+                if (Util.getDelete()) {
                     deleteAcc();
                 }
             }
@@ -139,7 +140,7 @@ public class TabPreferences extends Fragment {
         goLoginScreen();
     }
 
-    public void deleteAcc(){
+    public void deleteAcc() {
         logout();
         Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).setValue(null);
     }

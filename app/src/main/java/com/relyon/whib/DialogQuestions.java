@@ -2,10 +2,11 @@ package com.relyon.whib;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class DialogQuestions extends Dialog implements
         View.OnClickListener {

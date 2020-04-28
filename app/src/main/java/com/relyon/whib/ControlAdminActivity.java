@@ -2,14 +2,15 @@ package com.relyon.whib;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -115,17 +116,17 @@ public class ControlAdminActivity extends AppCompatActivity {
         Util.getmServerDatabaseRef().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-               if (update){
-                   for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                       Server server = snap.getValue(Server.class);
-                       serverList.add(server);
-                   }
-                   Timeline tl = new Timeline(null, subject, null);
-                   ServerTempInfo serverTempInfo = new ServerTempInfo(0, true, serverList.size() + 1);
-                   Server server = new Server(UUID.randomUUID().toString(), serverTempInfo, subject, tl);
-                   update = false;
-                   Util.mServerDatabaseRef.child(server.getServerUID()).setValue(server);
-               }
+                if (update) {
+                    for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                        Server server = snap.getValue(Server.class);
+                        serverList.add(server);
+                    }
+                    Timeline tl = new Timeline(null, subject, null);
+                    ServerTempInfo serverTempInfo = new ServerTempInfo(0, true, serverList.size() + 1);
+                    Server server = new Server(UUID.randomUUID().toString(), serverTempInfo, subject, tl);
+                    update = false;
+                    Util.mServerDatabaseRef.child(server.getServerUID()).setValue(server);
+                }
             }
 
             @Override

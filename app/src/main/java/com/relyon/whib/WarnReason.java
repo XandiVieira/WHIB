@@ -2,8 +2,9 @@ package com.relyon.whib;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class WarnReason extends Dialog {
 

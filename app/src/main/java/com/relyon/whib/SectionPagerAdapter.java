@@ -1,12 +1,11 @@
 package com.relyon.whib;
 
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 public class SectionPagerAdapter extends FragmentPagerAdapter {
-
 
     public SectionPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -14,7 +13,7 @@ public class SectionPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        switch (position){
+        switch (position) {
             case 0:
                 TabPreferences tabPreferences = new TabPreferences();
                 return tabPreferences;
@@ -33,8 +32,8 @@ public class SectionPagerAdapter extends FragmentPagerAdapter {
     }
 
     @Override
-    public CharSequence getPageTitle(int position){
-        switch (position){
+    public CharSequence getPageTitle(int position) {
+        switch (position) {
             case 0:
                 return "CONFIGURAÇÕES";
             case 1:

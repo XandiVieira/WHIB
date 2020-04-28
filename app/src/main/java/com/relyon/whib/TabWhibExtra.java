@@ -2,14 +2,15 @@ package com.relyon.whib;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -40,7 +41,7 @@ public class TabWhibExtra extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 advantages = new ArrayList<>();
-                for (DataSnapshot snap : dataSnapshot.getChildren()){
+                for (DataSnapshot snap : dataSnapshot.getChildren()) {
                     advantages.add(snap.getValue(Advantage.class));
                 }
                 ArrayAdapter adapter = new AdvantageAdapter(getContext(), advantages);

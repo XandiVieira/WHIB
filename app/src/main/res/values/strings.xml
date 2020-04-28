@@ -114,6 +114,8 @@
     <string name="report_sent">A sua denúncia foi enviada com sucesso!</string>
     <string name="cant_report_own_comment">Você não pode reportar seu próprio comentário!</string>
     <string name="select_a_reason">Selecione uma das razões anteriores!</string>
+    <string name="admob_app_id">ca-app-pub-1676578761693318~6855911877</string>
+    <string name="ad_unit_id">ca-app-pub-1676578761693318/6552659541</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

@@ -1,13 +1,14 @@
 package com.relyon.whib;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.relyon.whib.modelo.Argument;
 import com.relyon.whib.modelo.Util;
@@ -32,20 +33,21 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public void onBindViewHolder(final RecyclerViewArgumentAdapter.ViewHolder holder, final int position) {
-        if (Util.getUser().getUserUID().equals(elementos.get(position).getAuthorsUID())) {
+        Argument argument = (Argument) elementos.get(position);
+        if (Util.getUser().getUserUID().equals(argument.getAuthorsUID())) {
             holder.userName.setVisibility(View.GONE);
             holder.argumentLayout.setBackground(context.getResources().getDrawable(R.drawable.square_primary_dark));
             holder.layout.setGravity(Gravity.END);
         } else {
             holder.userName.setVisibility(View.VISIBLE);
-            holder.userName.setText(elementos.get(position).getAuthorsName());
+            holder.userName.setText(argument.getAuthorsName());
             holder.argumentLayout.setBackground(context.getResources().getDrawable(R.drawable.square_white));
             holder.layout.setGravity(Gravity.START);
             holder.text.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
             holder.time.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
         }
-        holder.text.setText(elementos.get(position).getText());
-        holder.time.setText(elementos.get(position).getTime());
+        holder.text.setText(argument.getText());
+        holder.time.setText(argument.getTime());
     }
 
     @Override

@@ -5,14 +5,14 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -52,65 +52,50 @@ public class DialogReport extends Dialog {
         reason4 = findViewById(R.id.reason4);
         inputReport = findViewById(R.id.input_report);
 
-        report.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (reason != null) {
-                    if (reason.equals(reason1.getText().toString())) {
-                        dismiss();
-                        ViewDialog alert = new ViewDialog();
-                        alert.showDialog(a);
-                    } else {
-                        sendReport(inputReport.getText().toString(), reason);
-                    }
+        report.setOnClickListener(v -> {
+            if (reason != null) {
+                if (reason.equals(reason1.getText().toString())) {
+                    dismiss();
+                    ViewDialog alert = new ViewDialog();
+                    alert.showDialog(a);
                 } else {
-                    Toast.makeText(getContext(), a.getString(R.string.select_a_reason), Toast.LENGTH_LONG).show();
+                    sendReport(inputReport.getText().toString(), reason);
                 }
+            } else {
+                Toast.makeText(getContext(), a.getString(R.string.select_a_reason), Toast.LENGTH_LONG).show();
             }
         });
 
-        reason1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                reason = reason1.getText().toString();
-                reason1.setBackground(getContext().getResources().getDrawable(R.color.colorPrimary));
-                reason2.setBackground(getContext().getResources().getDrawable(R.color.white));
-                reason3.setBackground(getContext().getResources().getDrawable(R.color.white));
-                reason4.setBackground(getContext().getResources().getDrawable(R.color.white));
-            }
+        reason1.setOnClickListener(v -> {
+            reason = reason1.getText().toString();
+            reason1.setBackground(getContext().getResources().getDrawable(R.color.colorPrimary));
+            reason2.setBackground(getContext().getResources().getDrawable(R.color.white));
+            reason3.setBackground(getContext().getResources().getDrawable(R.color.white));
+            reason4.setBackground(getContext().getResources().getDrawable(R.color.white));
         });
 
-        reason2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                reason = reason2.getText().toString();
-                reason1.setBackground(getContext().getResources().getDrawable(R.color.white));
-                reason2.setBackground(getContext().getResources().getDrawable(R.color.colorPrimary));
-                reason3.setBackground(getContext().getResources().getDrawable(R.color.white));
-                reason4.setBackground(getContext().getResources().getDrawable(R.color.white));
-            }
+        reason2.setOnClickListener(v -> {
+            reason = reason2.getText().toString();
+            reason1.setBackground(getContext().getResources().getDrawable(R.color.white));
+            reason2.setBackground(getContext().getResources().getDrawable(R.color.colorPrimary));
+            reason3.setBackground(getContext().getResources().getDrawable(R.color.white));
+            reason4.setBackground(getContext().getResources().getDrawable(R.color.white));
         });
 
-        reason3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                reason = reason3.getText().toString();
-                reason1.setBackground(getContext().getResources().getDrawable(R.color.white));
-                reason2.setBackground(getContext().getResources().getDrawable(R.color.white));
-                reason3.setBackground(getContext().getResources().getDrawable(R.color.colorPrimary));
-                reason4.setBackground(getContext().getResources().getDrawable(R.color.white));
-            }
+        reason3.setOnClickListener(v -> {
+            reason = reason3.getText().toString();
+            reason1.setBackground(getContext().getResources().getDrawable(R.color.white));
+            reason2.setBackground(getContext().getResources().getDrawable(R.color.white));
+            reason3.setBackground(getContext().getResources().getDrawable(R.color.colorPrimary));
+            reason4.setBackground(getContext().getResources().getDrawable(R.color.white));
         });
 
-        reason4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                reason = reason4.getText().toString();
-                reason1.setBackground(getContext().getResources().getDrawable(R.color.white));
-                reason2.setBackground(getContext().getResources().getDrawable(R.color.white));
-                reason3.setBackground(getContext().getResources().getDrawable(R.color.white));
-                reason4.setBackground(getContext().getResources().getDrawable(R.color.colorPrimary));
-            }
+        reason4.setOnClickListener(v -> {
+            reason = reason4.getText().toString();
+            reason1.setBackground(getContext().getResources().getDrawable(R.color.white));
+            reason2.setBackground(getContext().getResources().getDrawable(R.color.white));
+            reason3.setBackground(getContext().getResources().getDrawable(R.color.white));
+            reason4.setBackground(getContext().getResources().getDrawable(R.color.colorPrimary));
         });
     }
 

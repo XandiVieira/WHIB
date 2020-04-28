@@ -3,14 +3,15 @@ package com.relyon.whib;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.ServerTempInfo;
@@ -127,7 +128,7 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
 
     private void createNewServer() {
         Subject subject2 = elementos.get(0).getSubject();
-        ServerTempInfo serverTempInfo2 = new ServerTempInfo(0,true, Util.getNumberOfServers() + 1);
+        ServerTempInfo serverTempInfo2 = new ServerTempInfo(0, true, Util.getNumberOfServers() + 1);
         Timeline tl = new Timeline(null, subject2, null);
         Server server = new Server(UUID.randomUUID().toString(), serverTempInfo2, subject2, tl);
         Util.mServerDatabaseRef.child(server.getServerUID()).setValue(server);
