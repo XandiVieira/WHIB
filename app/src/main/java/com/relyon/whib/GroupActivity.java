@@ -31,7 +31,6 @@ public class GroupActivity extends AppCompatActivity {
     private RecyclerView rvArgument;
     private EditText inputMessage;
     private ArrayList<Argument> argumentList;
-    private AppCompatActivity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +38,6 @@ public class GroupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        activity = this;
         ImageView back = findViewById(R.id.back);
         TextView serverRoom = findViewById(R.id.serverRoom);
         TextView subject = findViewById(R.id.subject);
@@ -58,7 +56,7 @@ public class GroupActivity extends AppCompatActivity {
                     argumentList.add(argument);
                 }
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
-                layoutManager.setStackFromEnd(true);
+                //layoutManager.setStackFromEnd(true);
                 rvArgument.setLayoutManager(layoutManager);
                 RecyclerViewArgumentAdapter adapter = new RecyclerViewArgumentAdapter(getApplicationContext(), argumentList);
                 rvArgument.setAdapter(adapter);
@@ -70,30 +68,17 @@ public class GroupActivity extends AppCompatActivity {
             }
         });
 
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        back.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
         });
 
         serverRoom.setText("Servidor " + Util.getServer().getTempInfo().getNumber() + " - Sala " + Util.getGroup().getNumber());
         subject.setText(Util.getServer().getSubject().getTitle());
 
-        sendView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendMessage();
-            }
-        });
-        leaveGroup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                leaveGroup();
-            }
-        });
+        sendView.setOnClickListener(v -> sendMessage());
+        leaveGroup.setOnClickListener(v -> leaveGroup());
 
         Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("tempInfo").child("activated").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

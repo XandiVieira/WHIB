@@ -2,7 +2,6 @@ package com.relyon.whib;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -22,47 +21,17 @@ public class AboutActivity extends AppCompatActivity {
         LinearLayout contactUs = findViewById(R.id.contact_us);
         ImageView back = findViewById(R.id.back);
 
-        aboutUs.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), AboutUsActivity.class));
-            }
-        });
+        aboutUs.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), AboutUsActivity.class)));
 
-        faq.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), FaqActivity.class));
-            }
-        });
+        faq.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), FaqActivity.class)));
 
-        terms.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), TermsActivity.class));
-            }
-        });
+        terms.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), TermsActivity.class)));
 
-        privacyPolicy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), PrivacyPolicyActivity.class));
-            }
-        });
+        privacyPolicy.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), PrivacyPolicyActivity.class)));
 
-        contactUs.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), ContactActivity.class));
-            }
-        });
+        contactUs.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), ContactActivity.class)));
 
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        back.setOnClickListener(v -> onBackPressed());
     }
 
     @Override

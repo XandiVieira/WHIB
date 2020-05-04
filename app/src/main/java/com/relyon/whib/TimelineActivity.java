@@ -74,9 +74,9 @@ public class TimelineActivity extends AppCompatActivity {
         assert subjectObj != null;
         subject.setText(subjectObj.getTitle());
 
-        loadNativeAds();
+        new Thread(this::loadNativeAds).start();
 
-        Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").addValueEventListener(new ValueEventListener() {
+        new Thread(() -> Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 commentList = new ArrayList<>();
@@ -95,7 +95,7 @@ public class TimelineActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        })).start();
 
         menu.setOnClickListener(v -> {
             //Creating the instance of PopupMenu

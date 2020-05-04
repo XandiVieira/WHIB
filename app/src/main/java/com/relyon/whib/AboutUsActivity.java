@@ -16,12 +16,7 @@ public class AboutUsActivity extends AppCompatActivity {
 
         ImageView back = findViewById(R.id.back);
 
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        back.setOnClickListener(v -> onBackPressed());
     }
 
     @Override
