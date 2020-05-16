@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_gravity="center"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/whib_extra50"/>
+            android:src="@drawable/whib_extra50"/>
 
         <TextView
             android:id="@+id/text"

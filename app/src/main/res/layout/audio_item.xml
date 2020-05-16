@@ -32,12 +32,12 @@
             android:id="@+id/playButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            app:srcCompat="@mipmap/play_icon"/>
+            android:src="@mipmap/play_icon"/>
         <ImageView
             android:id="@+id/pauseButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@mipmap/pause_icon"
+            android:src="@mipmap/pause_icon"
             android:visibility="gone"/>
         <SeekBar
             android:id="@+id/evolutionBar"

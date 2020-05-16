@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.view.LayoutInflater;
@@ -18,8 +19,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.borjabravo.readmoretextview.ReadMoreTextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.ads.formats.NativeAd;
@@ -33,18 +36,21 @@ import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final Context context;
-    private final ArrayList<Object> elementos;
+    private ArrayList<Object> elementos;
+    private ArrayList<Object> elementosAux;
     private AppCompatActivity activity;
     private static final int COMMENT_ITEM_VIEW_TYPE = 0;
     private static final int NATIVE_EXPRESS_AD_VIEW_TYPE = 1;
 
-    RecyclerViewCommentAdapter(@NonNull Context context, ArrayList<Object> elementos, AppCompatActivity activity) {
+    RecyclerViewCommentAdapter(@NonNull Context context, AppCompatActivity activity) {
         this.context = context;
-        this.elementos = elementos;
+        this.elementos = new ArrayList<>();
+        this.elementosAux = new ArrayList<>();
         this.activity = activity;
     }
 
@@ -68,13 +74,16 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
     private void openRatingDialog(float rating, int position) {
         DialogRateComment cdd = new DialogRateComment(activity, rating, (Comment) elementos.get(position), position, elementos);
-        cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        cdd.show();
+        if (cdd.getWindow() != null) {
+            cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            cdd.show();
+        }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder1, int position) {
         int viewType = getItemViewType(position);
+        holder1.setIsRecyclable(false);
 
         if (viewType == NATIVE_EXPRESS_AD_VIEW_TYPE) {
             UnifiedNativeAd nativeAd = (UnifiedNativeAd) elementos.get(position);
@@ -87,6 +96,12 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             holder.ratingBar.setRating(comment.getRating());
             holder.ratingTV.setText(String.format("%.2f", comment.getRating()));
             holder.text.setText(comment.getText());
+            holder.text.setTrimExpandedText(" Ver menos");
+            holder.text.setTrimCollapsedText(" Ver mais");
+            holder.text.setTrimLines(4);
+            holder.text.setColorClickableText(Color.BLUE);
+            Typeface face = ResourcesCompat.getFont(context, R.font.baloo);
+            holder.text.setTypeface(face);
             Glide.with(context)
                     .load(comment.getUserPhotoURL())
                     .apply(RequestOptions.circleCropTransform())
@@ -108,7 +123,9 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                     } else if (comment.isAGroup()) {
                         holder.bg.setBackgroundResource(R.drawable.rounded_primary_double);
                     }
-                    holder.userName.setText(user.getUserName());
+                    if (user != null) {
+                        holder.userName.setText(user.getUserName());
+                    }
                 }
 
                 @Override
@@ -123,6 +140,12 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                     holder.ratingTV.setText(String.valueOf(rating));
                     ratingBar.setRating(rating);
                     Toast.makeText(context, String.valueOf(rating), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            holder.ratingBar.setOnClickListener(v -> {
+                if (holder.ratingBar.isIndicator()) {
+                    Toast.makeText(context, "Você já avaliou este comentário!", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -141,8 +164,10 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
     private boolean openReportDialog(Comment comment) {
         DialogReport dialogReport = new DialogReport(activity, comment);
-        dialogReport.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialogReport.show();
+        if (dialogReport.getWindow() != null) {
+            dialogReport.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialogReport.show();
+        }
         return true;
     }
 
@@ -181,28 +206,9 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         return elementos.size();
     }
 
-    public class NativeExpressAdViewHolder extends RecyclerView.ViewHolder {
+    public static class CommentViewHolder extends RecyclerView.ViewHolder {
 
-        private UnifiedNativeAdView adView;
-
-        NativeExpressAdViewHolder(View rowView) {
-            super(rowView);
-            adView = rowView.findViewById(R.id.ad_media);
-
-            adView.setHeadlineView(adView.findViewById(R.id.ad_headline));
-            adView.setBodyView(adView.findViewById(R.id.ad_headline));
-            adView.setCallToActionView(adView.findViewById(R.id.ad_headline));
-            adView.setIconView(adView.findViewById(R.id.ad_headline));
-            adView.setPriceView(adView.findViewById(R.id.ad_headline));
-            adView.setStarRatingView(adView.findViewById(R.id.ad_headline));
-            adView.setStoreView(adView.findViewById(R.id.ad_headline));
-            adView.setAdvertiserView(adView.findViewById(R.id.ad_headline));
-        }
-    }
-
-    public class CommentViewHolder extends RecyclerView.ViewHolder {
-
-        private TextView text;
+        private ReadMoreTextView text;
         private TextView ratingTV;
         private ImageView photo;
         private RatingBar ratingBar;
@@ -269,5 +275,34 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
         // Assign native ad object to the native view.
         adView.setNativeAd(nativeAd);
+    }
+
+    public void addAll(List<Comment> newComments, boolean b) {
+        int initialSize = elementos.size();
+        //elementos.addAll(newComments);
+        for (int i = 0; i < newComments.size(); i++) {
+            elementos.add(0, newComments.get(i));
+            /*if (b) {
+                elementos.add(newComments.get(i));
+            } else {
+                elementos.add(newComments.get(i));
+            }*/
+        }
+        notifyItemRangeInserted(0, newComments.size());
+    }
+
+    public String getLastItemId(boolean isFirst) {
+        if (elementos.size() > 0) {
+            Comment comment;
+            /*if (isFirst) {
+                comment = (Comment) elementos.get(0);
+            } else {
+                comment = (Comment) elementosAux.get(elementosAux.size() - 1);
+            }*/
+            comment = (Comment) elementos.get(0);
+            return comment.getKey();
+        } else {
+            return null;
+        }
     }
 }

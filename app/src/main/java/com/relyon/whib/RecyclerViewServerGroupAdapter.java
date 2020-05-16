@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,34 +21,41 @@ public class RecyclerViewServerGroupAdapter extends RecyclerView.Adapter<Recycle
     private final Context context;
     private ArrayList<ArrayList> elementos;
     private ArrayList<String> subjects;
+    private RecyclerView recyclerView;
 
-    RecyclerViewServerGroupAdapter(@NonNull Context context, ArrayList<ArrayList> elementos, ArrayList<String> subjects) {
+    RecyclerViewServerGroupAdapter(@NonNull Context context, ArrayList<ArrayList> elementos, ArrayList<String> subjects, RecyclerView recyclerViewServers) {
         this.context = context;
         this.elementos = elementos;
         this.subjects = subjects;
+        this.recyclerView = recyclerViewServers;
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.server_group_item, parent, false);
-
         return new ViewHolder(rowView);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-
         holder.subject.setText(subjects.get(position));
         if (holder.subject.getText().toString().equals("")) {
             holder.subject.setText("Indisponível");
         }
+
+        if (elementos.size() > 2) {
+            holder.nextServer.setVisibility(View.VISIBLE);
+        } else {
+            holder.nextServer.setVisibility(View.GONE);
+        }
+
         holder.initRecyclerView(elementos.get(position));
         /*if (elementos.length > 0 && elementos[position].size() > 0 && !elementos[position].get(0).getSubject().getTitle().equals("")) {
             holder.initRecyclerView(elementos[position]);
         } else {
             holder.itemView.setVisibility(View.GONE);
         }*/
-
     }
 
     private void goTimelineScreen(String subject, String status) {
@@ -60,22 +68,22 @@ public class RecyclerViewServerGroupAdapter extends RecyclerView.Adapter<Recycle
         return elementos.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView subject;
         RecyclerView recyclerViewInner;
+        ImageView nextServer;
 
         ViewHolder(View rowView) {
             super(rowView);
-
             subject = rowView.findViewById(R.id.subject);
             recyclerViewInner = rowView.findViewById(R.id.recyclerViewInner);
+            nextServer = rowView.findViewById(R.id.nextServer);
         }
 
         private void initRecyclerView(ArrayList<Server> elementos) {
             LinearLayoutManager layoutManager2 = new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false);
             recyclerViewInner = itemView.findViewById(R.id.recyclerViewInner);
-
             recyclerViewInner.setLayoutManager(layoutManager2);
             RecyclerViewServerAdapter adapter2 = new RecyclerViewServerAdapter(itemView.getContext(), elementos);
             recyclerViewInner.setAdapter(adapter2);

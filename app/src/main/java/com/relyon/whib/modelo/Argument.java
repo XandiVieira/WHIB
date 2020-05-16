@@ -5,13 +5,13 @@ public class Argument extends Sending {
     private String text;
     private String audioPath;
     private String groupUID;
-    private String time;
+    private Long time;
 
     public Argument() {
     }
 
-    public Argument(String type, String date, String authorsName, String authorsUID, Subject subject, String text,
-                    String audioPath, String groupUID, String time, Sending sending) {
+    public Argument(String type, Long date, String authorsName, String authorsUID, Subject subject, String text,
+                    String audioPath, String groupUID, Long time, Sending sending) {
         super(type, date, authorsName, authorsUID, subject);
         this.text = text;
         this.audioPath = audioPath;
@@ -22,7 +22,7 @@ public class Argument extends Sending {
         this.time = time;
     }
 
-    public Argument(String text, String audioPath, String groupUID, String time, Sending sending) {
+    public Argument(String text, String audioPath, String groupUID, Long time, Sending sending) {
         this.text = text;
         this.audioPath = audioPath;
         this.groupUID = groupUID;
@@ -58,11 +58,11 @@ public class Argument extends Sending {
         this.groupUID = groupUID;
     }
 
-    public String getTime() {
+    public Long getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(Long time) {
         this.time = time;
     }
 }

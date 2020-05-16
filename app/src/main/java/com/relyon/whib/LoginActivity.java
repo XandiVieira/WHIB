@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
     @Override
     public void run() {
 
-        //Esse métedo será execultado a cada período, ponha aqui a sua lógica
+        //Esse métedo será executado a cada período, ponha aqui a sua lógica
         if (mPager.getCurrentItem() == 3) {
             mPager.setCurrentItem(0);
         } else {
@@ -71,7 +71,6 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
 
         Handler handler = new Handler(); //contador de tempo
         handler.postDelayed(this, 4000); //o exemplo 2000 = 2 segundos
-
     }
 
     @Override

@@ -33,7 +33,7 @@
                 android:contentDescription="@string/profile"
                 android:onClick="profile"
                 android:text="@string/profile"
-                app:srcCompat="@drawable/profile_icon" />
+                android:src="@drawable/profile_icon" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -71,7 +71,7 @@
                 android:contentDescription="@string/exit_icon"
                 android:onClick="logout"
                 android:text="@string/logout"
-                app:srcCompat="@drawable/exit_icon" />
+                android:src="@drawable/exit_icon" />
 
             <TextView
                 android:layout_width="wrap_content"

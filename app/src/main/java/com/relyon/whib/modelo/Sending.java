@@ -3,12 +3,12 @@ package com.relyon.whib.modelo;
 public class Sending {
 
     private String type;
-    private String date;
+    private Long date;
     private String authorsName;
     private String authorsUID;
     private Subject subject;
 
-    public Sending(String type, String date, String authorsName, String authorsUID,
+    public Sending(String type, Long date, String authorsName, String authorsUID,
                    Subject subject) {
         this.type = type;
         this.date = date;
@@ -28,11 +28,11 @@ public class Sending {
         this.type = type;
     }
 
-    public String getDate() {
+    public Long getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Long date) {
         this.date = date;
     }
 

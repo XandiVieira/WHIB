@@ -59,7 +59,7 @@
             android:id="@+id/expanded_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/menu_icon"
+            android:src="@drawable/menu_icon"
             android:padding="5dp"/>
     </LinearLayout>
 

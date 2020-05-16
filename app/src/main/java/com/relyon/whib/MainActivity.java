@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerViewServers = findViewById(R.id.recyclerViewSec);
         recyclerViewServers.setLayoutManager(layoutManager);
-        RecyclerViewServerGroupAdapter adapter = new RecyclerViewServerGroupAdapter(this, serverGroupList, subjectList);
+        RecyclerViewServerGroupAdapter adapter = new RecyclerViewServerGroupAdapter(this, serverGroupList, subjectList, recyclerViewServers);
         recyclerViewServers.setAdapter(adapter);
     }
 

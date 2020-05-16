@@ -6,8 +6,8 @@ android {
         applicationId "com.relyon.whib"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 5
-        versionName "Teste interno - Correção versão de midias"
+        versionCode 6
+        versionName "Teste interno - Correção de crashes"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -62,6 +62,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.android.support:design:28.0.0'
+
+    implementation 'com.borjabravo:readmoretextview:2.1.0'
 }
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'

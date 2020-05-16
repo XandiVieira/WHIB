@@ -59,12 +59,9 @@ public class DialogRateComment extends Dialog implements
         rate.setOnClickListener(this);
         ratingBar.setRating(rating);
 
-        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                ratingTV.setText(String.valueOf(rating));
-                ratingBar.setRating(rating);
-            }
+        ratingBar.setOnRatingBarChangeListener((ratingBar1, rating, fromUser) -> {
+            ratingTV.setText(String.valueOf(rating));
+            ratingBar1.setRating(rating);
         });
     }
 

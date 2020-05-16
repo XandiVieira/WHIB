@@ -18,8 +18,6 @@ import com.relyon.whib.modelo.Sending;
 import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.Util;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 public class DialogPostComment extends Dialog implements
@@ -31,9 +29,10 @@ public class DialogPostComment extends Dialog implements
     private EditText commentBox;
     private TextView counter;
     private int caractCounter;
-    public Subject subject;
+    private Subject subject;
+    private static int MAX_COMMENT_SIZE = 600;
 
-    public DialogPostComment(Activity a, Subject subjectObj) {
+    DialogPostComment(Activity a, Subject subjectObj) {
         super(a);
         this.c = a;
         this.subject = subjectObj;
@@ -61,7 +60,7 @@ public class DialogPostComment extends Dialog implements
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.toString().trim().length() > 0) {
                     comment.setEnabled(true);
-                    caractCounter = 240 - charSequence.length();
+                    caractCounter = MAX_COMMENT_SIZE - charSequence.length();
                     counter.setText(String.valueOf(caractCounter));
                 } else {
                     comment.setEnabled(false);
@@ -90,20 +89,11 @@ public class DialogPostComment extends Dialog implements
     }
 
     private void postComment() {
-        SimpleDateFormat dateFormat_date = new SimpleDateFormat("yyyy/MM/dd - HH:mm:ss");
-        SimpleDateFormat dateFormat_time = new SimpleDateFormat("HH:mm:ss");
+        long data_atual = new Date().getTime();
 
-        Date data = new Date();
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(data);
-        Date data_atual = cal.getTime();
-
-        String current_date = dateFormat_date.format(data_atual);
-        String current_time = dateFormat_time.format(data_atual);
-        Sending sending = new Sending("text", current_date, Util.getUser().getUserName(), Util.getUser().getUserUID(), subject);
-        Comment comment = new Comment(commentBox.getText().toString(), (float) 0.0, Util.getUser().getPhotoPath(), current_time, 0, (float) 0.0, sending, false, null);
+        Sending sending = new Sending("text", data_atual, Util.getUser().getUserName(), Util.getUser().getUserUID(), subject);
         if (validateComment()) {
+            Comment comment = new Comment(commentBox.getText().toString(), (float) 0.0, Util.getUser().getPhotoPath(), data_atual, 0, (float) 0.0, sending, false, null);
             Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").push().setValue(comment);
             Toast.makeText(getContext(), "Comentário postado!", Toast.LENGTH_SHORT).show();
             // Clear input box
@@ -112,13 +102,12 @@ public class DialogPostComment extends Dialog implements
     }
 
     private boolean validateComment() {
-
         if (commentBox.getText().length() < 50) {
             Toast.makeText(getContext(), "O comentário deve possuir pelo menos 50 caracteres!", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (commentBox.getText().length() > 240) {
-            Toast.makeText(getContext(), "O comentário deve possuir no máximo 250 caracteres!", Toast.LENGTH_SHORT).show();
+        if (commentBox.getText().length() > MAX_COMMENT_SIZE) {
+            Toast.makeText(getContext(), "O comentário deve possuir no máximo " + MAX_COMMENT_SIZE + " caracteres!", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;

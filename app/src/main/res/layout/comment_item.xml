@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/background"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -42,7 +43,7 @@
                     android:gravity="center" />
             </LinearLayout>
 
-            <TextView
+            <com.borjabravo.readmoretextview.ReadMoreTextView
                 android:id="@+id/text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -50,11 +51,16 @@
                 android:layout_margin="@dimen/surround_margins"
                 android:fontFamily="@font/baloo"
                 android:gravity="left"
-                android:lineSpacingExtra="@dimen/negative"
+                android:lineSpacingExtra="-3dp"
                 android:padding="@dimen/surround_paddings"
                 android:text=""
                 android:textColor="@color/black"
-                android:textSize="@dimen/small_text" />
+                android:textSize="13sp"
+                app:colorClickableText="@color/colorPrimaryDark"
+                app:trimCollapsedText=" Ver mais"
+                app:trimExpandedText=" Ver menos"
+                app:trimLines="4"
+                app:trimMode="trimModeLine" />
 
         </LinearLayout>
 

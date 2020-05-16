@@ -2,7 +2,6 @@ package com.relyon.whib;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,7 +20,6 @@ import com.relyon.whib.modelo.Argument;
 import com.relyon.whib.modelo.Sending;
 import com.relyon.whib.modelo.Util;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -97,19 +95,21 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void sendMessage() {
-        if (Util.getGroup().getMode().equals("Áudio")) {
-            createNewArgument("audio", null);
-        } else if (Util.getGroup().getMode().equals("text")) {
-            createNewArgument("text", null);
-        } else if (Util.getGroup().getMode().equals("Time")) {
-            createNewArgument("time", null);
+        switch (Util.getGroup().getMode()) {
+            case "Áudio":
+                createNewArgument("audio", null);
+                break;
+            case "text":
+                createNewArgument("text", null);
+                break;
+            case "Time":
+                createNewArgument("time", null);
+                break;
         }
         inputMessage.setText("");
     }
 
     private void createNewArgument(String type, String audioPath) {
-        SimpleDateFormat dateFormat_date = new SimpleDateFormat("yyyy/MM/dd - HH:mm:ss");
-        SimpleDateFormat dateFormat_time = new SimpleDateFormat("HH:mm");
 
         Date data = new Date();
 
@@ -117,10 +117,8 @@ public class GroupActivity extends AppCompatActivity {
         cal.setTime(data);
         Date data_atual = cal.getTime();
 
-        String current_date = dateFormat_date.format(data_atual);
-        String current_time = dateFormat_time.format(data_atual);
-        Sending sending = new Sending(type, current_date, Util.getUser().getUserName(), Util.getUser().getUserUID(), Util.getSubject());
-        Argument argument = new Argument(inputMessage.getText().toString(), audioPath, Util.getGroup().getGroupUID(), current_time, sending);
+        Sending sending = new Sending(type, data_atual.getTime(), Util.getUser().getUserName(), Util.getUser().getUserUID(), Util.getSubject());
+        Argument argument = new Argument(inputMessage.getText().toString(), audioPath, Util.getGroup().getGroupUID(), data_atual.getTime(), sending);
         Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline")
                 .child("commentList").child(Util.getGroup().getCommentUID())
                 .child("group").child("argumentList").push().setValue(argument);

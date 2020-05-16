@@ -1,5 +1,9 @@
 package com.relyon.whib.modelo;
 
+import androidx.annotation.Nullable;
+
+import com.google.firebase.database.Exclude;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,19 +12,20 @@ public class Comment extends Sending {
     private String text;
     private float rating;
     private String userPhotoURL;
-    private String time;
+    private Long time;
     private int numberOfRatings;
     private float sumOfRatings;
     private String commentUID;
     private List<String> alreadyRatedList = new ArrayList<>();
     private boolean isAGroup;
     private Group group;
+    private String key;
 
     public Comment() {
     }
 
-    public Comment(String type, String date, String authorsName, String authorsUID, Subject subject, String text,
-                   float rating, String userPhotoURL, String time, int numberOfRatings, float sumOfRatings,
+    public Comment(String type, Long date, String authorsName, String authorsUID, Subject subject, String text,
+                   float rating, String userPhotoURL, Long time, int numberOfRatings, float sumOfRatings,
                    Sending sending, boolean isAGroup, Group group) {
         super(type, date, authorsName, authorsUID, subject);
         this.text = text;
@@ -38,7 +43,7 @@ public class Comment extends Sending {
         super.setType(sending.getType());
     }
 
-    public Comment(String text, float rating, String userPhotoURL, String time, int numberOfRatings, float sumOfRatings,
+    public Comment(String text, float rating, String userPhotoURL, Long time, int numberOfRatings, float sumOfRatings,
                    Sending sending, boolean isAGroup, Group group) {
         this.text = text;
         this.rating = rating;
@@ -79,11 +84,11 @@ public class Comment extends Sending {
         this.userPhotoURL = userPhotoURL;
     }
 
-    public String getTime() {
+    public Long getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(Long time) {
         this.time = time;
     }
 
@@ -133,5 +138,26 @@ public class Comment extends Sending {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+
+    @Exclude
+    public String getKey() {
+        return key;
+    }
+
+    @Exclude
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        Comment comment = (Comment) obj;
+        if (comment != null) {
+            return commentUID.matches(comment.getCommentUID());
+        } else {
+            return false;
+        }
     }
 }

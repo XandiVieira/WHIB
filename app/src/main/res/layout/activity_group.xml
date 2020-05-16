@@ -21,7 +21,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="0.5"
             android:padding="5dp"
-            app:srcCompat="@drawable/back_arrow" />
+            android:src="@drawable/back_arrow" />
 
         <TextView
             android:id="@+id/serverRoom"
@@ -46,7 +46,7 @@
             android:layout_marginTop="@dimen/right_margin"
             android:layout_weight="0.5"
             android:padding="10dp"
-            app:srcCompat="@drawable/exit_icon" />
+            android:src="@drawable/exit_icon" />
 
     </LinearLayout>
 
@@ -138,7 +138,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            app:srcCompat="@mipmap/send_icon" />
+                            android:src="@mipmap/send_icon" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

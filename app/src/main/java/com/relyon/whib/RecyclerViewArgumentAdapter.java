@@ -8,23 +8,28 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.relyon.whib.modelo.Argument;
 import com.relyon.whib.modelo.Util;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerViewArgumentAdapter.ViewHolder> {
 
     private final ArrayList<Argument> elementos;
     private Context context;
+    SimpleDateFormat dateFormat_date = new SimpleDateFormat("yyyy/MM/dd - HH:mm:ss");
+    SimpleDateFormat dateFormat_time = new SimpleDateFormat("HH:mm:ss");
 
     RecyclerViewArgumentAdapter(Context context, ArrayList<Argument> elementos) {
         this.context = context;
         this.elementos = elementos;
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.argument_item, parent, false);
@@ -32,8 +37,8 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerViewArgumentAdapter.ViewHolder holder, final int position) {
-        Argument argument = (Argument) elementos.get(position);
+    public void onBindViewHolder(@NonNull final RecyclerViewArgumentAdapter.ViewHolder holder, final int position) {
+        Argument argument = elementos.get(position);
         if (Util.getUser().getUserUID().equals(argument.getAuthorsUID())) {
             holder.userName.setVisibility(View.GONE);
             holder.argumentLayout.setBackground(context.getResources().getDrawable(R.drawable.square_primary_dark));
@@ -43,11 +48,11 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
             holder.userName.setText(argument.getAuthorsName());
             holder.argumentLayout.setBackground(context.getResources().getDrawable(R.drawable.square_white));
             holder.layout.setGravity(Gravity.START);
-            holder.text.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
+            holder.argument.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
             holder.time.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
         }
-        holder.text.setText(argument.getText());
-        holder.time.setText(argument.getTime());
+        holder.argument.setText(argument.getText());
+        holder.time.setText(dateFormat_time.format(argument.getTime()));
     }
 
     @Override
@@ -55,12 +60,11 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
         return elementos.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
         private LinearLayout layout;
         private LinearLayout argumentLayout;
         private TextView argument;
-        private TextView text;
         private TextView time;
         private TextView userName;
 
@@ -68,7 +72,6 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
             super(rowView);
             layout = rowView.findViewById(R.id.layout);
             argumentLayout = rowView.findViewById(R.id.argumentLayout);
-            text = rowView.findViewById(R.id.argument);
             time = rowView.findViewById(R.id.time);
             userName = rowView.findViewById(R.id.userName);
             argument = rowView.findViewById(R.id.argument);

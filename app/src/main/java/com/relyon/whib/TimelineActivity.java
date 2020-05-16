@@ -24,6 +24,7 @@ import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Subject;
@@ -33,23 +34,31 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.relyon.whib.modelo.Util.DataCache;
+import static java.util.Objects.requireNonNull;
+
 public class TimelineActivity extends AppCompatActivity {
 
     private ImageView menu;
     private Subject subjectObj;
-    private ArrayList<Object> commentList;
+    private ArrayList<Object> commentList = new ArrayList<>();
+    private List<Comment> currentPageListList = new ArrayList<>();
     private RecyclerView rvComments;
     private AppCompatActivity activity;
     private boolean canPost = true;
-    // The number of native ads to load and display.
-    public int NUMBER_OF_ADS = 0;
-
-    // The AdLoader used to load ads.
-    private AdLoader adLoader;
-
-    // List of native ads that have been successfully loaded.
+    private int NUMBER_OF_ADS = 0;
     private List<UnifiedNativeAd> mNativeAds = new ArrayList<>();
     private RecyclerViewCommentAdapter adapter;
+    private LinearLayoutManager layoutManager;
+
+    private int mTotalItemCount = 0;
+    private int mLastVisibleItemPosition;
+    private boolean mIsLoading = false;
+    private int mPostsPerPage = 1;
+    private Boolean isScrolling = false;
+    private int currentComments, totalComments, scrolledOutComments;
+    private Boolean reachedEnd = false;
+    private boolean isFirst = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,32 +79,56 @@ public class TimelineActivity extends AppCompatActivity {
         commentList = new ArrayList<>();
         activity = this;
 
-        subjectObj = getIntent().getExtras().getParcelable("subject");
-        assert subjectObj != null;
-        subject.setText(subjectObj.getTitle());
+        if (getIntent() != null && getIntent().getExtras() != null) {
+            subjectObj = getIntent().getExtras().getParcelable("subject");
+            if (subjectObj != null) {
+                subject.setText(subjectObj.getTitle());
+            }
+        }
 
-        new Thread(this::loadNativeAds).start();
+        initRecyclerViewComment();
+        if (DataCache.size() > 0) {
+            adapter.addAll(DataCache, true);
+        } else {
+            getComments(null);
+        }
 
-        new Thread(() -> Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").addValueEventListener(new ValueEventListener() {
+        /*rvComments.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                commentList = new ArrayList<>();
-                for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                    Comment comment = snap.getValue(Comment.class);
-                    comment.setCommentUID(snap.getKey());
-                    commentList.add(comment);
-                }
-                NUMBER_OF_ADS = commentList.size();
-                if (!commentList.isEmpty()) {
-                    initRecyclerViewComment();
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                //check for scroll state
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                    isScrolling = true;
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
 
+                currentComments = layoutManager.getChildCount();
+                totalComments = layoutManager.getItemCount();
+                scrolledOutComments = ((LinearLayoutManager) recyclerView.getLayoutManager()).
+                        findFirstVisibleItemPosition();
+
+                if (isScrolling && (currentComments + scrolledOutComments ==
+                        totalComments)) {
+                    isScrolling = false;
+
+                    if (dy > 0) {
+                        // Scrolling up
+                        if (!reachedEnd) {
+                            getComments(adapter.getLastItemId(isFirst));
+                        } else {
+                            Toast.makeText(getApplicationContext(), "No More Item Found", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        // Scrolling down
+                    }
+                }
             }
-        })).start();
+        });*/
 
         menu.setOnClickListener(v -> {
             //Creating the instance of PopupMenu
@@ -129,7 +162,10 @@ public class TimelineActivity extends AppCompatActivity {
             popup.show(); //showing popup menu
         }); //closing the setOnClickListener method
 
-        back.setOnClickListener(v -> backToMainScreen());
+        back.setOnClickListener(v -> {
+            getComments(adapter.getLastItemId(isFirst));
+            mIsLoading = true;
+        });
 
         commentBt.setOnClickListener(v -> {
             if (canPost) {
@@ -163,52 +199,124 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void initRecyclerViewComment() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
+        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
         rvComments = findViewById(R.id.rvComments);
         layoutManager.setStackFromEnd(true);
         rvComments.setLayoutManager(layoutManager);
-        adapter = new RecyclerViewCommentAdapter(getApplicationContext(), commentList, activity);
+        adapter = new RecyclerViewCommentAdapter(getApplicationContext(), activity);
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvComments.getContext(),
                 layoutManager.getOrientation());
         rvComments.addItemDecoration(dividerItemDecoration);
         dividerItemDecoration.setDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.divider));
         rvComments.setAdapter(adapter);
+        //new Thread(this::loadNativeAds).start();
+    }
+
+    private void getComments(String nodeId) {
+        mIsLoading = true;
+        Query query;
+        if (nodeId == null) {
+            query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(mPostsPerPage);
+            isFirst = true;
+        } else {
+            query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().endAt(nodeId).limitToLast(mPostsPerPage + 1);
+            isFirst = false;
+        }
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int index = 0;
+                List<Comment> comments = new ArrayList<>();
+                if (dataSnapshot != null && dataSnapshot.exists()) {
+                    for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                        if (dataSnapshot.getChildrenCount() > 0) {
+                            //if (!isFirst) {
+                            index++;
+                            //if (index < dataSnapshot.getChildrenCount()) {
+                            Comment comment = snap.getValue(Comment.class);
+                            requireNonNull(comment).setKey(snap.getKey());
+                            if (Util.commentExists(snap.getKey())) {
+                                reachedEnd = true;
+                            } else {
+                                reachedEnd = false;
+                                DataCache.add(comment);
+                                comments.add(comment);
+                                currentPageListList = comments;
+                                currentComments = comments.size();
+                            }
+                            /*}
+                            } else {
+                                if (index > 0) {
+                                    Comment comment = snap.getValue(Comment.class);
+                                    requireNonNull(comment).setKey(snap.getKey());
+                                    if (Util.commentExists(snap.getKey())) {
+                                        reachedEnd = true;
+                                    } else {
+                                        reachedEnd = false;
+                                        DataCache.add(comment);
+                                        comments.add(comment);
+                                        currentPageListList = comments;
+                                        currentComments = comments.size();
+                                    }
+                                }
+                                index++;
+                            }*/
+                        }
+                    }
+                }
+                adapter.addAll(comments, nodeId == null);
+                mIsLoading = false;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                mIsLoading = false;
+            }
+        });
     }
 
     private void loadNativeAds() {
+        mNativeAds.clear();
         AdLoader.Builder builder = new AdLoader.Builder(this, getString(R.string.ad_unit_id));
-        adLoader = builder.forUnifiedNativeAd(
+        // The AdLoader used to load ads.
+        AdLoader adLoader = builder.forUnifiedNativeAd(
                 unifiedNativeAd -> {
                     mNativeAds.add(unifiedNativeAd);
-                    if (!adLoader.isLoading()) {
-                        insertAdsInMenuItems();
-                    }
                 }).withAdListener(
                 new AdListener() {
                     @Override
                     public void onAdFailedToLoad(int errorCode) {
                         Log.e("TimelineActivity", "The previous native ad failed to load. Attempting to"
                                 + " load another.");
-                        if (!adLoader.isLoading()) {
+                    }
+
+                    @Override
+                    public void onAdLoaded() {
+                        super.onAdLoaded();
+                        if (mNativeAds.size() == NUMBER_OF_ADS) {
                             insertAdsInMenuItems();
                         }
                     }
                 }).build();
 
         // Load the Native Express ad.
-        adLoader.loadAds(new AdRequest.Builder().build(), NUMBER_OF_ADS);
+        try {
+            Thread.sleep(3000);
+            adLoader.loadAds(new AdRequest.Builder().build(), NUMBER_OF_ADS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void insertAdsInMenuItems() {
-        if (mNativeAds.size() <= 0) {
-            return;
-        }
-        int size = commentList.size();
-        for (int i = 0; i < size; i++) {
-            if (mNativeAds.size() >= i && size > (i + 1)) {
-                commentList.add((i + 1), mNativeAds.get(i));
-                adapter.notifyItemInserted(i + 1);
+        int pos = commentList.size() - 1;
+        for (int i = mNativeAds.size(); i > 0; i--) {
+            if (pos >= 0) {
+                commentList.add(pos, mNativeAds.get((i - 1)));
+                pos = pos - 1;
+                adapter.notifyDataSetChanged();
             }
         }
     }
