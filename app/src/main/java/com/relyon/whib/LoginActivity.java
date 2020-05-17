@@ -2,11 +2,15 @@ package com.relyon.whib;
 
 import android.animation.Animator;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -45,6 +49,7 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
     private ProgressBar progressBar;
     private ImageView logo;
+    private TextView version;
     private ArrayList<Techniques> techniques = new ArrayList<>();
     private Random random = new Random();
 
@@ -61,7 +66,6 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
 
     @Override
     public void run() {
-
         //Esse métedo será executado a cada período, ponha aqui a sua lógica
         if (mPager.getCurrentItem() == 3) {
             mPager.setCurrentItem(0);
@@ -86,7 +90,17 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
 
         logo = findViewById(R.id.logo);
 
+        version = findViewById(R.id.version);
+
         loginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
+
+        try {
+            PackageInfo pInfo = getApplicationContext().getPackageManager().getPackageInfo(getPackageName(), 0);
+            String version = pInfo.versionName;
+            this.version.setText("Version " + version);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("Error", e.getMessage());
+        }
 
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override

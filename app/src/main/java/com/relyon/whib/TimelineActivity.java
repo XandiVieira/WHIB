@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -22,6 +23,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
@@ -34,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.relyon.whib.modelo.Util.DataCache;
 import static java.util.Objects.requireNonNull;
 
 public class TimelineActivity extends AppCompatActivity {
@@ -58,6 +59,7 @@ public class TimelineActivity extends AppCompatActivity {
     private int currentComments, totalComments, scrolledOutComments;
     private Boolean reachedEnd = false;
     private boolean isFirst = true;
+    private boolean mayPass = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,48 +88,51 @@ public class TimelineActivity extends AppCompatActivity {
         }
 
         initRecyclerViewComment();
-        if (DataCache.size() > 0) {
-            adapter.addAll(DataCache, true);
-        } else {
-            getComments(null);
-        }
+        getComments(null);
 
-        /*rvComments.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").addChildEventListener(new ChildEventListener() {
             @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if (mayPass) {
+                    List<Comment> comments = new ArrayList<>();
+                    comments.add(dataSnapshot.getValue(Comment.class));
+                    comments.get(0).setCommentUID(dataSnapshot.getKey());
+                    requireNonNull(comments.get(0)).setCommentUID(dataSnapshot.getKey());
+                    adapter.addAll(comments, true, true);
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        rvComments.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                //check for scroll state
-                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-                    isScrolling = true;
+
+                if (!recyclerView.canScrollVertically(1)) {
+                    getComments(adapter.getLastItemId(isFirst));
                 }
             }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                currentComments = layoutManager.getChildCount();
-                totalComments = layoutManager.getItemCount();
-                scrolledOutComments = ((LinearLayoutManager) recyclerView.getLayoutManager()).
-                        findFirstVisibleItemPosition();
-
-                if (isScrolling && (currentComments + scrolledOutComments ==
-                        totalComments)) {
-                    isScrolling = false;
-
-                    if (dy > 0) {
-                        // Scrolling up
-                        if (!reachedEnd) {
-                            getComments(adapter.getLastItemId(isFirst));
-                        } else {
-                            Toast.makeText(getApplicationContext(), "No More Item Found", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        // Scrolling down
-                    }
-                }
-            }
-        });*/
+        });
 
         menu.setOnClickListener(v -> {
             //Creating the instance of PopupMenu
@@ -162,12 +167,13 @@ public class TimelineActivity extends AppCompatActivity {
         }); //closing the setOnClickListener method
 
         back.setOnClickListener(v -> {
-            getComments(adapter.getLastItemId(isFirst));
             mIsLoading = true;
+            onBackPressed();
         });
 
         commentBt.setOnClickListener(v -> {
             if (canPost) {
+                mayPass = true;
                 openCommentBox();
             } else {
                 Toast.makeText(getApplicationContext(), "Você já postou um comentário neste servidor ou já faz parte de um grupo!", Toast.LENGTH_SHORT).show();
@@ -209,7 +215,7 @@ public class TimelineActivity extends AppCompatActivity {
         rvComments.addItemDecoration(dividerItemDecoration);
         dividerItemDecoration.setDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.divider));
         rvComments.setAdapter(adapter);
-        //new Thread(this::loadNativeAds).start();
+        new Thread(this::loadNativeAds).start();
     }
 
     private void getComments(String nodeId) {
@@ -225,20 +231,17 @@ public class TimelineActivity extends AppCompatActivity {
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                int index = 0;
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Comment> comments = new ArrayList<>();
-                if (dataSnapshot != null && dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
                     for (DataSnapshot snap : dataSnapshot.getChildren()) {
                         if (dataSnapshot.getChildrenCount() > 0) {
-                            index++;
                             Comment comment = snap.getValue(Comment.class);
-                            requireNonNull(comment).setKey(snap.getKey());
+                            requireNonNull(comment).setCommentUID(snap.getKey());
                             if (adapter.commentExists(snap.getKey())) {
                                 reachedEnd = true;
                             } else {
                                 reachedEnd = false;
-                                DataCache.add(comment);
                                 comments.add(comment);
                                 currentPageListList = comments;
                                 currentComments = comments.size();
@@ -246,12 +249,14 @@ public class TimelineActivity extends AppCompatActivity {
                         }
                     }
                 }
-                adapter.addAll(comments, nodeId == null);
+                adapter.addAll(comments, nodeId == null, false);
                 mIsLoading = false;
+                NUMBER_OF_ADS = comments.size() / 3;
+                isFirst = false;
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
                 mIsLoading = false;
             }
         });
@@ -291,14 +296,7 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void insertAdsInMenuItems() {
-        int pos = commentList.size() - 1;
-        for (int i = mNativeAds.size(); i > 0; i--) {
-            if (pos >= 0) {
-                commentList.add(pos, mNativeAds.get((i - 1)));
-                pos = pos - 1;
-                adapter.notifyDataSetChanged();
-            }
-        }
+        adapter.addAllAds(mNativeAds);
     }
 
     private void openCommentBox() {
@@ -325,5 +323,12 @@ public class TimelineActivity extends AppCompatActivity {
         super.onRestart();
         Util.getServer().getTempInfo().setQtdUsers(Util.getServer().getTempInfo().getQtdUsers() + 1);
         Util.getmServerDatabaseRef().child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
     }
 }

@@ -45,7 +45,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     private AppCompatActivity activity;
     private static final int COMMENT_ITEM_VIEW_TYPE = 0;
     private static final int NATIVE_EXPRESS_AD_VIEW_TYPE = 1;
-    int mPostsPerPage = 3;
+    int mPostsPerPage = 10;
 
     RecyclerViewCommentAdapter(@NonNull Context context, AppCompatActivity activity) {
         this.context = context;
@@ -135,10 +135,14 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
             holder.ratingBar.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
                 if (elementos.get(position) instanceof Comment) {
-                    openRatingDialog(rating, position);
-                    holder.ratingTV.setText(String.valueOf(rating));
-                    ratingBar.setRating(rating);
-                    Toast.makeText(context, String.valueOf(rating), Toast.LENGTH_SHORT).show();
+                    if (!((Comment) elementos.get(position)).getAlreadyRatedList().contains(Util.getUser().getUserUID())) {
+                        openRatingDialog(rating, position);
+                        holder.ratingTV.setText(String.valueOf(rating));
+                        ratingBar.setRating(rating);
+                        Toast.makeText(context, String.valueOf(rating), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, String.valueOf(rating), Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 
@@ -276,44 +280,67 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         adView.setNativeAd(nativeAd);
     }
 
-    public void addAll(List<Comment> newComments, boolean b) {
-        if (b) {
-            elementos.addAll(newComments);
-            notifyItemRangeInserted(0, newComments.size());
+    void addAll(List<Comment> newComments, boolean isFirst, boolean newComment) {
+        if (newComment) {
+            if (newComments.size() > 0) {
+                elementos.add(newComments.get(0));
+                notifyItemRangeInserted(elementos.size(), 1);
+            }
         } else {
-            if (newComments.size() > mPostsPerPage) {
-                for (int i = newComments.size() - 1; i > 0; i--) {
-                    elementos.add(0, newComments.get(i));
-                }
-                notifyItemRangeInserted(0, newComments.size() - 1);
-            } else {
-                for (int i = newComments.size() - 1; i >= 0; i--) {
-                    elementos.add(0, newComments.get(i));
-                }
+            if (isFirst) {
+                elementos.addAll(newComments);
                 notifyItemRangeInserted(0, newComments.size());
+            } else {
+                if (newComments.size() > mPostsPerPage) {
+                    for (int i = newComments.size() - 1; i > 0; i--) {
+                        elementos.add(0, newComments.get(i));
+                    }
+                    notifyItemRangeInserted(0, newComments.size() - 1);
+                } else {
+                    for (int i = newComments.size() - 1; i >= 0; i--) {
+                        elementos.add(0, newComments.get(i));
+                    }
+                    notifyItemRangeInserted(0, newComments.size());
+                }
             }
         }
     }
 
-    public String getLastItemId(boolean isFirst) {
+    void addAllAds(List<UnifiedNativeAd> newAds) {
+        int index = elementos.size();
+        for (int i = 0; i < newAds.size(); i++) {
+            index = index - 3;
+            if (index > 0) {
+                elementos.add(index, newAds.get(i));
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+    String getLastItemId(boolean isFirst) {
         if (elementos.size() > 0) {
             if (isFirst) {
                 Comment comment = (Comment) elementos.get(0);
-                return comment.getKey();
+                return comment.getCommentUID();
             } else {
                 Comment comment = (Comment) elementos.get(0);
-                return comment.getKey();
+                return comment.getCommentUID();
             }
         } else {
             return null;
         }
     }
 
-    public Boolean commentExists(String key) {
+    Boolean commentExists(String key) {
         for (Object obj : elementos) {
-            Comment comment = (Comment) obj;
-            if (comment.getKey().equals(key)) {
-                return true;
+            if (obj instanceof Comment) {
+                Comment comment = (Comment) obj;
+                if (comment.getCommentUID() == null) {
+                    return false;
+                }
+                if (comment.getCommentUID().equals(key)) {
+                    return true;
+                }
             }
         }
         return false;

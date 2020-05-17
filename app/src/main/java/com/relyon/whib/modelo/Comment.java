@@ -9,17 +9,16 @@ import java.util.List;
 
 public class Comment extends Sending {
 
+    private String commentUID;
     private String text;
     private float rating;
     private String userPhotoURL;
     private Long time;
     private int numberOfRatings;
     private float sumOfRatings;
-    private String commentUID;
     private List<String> alreadyRatedList = new ArrayList<>();
     private boolean isAGroup;
     private Group group;
-    private String key;
 
     public Comment() {
     }
@@ -108,14 +107,6 @@ public class Comment extends Sending {
         this.sumOfRatings = sumOfRatings;
     }
 
-    public String getCommentUID() {
-        return commentUID;
-    }
-
-    public void setCommentUID(String commentUID) {
-        this.commentUID = commentUID;
-    }
-
     public List<String> getAlreadyRatedList() {
         return alreadyRatedList;
     }
@@ -140,15 +131,14 @@ public class Comment extends Sending {
         this.group = group;
     }
 
-
     @Exclude
-    public String getKey() {
-        return key;
+    public String getCommentUID() {
+        return commentUID;
     }
 
     @Exclude
-    public void setKey(String key) {
-        this.key = key;
+    public void setCommentUID(String commentUID) {
+        this.commentUID = commentUID;
     }
 
     @Override

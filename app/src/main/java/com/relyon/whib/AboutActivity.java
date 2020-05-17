@@ -1,9 +1,14 @@
 package com.relyon.whib;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.TextureView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,6 +25,15 @@ public class AboutActivity extends AppCompatActivity {
         LinearLayout privacyPolicy = findViewById(R.id.privacy_policy);
         LinearLayout contactUs = findViewById(R.id.contact_us);
         ImageView back = findViewById(R.id.back);
+        TextView version = findViewById(R.id.version);
+
+        try {
+            PackageInfo pInfo = getApplicationContext().getPackageManager().getPackageInfo(getPackageName(), 0);
+            String versionTxt = pInfo.versionName;
+            version.setText("Version " + versionTxt);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("Error", e.getMessage());
+        }
 
         aboutUs.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), AboutUsActivity.class)));
 

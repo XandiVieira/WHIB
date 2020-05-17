@@ -2,7 +2,7 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp"
+    android:layout_marginBottom="3dp"
     android:orientation="vertical"
     card_view:cardCornerRadius="@dimen/cardview_default_radius"
     card_view:cardElevation="@dimen/cardview_default_elevation">
@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="#FFFFFF"
-            android:minHeight="50dp"
+            android:minHeight="40dp"
             android:orientation="vertical">
 
             <TextView
@@ -64,7 +64,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="#0000FF"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textStyle="bold" />
 
                         <LinearLayout
@@ -76,7 +76,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:gravity="bottom"
-                                android:textSize="14sp"
+                                android:textSize="12sp"
                                 android:textStyle="bold" />
 
                             <androidx.appcompat.widget.AppCompatRatingBar
@@ -109,15 +109,13 @@
                         android:id="@+id/ad_media"
                         android:layout_width="250dp"
                         android:layout_height="175dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="5dp" />
+                        android:layout_gravity="center_horizontal" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:orientation="horizontal"
-                        android:paddingTop="5dp"
                         android:paddingBottom="5dp">
 
                         <TextView
@@ -147,6 +145,7 @@
                             android:background="@drawable/rounded_accent"
                             android:fontFamily="@font/baloo"
                             android:gravity="center"
+                            android:paddingHorizontal="3dp"
                             android:textSize="13sp" />
                     </LinearLayout>
                 </LinearLayout>

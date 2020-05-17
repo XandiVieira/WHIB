@@ -2,13 +2,16 @@ package com.relyon.whib;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,7 +26,7 @@ public class TabPreferences extends Fragment {
     private CheckBox checkSound, checkVibration, checkShowPhoto, checkNotifications;
 
     @Override
-    public void onAttach(final Activity activity) {
+    public void onAttach(@NonNull final Activity activity) {
         super.onAttach(activity);
     }
 
@@ -36,6 +39,16 @@ public class TabPreferences extends Fragment {
         checkVibration = rootView.findViewById(R.id.checkVibration);
         checkShowPhoto = rootView.findViewById(R.id.checkShowPhoto);
         checkNotifications = rootView.findViewById(R.id.checkNotifications);
+        TextView version1 = rootView.findViewById(R.id.version);
+
+        try {
+            PackageInfo pInfo = container.getContext().getPackageManager().getPackageInfo(container.getContext().getPackageName(), 0);
+            String version = pInfo.versionName;
+            version1.setText("Version " + version);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("Error", e.getMessage());
+        }
+
         Button delete_acc = rootView.findViewById(R.id.delete_acc);
         Button logout = rootView.findViewById(R.id.logout);
 
@@ -63,57 +76,37 @@ public class TabPreferences extends Fragment {
             checkVibration.setChecked(false);
         }
 
-        checkNotifications.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (checkNotifications.isChecked()) {
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("notification").setValue(true);
-                }
+        checkNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (checkNotifications.isChecked()) {
+                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("notification").setValue(true);
             }
         });
 
-        checkShowPhoto.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (checkShowPhoto.isChecked()) {
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("showPhoto").setValue(true);
-                }
+        checkShowPhoto.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (checkShowPhoto.isChecked()) {
+                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("showPhoto").setValue(true);
             }
         });
 
-        checkSound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (checkSound.isChecked()) {
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("sound").setValue(true);
-                }
+        checkSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (checkSound.isChecked()) {
+                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("sound").setValue(true);
             }
         });
 
-        checkVibration.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (checkVibration.isChecked()) {
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("vibration").setValue(true);
-                }
+        checkVibration.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (checkVibration.isChecked()) {
+                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("vibration").setValue(true);
             }
         });
 
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                logout();
-            }
-        });
+        logout.setOnClickListener(v -> logout());
 
-        delete_acc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogConfirmDeleteAcc cdd = new DialogConfirmDeleteAcc(getActivity());
-                cdd.show();
-                if (Util.getDelete()) {
-                    deleteAcc();
-                }
+        delete_acc.setOnClickListener(v -> {
+            DialogConfirmDeleteAcc cdd = new DialogConfirmDeleteAcc(getActivity());
+            cdd.show();
+            if (Util.getDelete()) {
+                deleteAcc();
             }
         });
 
@@ -134,13 +127,13 @@ public class TabPreferences extends Fragment {
     }
 
     //logout the user from application
-    public void logout() {
+    private void logout() {
         FirebaseAuth.getInstance().signOut();
         LoginManager.getInstance().logOut();
         goLoginScreen();
     }
 
-    public void deleteAcc() {
+    private void deleteAcc() {
         logout();
         Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).setValue(null);
     }

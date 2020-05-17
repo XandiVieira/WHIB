@@ -16,12 +16,12 @@ public class PrivacyPolicyActivity extends AppCompatActivity {
 
         ImageView back = findViewById(R.id.back);
 
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        back.setOnClickListener(v -> onBackPressed());
+
+        /*Bundle b = new Bundle();
+        b.putString(WebViewActivity.KEY_TITLE, getResources().getString(R.string.privacy_policy_title));
+        b.putString(WebViewActivity.KEY_PAGE_LOCATION, "file:///android_asset/Scopefy_PoliticaPrivacidade.html");
+        startWebViewActivity(b);*/
     }
 
     @Override

@@ -53,6 +53,15 @@
             android:layout_marginTop="-5dp"
             android:background="@android:color/darker_gray" />
 
+
+        <TextView
+            android:id="@+id/version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/small_text"
+            android:text="Version 1.0.0"
+            android:gravity="center"
+            android:fontFamily="@font/baloo"/>
     </LinearLayout>
 
     <LinearLayout

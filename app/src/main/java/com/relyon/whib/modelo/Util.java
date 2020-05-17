@@ -27,7 +27,6 @@ public class Util {
     public static boolean delete;
     public static List<String> subjectList;
     public static final String DATE_FORMAT = "yyyy-MM-dd";
-    public static List<Comment> DataCache = new ArrayList<>();
 
     public static String searchString = "";
 
@@ -175,14 +174,5 @@ public class Util {
         Date data_atual = cal.getTime();
 
         return dateFormat_hora.format(data_atual);
-    }
-
-    public static Boolean commentExists(String key){
-        for (Comment comment: DataCache){
-            if (comment.getKey().equals(key)){
-                return true;
-            }
-        }
-        return false;
     }
 }
