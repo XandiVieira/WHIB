@@ -54,7 +54,6 @@ public class TimelineActivity extends AppCompatActivity {
     private int mTotalItemCount = 0;
     private int mLastVisibleItemPosition;
     private boolean mIsLoading = false;
-    private int mPostsPerPage = 1;
     private Boolean isScrolling = false;
     private int currentComments, totalComments, scrolledOutComments;
     private Boolean reachedEnd = false;
@@ -217,10 +216,10 @@ public class TimelineActivity extends AppCompatActivity {
         mIsLoading = true;
         Query query;
         if (nodeId == null) {
-            query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(mPostsPerPage);
+            query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage);
             isFirst = true;
         } else {
-            query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().endAt(nodeId).limitToLast(mPostsPerPage + 1);
+            query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().endAt(nodeId).limitToLast(adapter.mPostsPerPage + 2);
             isFirst = false;
         }
 
@@ -232,12 +231,10 @@ public class TimelineActivity extends AppCompatActivity {
                 if (dataSnapshot != null && dataSnapshot.exists()) {
                     for (DataSnapshot snap : dataSnapshot.getChildren()) {
                         if (dataSnapshot.getChildrenCount() > 0) {
-                            //if (!isFirst) {
                             index++;
-                            //if (index < dataSnapshot.getChildrenCount()) {
                             Comment comment = snap.getValue(Comment.class);
                             requireNonNull(comment).setKey(snap.getKey());
-                            if (Util.commentExists(snap.getKey())) {
+                            if (adapter.commentExists(snap.getKey())) {
                                 reachedEnd = true;
                             } else {
                                 reachedEnd = false;
@@ -246,23 +243,6 @@ public class TimelineActivity extends AppCompatActivity {
                                 currentPageListList = comments;
                                 currentComments = comments.size();
                             }
-                            /*}
-                            } else {
-                                if (index > 0) {
-                                    Comment comment = snap.getValue(Comment.class);
-                                    requireNonNull(comment).setKey(snap.getKey());
-                                    if (Util.commentExists(snap.getKey())) {
-                                        reachedEnd = true;
-                                    } else {
-                                        reachedEnd = false;
-                                        DataCache.add(comment);
-                                        comments.add(comment);
-                                        currentPageListList = comments;
-                                        currentComments = comments.size();
-                                    }
-                                }
-                                index++;
-                            }*/
                         }
                     }
                 }
