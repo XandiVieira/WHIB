@@ -307,11 +307,18 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     void addAllAds(List<UnifiedNativeAd> newAds) {
-        int index = elementos.size();
-        for (int i = 0; i < newAds.size(); i++) {
-            index = index - 3;
-            if (index > 0) {
-                elementos.add(index, newAds.get(i));
+        int adsCount = 0;
+        int count = 0;
+        for (int i = 0; i < elementos.size(); i++) {
+            if (elementos.get(i) instanceof Comment) {
+                count++;
+            }
+            if (count == 3 && adsCount <= newAds.size()) {
+                if (elementos.size() >= (i + 1)) {
+                    elementos.add(i + 1, newAds.get(adsCount));
+                    adsCount++;
+                    count = 0;
+                }
             }
         }
         notifyDataSetChanged();

@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginBottom="-7dp"
     android:background="@color/colorPrimary"
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/surround_paddings">
@@ -9,6 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
         android:orientation="horizontal"
         android:paddingHorizontal="@dimen/surround_paddings">
 
@@ -22,22 +24,25 @@
             android:src="@drawable/back_arrow" />
 
         <TextView
-            android:id="@+id/tlTitle"
+            android:id="@+id/subject"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginStart="20dp"
             android:layout_marginLeft="20dp"
             android:layout_weight="9"
             android:fontFamily="@font/baloo"
             android:gravity="center"
-            android:text="@string/tl_title"
-            android:textSize="@dimen/small_text" />
+            android:lineSpacingExtra="-10dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="19sp" />
 
         <ImageView
             android:id="@+id/menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
+            android:layout_marginStart="@dimen/right_margin"
             android:layout_marginLeft="@dimen/right_margin"
             android:layout_marginTop="@dimen/right_margin"
             android:layout_weight="0.5"
@@ -54,16 +59,14 @@
         android:background="@color/colorAccent" />
 
     <TextView
-        android:id="@+id/subject"
+        android:id="@+id/emptyList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:fontFamily="@font/baloo"
-        android:gravity="center"
-        android:lineSpacingExtra="@dimen/text_spacing"
-        android:text="@string/subject"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="19sp" />
+        android:layout_margin="5dp"
+        android:text="@string/make_first_comment"
+        android:textColor="@color/black"
+        android:textSize="@dimen/small_text"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -3,6 +3,7 @@ package com.relyon.whib;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -41,25 +42,20 @@ import static java.util.Objects.requireNonNull;
 public class TimelineActivity extends AppCompatActivity {
 
     private ImageView menu;
+    private TextView emptyList;
     private Subject subjectObj;
-    private ArrayList<Object> commentList = new ArrayList<>();
-    private List<Comment> currentPageListList = new ArrayList<>();
     private RecyclerView rvComments;
     private AppCompatActivity activity;
     private boolean canPost = true;
     private int NUMBER_OF_ADS = 0;
     private List<UnifiedNativeAd> mNativeAds = new ArrayList<>();
     private RecyclerViewCommentAdapter adapter;
-    private LinearLayoutManager layoutManager;
-
-    private int mTotalItemCount = 0;
-    private int mLastVisibleItemPosition;
     private boolean mIsLoading = false;
-    private Boolean isScrolling = false;
-    private int currentComments, totalComments, scrolledOutComments;
-    private Boolean reachedEnd = false;
     private boolean isFirst = true;
     private boolean mayPass = false;
+
+    public TimelineActivity() {
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +73,7 @@ public class TimelineActivity extends AppCompatActivity {
         final ImageButton commentBt = findViewById(R.id.commentIcon);
         menu = findViewById(R.id.menu);
         rvComments = findViewById(R.id.rvComments);
-        commentList = new ArrayList<>();
+        emptyList = findViewById(R.id.emptyList);
         activity = this;
 
         if (getIntent() != null && getIntent().getExtras() != null) {
@@ -99,6 +95,7 @@ public class TimelineActivity extends AppCompatActivity {
                     comments.get(0).setCommentUID(dataSnapshot.getKey());
                     requireNonNull(comments.get(0)).setCommentUID(dataSnapshot.getKey());
                     adapter.addAll(comments, true, true);
+                    emptyList.setVisibility(View.GONE);
                 }
             }
 
@@ -125,11 +122,12 @@ public class TimelineActivity extends AppCompatActivity {
 
         rvComments.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-
                 if (!recyclerView.canScrollVertically(1)) {
-                    getComments(adapter.getLastItemId(isFirst));
+                    if (!mIsLoading) {
+                        getComments(adapter.getLastItemId(isFirst));
+                    }
                 }
             }
         });
@@ -167,7 +165,6 @@ public class TimelineActivity extends AppCompatActivity {
         }); //closing the setOnClickListener method
 
         back.setOnClickListener(v -> {
-            mIsLoading = true;
             onBackPressed();
         });
 
@@ -204,7 +201,7 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void initRecyclerViewComment() {
-        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
         rvComments = findViewById(R.id.rvComments);
         layoutManager.setStackFromEnd(true);
         rvComments.setLayoutManager(layoutManager);
@@ -213,7 +210,7 @@ public class TimelineActivity extends AppCompatActivity {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvComments.getContext(),
                 layoutManager.getOrientation());
         rvComments.addItemDecoration(dividerItemDecoration);
-        dividerItemDecoration.setDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.divider));
+        dividerItemDecoration.setDrawable(requireNonNull(ContextCompat.getDrawable(getApplicationContext(), R.drawable.divider)));
         rvComments.setAdapter(adapter);
         new Thread(this::loadNativeAds).start();
     }
@@ -238,13 +235,8 @@ public class TimelineActivity extends AppCompatActivity {
                         if (dataSnapshot.getChildrenCount() > 0) {
                             Comment comment = snap.getValue(Comment.class);
                             requireNonNull(comment).setCommentUID(snap.getKey());
-                            if (adapter.commentExists(snap.getKey())) {
-                                reachedEnd = true;
-                            } else {
-                                reachedEnd = false;
+                            if (!adapter.commentExists(snap.getKey())) {
                                 comments.add(comment);
-                                currentPageListList = comments;
-                                currentComments = comments.size();
                             }
                         }
                     }
@@ -253,6 +245,10 @@ public class TimelineActivity extends AppCompatActivity {
                 mIsLoading = false;
                 NUMBER_OF_ADS = comments.size() / 3;
                 isFirst = false;
+                new Thread(() -> loadNativeAds()).start();
+                if (comments.size() == 0) {
+                    emptyList.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
