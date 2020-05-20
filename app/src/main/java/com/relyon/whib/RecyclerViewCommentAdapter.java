@@ -92,7 +92,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             final Comment comment = (Comment) elements.get(position);
 
             holder.ratingBar.setNumStars(5);
-            if (((Comment) elements.get(position)).getAlreadyRatedList().contains(Util.getUser().getUserUID())) {
+            if (((Comment) elements.get(position)).getAlreadyRatedList().contains(Util.getUser().getUserUID()) || ((Comment) elements.get(position)).getAuthorsUID().equals(Util.getUser().getUserUID())) {
                 holder.ratingBar.setRating(comment.getRating());
                 holder.ratingTV.setText(String.format("%.2f", comment.getRating()));
             } else {
@@ -118,7 +118,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                     .apply(RequestOptions.circleCropTransform())
                     .into(holder.photo);
 
-            if (comment.getAlreadyRatedList().contains(Util.getUser().getUserUID())/* || comment.getAuthorsUID().equals(Util.getUser().getUserUID())*/) {
+            if (comment.getAlreadyRatedList().contains(Util.getUser().getUserUID()) || comment.getAuthorsUID().equals(Util.getUser().getUserUID()) && !Util.getUser().isAdmin()) {
                 holder.ratingBar.setIsIndicator(true);
             } else {
                 holder.ratingBar.setIsIndicator(false);
@@ -147,7 +147,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
             holder.ratingBar.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
                 if (elements.get(position) instanceof Comment) {
-                    if (!((Comment) elements.get(position)).getAlreadyRatedList().contains(Util.getUser().getUserUID()) && ((Comment) elements.get(position)).getAuthorsUID().equals(Util.getUser().getUserUID())) {
+                    if (!((Comment) elements.get(position)).getAlreadyRatedList().contains(Util.getUser().getUserUID()) && !((Comment) elements.get(position)).getAuthorsUID().equals(Util.getUser().getUserUID())) {
                         openRatingDialog(rating, position);
                         holder.ratingTV.setText(String.valueOf(rating));
                         ratingBar.setRating(rating);

@@ -242,13 +242,13 @@ public class TimelineActivity extends AppCompatActivity {
                     }
                 }
                 adapter.addAll(comments, nodeId == null, false);
+                if (comments.size() > 0) {
+                    emptyList.setVisibility(View.GONE);
+                }
                 mIsLoading = false;
                 NUMBER_OF_ADS = comments.size() / 3;
                 isFirst = false;
                 new Thread(() -> loadNativeAds()).start();
-                if (comments.size() == 0) {
-                    emptyList.setVisibility(View.VISIBLE);
-                }
             }
 
             @Override
