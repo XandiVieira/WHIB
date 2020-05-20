@@ -18,8 +18,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Group;
 import com.relyon.whib.modelo.GroupTempInfo;
-import com.relyon.whib.modelo.Participation;
-import com.relyon.whib.modelo.Question;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
 
@@ -33,16 +31,16 @@ public class DialogRateComment extends Dialog implements
     private AppCompatActivity c;
     public Dialog d;
     private TextView ratingTV;
-    public float rating;
+    private float rating;
     public Comment comment;
     private List<Object> commentList;
 
-    DialogRateComment(AppCompatActivity a, float rating, Comment comment, int position, ArrayList<Object> elementos) {
+    DialogRateComment(AppCompatActivity a, float rating, Comment comment, ArrayList<Object> elements) {
         super(a);
         this.c = a;
         this.rating = rating;
         this.comment = comment;
-        this.commentList = elementos;
+        this.commentList = elements;
     }
 
     @Override
@@ -128,8 +126,8 @@ public class DialogRateComment extends Dialog implements
         users.add(Util.getUser());
         GroupTempInfo groupTempInfo = new GroupTempInfo(users, false);
         Group group = new Group(UUID.randomUUID().toString(), comment.getSubject().getSubjectUID(), i, Util.getServer().getTempInfo().getNumber(),
-                groupTempInfo, "text", new ArrayList<Question>(), userUIDList,
-                new ArrayList<Participation>(), false, comment.getCommentUID());
+                groupTempInfo, "text", new ArrayList<>(), userUIDList,
+                new ArrayList<>(), false, comment.getCommentUID());
         comment.setGroup(group);
         //Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("commentGroup").setValue(group);
         sendNotification();

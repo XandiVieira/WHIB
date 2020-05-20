@@ -7,7 +7,7 @@
     android:layout_margin="1dp"
     android:background="@drawable/rounded_white"
     android:elevation="@dimen/elevation1"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:padding="1dp"
     android:visibility="visible">
 
@@ -15,6 +15,8 @@
         android:id="@+id/commentLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/rounded_white"
         android:orientation="vertical">
 
         <LinearLayout
@@ -99,4 +101,11 @@
                 android:textSize="@dimen/big_text" />
         </LinearLayout>
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/entrance"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="9"
+        android:src="@drawable/exit_icon" />
 </LinearLayout>

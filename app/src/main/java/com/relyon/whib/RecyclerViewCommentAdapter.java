@@ -41,7 +41,7 @@ import java.util.List;
 public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final Context context;
-    private ArrayList<Object> elementos;
+    private ArrayList<Object> elements;
     private AppCompatActivity activity;
     private static final int COMMENT_ITEM_VIEW_TYPE = 0;
     private static final int NATIVE_EXPRESS_AD_VIEW_TYPE = 1;
@@ -49,7 +49,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
     RecyclerViewCommentAdapter(@NonNull Context context, AppCompatActivity activity) {
         this.context = context;
-        this.elementos = new ArrayList<>();
+        this.elements = new ArrayList<>();
         this.activity = activity;
     }
 
@@ -72,7 +72,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     private void openRatingDialog(float rating, int position) {
-        DialogRateComment cdd = new DialogRateComment(activity, rating, (Comment) elementos.get(position), position, elementos);
+        DialogRateComment cdd = new DialogRateComment(activity, rating, (Comment) elements.get(position), elements);
         if (cdd.getWindow() != null) {
             cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             cdd.show();
@@ -85,20 +85,32 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         holder1.setIsRecyclable(false);
 
         if (viewType == NATIVE_EXPRESS_AD_VIEW_TYPE) {
-            UnifiedNativeAd nativeAd = (UnifiedNativeAd) elementos.get(position);
+            UnifiedNativeAd nativeAd = (UnifiedNativeAd) elements.get(position);
             populateNativeAdView(nativeAd, ((UnifiedNativeAdViewHolder) holder1).getAdView());
         } else {
             CommentViewHolder holder = (CommentViewHolder) holder1;
-            final Comment comment = (Comment) elementos.get(position);
+            final Comment comment = (Comment) elements.get(position);
 
             holder.ratingBar.setNumStars(5);
-            holder.ratingBar.setRating(comment.getRating());
-            holder.ratingTV.setText(String.format("%.2f", comment.getRating()));
+            if (((Comment) elements.get(position)).getAlreadyRatedList().contains(Util.getUser().getUserUID())) {
+                holder.ratingBar.setRating(comment.getRating());
+                holder.ratingTV.setText(String.format("%.2f", comment.getRating()));
+            } else {
+                holder.ratingBar.setRating(0);
+                holder.ratingTV.setText(String.format("%.2f", (float) 0));
+            }
             holder.text.setText(comment.getText());
             holder.text.setTrimExpandedText(" Ver menos");
             holder.text.setTrimCollapsedText(" Ver mais");
             holder.text.setTrimLines(4);
             holder.text.setColorClickableText(Color.BLUE);
+
+            if (comment.isAGroup()) {
+                holder.entrance.setVisibility(View.VISIBLE);
+            } else {
+                holder.entrance.setVisibility(View.GONE);
+            }
+
             Typeface face = ResourcesCompat.getFont(context, R.font.baloo);
             holder.text.setTypeface(face);
             Glide.with(context)
@@ -134,8 +146,8 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             });
 
             holder.ratingBar.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
-                if (elementos.get(position) instanceof Comment) {
-                    if (!((Comment) elementos.get(position)).getAlreadyRatedList().contains(Util.getUser().getUserUID())) {
+                if (elements.get(position) instanceof Comment) {
+                    if (!((Comment) elements.get(position)).getAlreadyRatedList().contains(Util.getUser().getUserUID()) && ((Comment) elements.get(position)).getAuthorsUID().equals(Util.getUser().getUserUID())) {
                         openRatingDialog(rating, position);
                         holder.ratingTV.setText(String.valueOf(rating));
                         ratingBar.setRating(rating);
@@ -152,8 +164,8 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                 }
             });
 
-            holder.text.setOnClickListener(v -> goToGroup(comment));
             holder.ratingTV.setOnClickListener(v -> goToGroup(comment));
+            holder.entrance.setOnClickListener(v -> goToGroup(comment));
             holder.text.setOnLongClickListener(v -> {
                 if (comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
                     return openReportDialog(comment);
@@ -197,7 +209,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public int getItemViewType(int position) {
-        Object recyclerViewItem = elementos.get(position);
+        Object recyclerViewItem = elements.get(position);
         if (recyclerViewItem instanceof UnifiedNativeAd) {
             return NATIVE_EXPRESS_AD_VIEW_TYPE;
         }
@@ -206,7 +218,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public int getItemCount() {
-        return elementos.size();
+        return elements.size();
     }
 
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
@@ -217,6 +229,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         private RatingBar ratingBar;
         private LinearLayout bg;
         private TextView userName;
+        private ImageView entrance;
 
         CommentViewHolder(View rowView) {
             super(rowView);
@@ -224,8 +237,9 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             ratingTV = rowView.findViewById(R.id.ratingTV);
             photo = rowView.findViewById(R.id.photo);
             ratingBar = rowView.findViewById(R.id.ratingBar);
-            bg = rowView.findViewById(R.id.background);
+            bg = rowView.findViewById(R.id.commentLayout);
             userName = rowView.findViewById(R.id.userName);
+            entrance = rowView.findViewById(R.id.entrance);
         }
     }
 
@@ -283,22 +297,22 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     void addAll(List<Comment> newComments, boolean isFirst, boolean newComment) {
         if (newComment) {
             if (newComments.size() > 0) {
-                elementos.add(newComments.get(0));
-                notifyItemRangeInserted(elementos.size(), 1);
+                elements.add(newComments.get(0));
+                notifyItemRangeInserted(elements.size(), 1);
             }
         } else {
             if (isFirst) {
-                elementos.addAll(newComments);
+                elements.addAll(newComments);
                 notifyItemRangeInserted(0, newComments.size());
             } else {
                 if (newComments.size() > mPostsPerPage) {
                     for (int i = newComments.size() - 1; i > 0; i--) {
-                        elementos.add(0, newComments.get(i));
+                        elements.add(0, newComments.get(i));
                     }
                     notifyItemRangeInserted(0, newComments.size() - 1);
                 } else {
                     for (int i = newComments.size() - 1; i >= 0; i--) {
-                        elementos.add(0, newComments.get(i));
+                        elements.add(0, newComments.get(i));
                     }
                     notifyItemRangeInserted(0, newComments.size());
                 }
@@ -309,13 +323,13 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     void addAllAds(List<UnifiedNativeAd> newAds) {
         int adsCount = 0;
         int count = 0;
-        for (int i = 0; i < elementos.size(); i++) {
-            if (elementos.get(i) instanceof Comment) {
+        for (int i = 0; i < elements.size(); i++) {
+            if (elements.get(i) instanceof Comment) {
                 count++;
             }
             if (count == 3 && adsCount <= newAds.size()) {
-                if (elementos.size() >= (i + 1)) {
-                    elementos.add(i + 1, newAds.get(adsCount));
+                if (elements.size() >= (i + 1)) {
+                    elements.add(i + 1, newAds.get(adsCount));
                     adsCount++;
                     count = 0;
                 }
@@ -325,12 +339,12 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     String getLastItemId(boolean isFirst) {
-        if (elementos.size() > 0) {
+        if (elements.size() > 0) {
             if (isFirst) {
-                Comment comment = (Comment) elementos.get(0);
+                Comment comment = (Comment) elements.get(0);
                 return comment.getCommentUID();
             } else {
-                Comment comment = (Comment) elementos.get(0);
+                Comment comment = (Comment) elements.get(0);
                 return comment.getCommentUID();
             }
         } else {
@@ -339,7 +353,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     Boolean commentExists(String key) {
-        for (Object obj : elementos) {
+        for (Object obj : elements) {
             if (obj instanceof Comment) {
                 Comment comment = (Comment) obj;
                 if (comment.getCommentUID() == null) {
