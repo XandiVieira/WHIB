@@ -87,15 +87,13 @@ public class MainActivity extends AppCompatActivity {
         //Retrieving the subjects
         getSubjects();
 
-        choseSubjectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (user.isExtra()) {
-                    goVoteScree();
-                } else {
-                    openExtraPromotion();
-                }
+        choseSubjectButton.setOnClickListener(v -> {
+            if (user.isExtra()) {
+                goVoteScreen();
+            } else {
+                openExtraPromotion();
             }
+            Toast.makeText(getApplicationContext(), "Em construção.", Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -106,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
         cdd.show();
     }
 
-    private void goVoteScree() {
-        //Intent intent = new Intent();
+    private void goVoteScreen() {
+        startActivity(new Intent(getApplicationContext(), NextSubjectVoting.class));
     }
 
     private void getSubjects() {

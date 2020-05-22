@@ -2,7 +2,6 @@ package com.relyon.whib;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -28,6 +27,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         ImageView back = findViewById(R.id.back);
         ImageView photo = findViewById(R.id.photo);
+        ImageView settings = findViewById(R.id.settings);
         TextView usernamme = findViewById(R.id.userName);
         nick = findViewById(R.id.nick);
         RatingBar ratingBar = findViewById(R.id.my_stars);
@@ -44,16 +44,15 @@ public class ProfileActivity extends AppCompatActivity {
             //user =
         }
 
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (user.getNickName() == null && !nick.getText().toString().equals("")) {
-                    user.setNickName(nick.getText().toString());
-                    Util.getmUserDatabaseRef().child(user.getUserUID()).setValue(user);
-                }
-                onBackPressed();
+        back.setOnClickListener(v -> {
+            if (user.getNickName() == null && !nick.getText().toString().equals("")) {
+                user.setNickName(nick.getText().toString());
+                Util.getmUserDatabaseRef().child(user.getUserUID()).setValue(user);
             }
+            onBackPressed();
         });
+
+        settings.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), SettingsActivity.class)));
 
         Glide.with(getApplicationContext())
                 .load(user.getPhotoPath())

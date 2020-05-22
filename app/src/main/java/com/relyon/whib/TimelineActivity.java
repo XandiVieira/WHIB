@@ -146,8 +146,9 @@ public class TimelineActivity extends AppCompatActivity {
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.store))) {
-                    Intent intent = new Intent(getApplicationContext(), StoreActivity.class);
-                    startActivity(intent);
+                    Toast.makeText(getApplicationContext(), "Em construção.", Toast.LENGTH_SHORT).show();
+                    /*Intent intent = new Intent(getApplicationContext(), StoreActivity.class);
+                    startActivity(intent);*/
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.profile))) {
                     Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);

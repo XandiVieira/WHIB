@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".NextSubjectVoting">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="9"
+            android:background="@color/colorPrimary"
+            android:padding="5dp"
+            android:src="@drawable/back_arrow" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:fontFamily="@font/baloo"
+            android:gravity="center_horizontal"
+            android:text="Vote no próximo assunto"
+            android:textSize="@dimen/big_text" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:layout_marginVertical="5dp"
+        android:background="@drawable/rounded_primary"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <LinearLayout
+            android:id="@+id/option1Layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_primary_borders"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/option1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="3dp"
+                android:fontFamily="@font/baloo"
+                android:text="Assunto 1"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/big_text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/option2Layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="5dp"
+            android:background="@drawable/rounded_primary_borders"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/option2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="3dp"
+                android:fontFamily="@font/baloo"
+                android:text="Assunto 2"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/big_text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/option3Layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="5dp"
+            android:background="@drawable/rounded_primary_borders"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/option3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="3dp"
+                android:fontFamily="@font/baloo"
+                android:text="Assunto 3"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/big_text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/option4Layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="5dp"
+            android:background="@drawable/rounded_primary_borders"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/option4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="3dp"
+                android:fontFamily="@font/baloo"
+                android:text="Assunto 4"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/big_text" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

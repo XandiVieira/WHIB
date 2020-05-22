@@ -52,52 +52,25 @@ public class TabPreferences extends Fragment {
         Button delete_acc = rootView.findViewById(R.id.delete_acc);
         Button logout = rootView.findViewById(R.id.logout);
 
-        if (Util.getUser().getPreferences().isNotification()) {
-            checkNotifications.setChecked(true);
-        } else {
-            checkNotifications.setChecked(false);
-        }
-
-        if (Util.getUser().getPreferences().isShowPhoto()) {
-            checkShowPhoto.setChecked(true);
-        } else {
-            checkShowPhoto.setChecked(false);
-        }
-
-        if (Util.getUser().getPreferences().isSound()) {
-            checkSound.setChecked(true);
-        } else {
-            checkSound.setChecked(false);
-        }
-
-        if (Util.getUser().getPreferences().isVibration()) {
-            checkVibration.setChecked(true);
-        } else {
-            checkVibration.setChecked(false);
-        }
+        checkNotifications.setChecked(Util.getUser().getPreferences().isNotification());
+        checkShowPhoto.setChecked(Util.getUser().getPreferences().isShowPhoto());
+        checkSound.setChecked(Util.getUser().getPreferences().isSound());
+        checkVibration.setChecked(Util.getUser().getPreferences().isVibration());
 
         checkNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (checkNotifications.isChecked()) {
-                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("notification").setValue(true);
-            }
+            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("notification").setValue(checkNotifications.isChecked());
         });
 
         checkShowPhoto.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (checkShowPhoto.isChecked()) {
-                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("showPhoto").setValue(true);
-            }
+            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("showPhoto").setValue(checkShowPhoto.isChecked());
         });
 
         checkSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (checkSound.isChecked()) {
-                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("sound").setValue(true);
-            }
+            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("sound").setValue(checkSound.isChecked());
         });
 
         checkVibration.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (checkVibration.isChecked()) {
-                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("vibration").setValue(true);
-            }
+            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("vibration").setValue(checkVibration.isChecked());
         });
 
         logout.setOnClickListener(v -> logout());

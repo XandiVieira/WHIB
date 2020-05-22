@@ -113,10 +113,6 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
             Typeface face = ResourcesCompat.getFont(context, R.font.baloo);
             holder.text.setTypeface(face);
-            Glide.with(context)
-                    .load(comment.getUserPhotoURL())
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(holder.photo);
 
             if (comment.getAlreadyRatedList().contains(Util.getUser().getUserUID()) || comment.getAuthorsUID().equals(Util.getUser().getUserUID()) && !Util.getUser().isAdmin()) {
                 holder.ratingBar.setIsIndicator(true);
@@ -127,10 +123,18 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
-                    if (user != null && user.isExtra()) {
-                        LayerDrawable stars = (LayerDrawable) holder.ratingBar.getProgressDrawable();
-                        stars.getDrawable(2).setColorFilter(Color.parseColor("#AFC2D5"), PorterDuff.Mode.SRC_ATOP);
-                        holder.bg.setBackgroundResource(R.drawable.rounded_accent_double);
+                    if (user != null) {
+                        if (user.getPreferences().isShowPhoto()) {
+                            Glide.with(context)
+                                    .load(comment.getUserPhotoURL())
+                                    .apply(RequestOptions.circleCropTransform())
+                                    .into(holder.photo);
+                        }
+                        if (user.isExtra()) {
+                            LayerDrawable stars = (LayerDrawable) holder.ratingBar.getProgressDrawable();
+                            stars.getDrawable(2).setColorFilter(Color.parseColor("#AFC2D5"), PorterDuff.Mode.SRC_ATOP);
+                            holder.bg.setBackgroundResource(R.drawable.rounded_accent_double);
+                        }
                     } else if (comment.isAGroup()) {
                         holder.bg.setBackgroundResource(R.drawable.rounded_primary_double);
                     }
@@ -167,7 +171,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             holder.ratingTV.setOnClickListener(v -> goToGroup(comment));
             holder.entrance.setOnClickListener(v -> goToGroup(comment));
             holder.text.setOnLongClickListener(v -> {
-                if (comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
+                if (!comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
                     return openReportDialog(comment);
                 } else {
                     Toast.makeText(context, context.getString(R.string.cant_report_own_comment), Toast.LENGTH_SHORT).show();

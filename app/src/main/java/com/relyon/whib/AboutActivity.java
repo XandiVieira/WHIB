@@ -5,10 +5,10 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.TextureView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -39,9 +39,14 @@ public class AboutActivity extends AppCompatActivity {
 
         faq.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), FaqActivity.class)));
 
-        terms.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), TermsActivity.class)));
-
-        privacyPolicy.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), PrivacyPolicyActivity.class)));
+        terms.setOnClickListener(v -> {
+            Toast.makeText(getApplicationContext(), "Em construção.", Toast.LENGTH_SHORT).show();
+            /*new Intent(getApplicationContext(), TermsActivity.class);*/
+        });
+        privacyPolicy.setOnClickListener(v -> {
+            Toast.makeText(getApplicationContext(), "Em construção.", Toast.LENGTH_SHORT).show();
+            /*new Intent(getApplicationContext(), PrivacyPolicyActivity.class);*/
+        });
 
         contactUs.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), ContactActivity.class)));
 
