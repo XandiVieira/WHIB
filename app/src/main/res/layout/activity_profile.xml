@@ -41,6 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/lightGrey"
+            android:baselineAligned="false"
             android:orientation="horizontal"
             android:padding="7dp">
 
@@ -79,7 +80,7 @@
                     android:layout_weight="3"
                     android:fontFamily="@font/baloo"
                     android:gravity="center"
-                    android:text="Username"
+                    android:lineSpacingExtra="-7dp"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="18sp" />
 
@@ -298,68 +299,102 @@
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="18sp" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/colorAccent" />
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:orientation="vertical">
+                        android:layout_marginHorizontal="5dp"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_weight="2"
-                            android:fontFamily="@font/baloo"
-                            android:gravity="center"
-                            android:text="@string/sent"
-                            android:textColor="@color/colorPrimaryDark"
-                            android:textSize="12sp" />
+                            android:layout_weight="1"
+                            android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/sent_reports"
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="2"
+                                android:fontFamily="@font/baloo"
+                                android:gravity="center"
+                                android:text="@string/sent"
+                                android:textColor="@color/colorPrimaryDark"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/sent_reports"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="2"
+                                android:fontFamily="@font/baloo"
+                                android:gravity="center"
+                                android:text="0"
+                                android:textColor="@color/colorPrimaryDark"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_weight="2"
-                            android:fontFamily="@font/baloo"
-                            android:gravity="center"
-                            android:text="0"
-                            android:textColor="@color/colorPrimaryDark"
-                            android:textSize="12sp" />
+                            android:layout_weight="1"
+                            android:orientation="vertical">
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/colorAccent" />
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_weight="2"
-                            android:fontFamily="@font/baloo"
-                            android:gravity="center"
-                            android:text="@string/received"
-                            android:textColor="@color/colorPrimaryDark"
-                            android:textSize="12sp" />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="2"
+                                android:fontFamily="@font/baloo"
+                                android:gravity="center"
+                                android:text="@string/received"
+                                android:textColor="@color/colorPrimaryDark"
+                                android:textSize="12sp" />
 
-                        <TextView
-                            android:id="@+id/received_reports"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_weight="2"
-                            android:fontFamily="@font/baloo"
-                            android:gravity="center"
-                            android:text="0"
-                            android:textColor="@color/colorPrimaryDark"
-                            android:textSize="12sp" />
+                            <TextView
+                                android:id="@+id/received_reports"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="2"
+                                android:fontFamily="@font/baloo"
+                                android:gravity="center"
+                                android:text="0"
+                                android:textColor="@color/colorPrimaryDark"
+                                android:textSize="12sp" />
+                        </LinearLayout>
                     </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="5dp"
+                        android:background="@color/colorAccent" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/baloo"
+                        android:gravity="center"
+                        android:text="@string/fair_reports"
+                        android:textSize="@dimen/subtitle" />
+
+                    <TextView
+                        android:id="@+id/empty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="@string/no_charges_on_you"
+                        android:visibility="gone" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/reports"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="5dp" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="1dp"
+    android:background="@drawable/rounded_white"
+    android:elevation="@dimen/elevation1"
+    android:orientation="vertical"
+    android:padding="1dp"
+    android:visibility="visible"
+    tools:targetApi="lollipop">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/reportReason"
+        android:textColor="@color/black"
+        android:textSize="@dimen/normal_text" />
+
+    <TextView
+        android:id="@+id/reason"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/baloo"
+        android:gravity="center"
+        android:lineSpacingExtra="-10dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/small_text" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/colorAccent" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/comment"
+        android:textColor="@color/black"
+        android:textSize="@dimen/normal_text" />
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/baloo"
+        android:gravity="center"
+        android:lineSpacingExtra="-10dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/small_text" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/colorAccent" />
+
+    <LinearLayout
+        android:id="@+id/explanationLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/reportExplanation"
+            android:textColor="@color/black"
+            android:textSize="@dimen/small_text" />
+
+        <TextView
+            android:id="@+id/explanation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:lineSpacingExtra="-10dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/small_text" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/colorAccent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/receiverAndSender"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/receiver"
+            android:textColor="@color/black"
+            android:textSize="@dimen/normal_text" />
+
+        <TextView
+            android:id="@+id/receiver"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:lineSpacingExtra="-10dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/small_text" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/colorAccent" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/sender"
+            android:textColor="@color/black"
+            android:textSize="@dimen/normal_text" />
+
+        <TextView
+            android:id="@+id/sender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:lineSpacingExtra="-10dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/small_text" />
+
+        <LinearLayout
+            android:id="@+id/decision"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/fair"
+                style="?android:buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:background="@drawable/rounded_green"
+                android:fontFamily="@font/baloo"
+                android:padding="3dp"
+                android:text="@string/fair"
+                android:textColor="@color/black"
+                android:textSize="@dimen/small_text" />
+
+            <Button
+                android:id="@+id/unfair"
+                style="?android:buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:background="@drawable/rounded_red"
+                android:fontFamily="@font/baloo"
+                android:padding="3dp"
+                android:text="@string/unfair"
+                android:textColor="@color/white"
+                android:textSize="@dimen/small_text" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

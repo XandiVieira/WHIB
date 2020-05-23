@@ -19,13 +19,13 @@ import java.util.ArrayList;
 public class RecyclerViewServerGroupAdapter extends RecyclerView.Adapter<RecyclerViewServerGroupAdapter.ViewHolder> {
 
     private final Context context;
-    private ArrayList<ArrayList> elementos;
+    private ArrayList<ArrayList> elements;
     private ArrayList<String> subjects;
     private RecyclerView recyclerView;
 
-    RecyclerViewServerGroupAdapter(@NonNull Context context, ArrayList<ArrayList> elementos, ArrayList<String> subjects, RecyclerView recyclerViewServers) {
+    RecyclerViewServerGroupAdapter(@NonNull Context context, ArrayList<ArrayList> elements, ArrayList<String> subjects, RecyclerView recyclerViewServers) {
         this.context = context;
-        this.elementos = elementos;
+        this.elements = elements;
         this.subjects = subjects;
         this.recyclerView = recyclerViewServers;
     }
@@ -44,13 +44,13 @@ public class RecyclerViewServerGroupAdapter extends RecyclerView.Adapter<Recycle
             holder.subject.setText("Indisponível");
         }
 
-        if (elementos.size() > 2) {
+        if (elements.size() > 2) {
             holder.nextServer.setVisibility(View.VISIBLE);
         } else {
             holder.nextServer.setVisibility(View.GONE);
         }
 
-        holder.initRecyclerView(elementos.get(position));
+        holder.initRecyclerView(elements.get(position));
         /*if (elementos.length > 0 && elementos[position].size() > 0 && !elementos[position].get(0).getSubject().getTitle().equals("")) {
             holder.initRecyclerView(elementos[position]);
         } else {
@@ -65,7 +65,7 @@ public class RecyclerViewServerGroupAdapter extends RecyclerView.Adapter<Recycle
 
     @Override
     public int getItemCount() {
-        return elementos.size();
+        return elements.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

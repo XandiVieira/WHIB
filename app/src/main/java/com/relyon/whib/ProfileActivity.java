@@ -2,23 +2,45 @@ package com.relyon.whib;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Report;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private EditText nick;
     private User user;
+    private ImageView photo;
+    private TextView userName;
+    private RatingBar ratingBar;
+    private TextView rating;
+    private TextView goodValuation;
+    private TextView mediumValuation;
+    private TextView badValuation;
+    private TextView sentReports;
+    private TextView receivedReports;
+    private RecyclerView reports;
+    private List<Report> reportList = new ArrayList<>();
+    private TextView empty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,22 +48,42 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         ImageView back = findViewById(R.id.back);
-        ImageView photo = findViewById(R.id.photo);
+        photo = findViewById(R.id.photo);
         ImageView settings = findViewById(R.id.settings);
-        TextView usernamme = findViewById(R.id.userName);
+        userName = findViewById(R.id.userName);
         nick = findViewById(R.id.nick);
-        RatingBar ratingBar = findViewById(R.id.my_stars);
-        TextView rating = findViewById(R.id.my_rating);
-        TextView goodValuation = findViewById(R.id.good_valuation);
-        TextView mediumValuation = findViewById(R.id.medium_valuation);
-        TextView badValuation = findViewById(R.id.bad_valuation);
-        TextView sentReports = findViewById(R.id.sent_reports);
-        TextView receivedReports = findViewById(R.id.received_reports);
+        ratingBar = findViewById(R.id.my_stars);
+        rating = findViewById(R.id.my_rating);
+        goodValuation = findViewById(R.id.good_valuation);
+        mediumValuation = findViewById(R.id.medium_valuation);
+        badValuation = findViewById(R.id.bad_valuation);
+        sentReports = findViewById(R.id.sent_reports);
+        receivedReports = findViewById(R.id.received_reports);
+        reports = findViewById(R.id.reports);
+        empty = findViewById(R.id.empty);
 
-        if (Util.getUser() != null) {
-            user = Util.getUser();
+        if (getIntent().hasExtra("userId")) {
+            Util.mUserDatabaseRef.child(getIntent().getStringExtra("userId")).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    user = dataSnapshot.getValue(User.class);
+                    if (user != null) {
+                        setUserProfile(false);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
         } else {
-            //user =
+            if (Util.getUser() != null) {
+                user = Util.getUser();
+                setUserProfile(true);
+            } else {
+                //user =
+            }
         }
 
         back.setOnClickListener(v -> {
@@ -53,34 +95,73 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         settings.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), SettingsActivity.class)));
+    }
 
+    private void setUserProfile(boolean loadReports) {
+        final int[] countReceivedReports = {0};
+        final int[] countSentReports = {0};
+        if (loadReports) {
+            Query query = Util.mDatabaseRef.child("reports").orderByChild("userReceiverUID").equalTo(Util.getUser().getUserUID());
+            query.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                        Report report = snap.getValue(Report.class);
+                        if (report != null) {
+                            countReceivedReports[0]++;
+                            if (report.isFair()) {
+                                report.setId(snap.getKey());
+                                reportList.add(report);
+                            }
+                        }
+                    }
+                    if (reportList.isEmpty()) {
+                        empty.setVisibility(View.VISIBLE);
+                    }
+                    receivedReports.setText(String.valueOf(countReceivedReports[0]));
+                    RecyclerViewReportAdapter recyclerViewReportAdapter = new RecyclerViewReportAdapter(reportList);
+                    reports.setAdapter(recyclerViewReportAdapter);
+
+                    Query query = Util.mDatabaseRef.child("reports").orderByChild("userSenderUID").equalTo(Util.getUser().getUserUID());
+                    query.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                                Report report = snap.getValue(Report.class);
+                                if (report != null) {
+                                    countReceivedReports[0]++;
+                                }
+                            }
+                            sentReports.setText(String.valueOf(countSentReports[0]));
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
         Glide.with(getApplicationContext())
                 .load(user.getPhotoPath())
                 .apply(RequestOptions.circleCropTransform())
                 .into(photo);
 
-        usernamme.setText(user.getUserName());
-        ratingBar.setProgress((int) (user.getRating() * 2));
+        userName.setText(user.getUserName());
+        ratingBar.setProgress((int) (user.getValuation().getSumOfRatings() / user.getValuation().getNumberOfRatings()));
         ratingBar.setIsIndicator(true);
-        rating.setText(String.format("%.2f", user.getRating()));
+        rating.setText(String.format("%.2f", user.getValuation().getSumOfRatings() / user.getValuation().getNumberOfRatings()));
         goodValuation.setText(user.getValuation().getGoodPercentage() + "%");
         mediumValuation.setText(user.getValuation().getMediumPercentage() + "%");
         badValuation.setText(user.getValuation().getBadPercentage() + "%");
-        if (user.getReportList() != null) {
-            int sent = 0;
-            int received = 0;
-            for (Report report : user.getReportList()) {
-                if (report.getUserSenderUID().equals(user.getUserUID())) {
-                    sent++;
-                    sentReports.setText(String.valueOf(sent));
-                } else {
-                    received++;
-                    receivedReports.setText(String.valueOf(received));
-                }
-            }
-        }
 
-        if (user.getNickName() != null) {
+        if ((user.getNickName() != null && !user.getNickName().isEmpty()) || !user.getUserUID().equals(Util.getUser().getUserUID())) {
             nick.setEnabled(false);
         } else {
             nick.setEnabled(true);

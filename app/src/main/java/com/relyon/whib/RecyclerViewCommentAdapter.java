@@ -45,7 +45,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     private AppCompatActivity activity;
     private static final int COMMENT_ITEM_VIEW_TYPE = 0;
     private static final int NATIVE_EXPRESS_AD_VIEW_TYPE = 1;
-    int mPostsPerPage = 10;
+    int mPostsPerPage = 5;
 
     RecyclerViewCommentAdapter(@NonNull Context context, AppCompatActivity activity) {
         this.context = context;
@@ -107,9 +107,12 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
             if (comment.isAGroup()) {
                 holder.entrance.setVisibility(View.VISIBLE);
+                holder.ratingTV.setTextSize(14);
             } else {
                 holder.entrance.setVisibility(View.GONE);
             }
+
+            holder.userProfile.setOnClickListener(v -> context.startActivity(new Intent(context, ProfileActivity.class).putExtra("userId", comment.getAuthorsUID())));
 
             Typeface face = ResourcesCompat.getFont(context, R.font.baloo);
             holder.text.setTypeface(face);
@@ -134,8 +137,10 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                             LayerDrawable stars = (LayerDrawable) holder.ratingBar.getProgressDrawable();
                             stars.getDrawable(2).setColorFilter(Color.parseColor("#AFC2D5"), PorterDuff.Mode.SRC_ATOP);
                             holder.bg.setBackgroundResource(R.drawable.rounded_accent_double);
+                            holder.commentLayout.setBackgroundResource(R.drawable.rounded_accent_double);
                         }
                     } else if (comment.isAGroup()) {
+                        holder.commentLayout.setBackgroundResource(R.drawable.rounded_primary_double);
                         holder.bg.setBackgroundResource(R.drawable.rounded_primary_double);
                     }
                     if (user != null) {
@@ -170,14 +175,17 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
             holder.ratingTV.setOnClickListener(v -> goToGroup(comment));
             holder.entrance.setOnClickListener(v -> goToGroup(comment));
-            holder.text.setOnLongClickListener(v -> {
-                if (!comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
-                    return openReportDialog(comment);
-                } else {
-                    Toast.makeText(context, context.getString(R.string.cant_report_own_comment), Toast.LENGTH_SHORT).show();
-                    return false;
-                }
-            });
+            holder.report.setOnClickListener(v -> tryToReport(comment));
+            holder.text.setOnLongClickListener(v -> tryToReport(comment));
+        }
+    }
+
+    private boolean tryToReport(Comment comment) {
+        if (!comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
+            return openReportDialog(comment);
+        } else {
+            Toast.makeText(context, context.getString(R.string.cant_report_own_comment), Toast.LENGTH_SHORT).show();
+            return false;
         }
     }
 
@@ -191,7 +199,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     private void goToGroup(Comment comment) {
-        if (comment.isAGroup() && comment.getGroup() != null && comment.getGroup().isReady()) {
+        if ((comment.isAGroup() && comment.getGroup() != null && comment.getGroup().isReady()) || (Util.getUser().isExtra() || Util.getUser().isAdmin())) {
             if (!comment.getGroup().getTempInfo().isFull()) {
                 Toast.makeText(context, "Entrou no grupo!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(context, GroupActivity.class);
@@ -225,15 +233,18 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         return elements.size();
     }
 
-    public static class CommentViewHolder extends RecyclerView.ViewHolder {
+    private static class CommentViewHolder extends RecyclerView.ViewHolder {
 
         private ReadMoreTextView text;
         private TextView ratingTV;
         private ImageView photo;
         private RatingBar ratingBar;
+        private LinearLayout commentLayout;
         private LinearLayout bg;
         private TextView userName;
         private ImageView entrance;
+        private LinearLayout userProfile;
+        private ImageView report;
 
         CommentViewHolder(View rowView) {
             super(rowView);
@@ -241,9 +252,12 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             ratingTV = rowView.findViewById(R.id.ratingTV);
             photo = rowView.findViewById(R.id.photo);
             ratingBar = rowView.findViewById(R.id.ratingBar);
-            bg = rowView.findViewById(R.id.commentLayout);
+            bg = rowView.findViewById(R.id.background);
+            commentLayout = rowView.findViewById(R.id.commentLayout);
             userName = rowView.findViewById(R.id.userName);
             entrance = rowView.findViewById(R.id.entrance);
+            userProfile = rowView.findViewById(R.id.userProfile);
+            report = rowView.findViewById(R.id.report);
         }
     }
 
@@ -298,27 +312,33 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         adView.setNativeAd(nativeAd);
     }
 
-    void addAll(List<Comment> newComments, boolean isFirst, boolean newComment) {
-        if (newComment) {
-            if (newComments.size() > 0) {
-                elements.add(newComments.get(0));
-                notifyItemRangeInserted(elements.size(), 1);
-            }
+    void addAll(List<Comment> newComments, boolean isFirst, boolean newComment, boolean reset) {
+        if (reset) {
+            elements.clear();
+            elements.addAll(newComments);
+            notifyDataSetChanged();
         } else {
-            if (isFirst) {
-                elements.addAll(newComments);
-                notifyItemRangeInserted(0, newComments.size());
+            if (newComment) {
+                if (newComments.size() > 0) {
+                    elements.add(newComments.get(0));
+                    notifyItemRangeInserted(elements.size(), 1);
+                }
             } else {
-                if (newComments.size() > mPostsPerPage) {
-                    for (int i = newComments.size() - 1; i > 0; i--) {
-                        elements.add(0, newComments.get(i));
-                    }
-                    notifyItemRangeInserted(0, newComments.size() - 1);
-                } else {
-                    for (int i = newComments.size() - 1; i >= 0; i--) {
-                        elements.add(0, newComments.get(i));
-                    }
+                if (isFirst) {
+                    elements.addAll(newComments);
                     notifyItemRangeInserted(0, newComments.size());
+                } else {
+                    if (newComments.size() > mPostsPerPage) {
+                        for (int i = newComments.size() - 1; i > 0; i--) {
+                            elements.add(0, newComments.get(i));
+                        }
+                        notifyItemRangeInserted(0, newComments.size() - 1);
+                    } else {
+                        for (int i = newComments.size() - 1; i >= 0; i--) {
+                            elements.add(0, newComments.get(i));
+                        }
+                        notifyItemRangeInserted(0, newComments.size());
+                    }
                 }
             }
         }

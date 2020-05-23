@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +56,8 @@ public class TimelineActivity extends AppCompatActivity {
     private boolean mIsLoading = false;
     private boolean isFirst = true;
     private boolean mayPass = false;
+    private boolean reset = false;
+    private boolean hasPassed = false;
 
     public TimelineActivity() {
     }
@@ -74,6 +79,37 @@ public class TimelineActivity extends AppCompatActivity {
         menu = findViewById(R.id.menu);
         rvComments = findViewById(R.id.rvComments);
         emptyList = findViewById(R.id.emptyList);
+
+        Spinner spinner = findViewById(R.id.filters);
+        ArrayAdapter<CharSequence> filterAdapter = ArrayAdapter.createFromResource(this,
+                R.array.comment_filters, android.R.layout.simple_spinner_item);
+        filterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(filterAdapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (hasPassed) {
+                    Query query = null;
+                    if (position == 0) {
+                        query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("time").endAt(adapter.getLastItemId(false)).limitToLast(adapter.mPostsPerPage + 2);
+                    } else if (position == 1) {
+                        query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("rating").endAt(adapter.getLastItemId(false)).limitToLast(adapter.mPostsPerPage + 2);
+                    } else if (position == 2) {
+                        query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("agroup").equalTo(true).limitToLast(adapter.mPostsPerPage + 2);
+                    }
+                    reset = true;
+                    getComments(adapter.getLastItemId(false), query);
+                }
+                hasPassed = true;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         activity = this;
 
         if (getIntent() != null && getIntent().getExtras() != null) {
@@ -84,7 +120,7 @@ public class TimelineActivity extends AppCompatActivity {
         }
 
         initRecyclerViewComment();
-        getComments(null);
+        getComments(null, null);
 
         Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").addChildEventListener(new ChildEventListener() {
             @Override
@@ -94,7 +130,7 @@ public class TimelineActivity extends AppCompatActivity {
                     comments.add(dataSnapshot.getValue(Comment.class));
                     comments.get(0).setCommentUID(dataSnapshot.getKey());
                     requireNonNull(comments.get(0)).setCommentUID(dataSnapshot.getKey());
-                    adapter.addAll(comments, true, true);
+                    adapter.addAll(comments, true, true, false);
                     emptyList.setVisibility(View.GONE);
                 }
             }
@@ -126,7 +162,7 @@ public class TimelineActivity extends AppCompatActivity {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (!recyclerView.canScrollVertically(1)) {
                     if (!mIsLoading) {
-                        getComments(adapter.getLastItemId(isFirst));
+                        getComments(adapter.getLastItemId(isFirst), null);
                     }
                 }
             }
@@ -216,15 +252,16 @@ public class TimelineActivity extends AppCompatActivity {
         new Thread(this::loadNativeAds).start();
     }
 
-    private void getComments(String nodeId) {
+    private void getComments(String nodeId, Query query) {
         mIsLoading = true;
-        Query query;
-        if (nodeId == null) {
-            query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage);
-            isFirst = true;
-        } else {
-            query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().endAt(nodeId).limitToLast(adapter.mPostsPerPage + 2);
-            isFirst = false;
+        if (query == null) {
+            if (nodeId == null) {
+                query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage);
+                isFirst = true;
+            } else {
+                query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().endAt(nodeId).limitToLast(adapter.mPostsPerPage + 2);
+                isFirst = false;
+            }
         }
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -236,13 +273,14 @@ public class TimelineActivity extends AppCompatActivity {
                         if (dataSnapshot.getChildrenCount() > 0) {
                             Comment comment = snap.getValue(Comment.class);
                             requireNonNull(comment).setCommentUID(snap.getKey());
-                            if (!adapter.commentExists(snap.getKey())) {
+                            if (!adapter.commentExists(snap.getKey()) || reset) {
                                 comments.add(comment);
                             }
                         }
                     }
                 }
-                adapter.addAll(comments, nodeId == null, false);
+                adapter.addAll(comments, nodeId == null, false, reset);
+                reset = false;
                 if (comments.size() > 0) {
                     emptyList.setVisibility(View.GONE);
                 }

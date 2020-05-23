@@ -20,6 +20,7 @@ import com.relyon.whib.modelo.Group;
 import com.relyon.whib.modelo.GroupTempInfo;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.modelo.Valuation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,16 +101,15 @@ public class DialogRateComment extends Dialog implements
             }
         }
         Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).setValue(comment);
-        Util.mUserDatabaseRef.child(comment.getAuthorsUID()).child("rating").addListenerForSingleValueEvent(new ValueEventListener() {
+        Util.mUserDatabaseRef.child(comment.getAuthorsUID()).child("valuation").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Float valuation = dataSnapshot.getValue(Float.class);
-                if (valuation == null || valuation == 0) {
-                    valuation = comment.getRating();
-                } else {
-                    valuation = (valuation + comment.getRating()) / 2;
+                Valuation valuation = dataSnapshot.getValue(Valuation.class);
+                if (valuation != null) {
+                    valuation.setNumberOfRatings(valuation.getNumberOfRatings() + 1);
+                    valuation.setSumOfRatings(valuation.getSumOfRatings() + comment.getRating());
                 }
-                Util.mUserDatabaseRef.child(comment.getAuthorsUID()).child("rating").setValue(valuation);
+                Util.mUserDatabaseRef.child(comment.getAuthorsUID()).child("valuation").setValue(valuation);
             }
 
             @Override

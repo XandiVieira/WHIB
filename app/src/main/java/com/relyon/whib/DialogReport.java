@@ -11,19 +11,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Report;
-import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class DialogReport extends Dialog {
@@ -99,7 +92,7 @@ public class DialogReport extends Dialog {
         });
     }
 
-    public class ViewDialog {
+    public static class ViewDialog {
 
         void showDialog(Activity activity) {
             final Dialog dialog = new Dialog(activity);
@@ -115,30 +108,8 @@ public class DialogReport extends Dialog {
 
     private void sendReport(String explanation, String reason) {
         final Report report = new Report(Util.getUser().getUserUID(), comment.getAuthorsUID(), reason, explanation, comment.getText());
-        Util.getmUserDatabaseRef().child(comment.getAuthorsUID()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user2 = dataSnapshot.getValue(User.class);
-                if (user2 != null) {
-                    if (user2.getReportList() != null) {
-                        user2.getReportList().add(report);
-                    } else {
-                        List<Report> reportList = new ArrayList<>();
-                        reportList.add(report);
-                        user2.setReportList(reportList);
-                    }
-                    Util.getmUserDatabaseRef().child(comment.getAuthorsUID()).setValue(user2);
-                    Util.getmReportDatabaseRef().child(UUID.randomUUID().toString()).setValue(report);
-                    dismiss();
-                    Toast.makeText(getContext(), getContext().getString(R.string.report_sent), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                dismiss();
-                Toast.makeText(getContext(), getContext().getString(R.string.report_sent), Toast.LENGTH_SHORT).show();
-            }
-        });
+        Util.getmReportDatabaseRef().child(UUID.randomUUID().toString()).setValue(report);
+        dismiss();
+        Toast.makeText(getContext(), getContext().getString(R.string.report_sent), Toast.LENGTH_SHORT).show();
     }
 }

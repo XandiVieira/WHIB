@@ -13,12 +13,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Comment;
+import com.relyon.whib.modelo.Group;
+import com.relyon.whib.modelo.GroupTempInfo;
 import com.relyon.whib.modelo.Sending;
 import com.relyon.whib.modelo.Subject;
+import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 public class DialogPostComment extends Dialog implements
         View.OnClickListener {
@@ -95,6 +106,9 @@ public class DialogPostComment extends Dialog implements
         if (validateComment()) {
             Comment comment = new Comment(commentBox.getText().toString(), (float) 0.0, Util.getUser().getPhotoPath(), data_atual, 0, (float) 0.0, sending, false, null);
             Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").push().setValue(comment);
+            if (Util.getUser().isAdmin() || Util.getUser().isExtra()) {
+                createNewGroup(comment);
+            }
             Toast.makeText(getContext(), "Comentário postado!", Toast.LENGTH_SHORT).show();
             // Clear input box
             commentBox.setText("");
@@ -111,5 +125,27 @@ public class DialogPostComment extends Dialog implements
             return false;
         }
         return true;
+    }
+
+    private void createNewGroup(Comment comment) {
+        List<String> userUIDList = new ArrayList<>();
+        userUIDList.add(Util.getUser().getUserUID());
+        List<User> users = new ArrayList<>();
+        users.add(Util.getUser());
+        GroupTempInfo groupTempInfo = new GroupTempInfo(users, false);
+        Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("agroup").equalTo(true).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Group group = new Group(UUID.randomUUID().toString(), comment.getSubject().getSubjectUID(), (int) dataSnapshot.getChildrenCount(), Util.getServer().getTempInfo().getNumber(),
+                        groupTempInfo, "text", new ArrayList<>(), userUIDList,
+                        new ArrayList<>(), true, comment.getCommentUID());
+                comment.setGroup(group);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

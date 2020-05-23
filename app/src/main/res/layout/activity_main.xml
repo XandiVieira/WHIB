@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,11 +18,13 @@
         android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:onClick="profile"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <ImageButton
                 android:layout_width="wrap_content"
@@ -32,8 +33,8 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/profile"
                 android:onClick="profile"
-                android:text="@string/profile"
-                android:src="@drawable/profile_icon" />
+                android:src="@drawable/profile_icon"
+                android:text="@string/profile" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -70,8 +71,8 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/exit_icon"
                 android:onClick="logout"
-                android:text="@string/logout"
-                android:src="@drawable/exit_icon" />
+                android:src="@drawable/exit_icon"
+                android:text="@string/logout" />
 
             <TextView
                 android:layout_width="wrap_content"

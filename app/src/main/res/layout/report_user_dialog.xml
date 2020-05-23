@@ -142,6 +142,7 @@
                 android:background="@drawable/rounded_grey"
                 android:fontFamily="@font/baloo"
                 android:hint="@string/tell_us_more"
+                android:lineSpacingExtra="-7dp"
                 android:padding="5dp"
                 android:textSize="@dimen/small_text" />
 

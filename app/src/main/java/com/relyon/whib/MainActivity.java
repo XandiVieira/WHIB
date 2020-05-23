@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Server> serverList;
     private ArrayList<ArrayList> serverGroupList;
     private ProgressBar progressBar;
+    private LinearLayout profile;
 
     private RecyclerView recyclerViewServers;
 
@@ -64,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         this.recyclerViewServers = findViewById(R.id.recyclerViewSec);
         this.progressBar = findViewById(R.id.progressBar);
         Button choseSubjectButton = findViewById(R.id.choseSubjectButton);
+        profile = findViewById(R.id.profile);
 
         //Initiate firebase instances
         startFirebase();
@@ -213,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 //set user for the Util class
                 Util.setUser(user);
+                profile.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -231,8 +235,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         user = new User(fbUser.getUid(), fbUser.getDisplayName(), photoPath,
-                setUserTempInfo(), setUserValuation(), null, null, false, true,
-                false, null, (float) 0.0, null, 0, null, null,
+                setUserTempInfo(), setUserValuation(), null, false, true,
+                false, null, null, 0, null, null,
                 false, false, 0, 0, setUserPreferences(), null, false);
 
         Util.setUser(user);

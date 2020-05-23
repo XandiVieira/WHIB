@@ -1,24 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
+    <Button
+        android:id="@+id/reports"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_accent"
+        android:fontFamily="@font/baloo"
+        android:padding="3dp"
+        android:text="Reports"
+        android:textColor="@color/colorPrimaryDark" />
 
     <Button
         android:id="@+id/createServerButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create Servers"
         android:background="@drawable/rounded_accent"
-        android:textColor="@color/colorPrimaryDark"
         android:fontFamily="@font/baloo"
-        android:padding="3dp"/>
+        android:padding="3dp"
+        android:text="Create Servers"
+        android:textColor="@color/colorPrimaryDark" />
 
     <ListView
-        android:layout_marginTop="20dp"
         android:id="@+id/admServerList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"/>
-
+        android:layout_marginTop="20dp"
+        android:orientation="vertical" />
 </LinearLayout>

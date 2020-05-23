@@ -31,22 +31,21 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     testImplementation 'junit:junit:4.12'
 
-    implementation 'com.google.firebase:firebase-core:17.3.0' //Firebase Core
+    implementation 'com.google.firebase:firebase-core:17.4.1' //Firebase Core
     implementation 'com.google.gms:google-services:4.3.3' //Google play services
-    implementation 'com.google.firebase:firebase-ads:17.2.1' //Admob
-    implementation 'com.google.firebase:firebase-core:17.3.0'
-    implementation 'com.google.firebase:firebase-auth:19.3.0' //Authentication Firebase
-    implementation 'com.google.firebase:firebase-firestore:21.4.2' //Cloudstore
-    implementation 'com.google.firebase:firebase-messaging:20.1.5' //Cloud messaging
+    implementation 'com.google.firebase:firebase-ads:19.1.0' //Admob
+    implementation 'com.google.firebase:firebase-auth:19.3.1' //Authentication Firebase
+    implementation 'com.google.firebase:firebase-firestore:21.4.3' //Cloudstore
+    implementation 'com.google.firebase:firebase-messaging:20.1.7' //Cloud messaging
     implementation 'com.google.firebase:firebase-storage:19.1.1' //Cloud storage
-    implementation 'com.google.firebase:firebase-analytics:17.4.0' //Analytics
+    implementation 'com.google.firebase:firebase-analytics:17.4.1' //Analytics
     implementation 'com.google.firebase:firebase-crashlytics:17.0.0' //Crashlytics
-    implementation 'com.google.firebase:firebase-inappmessaging:19.0.5' //inapp messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.5'
+    implementation 'com.google.firebase:firebase-inappmessaging:19.0.6' //inapp messaging
+    implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.6'
     //inapp messaging display
-    implementation 'com.google.firebase:firebase-perf:19.0.6' //performance
-    implementation 'com.google.firebase:firebase-database:19.2.1' //Realtime databae
-    implementation 'com.google.firebase:firebase-config:19.1.3' //Remote config
+    implementation 'com.google.firebase:firebase-perf:19.0.7' //performance
+    implementation 'com.google.firebase:firebase-database:19.3.0' //Realtime database
+    implementation 'com.google.firebase:firebase-config:19.1.4' //Remote config
 
     implementation 'com.google.android.gms:play-services-ads:19.1.0'
 
