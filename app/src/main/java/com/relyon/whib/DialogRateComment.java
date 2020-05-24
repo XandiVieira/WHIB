@@ -94,10 +94,12 @@ public class DialogRateComment extends Dialog implements
                 }
             }
         }
-        if (comment.getNumberOfRatings() >= 10 && comment.getRating() >= 3.5) {
-            comment.setAGroup(true);
-            if (comment.getGroup() == null) {
-                createNewGroup(i + 1);
+        if (((Util.getUser().isAdmin() || Util.getUser().isExtra()) && (comment.getNumberOfRatings() >= 5 && comment.getRating() >= 3)) || (comment.getNumberOfRatings() >= 10 && comment.getRating() >= 3.25)) {
+            if (!comment.isAGroup()) {
+                comment.setAGroup(true);
+                if (comment.getGroup() == null) {
+                    createNewGroup(i + 1);
+                }
             }
         }
         Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).setValue(comment);

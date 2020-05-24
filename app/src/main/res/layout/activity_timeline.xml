@@ -56,15 +56,20 @@
         android:layout_marginTop="-10dp"
         android:background="@color/colorAccent" />
 
-    <androidx.appcompat.widget.AppCompatSpinner
-        android:id="@+id/filters"
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="1dp"
-        android:gravity="center_horizontal"
-        android:padding="3dp"
-        android:popupBackground="@drawable/rounded_primary"
-        android:textAlignment="center" />
+        android:layout_margin="3dp"
+        android:background="#A1C4E6">
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/filters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:popupBackground="@drawable/rounded_primary"
+            android:textAlignment="center" />
+    </RelativeLayout>
 
     <View
         android:layout_width="match_parent"

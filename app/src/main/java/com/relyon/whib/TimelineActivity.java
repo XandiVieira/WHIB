@@ -58,6 +58,8 @@ public class TimelineActivity extends AppCompatActivity {
     private boolean mayPass = false;
     private boolean reset = false;
     private boolean hasPassed = false;
+    private int filter = 0;
+    private Query query;
 
     public TimelineActivity() {
     }
@@ -90,16 +92,19 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (hasPassed) {
-                    Query query = null;
                     if (position == 0) {
-                        query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("time").endAt(adapter.getLastItemId(false)).limitToLast(adapter.mPostsPerPage + 2);
+                        filter = 0;
+                        query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage);
                     } else if (position == 1) {
-                        query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("rating").endAt(adapter.getLastItemId(false)).limitToLast(adapter.mPostsPerPage + 2);
+                        filter = 1;
+                        query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("rating").endAt(adapter.getLastRate()).limitToLast(adapter.mPostsPerPage + 2);
                     } else if (position == 2) {
+                        filter = 2;
                         query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("agroup").equalTo(true).limitToLast(adapter.mPostsPerPage + 2);
                     }
+                    isFirst = true;
                     reset = true;
-                    getComments(adapter.getLastItemId(false), query);
+                    getComments();
                 }
                 hasPassed = true;
             }
@@ -120,7 +125,7 @@ public class TimelineActivity extends AppCompatActivity {
         }
 
         initRecyclerViewComment();
-        getComments(null, null);
+        getComments();
 
         Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").addChildEventListener(new ChildEventListener() {
             @Override
@@ -162,7 +167,7 @@ public class TimelineActivity extends AppCompatActivity {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (!recyclerView.canScrollVertically(1)) {
                     if (!mIsLoading) {
-                        getComments(adapter.getLastItemId(isFirst), null);
+                        getComments();
                     }
                 }
             }
@@ -249,18 +254,25 @@ public class TimelineActivity extends AppCompatActivity {
         rvComments.addItemDecoration(dividerItemDecoration);
         dividerItemDecoration.setDrawable(requireNonNull(ContextCompat.getDrawable(getApplicationContext(), R.drawable.divider)));
         rvComments.setAdapter(adapter);
+        query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage);
         new Thread(this::loadNativeAds).start();
     }
 
-    private void getComments(String nodeId, Query query) {
+    private void getComments() {
         mIsLoading = true;
-        if (query == null) {
-            if (nodeId == null) {
-                query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage);
-                isFirst = true;
+        if (filter == 2) {
+            query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("agroup").equalTo(true).limitToLast(adapter.mPostsPerPage + 2);
+        } else if (filter == 1) {
+            if (isFirst) {
+                query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("rating").limitToLast(adapter.mPostsPerPage + 2);
             } else {
-                query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().endAt(nodeId).limitToLast(adapter.mPostsPerPage + 2);
-                isFirst = false;
+                query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("rating").endAt(adapter.getLastRate()).limitToLast(adapter.mPostsPerPage + 2);
+            }
+        } else {
+            if (isFirst) {
+                query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage + 2);
+            } else {
+                query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().endAt(adapter.getLastItemId(false)).limitToLast(adapter.mPostsPerPage + 2);
             }
         }
 
@@ -279,7 +291,7 @@ public class TimelineActivity extends AppCompatActivity {
                         }
                     }
                 }
-                adapter.addAll(comments, nodeId == null, false, reset);
+                adapter.addAll(comments, adapter.getLastItemId(false) == null, false, reset);
                 reset = false;
                 if (comments.size() > 0) {
                     emptyList.setVisibility(View.GONE);

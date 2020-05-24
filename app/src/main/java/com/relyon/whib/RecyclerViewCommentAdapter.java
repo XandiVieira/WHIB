@@ -390,4 +390,9 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         }
         return false;
     }
+
+    float getLastRate() {
+        Comment comment = (Comment) elements.get(0);
+        return comment.getRating();
+    }
 }
