@@ -85,9 +85,9 @@
                 android:gravity="bottom"
                 android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatRatingBar
+                <me.zhanghai.android.materialratingbar.MaterialRatingBar
                     android:id="@+id/ratingBar"
-                    style="?android:attr/ratingBarStyleIndicator"
+                    style="@style/RatingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
@@ -98,7 +98,7 @@
                     android:progressTint="@color/colorAccent"
                     android:rating="0.0"
                     android:secondaryProgressTint="@color/colorPrimary"
-                    android:stepSize="0.25" />
+                    android:stepSize="0.1" />
 
                 <TextView
                     android:id="@+id/ratingTV"

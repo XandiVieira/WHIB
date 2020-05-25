@@ -38,6 +38,8 @@ import com.relyon.whib.modelo.Util;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.zhanghai.android.materialratingbar.MaterialRatingBar;
+
 public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final Context context;
@@ -45,7 +47,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     private AppCompatActivity activity;
     private static final int COMMENT_ITEM_VIEW_TYPE = 0;
     private static final int NATIVE_EXPRESS_AD_VIEW_TYPE = 1;
-    int mPostsPerPage = 5;
+    int mPostsPerPage = 10;
 
     RecyclerViewCommentAdapter(@NonNull Context context, AppCompatActivity activity) {
         this.context = context;
@@ -136,6 +138,8 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                         if (user.isExtra()) {
                             LayerDrawable stars = (LayerDrawable) holder.ratingBar.getProgressDrawable();
                             stars.getDrawable(2).setColorFilter(Color.parseColor("#AFC2D5"), PorterDuff.Mode.SRC_ATOP);
+                            stars.getDrawable(1).setColorFilter(Color.parseColor("#AFC2D5"), PorterDuff.Mode.SRC_ATOP);
+                            stars.getDrawable(0).setColorFilter(Color.parseColor("#AFC2D5"), PorterDuff.Mode.SRC_ATOP);
                             holder.bg.setBackgroundResource(R.drawable.rounded_accent_double);
                             holder.commentLayout.setBackgroundResource(R.drawable.rounded_accent_double);
                         }
@@ -238,7 +242,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         private ReadMoreTextView text;
         private TextView ratingTV;
         private ImageView photo;
-        private RatingBar ratingBar;
+        private MaterialRatingBar ratingBar;
         private LinearLayout commentLayout;
         private LinearLayout bg;
         private TextView userName;

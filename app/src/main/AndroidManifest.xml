@@ -19,7 +19,9 @@
         <activity android:name=".FaqActivity" />
         <activity android:name=".AboutUsActivity" />
         <activity android:name=".AboutActivity" />
-        <activity android:name=".ProfileActivity" />
+        <activity
+            android:name=".ProfileActivity"
+            android:windowSoftInputMode="stateHidden" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

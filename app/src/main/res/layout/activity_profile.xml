@@ -35,7 +35,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="5dp">
+        android:paddingHorizontal="5dp"
+        android:paddingTop="5dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,7 +44,7 @@
             android:background="@color/lightGrey"
             android:baselineAligned="false"
             android:orientation="horizontal"
-            android:padding="7dp">
+            android:padding="5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -75,9 +76,8 @@
                 <TextView
                     android:id="@+id/userName"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight="3"
                     android:fontFamily="@font/baloo"
                     android:gravity="center"
                     android:lineSpacingExtra="-7dp"
@@ -124,7 +124,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="5dp">
 
@@ -137,9 +137,8 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight="2"
                     android:fontFamily="@font/baloo"
                     android:gravity="center"
                     android:text="@string/rating"
@@ -151,11 +150,14 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <androidx.appcompat.widget.AppCompatRatingBar
+                    <me.zhanghai.android.materialratingbar.MaterialRatingBar
                         android:id="@+id/my_stars"
+                        style="@style/RatingBar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:max="5" />
+                        android:max="5"
+                        android:rating="0.0"
+                        android:stepSize="0.1" />
 
                     <TextView
                         android:id="@+id/my_rating"
@@ -175,13 +177,13 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight="2"
                     android:fontFamily="@font/baloo"
                     android:gravity="center"
                     android:text="@string/valuations"
@@ -191,8 +193,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:baselineAligned="false"
                     android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:paddingHorizontal="5dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -201,7 +204,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:padding="5dp">
+                        android:paddingHorizontal="5dp">
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -211,9 +214,8 @@
                         <TextView
                             android:id="@+id/good_valuation"
                             android:layout_width="wrap_content"
-                            android:layout_height="0dp"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_weight="2"
                             android:fontFamily="@font/baloo"
                             android:gravity="center"
                             android:text="50%"
@@ -238,9 +240,8 @@
                         <TextView
                             android:id="@+id/medium_valuation"
                             android:layout_width="wrap_content"
-                            android:layout_height="0dp"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_weight="2"
                             android:fontFamily="@font/baloo"
                             android:gravity="center"
                             android:text="50%"
@@ -255,7 +256,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:padding="5dp">
+                        android:paddingHorizontal="5dp">
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -265,9 +266,8 @@
                         <TextView
                             android:id="@+id/bad_valuation"
                             android:layout_width="wrap_content"
-                            android:layout_height="0dp"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_weight="2"
                             android:fontFamily="@font/baloo"
                             android:gravity="center"
                             android:text="50%"
@@ -280,99 +280,98 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/colorAccent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/baloo"
+                    android:gravity="center"
+                    android:text="@string/reports"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="16sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_gravity="center"
-                        android:layout_weight="2"
-                        android:fontFamily="@font/baloo"
-                        android:gravity="center"
-                        android:text="@string/reports"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textSize="18sp" />
+                    android:layout_marginHorizontal="5dp"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="5dp"
-                        android:baselineAligned="false"
-                        android:orientation="horizontal">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                        <LinearLayout
+                        <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/baloo"
+                            android:gravity="center"
+                            android:text="@string/sent"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="12sp" />
 
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_weight="2"
-                                android:fontFamily="@font/baloo"
-                                android:gravity="center"
-                                android:text="@string/sent"
-                                android:textColor="@color/colorPrimaryDark"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/sent_reports"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_weight="2"
-                                android:fontFamily="@font/baloo"
-                                android:gravity="center"
-                                android:text="0"
-                                android:textColor="@color/colorPrimaryDark"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
+                        <TextView
+                            android:id="@+id/sent_reports"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_weight="2"
-                                android:fontFamily="@font/baloo"
-                                android:gravity="center"
-                                android:text="@string/received"
-                                android:textColor="@color/colorPrimaryDark"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/received_reports"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_weight="2"
-                                android:fontFamily="@font/baloo"
-                                android:gravity="center"
-                                android:text="0"
-                                android:textColor="@color/colorPrimaryDark"
-                                android:textSize="12sp" />
-                        </LinearLayout>
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/baloo"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="12sp" />
                     </LinearLayout>
 
-                    <View
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginBottom="5dp"
-                        android:background="@color/colorAccent" />
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/baloo"
+                            android:gravity="center"
+                            android:text="@string/received"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/received_reports"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="@font/baloo"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@color/colorAccent" />
+
+                <LinearLayout
+                    android:id="@+id/reportsLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -380,7 +379,7 @@
                         android:fontFamily="@font/baloo"
                         android:gravity="center"
                         android:text="@string/fair_reports"
-                        android:textSize="@dimen/subtitle" />
+                        android:textSize="@dimen/big_text" />
 
                     <TextView
                         android:id="@+id/empty"
@@ -393,8 +392,7 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/reports"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="5dp" />
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

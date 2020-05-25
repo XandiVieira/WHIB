@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +24,8 @@ import com.relyon.whib.modelo.Valuation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 public class DialogRateComment extends Dialog implements
         View.OnClickListener {
@@ -51,7 +52,7 @@ public class DialogRateComment extends Dialog implements
         setContentView(R.layout.rate_comment_dialog);
         Button rate = findViewById(R.id.rate_Button);
         Button cancel = findViewById(R.id.cancel_button);
-        RatingBar ratingBar = findViewById(R.id.ratingBar);
+        MaterialRatingBar ratingBar = findViewById(R.id.ratingBar);
         ratingTV = findViewById(R.id.ratingTV);
         cancel.setOnClickListener(this);
         ratingTV.setText(String.valueOf(rating));

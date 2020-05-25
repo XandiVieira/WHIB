@@ -14,4 +14,12 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="RatingBar" parent="Theme.AppCompat">
+        <item name="mrb_progressTint">@color/colorAccent</item>
+        <item name="mrb_secondaryProgressTint">@color/colorAccent</item>
+        <item name="mrb_progressBackgroundTint">@color/colorAccent</item>
+        <item name="mrb_fillBackgroundStars">false</item>
+        <item name="android:minHeight">36dp</item>
+        <item name="android:maxHeight">45dp</item>
+    </style>
 </resources>

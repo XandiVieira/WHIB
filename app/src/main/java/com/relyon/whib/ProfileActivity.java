@@ -5,11 +5,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RatingBar;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -25,13 +26,15 @@ import com.relyon.whib.modelo.Util;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.zhanghai.android.materialratingbar.MaterialRatingBar;
+
 public class ProfileActivity extends AppCompatActivity {
 
     private EditText nick;
     private User user;
     private ImageView photo;
     private TextView userName;
-    private RatingBar ratingBar;
+    private MaterialRatingBar ratingBar;
     private TextView rating;
     private TextView goodValuation;
     private TextView mediumValuation;
@@ -41,6 +44,7 @@ public class ProfileActivity extends AppCompatActivity {
     private RecyclerView reports;
     private List<Report> reportList = new ArrayList<>();
     private TextView empty;
+    private LinearLayout reportsLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +65,7 @@ public class ProfileActivity extends AppCompatActivity {
         receivedReports = findViewById(R.id.received_reports);
         reports = findViewById(R.id.reports);
         empty = findViewById(R.id.empty);
+        reportsLayout = findViewById(R.id.reportsLayout);
 
         if (getIntent().hasExtra("userId")) {
             Util.mUserDatabaseRef.child(getIntent().getStringExtra("userId")).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -101,62 +106,69 @@ public class ProfileActivity extends AppCompatActivity {
         final int[] countReceivedReports = {0};
         final int[] countSentReports = {0};
         if (loadReports) {
-            Query query = Util.mDatabaseRef.child("reports").orderByChild("userReceiverUID").equalTo(Util.getUser().getUserUID());
-            query.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                        Report report = snap.getValue(Report.class);
-                        if (report != null) {
-                            countReceivedReports[0]++;
-                            if (report.isFair()) {
-                                report.setId(snap.getKey());
-                                reportList.add(report);
-                            }
-                        }
-                    }
-                    if (reportList.isEmpty()) {
-                        empty.setVisibility(View.VISIBLE);
-                    }
-                    receivedReports.setText(String.valueOf(countReceivedReports[0]));
-                    RecyclerViewReportAdapter recyclerViewReportAdapter = new RecyclerViewReportAdapter(reportList);
-                    reports.setAdapter(recyclerViewReportAdapter);
-
-                    Query query = Util.mDatabaseRef.child("reports").orderByChild("userSenderUID").equalTo(Util.getUser().getUserUID());
-                    query.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                                Report report = snap.getValue(Report.class);
-                                if (report != null) {
-                                    countReceivedReports[0]++;
-                                }
-                            }
-                            sentReports.setText(String.valueOf(countSentReports[0]));
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
+            reportsLayout.setVisibility(View.VISIBLE);
+        } else {
+            reportsLayout.setVisibility(View.GONE);
         }
-        Glide.with(getApplicationContext())
-                .load(user.getPhotoPath())
-                .apply(RequestOptions.circleCropTransform())
-                .into(photo);
+        Query query = Util.mDatabaseRef.child("report").orderByChild("userReceiverUID").equalTo(user.getUserUID());
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                    Report report = snap.getValue(Report.class);
+                    if (report != null) {
+                        countReceivedReports[0]++;
+                        if (report.isFair() && loadReports) {
+                            report.setId(snap.getKey());
+                            reportList.add(report);
+                        }
+                    }
+                }
+                if (reportList.isEmpty()) {
+                    empty.setVisibility(View.VISIBLE);
+                }
+                receivedReports.setText(String.valueOf(countReceivedReports[0]));
+                RecyclerViewReportAdapter recyclerViewReportAdapter = new RecyclerViewReportAdapter(reportList);
+                reports.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                reports.setAdapter(recyclerViewReportAdapter);
+
+                Query query = Util.mDatabaseRef.child("report").orderByChild("userSenderUID").equalTo(user.getUserUID());
+                query.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                            Report report = snap.getValue(Report.class);
+                            if (report != null) {
+                                countReceivedReports[0]++;
+                            }
+                        }
+                        sentReports.setText(String.valueOf(countSentReports[0]));
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        Glide.with(getApplicationContext()).load(user.getPhotoPath()).apply(RequestOptions.circleCropTransform()).into(photo);
 
         userName.setText(user.getUserName());
-        ratingBar.setProgress((int) (user.getValuation().getSumOfRatings() / user.getValuation().getNumberOfRatings()));
+        if (user.getValuation().getSumOfRatings() != 0 && user.getValuation().getNumberOfRatings() != 0) {
+            ratingBar.setRating(user.getValuation().getSumOfRatings() / user.getValuation().getNumberOfRatings());
+            rating.setText(String.format("%.2f", user.getValuation().getSumOfRatings() / user.getValuation().getNumberOfRatings()));
+        } else {
+            ratingBar.setRating(0);
+            rating.setText(String.format("%.2f", 0));
+        }
         ratingBar.setIsIndicator(true);
-        rating.setText(String.format("%.2f", user.getValuation().getSumOfRatings() / user.getValuation().getNumberOfRatings()));
         goodValuation.setText(user.getValuation().getGoodPercentage() + "%");
         mediumValuation.setText(user.getValuation().getMediumPercentage() + "%");
         badValuation.setText(user.getValuation().getBadPercentage() + "%");
