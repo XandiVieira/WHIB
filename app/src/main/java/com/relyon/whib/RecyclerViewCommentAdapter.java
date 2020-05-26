@@ -94,6 +94,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             final Comment comment = (Comment) elements.get(position);
 
             holder.ratingBar.setNumStars(5);
+            holder.ratingBar.setStepSize(0.01f);
             if (((Comment) elements.get(position)).getAlreadyRatedList().contains(Util.getUser().getUserUID()) || ((Comment) elements.get(position)).getAuthorsUID().equals(Util.getUser().getUserUID())) {
                 holder.ratingBar.setRating(comment.getRating());
                 holder.ratingTV.setText(String.format("%.2f", comment.getRating()));
@@ -138,8 +139,8 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                         if (user.isExtra()) {
                             LayerDrawable stars = (LayerDrawable) holder.ratingBar.getProgressDrawable();
                             stars.getDrawable(2).setColorFilter(Color.parseColor("#AFC2D5"), PorterDuff.Mode.SRC_ATOP);
-                            stars.getDrawable(1).setColorFilter(Color.parseColor("#AFC2D5"), PorterDuff.Mode.SRC_ATOP);
-                            stars.getDrawable(0).setColorFilter(Color.parseColor("#AFC2D5"), PorterDuff.Mode.SRC_ATOP);
+                            stars.getDrawable(1).setColorFilter(Color.parseColor("#2B4162"), PorterDuff.Mode.SRC_ATOP);
+                            stars.getDrawable(0).setColorFilter(Color.parseColor("#2B4162"), PorterDuff.Mode.SRC_ATOP);
                             holder.bg.setBackgroundResource(R.drawable.rounded_accent_double);
                             holder.commentLayout.setBackgroundResource(R.drawable.rounded_accent_double);
                         }

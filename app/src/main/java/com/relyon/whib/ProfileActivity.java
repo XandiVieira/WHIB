@@ -161,6 +161,7 @@ public class ProfileActivity extends AppCompatActivity {
         Glide.with(getApplicationContext()).load(user.getPhotoPath()).apply(RequestOptions.circleCropTransform()).into(photo);
 
         userName.setText(user.getUserName());
+        ratingBar.setStepSize(0.01f);
         if (user.getValuation().getSumOfRatings() != 0 && user.getValuation().getNumberOfRatings() != 0) {
             ratingBar.setRating(user.getValuation().getSumOfRatings() / user.getValuation().getNumberOfRatings());
             rating.setText(String.format("%.2f", user.getValuation().getSumOfRatings() / user.getValuation().getNumberOfRatings()));

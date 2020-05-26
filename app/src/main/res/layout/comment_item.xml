@@ -97,8 +97,7 @@
                     android:progressBackgroundTint="@color/black"
                     android:progressTint="@color/colorAccent"
                     android:rating="0.0"
-                    android:secondaryProgressTint="@color/colorPrimary"
-                    android:stepSize="0.1" />
+                    android:secondaryProgressTint="@color/colorPrimary" />
 
                 <TextView
                     android:id="@+id/ratingTV"
