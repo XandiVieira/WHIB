@@ -20,7 +20,7 @@
             android:layout_margin="3dp"
             android:layout_weight="1"
             android:fontFamily="@font/baloo"
-            android:text="Assunto 1"
+            android:lineSpacingExtra="-7dp"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="@dimen/big_text" />
 

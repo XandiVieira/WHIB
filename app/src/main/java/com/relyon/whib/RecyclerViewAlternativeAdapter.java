@@ -60,9 +60,9 @@ public class RecyclerViewAlternativeAdapter extends RecyclerView.Adapter<Recycle
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Alternative alternative = survey.getAlternatives().get(position);
         float percentage = ((float) alternative.getNumVotes() / (float) survey.getNumVotes()) * 100;
+        holder.text.setText(alternative.getText());
         if (!survey.getAlreadyVoted().contains(Util.getUser().getUserUID())) {
             holder.partials.setVisibility(View.GONE);
-            holder.text.setText(alternative.getText());
             holder.bg.setOnClickListener(v -> {
                 Util.getmDatabaseRef().child("survey").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
