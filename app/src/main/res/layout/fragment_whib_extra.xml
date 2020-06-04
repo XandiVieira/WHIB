@@ -1,43 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:gravity="center"
     android:layout_margin="5dp"
+    android:gravity="center"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="@dimen/elevation1"
-        android:background="@color/white"
-        android:orientation="vertical"
         android:layout_gravity="center"
+        android:layout_margin="3dp"
+        android:background="@color/white"
+        android:elevation="@dimen/elevation1"
         android:gravity="center"
-        android:layout_margin="3dp">
+        android:orientation="vertical">
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_gravity="center"
             android:layout_height="wrap_content"
-            android:src="@drawable/whib_extra50"/>
+            android:layout_gravity="center"
+            android:src="@drawable/whib_extra50" />
 
         <TextView
             android:id="@+id/text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/title_extra"
-            android:lineSpacingExtra="@dimen/text_spacing"
-            android:fontFamily="@font/baloo"
-            android:textColor="@color/colorPrimaryDark"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:textSize="@dimen/normal_text"
             android:background="@color/white"
-            android:padding="5dp"/>
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:lineSpacingExtra="@dimen/text_spacing"
+            android:padding="5dp"
+            android:text="@string/title_extra"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/normal_text" />
 
     </LinearLayout>
 
@@ -45,23 +43,21 @@
         android:id="@+id/resourceLV"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_marginTop="5dp"
-        android:elevation="@dimen/elevation1">
-    </ListView>
+        android:layout_weight="1"
+        android:elevation="@dimen/elevation1" />
 
-<Button
-    android:id="@+id/signWhibExtraBT"
-    android:layout_width="wrap_content"
-    android:layout_height="40dp"
-    android:text="@string/sign_whib_extra"
-    android:background="@drawable/rounded_accent"
-    android:textColor="@color/colorPrimaryDark"
-    android:fontFamily="@font/baloo"
-    android:layout_marginTop="5dp"
-    android:textSize="@dimen/normal_text"
-    android:layout_gravity="center"
-    android:gravity="center"
-    android:padding="5dp"/>
-
+    <Button
+        android:id="@+id/signWhibExtraBT"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/rounded_accent"
+        android:fontFamily="@font/baloo"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="@string/sign_whib_extra"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/normal_text" />
 </LinearLayout>

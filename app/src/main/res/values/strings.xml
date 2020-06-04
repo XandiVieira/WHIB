@@ -128,6 +128,16 @@
     <string name="no_reports">Não há nenhuma denúncia para ser avaliada!</string>
     <string name="no_charges_on_you">Você não recebeu nenhuma denúncia!</string>
 
+    <string name="subscription_period_prompt">Select your subscription period</string>
+    <string name="subscription_resignup_prompt">To reactivate your subscription, select your subscription period</string>
+    <string name="subscription_update_prompt">To change your subscription, select your new subscription period</string>
+    <string name="subscription_period_monthly">1 Mês R$5.99</string>
+    <string name="subscription_period_threemonth">3 Meses R$15.99</string>
+    <string name="subscription_period_sixmonth">6 Meses R$29.99</string>
+    <string name="subscription_period_yearly">1 Ano R$45.99</string>
+    <string name="subscription_prompt_continue">Continue</string>
+    <string name="subscription_prompt_cancel">Cancel</string>
+
     <string-array name="menu_settings">
         <item>Preferências</item>
         <item>WHIB extra</item>

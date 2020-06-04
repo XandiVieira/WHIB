@@ -19,14 +19,14 @@ import java.util.ArrayList;
 
 public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerViewArgumentAdapter.ViewHolder> {
 
-    private final ArrayList<Argument> elementos;
+    private final ArrayList<Argument> elements;
     private Context context;
     SimpleDateFormat dateFormat_date = new SimpleDateFormat("yyyy/MM/dd - HH:mm:ss");
     SimpleDateFormat dateFormat_time = new SimpleDateFormat("HH:mm:ss");
 
-    RecyclerViewArgumentAdapter(Context context, ArrayList<Argument> elementos) {
+    RecyclerViewArgumentAdapter(Context context, ArrayList<Argument> elements) {
         this.context = context;
-        this.elementos = elementos;
+        this.elements = elements;
     }
 
     @NonNull
@@ -38,7 +38,7 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public void onBindViewHolder(@NonNull final RecyclerViewArgumentAdapter.ViewHolder holder, final int position) {
-        Argument argument = elementos.get(position);
+        Argument argument = elements.get(position);
         if (Util.getUser().getUserUID().equals(argument.getAuthorsUID())) {
             holder.userName.setVisibility(View.GONE);
             holder.argumentLayout.setBackground(context.getResources().getDrawable(R.drawable.square_primary_dark));
@@ -57,7 +57,7 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public int getItemCount() {
-        return elementos.size();
+        return elements.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

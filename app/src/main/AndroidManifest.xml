@@ -3,6 +3,7 @@
     package="com.relyon.whib">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.Android.vending.BILLING" />
 
     <application
         android:allowBackup="true"
@@ -12,7 +13,8 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".NextSubjectVoting"></activity>
+
+        <activity android:name=".NextSubjectVoting" />
         <activity android:name=".ContactActivity" />
         <activity android:name=".PrivacyPolicyActivity" />
         <activity android:name=".TermsActivity" />

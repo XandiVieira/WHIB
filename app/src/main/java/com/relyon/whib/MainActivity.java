@@ -94,7 +94,11 @@ public class MainActivity extends AppCompatActivity {
             if (user.isExtra()) {
                 goVoteScreen();
             } else {
-                openExtraPromotion();
+                if (Util.getUser().isExtra()) {
+                    startActivity(new Intent(getApplicationContext(), NextSubjectVoting.class));
+                } else {
+                    openExtraPromotion();
+                }
             }
             Toast.makeText(getApplicationContext(), "Em construção.", Toast.LENGTH_SHORT).show();
         });
@@ -105,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "Assine a versão extra!", Toast.LENGTH_SHORT).show();
         DialogPromoExtra cdd = new DialogPromoExtra(this);
         cdd.show();
+        startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
     }
 
     private void goVoteScreen() {
@@ -254,18 +259,15 @@ public class MainActivity extends AppCompatActivity {
 //Attributes no set here - Complaints - History -  Following - groupList - Doubts - Items
 
     private Preferences setUserPreferences() {
-
         return new Preferences(true, true, true, true);
     }
 
 
     private Valuation setUserValuation() {
-
         return new Valuation(0, 0, 0, 0, 0, 0);
     }
 
     private UserTempInfo setUserTempInfo() {
-
         return new UserTempInfo(null, null, true, false);
     }
 
