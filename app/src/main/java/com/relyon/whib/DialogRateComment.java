@@ -49,7 +49,7 @@ public class DialogRateComment extends Dialog implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.rate_comment_dialog);
+        setContentView(R.layout.dialog_rate_comment);
         Button rate = findViewById(R.id.rate_Button);
         Button cancel = findViewById(R.id.cancel_button);
         MaterialRatingBar ratingBar = findViewById(R.id.ratingBar);

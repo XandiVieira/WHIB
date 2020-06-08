@@ -26,7 +26,7 @@ public class DialogPromoExtra extends Dialog implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.extra_version_dialog);
+        setContentView(R.layout.dialog_extra_version);
         yes = findViewById(R.id.advantagesButton);
         no = findViewById(R.id.continueButton);
         closeIcon = findViewById(R.id.closeIcon);

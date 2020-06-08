@@ -37,7 +37,7 @@ public class DialogReport extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.report_user_dialog);
+        setContentView(R.layout.dialog_report_user);
         Button report = findViewById(R.id.report_button);
         reason1 = findViewById(R.id.reason1);
         reason2 = findViewById(R.id.reason2);
@@ -98,7 +98,7 @@ public class DialogReport extends Dialog {
             final Dialog dialog = new Dialog(activity);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setCancelable(true);
-            dialog.setContentView(R.layout.reverse_report_dialog);
+            dialog.setContentView(R.layout.dialog_reverse_report);
             if (dialog.getWindow() != null) {
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             }

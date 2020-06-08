@@ -32,7 +32,7 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.argument_item, parent, false);
+        View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_argument, parent, false);
         return new ViewHolder(rowView);
     }
 

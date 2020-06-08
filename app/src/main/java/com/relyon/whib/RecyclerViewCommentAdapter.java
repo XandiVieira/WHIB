@@ -61,14 +61,14 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         switch (viewType) {
             case NATIVE_EXPRESS_AD_VIEW_TYPE:
                 View unifiedNativeLayoutView = LayoutInflater.from(
-                        viewGroup.getContext()).inflate(R.layout.ad_unified,
+                        viewGroup.getContext()).inflate(R.layout.item_ad_unified,
                         viewGroup, false);
                 return new UnifiedNativeAdViewHolder(unifiedNativeLayoutView);
             case COMMENT_ITEM_VIEW_TYPE:
                 // Fall through.
             default:
                 View menuItemLayoutView = LayoutInflater.from(viewGroup.getContext())
-                        .inflate(R.layout.comment_item, viewGroup, false);
+                        .inflate(R.layout.item_comment, viewGroup, false);
                 return new CommentViewHolder(menuItemLayoutView);
         }
     }

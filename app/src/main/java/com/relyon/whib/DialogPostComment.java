@@ -42,7 +42,7 @@ public class DialogPostComment extends Dialog implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.post_comment_dialog);
+        setContentView(R.layout.dialog_post_comment);
         comment = findViewById(R.id.commentButton);
         commentBox = findViewById(R.id.commentBox);
         ImageView closeIcon = findViewById(R.id.closeIcon);

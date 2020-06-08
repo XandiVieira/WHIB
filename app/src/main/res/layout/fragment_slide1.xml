@@ -21,5 +21,4 @@
         android:shadowColor="@color/colorAccent"
         android:textColorHint="@color/colorAccent"
         android:textColorLink="@color/colorAccent"/>
-
 </LinearLayout>

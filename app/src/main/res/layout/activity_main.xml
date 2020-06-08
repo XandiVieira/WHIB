@@ -132,7 +132,7 @@
             android:fontFamily="@font/baloo"
             android:gravity="center"
             android:paddingHorizontal="15dp"
-            android:text="@string/chose_next_subject"
+            android:text="@string/choose_next_subject"
             android:textAlignment="center"
             android:textSize="@dimen/normal_text" />
     </LinearLayout>

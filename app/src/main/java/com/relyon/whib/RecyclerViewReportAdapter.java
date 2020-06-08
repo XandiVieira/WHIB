@@ -26,7 +26,7 @@ public class RecyclerViewReportAdapter extends RecyclerView.Adapter<RecyclerView
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.report_item, parent, false);
+        View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_report, parent, false);
         return new ViewHolder(rowView);
     }
 

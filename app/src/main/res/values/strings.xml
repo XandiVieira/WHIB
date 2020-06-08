@@ -41,7 +41,7 @@
 
     <string name="exit_icon">Icone sair</string>
     <string name="right_arrow_icon">Icone seta direita</string>
-    <string name="chose_next_subject">Escolha o próximo assunto</string>
+    <string name="choose_next_subject">Escolha o próximo assunto</string>
     <string name="back_icon">Icone seta esquerda</string>
 
     <string name="sair">sair</string>
@@ -132,11 +132,30 @@
     <string name="subscription_resignup_prompt">To reactivate your subscription, select your subscription period</string>
     <string name="subscription_update_prompt">To change your subscription, select your new subscription period</string>
     <string name="subscription_period_monthly">1 Mês R$5.99</string>
-    <string name="subscription_period_threemonth">3 Meses R$15.99</string>
     <string name="subscription_period_sixmonth">6 Meses R$29.99</string>
     <string name="subscription_period_yearly">1 Ano R$45.99</string>
     <string name="subscription_prompt_continue">Continue</string>
     <string name="subscription_prompt_cancel">Cancel</string>
+    <string name="get_whib_extra">Assine o WHIB Extra</string>
+    <string name="monthly">1 \n mês</string>
+    <string name="quarterly">3 \n meses</string>
+    <string name="semiannual">6 \n meses</string>
+    <string name="yearly">1 \n ano</string>
+    <string name="sign">Assinar</string>
+    <string name="next">Continuar</string>
+    <string name="most_popular_plan">Plano mais popular</string>
+    <string name="cancel_subscription_text">Cancele sua assinatura a qualquer momento, consule nossa política de privacidade para mais informações.</string>
+    <string name="turn_off_ads">Desligar Aúncios</string>
+    <string name="do_not_see_ads">Não veja mais anúncios em nenhuma parte</string>
+    <string name="help_to_choose">Ajude a escolher os próximos assuntos que serão debatidos no app</string>
+    <string name="highlight_your_comments">Destaque seus comentários</string>
+    <string name="get_your_comments_highlighted">Todos seus comentários destacados da maioria, chame a atenção e receba mais avaliações</string>
+    <string name="get_in_full_servers">Entre em servidores lotados</string>
+    <string name="get_in_full_servers_explanation">Entre nos servidores lotados e participe das melhores discussões</string>
+    <string name="choose_subscription_time">Escolha o tempo da sua inscrição</string>
+    <string name="become_exclusive">Torne-se exclusivo</string>
+    <string name="enjoy_advantges">Disfrute das vantagnes</string>
+    <string name="no_thanks">Não, obrigado</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

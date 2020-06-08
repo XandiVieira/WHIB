@@ -51,7 +51,7 @@ public class AdapterAdmServer extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        final View view = act.getLayoutInflater().inflate(R.layout.adm_server_item, parent, false);
+        final View view = act.getLayoutInflater().inflate(R.layout.item_adm_server, parent, false);
         final Server server = admServerList.get(position);
         TextView subjectTitle = view.findViewById(R.id.subjectTitle);
         final Switch disableSwitch = view.findViewById(R.id.disableServer);

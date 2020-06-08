@@ -3,7 +3,7 @@ package com.relyon.whib.util;
 public class Constants {
 
     public static final String SKU_WHIB_MONTHLY = "whib_extra";
-    public static final String SKU_WHIB_THREEMONTH = "whib_extra_3_month";
+    //public static final String SKU_WHIB_THREEMONTH = "whib_extra_3_month";
     public static final String SKU_WHIB_SIXMONTH = "whib_extra_6_month";
     public static final String SKU_WHIB_YEARLY = "whib_extra_1_year";
 

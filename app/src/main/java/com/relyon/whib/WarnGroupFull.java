@@ -20,6 +20,6 @@ public class WarnGroupFull extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.group_full_warn);
+        setContentView(R.layout.dialog_group_full_warn);
     }
 }

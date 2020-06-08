@@ -18,6 +18,7 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,7 +36,6 @@ import java.util.List;
 
 import static com.relyon.whib.util.Constants.SKU_WHIB_MONTHLY;
 import static com.relyon.whib.util.Constants.SKU_WHIB_SIXMONTH;
-import static com.relyon.whib.util.Constants.SKU_WHIB_THREEMONTH;
 import static com.relyon.whib.util.Constants.SKU_WHIB_YEARLY;
 import static com.relyon.whib.util.Constants.base64EncodedPublicKey;
 
@@ -169,14 +169,10 @@ public class TabWhibExtra extends Fragment implements IabBroadcastReceiver.IabBr
 
             // First find out which subscription is auto renewing
             Purchase whibMonthly = inventory.getPurchase(SKU_WHIB_MONTHLY);
-            Purchase whibThreeMonth = inventory.getPurchase(SKU_WHIB_THREEMONTH);
             Purchase whibSixMonth = inventory.getPurchase(SKU_WHIB_SIXMONTH);
             Purchase whibYearly = inventory.getPurchase(SKU_WHIB_YEARLY);
             if (whibMonthly != null && whibMonthly.isAutoRenewing()) {
                 mWhibSku = SKU_WHIB_MONTHLY;
-                mAutoRenewEnabled = true;
-            } else if (whibThreeMonth != null && whibThreeMonth.isAutoRenewing()) {
-                mWhibSku = SKU_WHIB_THREEMONTH;
                 mAutoRenewEnabled = true;
             } else if (whibSixMonth != null && whibSixMonth.isAutoRenewing()) {
                 mWhibSku = SKU_WHIB_SIXMONTH;
@@ -192,7 +188,6 @@ public class TabWhibExtra extends Fragment implements IabBroadcastReceiver.IabBr
             // The user is subscribed if either subscription exists, even if neither is auto
             // renewing
             mSubscribedTowhib = (whibMonthly != null && verifyDeveloperPayload(whibMonthly))
-                    || (whibThreeMonth != null && verifyDeveloperPayload(whibThreeMonth))
                     || (whibSixMonth != null && verifyDeveloperPayload(whibSixMonth))
                     || (whibYearly != null && verifyDeveloperPayload(whibYearly));
             Log.d(TAG, "User " + (mSubscribedTowhib ? "HAS" : "DOES NOT HAVE")
@@ -226,13 +221,11 @@ public class TabWhibExtra extends Fragment implements IabBroadcastReceiver.IabBr
         CharSequence[] options;
         if (!mSubscribedTowhib || !mAutoRenewEnabled) {
             // Both subscription options should be available
-            options = new CharSequence[4];
+            options = new CharSequence[3];
             options[0] = getString(R.string.subscription_period_monthly);
-            options[1] = getString(R.string.subscription_period_threemonth);
-            options[2] = getString(R.string.subscription_period_sixmonth);
-            options[3] = getString(R.string.subscription_period_yearly);
+            options[1] = getString(R.string.subscription_period_sixmonth);
+            options[2] = getString(R.string.subscription_period_yearly);
             mFirstChoiceSku = SKU_WHIB_MONTHLY;
-            mSecondChoiceSku = SKU_WHIB_THREEMONTH;
             mThirdChoiceSku = SKU_WHIB_SIXMONTH;
             mFourthChoiceSku = SKU_WHIB_YEARLY;
         } else {
@@ -241,37 +234,22 @@ public class TabWhibExtra extends Fragment implements IabBroadcastReceiver.IabBr
             switch (mWhibSku) {
                 case SKU_WHIB_MONTHLY:
                     // Give the option to upgrade below
-                    options[0] = getString(R.string.subscription_period_threemonth);
                     options[1] = getString(R.string.subscription_period_sixmonth);
                     options[2] = getString(R.string.subscription_period_yearly);
-                    mFirstChoiceSku = SKU_WHIB_THREEMONTH;
-                    mSecondChoiceSku = SKU_WHIB_SIXMONTH;
-                    mThirdChoiceSku = SKU_WHIB_YEARLY;
-                    break;
-                case SKU_WHIB_THREEMONTH:
-                    // Give the option to upgrade or downgrade below
-                    options[0] = getString(R.string.subscription_period_monthly);
-                    options[1] = getString(R.string.subscription_period_sixmonth);
-                    options[2] = getString(R.string.subscription_period_yearly);
-                    mFirstChoiceSku = SKU_WHIB_MONTHLY;
                     mSecondChoiceSku = SKU_WHIB_SIXMONTH;
                     mThirdChoiceSku = SKU_WHIB_YEARLY;
                     break;
                 case SKU_WHIB_SIXMONTH:
                     // Give the option to upgrade or downgrade below
                     options[0] = getString(R.string.subscription_period_monthly);
-                    options[1] = getString(R.string.subscription_period_threemonth);
                     options[2] = getString(R.string.subscription_period_yearly);
                     mFirstChoiceSku = SKU_WHIB_MONTHLY;
-                    mSecondChoiceSku = SKU_WHIB_THREEMONTH;
                     mThirdChoiceSku = SKU_WHIB_YEARLY;
                     break;
                 default:
                     // Give the option to upgrade or downgrade below
                     options[0] = getString(R.string.subscription_period_monthly);
-                    options[1] = getString(R.string.subscription_period_threemonth);
                     options[2] = getString(R.string.subscription_period_sixmonth);
-                    mFirstChoiceSku = SKU_WHIB_THREEMONTH;
                     mSecondChoiceSku = SKU_WHIB_SIXMONTH;
                     mThirdChoiceSku = SKU_WHIB_YEARLY;
                     break;
@@ -288,13 +266,18 @@ public class TabWhibExtra extends Fragment implements IabBroadcastReceiver.IabBr
             titleResId = R.string.subscription_update_prompt;
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        /*AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(titleResId)
-                .setSingleChoiceItems(options, 0 /* checkedItem */, this)
+                .setSingleChoiceItems(options, 0, this)
                 .setPositiveButton(R.string.subscription_prompt_continue, this)
                 .setNegativeButton(R.string.subscription_prompt_cancel, this);
         AlertDialog dialog = builder.create();
-        dialog.show();
+        dialog.show();*/
+        FragmentManager fm = getFragmentManager();
+        DialogChooseSubscription dialog = DialogChooseSubscription.newInstance("Some Title");
+        if (fm != null) {
+            dialog.show(fm, "fragment_edit_name");
+        }
     }
 
     @Override
@@ -389,7 +372,6 @@ public class TabWhibExtra extends Fragment implements IabBroadcastReceiver.IabBr
             Log.d(TAG, "Purchase successful.");
 
             if (purchase.getSku().equals(SKU_WHIB_MONTHLY)
-                    || purchase.getSku().equals(SKU_WHIB_THREEMONTH)
                     || purchase.getSku().equals(SKU_WHIB_SIXMONTH)
                     || purchase.getSku().equals(SKU_WHIB_YEARLY)) {
                 // bought the rasbita subscription
