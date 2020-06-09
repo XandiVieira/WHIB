@@ -43,9 +43,12 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
     public Dialog d;
     private static final int NUM_PAGES = 4;
     private ViewPager mPager;
-    private LinearLayout option1;
-    private LinearLayout option2;
-    private LinearLayout option3;
+    private LinearLayout border1;
+    private LinearLayout border2;
+    private LinearLayout border3;
+    private LinearLayout background;
+    private Button confirm;
+    private int color;
 
     // Does the user have an active subscription to the whib plan?
     boolean mSubscribedToWhib = false;
@@ -60,7 +63,7 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
     String mThirdChoiceSku = SKU_WHIB_YEARLY;
 
     // Used to select between subscribing on a monthly, three month, six month or yearly basis
-    String mSelectedSubscriptionPeriod = mThirdChoiceSku;
+    String mSelectedSubscriptionPeriod = mSecondChoiceSku;
 
     // SKU for our subscription
 
@@ -110,10 +113,11 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         TextView noThanks = view.findViewById(R.id.noThanks);
-        Button confirm = view.findViewById(R.id.confirm);
-        option1 = view.findViewById(R.id.option1);
-        option2 = view.findViewById(R.id.option2);
-        option3 = view.findViewById(R.id.option3);
+        confirm = view.findViewById(R.id.confirm);
+        border1 = view.findViewById(R.id.border1);
+        border2 = view.findViewById(R.id.border2);
+        border3 = view.findViewById(R.id.border3);
+        background = view.findViewById(R.id.background);
 
         noThanks.setOnClickListener(v -> dismiss());
 
@@ -154,25 +158,26 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
             mSecondChoiceSku = "";
         });
 
-        option1.setOnClickListener(v -> {
+        border1.setOnClickListener(v -> {
             mSelectedSubscriptionPeriod = mFirstChoiceSku;
-            option1.setBackground(getContext().getResources().getDrawable(R.drawable.rounded_accent));
-            option2.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
-            option3.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
+            changeColor(border1);
+            border2.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
+            border3.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
+
         });
 
-        option2.setOnClickListener(v -> {
+        border2.setOnClickListener(v -> {
             mSelectedSubscriptionPeriod = mSecondChoiceSku;
-            option1.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
-            option2.setBackground(getContext().getResources().getDrawable(R.drawable.rounded_accent));
-            option3.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
+            border1.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
+            changeColor(border2);
+            border3.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
         });
 
-        option3.setOnClickListener(v -> {
+        border3.setOnClickListener(v -> {
             mSelectedSubscriptionPeriod = mThirdChoiceSku;
-            option1.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
-            option2.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
-            option3.setBackground(getContext().getResources().getDrawable(R.drawable.rounded_accent));
+            border1.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
+            border2.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
+            changeColor(border3);
         });
 
         new Thread(new Runnable() {
@@ -189,11 +194,47 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
                             } else {
                                 mPager.setCurrentItem(mPager.getCurrentItem() + 1);
                             }
+                            if (mPager.getCurrentItem() == 0) {
+                                background.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_green));
+                                confirm.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_green_horizontal));
+                                color = R.drawable.rounded_dark_green;
+                            } else if (mPager.getCurrentItem() == 1) {
+                                background.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_orange));
+                                confirm.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_orange_horizontal));
+                                color = R.drawable.rounded_dark_orange;
+                            } else if (mPager.getCurrentItem() == 2) {
+                                background.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_blue));
+                                confirm.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_blue_horizontal));
+                                color = R.drawable.rounded_dark_blue;
+                            } else if (mPager.getCurrentItem() == 3) {
+                                background.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_purple));
+                                confirm.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_purple_horizontal));
+                                color = R.drawable.rounded_dark_purple;
+                            }
+                            if (mSelectedSubscriptionPeriod.equals(mFirstChoiceSku)) {
+                                border1.setBackground(getContext().getResources().getDrawable(color));
+                            } else if (mSelectedSubscriptionPeriod.equals(mSecondChoiceSku)) {
+                                border2.setBackground(getContext().getResources().getDrawable(color));
+                            } else if (mSelectedSubscriptionPeriod.equals(mThirdChoiceSku)) {
+                                border3.setBackground(getContext().getResources().getDrawable(color));
+                            }
                         }
                     });
                 }
             }
         }).start();
+    }
+
+    private void changeColor(LinearLayout option) {
+        if (mPager.getCurrentItem() == 0) {
+            option.setBackground(getContext().getResources().getDrawable(R.drawable.rounded_dark_green));
+        } else if (mPager.getCurrentItem() == 1) {
+            option.setBackground(getContext().getResources().getDrawable(R.drawable.rounded_accent));
+        } else if (mPager.getCurrentItem() == 2) {
+            option.setBackground(getContext().getResources().getDrawable(R.drawable.rounded_dark_blue));
+        } else if (mPager.getCurrentItem() == 3) {
+            option.setBackground(getContext().getResources().getDrawable(R.drawable.rounded_dark_purple));
+        }
     }
 
     private void handleSelection() {

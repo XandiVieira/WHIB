@@ -4,13 +4,14 @@
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:layout_margin="10dp"
     android:orientation="vertical"
     app:cardBackgroundColor="@android:color/transparent">
 
     <LinearLayout
+        android:id="@+id/background"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
         android:background="@drawable/rounded_primary_double"
         android:orientation="vertical">
 
@@ -24,83 +25,110 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="2dp"
-            android:baselineAligned="false"
             android:elevation="10dp"
             android:orientation="horizontal"
             android:paddingHorizontal="1dp">
 
             <LinearLayout
-                android:id="@+id/option1"
+                android:id="@+id/border1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="1dp"
                 android:layout_weight="1"
-                android:background="@drawable/corner_white"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/duration1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/baloo"
-                    android:gravity="center"
-                    android:lineSpacingExtra="-10dp"
-                    android:text="@string/monthly"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="@dimen/subtitle" />
-
-                <TextView
-                    android:id="@+id/price1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/baloo"
-                    android:gravity="center"
-                    android:lineSpacingExtra="-10dp"
-                    android:text="R$ 5,99/mês"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="@dimen/big_text" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/option2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="1dp"
-                android:layout_weight="1"
-                android:background="@drawable/corner_white"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:padding="5dp">
 
-                <TextView
-                    android:id="@+id/duration2"
+                <LinearLayout
+                    android:id="@+id/option1"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/baloo"
-                    android:gravity="center"
-                    android:lineSpacingExtra="-10dp"
-                    android:text="@string/quarterly"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="@dimen/normal_text" />
+                    android:layout_height="match_parent"
+                    android:layout_margin="1dp"
+                    android:background="@drawable/corner_white"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/price2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/baloo"
-                    android:gravity="center"
-                    android:lineSpacingExtra="-10dp"
-                    android:text="R$ 5,33/mês"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="@dimen/big_text" />
+                    <TextView
+                        android:id="@+id/duration1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/baloo"
+                        android:gravity="center"
+                        android:lineSpacingExtra="-15dp"
+                        android:text="@string/monthly"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/subtitle" />
 
+                    <TextView
+                        android:id="@+id/price1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/baloo"
+                        android:gravity="center"
+                        android:lineSpacingExtra="-10dp"
+                        android:text="R$ 5,99/mês"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/big_text" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/border2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/rounded_accent"
+                android:minHeight="130dp"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <LinearLayout
+                    android:id="@+id/option2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/duration2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/baloo"
+                        android:gravity="center"
+                        android:lineSpacingExtra="-15dp"
+                        android:text="@string/semiannual"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/subtitle" />
+
+                    <TextView
+                        android:id="@+id/price2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/baloo"
+                        android:gravity="center"
+                        android:lineSpacingExtra="-10dp"
+                        android:text="R$ 3,99/mês"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/big_text" />
+
+                    <TextView
+                        android:id="@+id/most_popular_plan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:lineSpacingExtra="-5dp"
+                        android:text="@string/most_popular_plan"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/small_text"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/border3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:orientation="vertical"
                 android:padding="5dp">
 
@@ -109,7 +137,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:background="@color/colorAccent"
+                    android:background="@drawable/corner_white"
                     android:orientation="vertical">
 
                     <TextView
@@ -118,8 +146,8 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/baloo"
                         android:gravity="center"
-                        android:lineSpacingExtra="-10dp"
-                        android:text="@string/semiannual"
+                        android:lineSpacingExtra="-15dp"
+                        android:text="@string/yearly"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="@dimen/subtitle" />
 
@@ -130,52 +158,11 @@
                         android:fontFamily="@font/baloo"
                         android:gravity="center"
                         android:lineSpacingExtra="-10dp"
-                        android:text="R$ 3,99/mês"
+                        android:text="R$ 3,84/mês"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="@dimen/big_text" />
+
                 </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/most_popular_plan"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="@dimen/small_text"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/option4"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="1dp"
-                android:layout_weight="1"
-                android:background="@drawable/corner_white"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/duration4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/baloo"
-                    android:gravity="center"
-                    android:lineSpacingExtra="-10dp"
-                    android:text="@string/yearly"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="@dimen/subtitle" />
-
-                <TextView
-                    android:id="@+id/price4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/baloo"
-                    android:gravity="center"
-                    android:lineSpacingExtra="-10dp"
-                    android:text="R$ 3,84/mês"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="@dimen/big_text" />
-
             </LinearLayout>
         </LinearLayout>
 
@@ -196,9 +183,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginVertical="5dp"
-            android:background="@drawable/rounded_primary"
+            android:background="@drawable/corner_white"
             android:elevation="10dp"
             android:paddingHorizontal="25dp"
+            android:paddingVertical="5dp"
             android:text="@string/no_thanks"
             android:textColor="@color/black"
             android:textSize="@dimen/small_text" />

@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
-        android:lineSpacingExtra="-10dp"
+        android:lineSpacingExtra="-15dp"
         android:shadowColor="@color/colorAccent"
         android:text="@string/turn_off_ads"
         android:textAllCaps="false"
@@ -38,7 +38,7 @@
         android:textColorHighlight="@color/colorAccent"
         android:textColorHint="@color/colorAccent"
         android:textColorLink="@color/colorAccent"
-        android:textSize="24sp"
+        android:textSize="@dimen/subtitle"
         app:fontFamily="@font/baloo" />
 
     <TextView
