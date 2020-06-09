@@ -2,6 +2,7 @@ package com.relyon.whib;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.relyon.whib.util.IabBroadcastReceiver;
 import com.relyon.whib.util.IabHelper;
 import com.relyon.whib.util.IabResult;
+import com.relyon.whib.util.Inventory;
 import com.relyon.whib.util.Purchase;
 
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ import static com.relyon.whib.TabWhibExtra.TAG;
 import static com.relyon.whib.util.Constants.SKU_WHIB_MONTHLY;
 import static com.relyon.whib.util.Constants.SKU_WHIB_SIXMONTH;
 import static com.relyon.whib.util.Constants.SKU_WHIB_YEARLY;
+import static com.relyon.whib.util.Constants.base64EncodedPublicKey;
 
 public class DialogChooseSubscription extends DialogFragment implements IabBroadcastReceiver.IabBroadcastListener {
 
@@ -106,6 +109,42 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
             getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
             getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
+
+        // Create the helper, passing it our context and the public key to verify signatures with
+        Log.d(TAG, "Creating IAB helper.");
+        mHelper = new IabHelper(getContext(), base64EncodedPublicKey);
+
+        // enable debug logging (for a production application, you should set this to false).
+        mHelper.enableDebugLogging(true);
+
+        // Start setup. This is asynchronous and the specified listener
+        // will be called once setup completes.
+        Log.d(TAG, "Starting setup.");
+        mHelper.startSetup(result -> {
+            Log.d(TAG, "Setup finished.");
+
+            if (!result.isSuccess()) {
+                // Oh noes, there was a problem.
+                complain("Problem setting up in-app billing: " + result);
+                return;
+            }
+
+            // Have we been disposed of in the meantime? If so, quit.
+            if (mHelper == null) return;
+
+            mBroadcastReceiver = new IabBroadcastReceiver(this);
+            IntentFilter broadcastFilter = new IntentFilter(IabBroadcastReceiver.ACTION);
+            getContext().registerReceiver(mBroadcastReceiver, broadcastFilter);
+
+            // IAB is fully set up. Now, let's get an inventory of stuff we own.
+            Log.d(TAG, "Setup successful. Querying inventory.");
+            try {
+                mHelper.queryInventoryAsync(mGotInventoryListener);
+            } catch (IabHelper.IabAsyncInProgressException e) {
+                complain("Error querying inventory. Another async operation in progress.");
+            }
+        });
+
         return inflater.inflate(R.layout.dialog_choose_subscribe, parent);
     }
 
@@ -240,10 +279,6 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
     private void handleSelection() {
     }
 
-    @Override
-    public void receivedBroadcast() {
-    }
-
     private void complain(String message) {
         Log.e(TAG, "**** whib Error: " + message);
         alert("Error: " + message);
@@ -333,6 +368,65 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
         @Override
         public int getCount() {
             return NUM_PAGES;
+        }
+    }
+
+    // Listener that's called when we finish querying the items and subscriptions we own
+    private IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
+        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
+            Log.d(TAG, "Query inventory finished.");
+
+            // Have we been disposed of in the meantime? If so, quit.
+            if (mHelper == null) {
+                return;
+            }
+
+            // Is it a failure?
+            if (result.isFailure()) {
+                complain("Failed to query inventory: " + result);
+                return;
+            }
+
+            Log.d(TAG, "Query inventory was successful.");
+
+            // First find out which subscription is auto renewing
+            Purchase whibMonthly = inventory.getPurchase(SKU_WHIB_MONTHLY);
+            Purchase whibSixMonth = inventory.getPurchase(SKU_WHIB_SIXMONTH);
+            Purchase whibYearly = inventory.getPurchase(SKU_WHIB_YEARLY);
+            if (whibMonthly != null && whibMonthly.isAutoRenewing()) {
+                mWhibSku = SKU_WHIB_MONTHLY;
+                mAutoRenewEnabled = true;
+            } else if (whibSixMonth != null && whibSixMonth.isAutoRenewing()) {
+                mWhibSku = SKU_WHIB_SIXMONTH;
+                mAutoRenewEnabled = true;
+            } else if (whibYearly != null && whibYearly.isAutoRenewing()) {
+                mWhibSku = SKU_WHIB_YEARLY;
+                mAutoRenewEnabled = true;
+            } else {
+                mWhibSku = "";
+                mAutoRenewEnabled = false;
+            }
+
+            // The user is subscribed if either subscription exists, even if neither is auto
+            // renewing
+            mSubscribedToWhib = (whibMonthly != null && verifyDeveloperPayload(whibMonthly))
+                    || (whibSixMonth != null && verifyDeveloperPayload(whibSixMonth))
+                    || (whibYearly != null && verifyDeveloperPayload(whibYearly));
+            Log.d(TAG, "User " + (mSubscribedToWhib ? "HAS" : "DOES NOT HAVE")
+                    + " infinite gas subscription.");
+
+            Log.d(TAG, "Initial inventory query finished; enabling main UI.");
+        }
+    };
+
+    @Override
+    public void receivedBroadcast() {
+        // Received a broadcast notification that the inventory of items has changed
+        Log.d(TAG, "Received broadcast notification. Querying inventory.");
+        try {
+            mHelper.queryInventoryAsync(mGotInventoryListener);
+        } catch (IabHelper.IabAsyncInProgressException e) {
+            complain("Error querying inventory. Another async operation in progress.");
         }
     }
 }
