@@ -104,6 +104,7 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup parent, Bundle bundle) {
+        View inflate = inflater.inflate(R.layout.dialog_choose_subscribe, parent);
         // Set to adjust screen height automatically, when soft keyboard appears on screen
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
@@ -145,7 +146,7 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
             }
         });
 
-        return inflater.inflate(R.layout.dialog_choose_subscribe, parent);
+        return inflate;
     }
 
     @Override
@@ -167,6 +168,22 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
      */
         PagerAdapter mPagerAdapter = new ScreenSlidePagerAdapter(getChildFragmentManager());
         mPager.setAdapter(mPagerAdapter);
+
+        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                handleColors();
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         confirm.setOnClickListener(v -> {
             String payload = "";
@@ -233,35 +250,41 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
                             } else {
                                 mPager.setCurrentItem(mPager.getCurrentItem() + 1);
                             }
-                            if (mPager.getCurrentItem() == 0) {
-                                background.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_green));
-                                confirm.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_green_horizontal));
-                                color = R.drawable.rounded_dark_green;
-                            } else if (mPager.getCurrentItem() == 1) {
-                                background.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_orange));
-                                confirm.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_orange_horizontal));
-                                color = R.drawable.rounded_dark_orange;
-                            } else if (mPager.getCurrentItem() == 2) {
-                                background.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_blue));
-                                confirm.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_blue_horizontal));
-                                color = R.drawable.rounded_dark_blue;
-                            } else if (mPager.getCurrentItem() == 3) {
-                                background.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_purple));
-                                confirm.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_purple_horizontal));
-                                color = R.drawable.rounded_dark_purple;
-                            }
-                            if (mSelectedSubscriptionPeriod.equals(mFirstChoiceSku)) {
-                                border1.setBackground(getContext().getResources().getDrawable(color));
-                            } else if (mSelectedSubscriptionPeriod.equals(mSecondChoiceSku)) {
-                                border2.setBackground(getContext().getResources().getDrawable(color));
-                            } else if (mSelectedSubscriptionPeriod.equals(mThirdChoiceSku)) {
-                                border3.setBackground(getContext().getResources().getDrawable(color));
+                            if (getContext() != null) {
+                                handleColors();
                             }
                         }
                     });
                 }
             }
         }).start();
+    }
+
+    public void handleColors() {
+        if (mPager.getCurrentItem() == 0) {
+            background.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_green));
+            confirm.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_green_horizontal));
+            color = R.drawable.rounded_dark_green;
+        } else if (mPager.getCurrentItem() == 1) {
+            background.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_orange));
+            confirm.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_orange_horizontal));
+            color = R.drawable.rounded_accent;
+        } else if (mPager.getCurrentItem() == 2) {
+            background.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_blue));
+            confirm.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_blue_horizontal));
+            color = R.drawable.rounded_dark_blue;
+        } else if (mPager.getCurrentItem() == 3) {
+            background.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_purple));
+            confirm.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_purple_horizontal));
+            color = R.drawable.rounded_dark_purple;
+        }
+        if (mSelectedSubscriptionPeriod.equals(mFirstChoiceSku)) {
+            border1.setBackground(getContext().getResources().getDrawable(color));
+        } else if (mSelectedSubscriptionPeriod.equals(mSecondChoiceSku)) {
+            border2.setBackground(getContext().getResources().getDrawable(color));
+        } else if (mSelectedSubscriptionPeriod.equals(mThirdChoiceSku)) {
+            border3.setBackground(getContext().getResources().getDrawable(color));
+        }
     }
 
     private void changeColor(LinearLayout option) {
@@ -341,7 +364,7 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
      * A simple pager adapter that represents 4 ScreenSlidePageFragment objects, in
      * sequence.
      */
-    private static class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
         }

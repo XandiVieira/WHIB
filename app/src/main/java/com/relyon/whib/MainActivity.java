@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -97,7 +99,10 @@ public class MainActivity extends AppCompatActivity {
                 if (Util.getUser().isExtra()) {
                     startActivity(new Intent(getApplicationContext(), NextSubjectVoting.class));
                 } else {
-                    openExtraPromotion();
+                    //openExtraPromotion();
+                    FragmentTransaction fm = ((FragmentActivity) this).getSupportFragmentManager().beginTransaction();
+                    DialogChooseSubscription dialog = DialogChooseSubscription.newInstance("Some Title");
+                    dialog.show(fm, "fragment_edit_name");
                 }
             }
             Toast.makeText(getApplicationContext(), "Em construção.", Toast.LENGTH_SHORT).show();

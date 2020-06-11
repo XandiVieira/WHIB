@@ -18,8 +18,9 @@
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/pager"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:padding="@dimen/top" />
+            android:layout_height="220dp"
+            android:padding="@dimen/top"
+            android:paddingHorizontal="3dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -74,7 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/rounded_dark_orange"
+                android:background="@drawable/rounded_accent"
                 android:minHeight="130dp"
                 android:orientation="vertical"
                 android:padding="5dp">
@@ -111,15 +112,14 @@
                         android:textSize="@dimen/big_text" />
 
                     <TextView
-                        android:id="@+id/most_popular_plan"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/totalPrice2"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:lineSpacingExtra="-5dp"
-                        android:text="@string/most_popular_plan"
+                        android:lineSpacingExtra="-3dp"
+                        android:text="@string/total_price_monthly"
                         android:textColor="@color/colorPrimaryDark"
-                        android:textSize="@dimen/small_text"
-                        android:textStyle="bold" />
+                        android:textSize="@dimen/small_text" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -162,6 +162,16 @@
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="@dimen/big_text" />
 
+                    <TextView
+                        android:id="@+id/totalPrice3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:lineSpacingExtra="-3dp"
+                        android:text="@string/total_price_yearly"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/small_text" />
+
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -171,7 +181,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:background="@drawable/background_gradient_orange_horizontal"
             android:fontFamily="@font/baloo"
             android:paddingHorizontal="50dp"
@@ -194,8 +204,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="2dp"
             android:gravity="center"
+            android:lineSpacingExtra="-3dp"
             android:text="@string/cancel_subscription_text" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
