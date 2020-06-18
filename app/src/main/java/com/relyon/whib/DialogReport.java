@@ -107,7 +107,7 @@ public class DialogReport extends Dialog {
     }
 
     private void sendReport(String explanation, String reason) {
-        final Report report = new Report(Util.getUser().getUserUID(), comment.getAuthorsUID(), reason, explanation, comment.getText());
+        final Report report = new Report(Util.getUser().getUserUID(), comment.getAuthorsUID(), reason, explanation, comment.getText(), comment.getCommentUID());
         Util.getmReportDatabaseRef().child(UUID.randomUUID().toString()).setValue(report);
         dismiss();
         Toast.makeText(getContext(), getContext().getString(R.string.report_sent), Toast.LENGTH_SHORT).show();

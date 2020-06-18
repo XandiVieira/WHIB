@@ -10,8 +10,9 @@ public class Report {
     private String text;
     private boolean fair;
     private boolean reviewed;
+    private String commentUID;
 
-    public Report(String userSenderUID, String userReceiverUID, String reason, String explanation, String text) {
+    public Report(String userSenderUID, String userReceiverUID, String reason, String explanation, String text, String commentUID) {
         this.userSenderUID = userSenderUID;
         this.userReceiverUID = userReceiverUID;
         this.reason = reason;
@@ -19,6 +20,7 @@ public class Report {
         this.text = text;
         this.fair = false;
         this.reviewed = false;
+        this.commentUID = commentUID;
     }
 
     public Report() {
@@ -86,5 +88,13 @@ public class Report {
 
     public void setReviewed(boolean reviewed) {
         this.reviewed = reviewed;
+    }
+
+    public String getCommentUID() {
+        return commentUID;
+    }
+
+    public void setCommentUID(String commentUID) {
+        this.commentUID = commentUID;
     }
 }

@@ -6,8 +6,8 @@ android {
         applicationId "com.relyon.whib"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 17
-        versionName "Teste interno - Adjusting dialog fragment"
+        versionCode 18
+        versionName "Teste interno - Adjusting to match parameters"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }

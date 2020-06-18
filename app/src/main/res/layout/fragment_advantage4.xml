@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/baloo"
         android:gravity="center"
-        android:text="@string/enjoy_advantges"
+        android:text="@string/enjoy_advantages"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="@dimen/subtitle" />
 

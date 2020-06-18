@@ -26,6 +26,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.relyon.whib.modelo.Util;
 import com.relyon.whib.util.IabBroadcastReceiver;
 import com.relyon.whib.util.IabHelper;
 import com.relyon.whib.util.IabResult;
@@ -342,12 +343,13 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
             if (purchase.getSku().equals(SKU_WHIB_MONTHLY)
                     || purchase.getSku().equals(SKU_WHIB_SIXMONTH)
                     || purchase.getSku().equals(SKU_WHIB_YEARLY)) {
-                // bought the rasbita subscription
+                // bought the whib subscription
                 Log.d(TAG, "whib subscription purchased.");
                 alert("Thank you for subscribing to whib!");
                 mSubscribedToWhib = true;
                 mAutoRenewEnabled = purchase.isAutoRenewing();
                 mWhibSku = purchase.getSku();
+                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);
             }
         }
     };
@@ -364,7 +366,7 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
      * A simple pager adapter that represents 4 ScreenSlidePageFragment objects, in
      * sequence.
      */
-    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+    private static class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
         }

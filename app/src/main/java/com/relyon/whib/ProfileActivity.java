@@ -67,7 +67,7 @@ public class ProfileActivity extends AppCompatActivity {
         empty = findViewById(R.id.empty);
         reportsLayout = findViewById(R.id.reportsLayout);
 
-        if (getIntent().hasExtra("userId")) {
+        if (getIntent().hasExtra("userId") && !getIntent().getStringExtra("userId").equals(Util.getUser().getUserUID())) {
             Util.mUserDatabaseRef.child(getIntent().getStringExtra("userId")).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

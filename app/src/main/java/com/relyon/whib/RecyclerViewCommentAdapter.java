@@ -30,8 +30,10 @@ import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.android.gms.ads.formats.UnifiedNativeAdView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Comment;
+import com.relyon.whib.modelo.Report;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
 
@@ -186,21 +188,48 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     private boolean tryToReport(Comment comment) {
-        if (!comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
-            return openReportDialog(comment);
-        } else {
-            Toast.makeText(context, context.getString(R.string.cant_report_own_comment), Toast.LENGTH_SHORT).show();
-            return false;
-        }
+        Query query = Util.mDatabaseRef.child("report").orderByChild("userSenderUID").equalTo(Util.getUser().getUserUID());
+        ValueEventListener listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
+                    Toast.makeText(context, context.getString(R.string.cant_report_own_comment), Toast.LENGTH_SHORT).show();
+                } else if (dataSnapshot.hasChildren()) {
+                    boolean found = false;
+                    for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                        Report report = snap.getValue(Report.class);
+                        if (report != null) {
+                            if (report.getCommentUID().equals(comment.getCommentUID())) {
+                                found = true;
+                                Toast.makeText(context, context.getString(R.string.already_reported_this_comment), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                    if (!found) {
+                        query.removeEventListener(this);
+                        openReportDialog(comment);
+                    }
+                } else {
+                    query.removeEventListener(this);
+                    openReportDialog(comment);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        query.addListenerForSingleValueEvent(listener);
+        return false;
     }
 
-    private boolean openReportDialog(Comment comment) {
+    private void openReportDialog(Comment comment) {
         DialogReport dialogReport = new DialogReport(activity, comment);
         if (dialogReport.getWindow() != null) {
             dialogReport.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             dialogReport.show();
         }
-        return true;
     }
 
     private void goToGroup(Comment comment) {

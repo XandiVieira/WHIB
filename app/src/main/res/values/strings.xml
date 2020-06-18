@@ -154,10 +154,11 @@
     <string name="get_in_full_servers_explanation">Entre nos servidores lotados e participe das melhores discussões</string>
     <string name="choose_subscription_time">Escolha o tempo da sua inscrição</string>
     <string name="become_exclusive">Torne-se exclusivo</string>
-    <string name="enjoy_advantges">Disfrute das vantagnes</string>
+    <string name="enjoy_advantages">Desfrute das vantagens</string>
     <string name="no_thanks">Não, obrigado</string>
     <string name="total_price_yearly">Preço total: \n R$ 45,99</string>
     <string name="total_price_monthly">Preço total: \n R$ 29,99</string>
+    <string name="already_reported_this_comment">Você já reportou este comentário!</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>
