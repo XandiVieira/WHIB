@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -49,6 +50,7 @@ public class ControlAdminActivity extends AppCompatActivity {
         subjectsAdded = new ArrayList<>();
         admServerList = findViewById(R.id.admServerList);
         Button reports = findViewById(R.id.reports);
+        Button complaints = findViewById(R.id.complaints);
         activity = this;
 
         Util.getmServerDatabaseRef().addValueEventListener(new ValueEventListener() {
@@ -78,7 +80,13 @@ public class ControlAdminActivity extends AppCompatActivity {
         Button createServer = findViewById(R.id.createServerButton);
 
         createServer.setOnClickListener(v -> callDialog());
-        reports.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), AdmActivity.class)));
+        reports.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), AdmReportsActivity.class)));
+        complaints.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), AdmComplaintsActivity.class));
+            }
+        });
     }
 
     private void callDialog() {

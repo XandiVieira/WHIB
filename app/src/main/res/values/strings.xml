@@ -101,7 +101,7 @@
     <string name="did_not_find_answer">Não encontrou respostas para suas dúvidas? Pergunte aqui!</string>
     <string name="tell_your_problem">Nos conte a respeito do seu problema para que possamos te ajudar</string>
     <string name="send">Enviar</string>
-    <string name="answer_soon">Em breve responderemos sua requisição Sua resposta estará aqui mesmo nesta!</string>
+    <string name="answer_soon">Em breve responderemos sua questão.</string>
     <string name="report_user">Denunciar Usuário</string>
     <string name="what_reason">Qual o motivo?</string>
     <string name="do_no_agree">Não concordo com o que foi dito</string>
@@ -159,6 +159,9 @@
     <string name="total_price_yearly">Preço total: \n R$ 45,99</string>
     <string name="total_price_monthly">Preço total: \n R$ 29,99</string>
     <string name="already_reported_this_comment">Você já reportou este comentário!</string>
+    <string name="answer">Resposta</string>
+    <string name="soon">Em breve</string>
+    <string name="no_complaints">Não há nenhuma questão para ser respondida</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

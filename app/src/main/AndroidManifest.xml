@@ -114,7 +114,10 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".AdmActivity" />
+        <activity android:name=".AdmReportsActivity" />
+        <activity
+            android:name=".AdmComplaintsActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
     </application>
 
 </manifest>

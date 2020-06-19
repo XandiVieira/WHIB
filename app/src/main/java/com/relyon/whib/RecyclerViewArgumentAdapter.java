@@ -21,7 +21,6 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
 
     private final ArrayList<Argument> elements;
     private Context context;
-    SimpleDateFormat dateFormat_date = new SimpleDateFormat("yyyy/MM/dd - HH:mm:ss");
     SimpleDateFormat dateFormat_time = new SimpleDateFormat("HH:mm:ss");
 
     RecyclerViewArgumentAdapter(Context context, ArrayList<Argument> elements) {

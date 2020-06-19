@@ -18,7 +18,7 @@ import com.relyon.whib.modelo.Util;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdmActivity extends AppCompatActivity {
+public class AdmReportsActivity extends AppCompatActivity {
 
     private RecyclerView reports;
     private List<Report> reportList;
@@ -28,7 +28,7 @@ public class AdmActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_adm);
+        setContentView(R.layout.activity_adm_reports);
 
         reports = findViewById(R.id.reports);
         empty = findViewById(R.id.empty);

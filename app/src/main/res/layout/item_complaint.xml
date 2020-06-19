@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="3dp"
+    android:background="@drawable/rounded_white"
+    android:elevation="@dimen/elevation1"
+    android:orientation="vertical"
+    android:visibility="visible">
+
+    <TextView
+        android:id="@+id/complaintDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="15dp"
+        android:layout_marginRight="15dp"
+        android:text="18/06/2020"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/small_text" />
+
+    <TextView
+        android:id="@+id/myComplaint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:gravity="center"
+        android:text="Eu acho que a rede social está se tornando tóxica e bla bla bla melhorem isso"
+        android:textColor="@color/black"
+        android:textSize="@dimen/normal_text" />
+
+    <LinearLayout
+        android:id="@+id/adminLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/answerEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2" />
+
+        <Button
+            android:id="@+id/send"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:background="@drawable/rounded_dark_orange"
+            android:text="@string/send" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/userLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorAccent" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="3dp"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:text="@string/answer"
+            android:textColor="@color/black"
+            android:textSize="@dimen/subtitle" />
+
+        <TextView
+            android:id="@+id/answerDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="15dp"
+            android:layout_marginRight="15dp"
+            android:text="18/06/2020"
+            android:textColor="@color/black"
+            android:textSize="@dimen/small_text" />
+
+        <TextView
+            android:id="@+id/answer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="3dp"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:lineSpacingExtra="-8dp"
+            android:text="Agradecemos seu feedback e estaremos sempre nos esforçando para melhorar e aceitando soluções práticas de nossos usuários para que possamos tornar o WHIB um ambiente cada vez melhor."
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/big_text" />
+    </LinearLayout>
+
+</LinearLayout>

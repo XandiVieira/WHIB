@@ -15,6 +15,16 @@
         android:textColor="@color/colorPrimaryDark" />
 
     <Button
+        android:id="@+id/complaints"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_accent"
+        android:fontFamily="@font/baloo"
+        android:padding="3dp"
+        android:text="Complaints"
+        android:textColor="@color/colorPrimaryDark" />
+
+    <Button
         android:id="@+id/createServerButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

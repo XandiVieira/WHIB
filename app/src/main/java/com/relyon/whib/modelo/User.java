@@ -16,7 +16,7 @@ public class User {
     private List<String> groupsUIDList;
     private History history;
     private int followers;
-    private List<Doubts> pendingDoubts;
+    private List<Complaint> pendingDoubts;
     private List<Item> itemsListUID;
     private boolean changedName;
     private boolean changedPhoto;
@@ -29,7 +29,7 @@ public class User {
     public User() {
     }
 
-    public User(String userUID, String userName, String photoPath, UserTempInfo tempInfo, Valuation valuation, List<User> following, boolean blocked, boolean firstTime, boolean extra, List<String> groupsUIDList, History history, int followers, List<Doubts> pendingDoubts, List<Item> itemsListUID, boolean changedName, boolean changedPhoto, double totalInPurchase, int purchases, Preferences preferences, String nickName, boolean isAdmin) {
+    public User(String userUID, String userName, String photoPath, UserTempInfo tempInfo, Valuation valuation, List<User> following, boolean blocked, boolean firstTime, boolean extra, List<String> groupsUIDList, History history, int followers, List<Complaint> pendingDoubts, List<Item> itemsListUID, boolean changedName, boolean changedPhoto, double totalInPurchase, int purchases, Preferences preferences, String nickName, boolean isAdmin) {
         this.userUID = userUID;
         this.userName = userName;
         this.photoPath = photoPath;
@@ -149,11 +149,11 @@ public class User {
         this.followers = followers;
     }
 
-    public List<Doubts> getPendingDoubts() {
+    public List<Complaint> getPendingDoubts() {
         return pendingDoubts;
     }
 
-    public void setPendingDoubts(List<Doubts> pendingDoubts) {
+    public void setPendingDoubts(List<Complaint> pendingDoubts) {
         this.pendingDoubts = pendingDoubts;
     }
 
