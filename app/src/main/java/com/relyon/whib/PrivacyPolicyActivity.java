@@ -2,12 +2,14 @@ package com.relyon.whib;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.webkit.WebView;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class PrivacyPolicyActivity extends AppCompatActivity {
+
+    public static final String KEY_PAGE_LOCATION = "file:///android_asset/privacyPolicy.html";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,10 +20,12 @@ public class PrivacyPolicyActivity extends AppCompatActivity {
 
         back.setOnClickListener(v -> onBackPressed());
 
-        /*Bundle b = new Bundle();
-        b.putString(WebViewActivity.KEY_TITLE, getResources().getString(R.string.privacy_policy_title));
-        b.putString(WebViewActivity.KEY_PAGE_LOCATION, "file:///android_asset/Scopefy_PoliticaPrivacidade.html");
-        startWebViewActivity(b);*/
+        WebView webView = findViewById(R.id.webView);
+
+        webView.getSettings().setLoadWithOverviewMode(true);
+        webView.getSettings().setUseWideViewPort(true);
+
+        webView.loadUrl(KEY_PAGE_LOCATION);
     }
 
     @Override

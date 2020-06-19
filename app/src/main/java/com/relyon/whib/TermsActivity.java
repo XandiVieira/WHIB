@@ -2,12 +2,14 @@ package com.relyon.whib;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.webkit.WebView;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class TermsActivity extends AppCompatActivity {
+
+    public static final String KEY_PAGE_LOCATION = "file:///android_asset/terms.html";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,12 +18,14 @@ public class TermsActivity extends AppCompatActivity {
 
         ImageView back = findViewById(R.id.back);
 
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        back.setOnClickListener(v -> onBackPressed());
+
+        WebView webView = findViewById(R.id.webView);
+
+        webView.getSettings().setLoadWithOverviewMode(true);
+        webView.getSettings().setUseWideViewPort(true);
+
+        webView.loadUrl(KEY_PAGE_LOCATION);
     }
 
     @Override

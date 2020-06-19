@@ -49,7 +49,8 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
     private ProgressBar progressBar;
     private ImageView logo;
-    private TextView version;
+    private TextView terms;
+    private TextView privacyPolicy;
     private ArrayList<Techniques> techniques = new ArrayList<>();
     private Random random = new Random();
 
@@ -90,14 +91,22 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
 
         logo = findViewById(R.id.logo);
 
-        version = findViewById(R.id.version);
+        terms = findViewById(R.id.terms);
+
+        privacyPolicy = findViewById(R.id.privacyPolicy);
+
+        terms.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), TermsActivity.class)));
+
+        privacyPolicy.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), PrivacyPolicyActivity.class)));
+
+        TextView version1 = findViewById(R.id.version);
 
         loginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
 
         try {
             PackageInfo pInfo = getApplicationContext().getPackageManager().getPackageInfo(getPackageName(), 0);
             String version = pInfo.versionName;
-            this.version.setText("Version " + version);
+            version1.setText("Version " + version);
         } catch (PackageManager.NameNotFoundException e) {
             Log.e("Error", e.getMessage());
         }
@@ -120,13 +129,10 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
         });
 
         firebaseAuth = FirebaseAuth.getInstance();
-        firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    goMainScreen();
-                }
+        firebaseAuthListener = firebaseAuth -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                goMainScreen();
             }
         };
 
@@ -226,16 +232,15 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
      * A simple pager adapter that represents 4 ScreenSlidePageFragment objects, in
      * sequence.
      */
-    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+    private static class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
+        @NonNull
         @Override
         public Fragment getItem(int position) {
             switch (position) {
-                case 0:
-                    return new FragmentSlide1();
 
                 case 1:
                     return new FragmentSlide2();

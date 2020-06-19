@@ -8,7 +8,6 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -40,12 +39,11 @@ public class AboutActivity extends AppCompatActivity {
         faq.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), FaqActivity.class)));
 
         terms.setOnClickListener(v -> {
-            Toast.makeText(getApplicationContext(), "Em construção.", Toast.LENGTH_SHORT).show();
-            /*new Intent(getApplicationContext(), TermsActivity.class);*/
+            startActivity(new Intent(getApplicationContext(), TermsActivity.class));
         });
+
         privacyPolicy.setOnClickListener(v -> {
-            Toast.makeText(getApplicationContext(), "Em construção.", Toast.LENGTH_SHORT).show();
-            /*new Intent(getApplicationContext(), PrivacyPolicyActivity.class);*/
+            startActivity(new Intent(getApplicationContext(), PrivacyPolicyActivity.class));
         });
 
         contactUs.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), ContactActivity.class)));
