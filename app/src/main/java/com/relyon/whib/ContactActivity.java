@@ -6,6 +6,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ import java.util.UUID;
 public class ContactActivity extends AppCompatActivity {
 
     private ArrayList<Complaint> complaintList = new ArrayList<>();
+    private TextView empty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,16 +39,23 @@ public class ContactActivity extends AppCompatActivity {
         ImageView back = findViewById(R.id.back);
         Button btFaq = findViewById(R.id.bt_faq);
         Button send = findViewById(R.id.send_complaint);
+        empty = findViewById(R.id.empty);
         RecyclerView myComplaints = findViewById(R.id.myComplaints);
 
         Util.mDatabaseRef.child("complaint").orderByChild("senderUID").equalTo(Util.getUser().getUserUID()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                complaintList.clear();
                 for (DataSnapshot snap : dataSnapshot.getChildren()) {
                     Complaint complaint = snap.getValue(Complaint.class);
                     if (complaint != null) {
                         complaintList.add(complaint);
                     }
+                }
+                if (complaintList.size() > 0) {
+                    empty.setText(getString(R.string.your_requests));
+                } else {
+                    empty.setText(getString(R.string.no_requests));
                 }
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
                 myComplaints.setLayoutManager(layoutManager);
@@ -74,7 +83,9 @@ public class ContactActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Detalhe melhor o seu problema.", Toast.LENGTH_SHORT).show();
             } else {
                 Complaint complaint = new Complaint(UUID.randomUUID().toString(), Util.getUser().getUserUID(), complaintTxt.getText().toString(), new Date().getTime());
-                Util.mDatabaseRef.child("complaint").push().setValue(complaint);
+                Util.mDatabaseRef.child("complaint").child(complaint.getComplaintId()).setValue(complaint);
+                Toast.makeText(getApplicationContext(), "Requisição enviada com sucesso!", Toast.LENGTH_SHORT).show();
+                complaintTxt.setText("");
             }
         });
     }

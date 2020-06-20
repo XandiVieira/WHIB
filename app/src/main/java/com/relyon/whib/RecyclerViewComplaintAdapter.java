@@ -24,7 +24,7 @@ public class RecyclerViewComplaintAdapter extends RecyclerView.Adapter<RecyclerV
 
     private final ArrayList<Complaint> elements;
     private Context context;
-    SimpleDateFormat dateFormat_time = new SimpleDateFormat("HH:mm:ss");
+    SimpleDateFormat dateFormat_time = new SimpleDateFormat("dd/MM//yy HH:mm:ss");
 
     RecyclerViewComplaintAdapter(Context context, ArrayList<Complaint> elements) {
         this.context = context;
