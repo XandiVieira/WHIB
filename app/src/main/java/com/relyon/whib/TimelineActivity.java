@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -40,6 +41,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import me.toptas.fancyshowcase.FancyShowCaseView;
+
 import static java.util.Objects.requireNonNull;
 
 public class TimelineActivity extends AppCompatActivity {
@@ -68,16 +71,21 @@ public class TimelineActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
-        List<String> testDeviceIds = Collections.singletonList("3DF6979E4CCB56C2A91510C1A9BCC253");
-        RequestConfiguration configuration =
-                new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
-        MobileAds.setRequestConfiguration(configuration);
-        MobileAds.initialize(this,
-                getString(R.string.admob_app_id));
+
+        if (!Util.getUser().isFirstTime()) {
+            List<String> testDeviceIds = Collections.singletonList("3DF6979E4CCB56C2A91510C1A9BCC253");
+            RequestConfiguration configuration =
+                    new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+
+            MobileAds.setRequestConfiguration(configuration);
+            MobileAds.initialize(this,
+                    getString(R.string.admob_app_id));
+        }
 
         final ImageView back = findViewById(R.id.back);
         TextView subject = findViewById(R.id.subject);
         final ImageButton commentBt = findViewById(R.id.commentIcon);
+        LinearLayout leaveCommentLayout = findViewById(R.id.leaveCommentLayout);
         menu = findViewById(R.id.menu);
         rvComments = findViewById(R.id.rvComments);
         emptyList = findViewById(R.id.emptyList);
@@ -211,13 +219,10 @@ public class TimelineActivity extends AppCompatActivity {
         });
 
         commentBt.setOnClickListener(v -> {
-            if (canPost) {
-                mayPass = true;
-                openCommentBox();
-            } else {
-                Toast.makeText(getApplicationContext(), "Você já postou um comentário neste servidor ou já faz parte de um grupo!", Toast.LENGTH_SHORT).show();
-            }
+            openCommentBox();
         });
+
+        leaveCommentLayout.setOnClickListener(v -> openCommentBox());
 
         Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("tempInfo").child("activated").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -233,6 +238,10 @@ public class TimelineActivity extends AppCompatActivity {
 
             }
         });
+
+        if (Util.getUser().isFirstTime()) {
+            callTour();
+        }
     }
 
     private void backToMainScreen() {
@@ -255,7 +264,10 @@ public class TimelineActivity extends AppCompatActivity {
         dividerItemDecoration.setDrawable(requireNonNull(ContextCompat.getDrawable(getApplicationContext(), R.drawable.divider)));
         rvComments.setAdapter(adapter);
         query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage);
-        new Thread(this::loadNativeAds).start();
+
+        if (!Util.getUser().isFirstTime()) {
+            new Thread(this::loadNativeAds).start();
+        }
     }
 
     private void getComments() {
@@ -310,35 +322,37 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void loadNativeAds() {
-        mNativeAds.clear();
-        AdLoader.Builder builder = new AdLoader.Builder(this, getString(R.string.ad_unit_id));
-        // The AdLoader used to load ads.
-        AdLoader adLoader = builder.forUnifiedNativeAd(
-                unifiedNativeAd -> {
-                    mNativeAds.add(unifiedNativeAd);
-                }).withAdListener(
-                new AdListener() {
-                    @Override
-                    public void onAdFailedToLoad(int errorCode) {
-                        Log.e("TimelineActivity", "The previous native ad failed to load. Attempting to"
-                                + " load another.");
-                    }
-
-                    @Override
-                    public void onAdLoaded() {
-                        super.onAdLoaded();
-                        if (mNativeAds.size() == NUMBER_OF_ADS) {
-                            insertAdsInMenuItems();
+        if (!Util.getUser().isFirstTime()) {
+            mNativeAds.clear();
+            AdLoader.Builder builder = new AdLoader.Builder(this, getString(R.string.ad_unit_id));
+            // The AdLoader used to load ads.
+            AdLoader adLoader = builder.forUnifiedNativeAd(
+                    unifiedNativeAd -> {
+                        mNativeAds.add(unifiedNativeAd);
+                    }).withAdListener(
+                    new AdListener() {
+                        @Override
+                        public void onAdFailedToLoad(int errorCode) {
+                            Log.e("TimelineActivity", "The previous native ad failed to load. Attempting to"
+                                    + " load another.");
                         }
-                    }
-                }).build();
 
-        // Load the Native Express ad.
-        try {
-            Thread.sleep(3000);
-            adLoader.loadAds(new AdRequest.Builder().build(), NUMBER_OF_ADS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+                        @Override
+                        public void onAdLoaded() {
+                            super.onAdLoaded();
+                            if (mNativeAds.size() == NUMBER_OF_ADS && !Util.getUser().isFirstTime()) {
+                                insertAdsInMenuItems();
+                            }
+                        }
+                    }).build();
+
+            // Load the Native Express ad.
+            try {
+                Thread.sleep(3000);
+                adLoader.loadAds(new AdRequest.Builder().build(), NUMBER_OF_ADS);
+            } catch (InterruptedException e) {
+                Log.d("Catch", e.getMessage());
+            }
         }
     }
 
@@ -347,8 +361,26 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void openCommentBox() {
-        DialogPostComment cdd = new DialogPostComment(this, subjectObj);
-        cdd.show();
+        if (canPost) {
+            mayPass = true;
+            DialogPostComment cdd = new DialogPostComment(this, subjectObj);
+            cdd.show();
+        } else {
+            Toast.makeText(getApplicationContext(), "Você já postou um comentário neste servidor ou já faz parte de um grupo!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void callTour() {
+        if (Util.getUser().isFirstTime()) {
+            new FancyShowCaseView.Builder(this).customView(R.layout.custom_tour_timeline_comment, view -> {
+                view.findViewById(R.id.skip_tutorial).setOnClickListener(v -> {
+                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false);
+                });
+            }).focusBorderSize(10)
+                    .focusRectAtPosition(100, 500, 2000, 500)
+                    .build()
+                    .show();
+        }
     }
 
     @Override

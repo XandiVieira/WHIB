@@ -7,6 +7,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -91,12 +92,33 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }
 
+
         back.setOnClickListener(v -> {
-            if (user.getNickName() == null && !nick.getText().toString().equals("")) {
-                user.setNickName(nick.getText().toString());
-                Util.getmUserDatabaseRef().child(user.getUserUID()).setValue(user);
+            if (user.getNickName() == null && !nick.getText().toString().replace("@", "").equals("")) {
+                String nickname = nick.getText().toString().replace("@", "");
+                user.setNickName(nickname);
+                Util.getmUserDatabaseRef().child("nickname").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        List<String> nicknames = new ArrayList<>();
+                        for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                            nicknames.add(snap.getValue(String.class));
+                        }
+                        if (nicknames.contains(nickname)) {
+                            Toast.makeText(getApplicationContext(), "Este nome de usuário já está sendo utilizado.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Util.getmUserDatabaseRef().child(user.getUserUID()).setValue(user);
+                            Util.getmUserDatabaseRef().child("nickname").push().setValue(user.getNickName());
+                            onBackPressed();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
-            onBackPressed();
         });
 
         settings.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), SettingsActivity.class)));

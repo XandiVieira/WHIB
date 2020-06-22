@@ -39,6 +39,8 @@ import com.relyon.whib.modelo.Valuation;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import me.toptas.fancyshowcase.FancyShowCaseView;
+
 import static com.relyon.whib.modelo.Util.getCurrentDate;
 import static com.relyon.whib.modelo.Util.setNewPopularity;
 
@@ -227,6 +229,9 @@ public class MainActivity extends AppCompatActivity {
                 //set user for the Util class
                 Util.setUser(user);
                 profile.setVisibility(View.VISIBLE);
+                if (user != null && user.isFirstTime()) {
+                    callTour();
+                }
             }
 
             @Override
@@ -257,7 +262,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void callTour() {
-        user.setFirstTime(false);
+        if (user.isFirstTime()) {
+            new FancyShowCaseView.Builder(this).customView(R.layout.custom_tour_servers, view -> {
+                view.findViewById(R.id.skip_tutorial).setOnClickListener(v -> {
+                    Util.getUser().setFirstTime(false);
+                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false);
+                });
+            }).focusOn(recyclerViewServers)
+                    .focusBorderSize(10)
+                    .focusCircleAtPosition(550, 800, 500)
+                    .build()
+                    .show();
+        }
     }
 
     //Methods for completing user setting
@@ -267,7 +283,6 @@ public class MainActivity extends AppCompatActivity {
         return new Preferences(true, true, true, true);
     }
 
-
     private Valuation setUserValuation() {
         return new Valuation(0, 0, 0, 0, 0, 0);
     }
@@ -275,7 +290,6 @@ public class MainActivity extends AppCompatActivity {
     private UserTempInfo setUserTempInfo() {
         return new UserTempInfo(null, null, true, false);
     }
-
 
     //Go to login activity
     private void goLoginScreen() {

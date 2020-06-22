@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/baloo"
+            android:gravity="top"
+            android:lineSpacingExtra="-20dp"
+            android:text="Olá! Seja Bem-Vindo ao WHIB"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/subtitle"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginLeft="20dp"
+            android:fontFamily="@font/baloo"
+            android:gravity="center_horizontal"
+            android:lineSpacingExtra="-5dp"
+            android:text="Vamos te ajudar a entender tudo rapidinho com este tutorial"
+            android:textColor="@color/white"
+            android:textSize="@dimen/small_text" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="15dp"
+        android:layout_weight="1"
+        android:fontFamily="@font/baloo"
+        android:gravity="bottom"
+        android:lineSpacingExtra="-5dp"
+        android:text="Aqui você encontra os assuntos que estão sendo debatidos no momento. Vamos lá, escolha um assunto."
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/normal_text"
+        tools:ignore="RtlCompat" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="bottom">
+
+            <TextView
+                android:id="@+id/close_tutorial"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginBottom="7dp"
+                android:gravity="bottom"
+                android:text="@string/close"
+                android:textColor="@color/white"
+                android:textStyle="" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/skip_tutorial"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_marginHorizontal="10dp"
+                android:background="@drawable/rounded_dark_orange"
+                android:paddingHorizontal="10dp"
+                android:text="@string/skip_tutorial" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

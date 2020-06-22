@@ -94,7 +94,7 @@
     <string name="our_goal">Objetivo</string>
     <string name="our_mission">Missão</string>
     <string name="mission">Ser um provedor de discussões  saudáveis sobre os assuntos mais  comentados do momento e assim  proporcionar que todos aprendam  e se  tornem mais informados e  tolerantes sobre tudo…</string>
-    <string name="goal">O app WHIB foi criado com o intuito  de…</string>
+    <string name="goal">O app WHIB foi criado com o intuito de tornar o debate um hábito saudável entre os brasileiros, pois numa sociedade tão polarizada já não há conversa entre as partes.</string>
     <string name="history">Histórico</string>
     <string name="consult_faq">Sua dúvida pode já ter sido respondida consulte nosso FAQ</string>
     <string name="frequent_questions">Perguntas Frequentes</string>
@@ -164,6 +164,8 @@
     <string name="no_complaints">Não há nenhuma questão para ser respondida</string>
     <string name="your_requests">Suas requisições</string>
     <string name="no_requests">Você não tem nenhuma requisição</string>
+    <string name="skip_tutorial">Pular tutorial</string>
+    <string name="close"><u>Fechar</u></string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

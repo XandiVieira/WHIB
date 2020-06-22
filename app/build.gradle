@@ -6,8 +6,8 @@ android {
         applicationId "com.relyon.whib"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 18
-        versionName "Teste interno - Adjusting to match parameters"
+        versionCode 19
+        versionName "Teste interno - Starting tutorial"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -48,7 +48,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-config:19.1.4' //Remote config
 
     implementation 'com.google.android.gms:play-services-ads:19.1.0'
-    implementation 'com.android.billingclient:billing:2.2.1'
+    implementation 'com.android.billingclient:billing:3.0.0'
 
     implementation 'com.facebook.android:facebook-android-sdk:5.0.1'
     implementation "com.android.support:recyclerview-v7:28.0.0"
@@ -67,6 +67,7 @@ dependencies {
     implementation 'com.android.support:design:28.0.0'
 
     implementation 'com.borjabravo:readmoretextview:2.1.0'
+    implementation 'me.toptas.fancyshowcase:fancyshowcaseview:1.3.0'
     implementation 'androidx.annotation:annotation:1.1.0'
 }
 apply plugin: 'com.google.gms.google-services'

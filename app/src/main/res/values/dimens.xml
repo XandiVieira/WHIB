@@ -34,4 +34,9 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
 
+    <dimen name="showcase_radius">150dp</dimen>
+    <dimen name="showcase_radius_inner">156dp</dimen>
+    <dimen name="showcase_radius_outer">183dp</dimen>
+
+    <dimen name="showcase_radius_material">150dp</dimen>
 </resources>
