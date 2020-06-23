@@ -1,5 +1,6 @@
 package com.relyon.whib;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
@@ -9,7 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,21 +25,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import me.toptas.fancyshowcase.FancyShowCaseView;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 public class DialogRateComment extends Dialog implements
         View.OnClickListener {
 
-    private AppCompatActivity c;
+    private Activity a;
     public Dialog d;
     private TextView ratingTV;
     private float rating;
     public Comment comment;
     private List<Object> commentList;
 
-    DialogRateComment(AppCompatActivity a, float rating, Comment comment, ArrayList<Object> elements) {
+    DialogRateComment(Activity a, float rating, Comment comment, ArrayList<Object> elements) {
         super(a);
-        this.c = a;
+        this.a = a;
         this.rating = rating;
         this.comment = comment;
         this.commentList = elements;
@@ -70,11 +71,14 @@ public class DialogRateComment extends Dialog implements
         switch (v.getId()) {
             case R.id.rate_Button:
                 confirmRate();
+                callTour();
                 break;
             case R.id.cancel_button:
-                c.closeContextMenu();
+                a.closeContextMenu();
+                callTour();
                 break;
             default:
+                callTour();
                 break;
         }
         dismiss();
@@ -137,5 +141,15 @@ public class DialogRateComment extends Dialog implements
     }
 
     private void sendNotification() {
+    }
+
+    private void callTour() {
+        if (Util.getUser().isFirstTime()) {
+            new FancyShowCaseView.Builder(a).customView(R.layout.custom_tour_timeline_make_comment, view -> {
+            }).focusBorderSize(10)
+                    .focusRectAtPosition(100, 1800, 2000, 200)
+                    .build()
+                    .show();
+        }
     }
 }

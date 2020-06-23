@@ -20,10 +20,12 @@ import com.relyon.whib.modelo.Util;
 
 import java.util.Date;
 
+import me.toptas.fancyshowcase.FancyShowCaseView;
+
 public class DialogPostComment extends Dialog implements
         View.OnClickListener {
 
-    private Activity c;
+    private Activity activity;
     public Dialog d;
     private Button comment;
     private EditText commentBox;
@@ -31,10 +33,11 @@ public class DialogPostComment extends Dialog implements
     private int charactCounter;
     private Subject subject;
     private static int MAX_COMMENT_SIZE = 600;
+    private ImageView menu;
 
-    DialogPostComment(Activity a, Subject subjectObj) {
+    DialogPostComment(Activity a, Subject subjectObj, ImageView menu) {
         super(a);
-        this.c = a;
+        this.activity = a;
         this.subject = subjectObj;
     }
 
@@ -80,9 +83,11 @@ public class DialogPostComment extends Dialog implements
                 postComment();
                 break;
             case R.id.closeIcon:
-                c.closeContextMenu();
+                activity.closeContextMenu();
+                callTour();
                 break;
             default:
+                callTour();
                 break;
         }
         dismiss();
@@ -97,6 +102,7 @@ public class DialogPostComment extends Dialog implements
             Toast.makeText(getContext(), "Comentário postado!", Toast.LENGTH_SHORT).show();
             // Clear input box
             commentBox.setText("");
+            callTour();
         }
     }
 
@@ -110,5 +116,16 @@ public class DialogPostComment extends Dialog implements
             return false;
         }
         return true;
+    }
+
+    private void callTour() {
+        if (Util.getUser().isFirstTime()) {
+            new FancyShowCaseView.Builder(activity).customView(R.layout.custom_tour_timeline_menu, view -> {
+                //view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false));
+            }).focusBorderSize(10)
+                    .focusRectAtPosition(1005, 80, 25, 80)
+                    .build()
+                    .show();
+        }
     }
 }

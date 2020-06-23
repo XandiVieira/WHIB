@@ -92,26 +92,38 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
             holder.serverStatus.setText("Lotado");
         }
 
+        holder.full1.setOnClickListener(v -> beforeGroup(position, holder));
+        holder.full2.setOnClickListener(v -> beforeGroup(position, holder));
+        holder.full3.setOnClickListener(v -> beforeGroup(position, holder));
+        holder.full4.setOnClickListener(v -> beforeGroup(position, holder));
+
+        holder.serverNumber.setOnClickListener(v -> beforeGroup(position, holder));
+
         holder.itemView.setOnClickListener(v -> {
-            Server server = elements.get(position);
-            if (server.getTempInfo().getQtdUsers() < 95) {
-                goToServer(server, holder, position);
-            } else if (server.getTempInfo().getQtdUsers() >= 95 && server.getTempInfo().getQtdUsers() < 100) {
-                boolean todosLotados = true;
-                for (int i = 0; i < elements.size(); i++) {
-                    if (elements.get(i).getTempInfo().getQtdUsers() < 95) {
-                        todosLotados = false;
-                    }
-                }
-                if (todosLotados) {
-                    createNewServer();
-                }
-                goToServer(server, holder, position);
-            } else if (server.getTempInfo().getQtdUsers() >= 100) {
-                Toast.makeText(context, "Servidor Lotado!", Toast.LENGTH_SHORT).show();
-            }
-            Util.getmServerDatabaseRef().child(server.getServerUID()).child("tempInfo").setValue(server.getTempInfo());
+            beforeGroup(position, holder);
         });
+    }
+
+    private void beforeGroup(int position, ViewHolder holder) {
+        Server server = elements.get(position);
+        if (server.getTempInfo().getQtdUsers() < 95) {
+            goToServer(server, holder, position);
+        } else if (server.getTempInfo().getQtdUsers() >= 95 && server.getTempInfo().getQtdUsers() < 100) {
+            boolean todosLotados = true;
+            for (int i = 0; i < elements.size(); i++) {
+                if (elements.get(i).getTempInfo().getQtdUsers() < 95) {
+                    todosLotados = false;
+                }
+            }
+            if (todosLotados) {
+                createNewServer();
+            }
+            goToServer(server, holder, position);
+        } else if (server.getTempInfo().getQtdUsers() >= 100) {
+            Toast.makeText(context, "Servidor Lotado!", Toast.LENGTH_SHORT).show();
+        }
+        Util.getmServerDatabaseRef().child(server.getServerUID()).child("tempInfo").setValue(server.getTempInfo());
+
     }
 
     private void goToServer(Server server, ViewHolder holder, int position) {

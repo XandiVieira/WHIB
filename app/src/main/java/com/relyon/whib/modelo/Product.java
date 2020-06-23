@@ -2,33 +2,24 @@ package com.relyon.whib.modelo;
 
 import java.util.Date;
 
-public class Item {
+public class Product {
 
-    private int typeID;
     private String itemUID;
+    private String imagePath;
     private String title;
+    private String description;
+    private double price;
     private Date validity;
     private Date purchaseDate;
-    private int benefitID;
 
-    public Item(int typeID, String itemUID, String title, Date validity, Date purchaseDate, int benefitID) {
-        this.typeID = typeID;
+    public Product(String itemUID, String imagePath, String title, String description, double price, Date validity, Date purchaseDate) {
         this.itemUID = itemUID;
+        this.imagePath = imagePath;
         this.title = title;
+        this.description = description;
+        this.price = price;
         this.validity = validity;
         this.purchaseDate = purchaseDate;
-        this.benefitID = benefitID;
-    }
-
-    public Item() {
-    }
-
-    public int getTypeID() {
-        return typeID;
-    }
-
-    public void setTypeID(int typeID) {
-        this.typeID = typeID;
     }
 
     public String getItemUID() {
@@ -39,12 +30,36 @@ public class Item {
         this.itemUID = itemUID;
     }
 
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
     public String getTitle() {
         return title;
     }
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public Date getValidity() {
@@ -61,13 +76,5 @@ public class Item {
 
     public void setPurchaseDate(Date purchaseDate) {
         this.purchaseDate = purchaseDate;
-    }
-
-    public int getBenefitID() {
-        return benefitID;
-    }
-
-    public void setBenefitID(int benefitID) {
-        this.benefitID = benefitID;
     }
 }

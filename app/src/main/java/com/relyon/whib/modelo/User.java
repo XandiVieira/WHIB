@@ -17,7 +17,7 @@ public class User {
     private History history;
     private int followers;
     private List<Complaint> pendingDoubts;
-    private List<Item> itemsListUID;
+    private List<Product> itemsListUID;
     private boolean changedName;
     private boolean changedPhoto;
     private double totalInPurchase;
@@ -29,7 +29,7 @@ public class User {
     public User() {
     }
 
-    public User(String userUID, String userName, String photoPath, UserTempInfo tempInfo, Valuation valuation, List<User> following, boolean blocked, boolean firstTime, boolean extra, List<String> groupsUIDList, History history, int followers, List<Complaint> pendingDoubts, List<Item> itemsListUID, boolean changedName, boolean changedPhoto, double totalInPurchase, int purchases, Preferences preferences, String nickName, boolean isAdmin) {
+    public User(String userUID, String userName, String photoPath, UserTempInfo tempInfo, Valuation valuation, List<User> following, boolean blocked, boolean firstTime, boolean extra, List<String> groupsUIDList, History history, int followers, List<Complaint> pendingDoubts, List<Product> itemsListUID, boolean changedName, boolean changedPhoto, double totalInPurchase, int purchases, Preferences preferences, String nickName, boolean isAdmin) {
         this.userUID = userUID;
         this.userName = userName;
         this.photoPath = photoPath;
@@ -157,11 +157,11 @@ public class User {
         this.pendingDoubts = pendingDoubts;
     }
 
-    public List<Item> getItemsListUID() {
+    public List<Product> getItemsListUID() {
         return itemsListUID;
     }
 
-    public void setItemsListUID(List<Item> itemsListUID) {
+    public void setItemsListUID(List<Product> itemsListUID) {
         this.itemsListUID = itemsListUID;
     }
 

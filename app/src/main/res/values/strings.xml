@@ -166,6 +166,8 @@
     <string name="no_requests">Você não tem nenhuma requisição</string>
     <string name="skip_tutorial">Pular tutorial</string>
     <string name="close"><u>Fechar</u></string>
+    <string name="next_step">Próximo</string>
+    <string name="buy">Comprar</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1"
+        android:fontFamily="@font/baloo"
+        android:gravity="top"
+        android:lineSpacingExtra="-15dp"
+        android:text="Você também pode fazer seu próprio comentário"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/subtitle"
+        tools:ignore="RtlCompat" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="10dp"
+        android:layout_weight="1"
+        android:fontFamily="@font/baloo"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="-5dp"
+        android:text="Lembre-se que aqui você não vai responder outros usuários e sim fazer seu proóprio comentário sobre o assunto."
+        android:textColor="@color/white"
+        android:textSize="@dimen/normal_text" />
+</LinearLayout>

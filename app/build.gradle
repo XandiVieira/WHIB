@@ -47,7 +47,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:19.3.0' //Realtime database
     implementation 'com.google.firebase:firebase-config:19.1.4' //Remote config
 
-    implementation 'com.google.android.gms:play-services-ads:19.1.0'
+    implementation 'com.google.android.gms:play-services-ads:19.2.0'
     implementation 'com.android.billingclient:billing:3.0.0'
 
     implementation 'com.facebook.android:facebook-android-sdk:5.0.1'

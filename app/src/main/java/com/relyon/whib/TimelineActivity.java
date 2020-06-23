@@ -48,6 +48,7 @@ import static java.util.Objects.requireNonNull;
 public class TimelineActivity extends AppCompatActivity {
 
     private ImageView menu;
+    private LinearLayout leaveCommentLayout;
     private TextView emptyList;
     private Subject subjectObj;
     private RecyclerView rvComments;
@@ -85,7 +86,8 @@ public class TimelineActivity extends AppCompatActivity {
         final ImageView back = findViewById(R.id.back);
         TextView subject = findViewById(R.id.subject);
         final ImageButton commentBt = findViewById(R.id.commentIcon);
-        LinearLayout leaveCommentLayout = findViewById(R.id.leaveCommentLayout);
+        leaveCommentLayout = findViewById(R.id.leaveCommentLayout);
+        Toast.makeText(getApplicationContext(), String.valueOf(leaveCommentLayout.getHeight()), Toast.LENGTH_SHORT).show();
         menu = findViewById(R.id.menu);
         rvComments = findViewById(R.id.rvComments);
         emptyList = findViewById(R.id.emptyList);
@@ -182,6 +184,9 @@ public class TimelineActivity extends AppCompatActivity {
         });
 
         menu.setOnClickListener(v -> {
+            if (Util.getUser().isFirstTime()){
+                callTour3();
+            }
             //Creating the instance of PopupMenu
             PopupMenu popup = new PopupMenu(TimelineActivity.this, menu);
             //Inflating the Popup using xml file
@@ -363,7 +368,7 @@ public class TimelineActivity extends AppCompatActivity {
     private void openCommentBox() {
         if (canPost) {
             mayPass = true;
-            DialogPostComment cdd = new DialogPostComment(this, subjectObj);
+            DialogPostComment cdd = new DialogPostComment(this, subjectObj, menu);
             cdd.show();
         } else {
             Toast.makeText(getApplicationContext(), "Você já postou um comentário neste servidor ou já faz parte de um grupo!", Toast.LENGTH_SHORT).show();
@@ -373,11 +378,20 @@ public class TimelineActivity extends AppCompatActivity {
     private void callTour() {
         if (Util.getUser().isFirstTime()) {
             new FancyShowCaseView.Builder(this).customView(R.layout.custom_tour_timeline_comment, view -> {
-                view.findViewById(R.id.skip_tutorial).setOnClickListener(v -> {
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false);
-                });
+                view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false));
             }).focusBorderSize(10)
-                    .focusRectAtPosition(100, 500, 2000, 500)
+                    .focusRectAtPosition(100, 500, 2000, 550)
+                    .build()
+                    .show();
+        }
+    }
+
+    private void callTour3() {
+        if (Util.getUser().isFirstTime()) {
+            new FancyShowCaseView.Builder(activity).customView(R.layout.custom_tour_timeline_menu_opened, view -> {
+                //view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false));
+            }).focusBorderSize(10)
+                    .focusRectAtPosition(750, 475, 700, 700)
                     .build()
                     .show();
         }
@@ -409,5 +423,10 @@ public class TimelineActivity extends AppCompatActivity {
         super.onBackPressed();
         finish();
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
