@@ -5,6 +5,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,6 +20,7 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about);
 
         LinearLayout aboutUs = findViewById(R.id.about_us);
+        LinearLayout tips = findViewById(R.id.tips);
         LinearLayout faq = findViewById(R.id.faq);
         LinearLayout terms = findViewById(R.id.use_terms);
         LinearLayout privacyPolicy = findViewById(R.id.privacy_policy);
@@ -35,6 +37,8 @@ public class AboutActivity extends AppCompatActivity {
         }
 
         aboutUs.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), AboutUsActivity.class)));
+
+        tips.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), TipsActivity.class)));
 
         faq.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), FaqActivity.class)));
 

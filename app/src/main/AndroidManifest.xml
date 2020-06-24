@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="com.Android.vending.BILLING" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -82,7 +83,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ControlAdminActivity"
+            android:name=".AdmControlActivity"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -118,6 +119,10 @@
         <activity
             android:name=".AdmComplaintsActivity"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".AdmCreateStoreItem"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity android:name=".TipsActivity" />
     </application>
 
 </manifest>

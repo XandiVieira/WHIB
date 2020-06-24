@@ -1,24 +1,23 @@
 package com.relyon.whib.modelo;
 
-import java.util.Date;
-
 public class Product {
 
     private String itemUID;
     private String imagePath;
     private String title;
     private String description;
-    private double price;
-    private Date validity;
-    private Date purchaseDate;
+    private float price;
+    private Long purchaseDate;
 
-    public Product(String itemUID, String imagePath, String title, String description, double price, Date validity, Date purchaseDate) {
+    public Product() {
+    }
+
+    public Product(String itemUID, String imagePath, String title, String description, float price, Long purchaseDate) {
         this.itemUID = itemUID;
         this.imagePath = imagePath;
         this.title = title;
         this.description = description;
         this.price = price;
-        this.validity = validity;
         this.purchaseDate = purchaseDate;
     }
 
@@ -58,23 +57,15 @@ public class Product {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 
-    public Date getValidity() {
-        return validity;
-    }
-
-    public void setValidity(Date validity) {
-        this.validity = validity;
-    }
-
-    public Date getPurchaseDate() {
+    public Long getPurchaseDate() {
         return purchaseDate;
     }
 
-    public void setPurchaseDate(Date purchaseDate) {
+    public void setPurchaseDate(Long purchaseDate) {
         this.purchaseDate = purchaseDate;
     }
 }

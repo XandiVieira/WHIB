@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import me.toptas.fancyshowcase.FancyShowCaseQueue;
 import me.toptas.fancyshowcase.FancyShowCaseView;
 
 import static java.util.Objects.requireNonNull;
@@ -53,6 +54,7 @@ public class TimelineActivity extends AppCompatActivity {
     private Subject subjectObj;
     private RecyclerView rvComments;
     private AppCompatActivity activity;
+    private Spinner spinner;
     private boolean canPost = true;
     private int NUMBER_OF_ADS = 0;
     private List<UnifiedNativeAd> mNativeAds = new ArrayList<>();
@@ -63,6 +65,7 @@ public class TimelineActivity extends AppCompatActivity {
     private boolean reset = false;
     private boolean hasPassed = false;
     private int filter = 0;
+    private FancyShowCaseQueue queue = new FancyShowCaseQueue();
     private Query query;
 
     public TimelineActivity() {
@@ -92,7 +95,7 @@ public class TimelineActivity extends AppCompatActivity {
         rvComments = findViewById(R.id.rvComments);
         emptyList = findViewById(R.id.emptyList);
 
-        Spinner spinner = findViewById(R.id.filters);
+        spinner = findViewById(R.id.filters);
         ArrayAdapter<CharSequence> filterAdapter = ArrayAdapter.createFromResource(this,
                 R.array.comment_filters, android.R.layout.simple_spinner_item);
         filterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -184,8 +187,8 @@ public class TimelineActivity extends AppCompatActivity {
         });
 
         menu.setOnClickListener(v -> {
-            if (Util.getUser().isFirstTime()){
-                callTour3();
+            if (Util.getUser().isFirstTime()) {
+                //callTour3();
             }
             //Creating the instance of PopupMenu
             PopupMenu popup = new PopupMenu(TimelineActivity.this, menu);
@@ -200,9 +203,8 @@ public class TimelineActivity extends AppCompatActivity {
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.store))) {
-                    Toast.makeText(getApplicationContext(), "Em construção.", Toast.LENGTH_SHORT).show();
-                    /*Intent intent = new Intent(getApplicationContext(), StoreActivity.class);
-                    startActivity(intent);*/
+                    Intent intent = new Intent(getApplicationContext(), StoreActivity.class);
+                    startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.profile))) {
                     Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
@@ -377,12 +379,55 @@ public class TimelineActivity extends AppCompatActivity {
 
     private void callTour() {
         if (Util.getUser().isFirstTime()) {
-            new FancyShowCaseView.Builder(this).customView(R.layout.custom_tour_timeline_comment, view -> {
-                view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false));
-            }).focusBorderSize(10)
+            final FancyShowCaseView fancyShowCaseView = new FancyShowCaseView.Builder(this).
+                    customView(R.layout.custom_tour_timeline_comment, view -> {
+                        view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false));
+                    }).focusBorderSize(10)
                     .focusRectAtPosition(100, 500, 2000, 550)
-                    .build()
-                    .show();
+                    .build();
+
+            final FancyShowCaseView fancyShowCaseView2 = new FancyShowCaseView.Builder(this).
+                    customView(R.layout.custom_tour_timeline_make_comment, view -> {
+                        //view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false));
+                    }).focusBorderSize(10)
+                    .focusRectAtPosition(100, 1800, 2000, 220)
+                    .build();
+
+            final FancyShowCaseView fancyShowCaseView3 = new FancyShowCaseView.Builder(this).
+                    customView(R.layout.custom_tour_timeline_filter, view -> {
+                        if (spinner.isShown()) {
+                            try {
+                                Thread.sleep(2000);
+                            } catch (InterruptedException e) {
+                                Log.d("Catch", e.getMessage());
+                            }
+                            spinner.performClick();
+                        }
+                    }).focusBorderSize(10)
+                    .focusRectAtPosition(300, 210, 1500, 130)
+                    .build();
+
+            final FancyShowCaseView fancyShowCaseView4 = new FancyShowCaseView.Builder(this).
+                    customView(R.layout.custom_tour_timeline_menu, view -> {
+                        //view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false));
+                    }).focusBorderSize(10)
+                    .focusRectAtPosition(1005, 80, 25, 80)
+                    .build();
+
+            final FancyShowCaseView fancyShowCaseView5 = new FancyShowCaseView.Builder(this).
+                    customView(R.layout.custom_tour_timeline_menu_opened, view -> {
+                        if (menu.isShown()) {
+                            menu.performClick();
+                        }
+                    }).focusBorderSize(10)
+                    .focusRectAtPosition(750, 475, 700, 700)
+                    .build();
+            queue.add(fancyShowCaseView);
+            queue.add(fancyShowCaseView2);
+            queue.add(fancyShowCaseView3);
+            queue.add(fancyShowCaseView4);
+            queue.add(fancyShowCaseView5);
+            queue.show();
         }
     }
 

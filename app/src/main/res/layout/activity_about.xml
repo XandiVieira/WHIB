@@ -54,6 +54,27 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/tips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@color/white"
+        android:elevation="3dp"
+        android:padding="5dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:fontFamily="@font/baloo"
+            android:gravity="left"
+            android:text="@string/tips"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="26sp" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/faq"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -8,27 +8,40 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:fontFamily="@font/baloo"
         android:gravity="top"
         android:lineSpacingExtra="-15dp"
-        android:text="Você também pode fazer seu próprio comentário"
+        android:text="Aqui você encontra nossos filtros..."
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textSize="@dimen/subtitle"
+        android:textSize="@dimen/big_text"
         tools:ignore="RtlCompat" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
+        android:layout_gravity="top"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:fontFamily="@font/baloo"
+        android:gravity="center_vertical"
+        android:lineSpacingExtra="-5dp"
+        android:text="...onde você pode classificar os comentários por data ou número de estrelas e também ver apenas grupos se você preferir."
+        android:textColor="@color/white"
+        android:textSize="@dimen/normal_text" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="top"
         android:layout_marginHorizontal="10dp"
         android:layout_weight="1"
         android:fontFamily="@font/baloo"
-        android:gravity="center_horizontal"
+        android:gravity="top"
         android:lineSpacingExtra="-5dp"
-        android:text="Lembre-se que aqui você não vai responder outros usuários e sim fazer seu próprio comentário sobre o assunto."
+        android:text="Nota: Comentários em branco saõ o padrão, em laranja são comentários destacados dos usuários premium e comentarios em lilás são grupos onde você pode entrar e participar do debate."
         android:textColor="@color/white"
         android:textSize="@dimen/normal_text" />
 </LinearLayout>

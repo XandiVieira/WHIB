@@ -33,7 +33,7 @@ public class StoreActivity extends AppCompatActivity {
         ImageView back = findViewById(R.id.back);
         back.setOnClickListener(v -> onBackPressed());
 
-        Util.mDatabaseRef.child("products").addValueEventListener(new ValueEventListener() {
+        Util.mDatabaseRef.child("product").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snap : dataSnapshot.getChildren()) {

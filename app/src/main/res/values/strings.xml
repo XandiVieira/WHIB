@@ -168,6 +168,7 @@
     <string name="close"><u>Fechar</u></string>
     <string name="next_step">Próximo</string>
     <string name="buy">Comprar</string>
+    <string name="tips">Dicas</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

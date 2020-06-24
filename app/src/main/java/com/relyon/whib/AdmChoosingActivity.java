@@ -21,7 +21,7 @@ public class AdmChoosingActivity extends AppCompatActivity {
         LinearLayout standard = findViewById(R.id.standard);
 
         adm.setOnClickListener(v -> {
-            Intent intent = new Intent(getApplicationContext(), ControlAdminActivity.class);
+            Intent intent = new Intent(getApplicationContext(), AdmControlActivity.class);
             startActivity(intent);
         });
 

@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class ControlAdminActivity extends AppCompatActivity {
+public class AdmControlActivity extends AppCompatActivity {
 
     private ListView admServerList;
     private List<Server> serverListComplete;
@@ -43,7 +43,7 @@ public class ControlAdminActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_admin_control);
+        setContentView(R.layout.activity_adm_control);
 
         serverListComplete = new ArrayList<>();
         serverListFiltered = new ArrayList<>();
@@ -51,6 +51,8 @@ public class ControlAdminActivity extends AppCompatActivity {
         admServerList = findViewById(R.id.admServerList);
         Button reports = findViewById(R.id.reports);
         Button complaints = findViewById(R.id.complaints);
+        Button storeItem = findViewById(R.id.storeItem);
+        storeItem.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), AdmCreateStoreItem.class)));
         activity = this;
 
         Util.getmServerDatabaseRef().addValueEventListener(new ValueEventListener() {

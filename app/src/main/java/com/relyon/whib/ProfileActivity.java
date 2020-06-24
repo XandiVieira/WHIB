@@ -94,7 +94,9 @@ public class ProfileActivity extends AppCompatActivity {
 
 
         back.setOnClickListener(v -> {
-            if (user.getNickName() == null && !nick.getText().toString().replace("@", "").equals("")) {
+            if (nick.getText().toString().trim().equals("")) {
+                onBackPressed();
+            } else if (user.getNickName() == null && !nick.getText().toString().replace("@", "").equals("")) {
                 String nickname = nick.getText().toString().replace("@", "");
                 user.setNickName(nickname);
                 Util.getmUserDatabaseRef().child("nickname").addValueEventListener(new ValueEventListener() {
