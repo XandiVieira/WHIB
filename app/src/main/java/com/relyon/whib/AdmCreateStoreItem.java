@@ -1,8 +1,10 @@
 package com.relyon.whib;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -14,7 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.relyon.whib.modelo.Product;
+import com.relyon.whib.modelo.Util;
 
 import java.util.Date;
 import java.util.UUID;
@@ -57,12 +62,9 @@ public class AdmCreateStoreItem extends AppCompatActivity {
                         if (data != null && data.getData() != null && !data.getData().toString().trim().equals("")) {
                             Glide.with(getApplicationContext()).load(data.getData()).into(image);
                             Product product = new Product(UUID.randomUUID().toString(), data.getData().toString(), title.getText().toString(), description.getText().toString(), Float.parseFloat(price.getText().toString()), new Date().getTime());
-                            //Util.mDatabaseRef.child("product").child(product.getItemUID()).setValue(product);
-                            title.setText("");
-                            description.setText("");
-                            price.setText("");
-                            image.setImageDrawable(null);
-                            Toast.makeText(getApplicationContext(), "Produto criado com sucesso", Toast.LENGTH_SHORT).show();
+                            //Firebase
+                            StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+                            uploadImage(data.getData(), storageReference, product);
                         } else {
                             Toast.makeText(getApplicationContext(), "Não esqueça da imagem.", Toast.LENGTH_SHORT).show();
                         }
@@ -79,8 +81,7 @@ public class AdmCreateStoreItem extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == PERMISSION_CODE) {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -92,14 +93,36 @@ public class AdmCreateStoreItem extends AppCompatActivity {
     private void openGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(galleryIntent, PICK_IMAGE);
+    }
 
-        /*Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        getIntent.setType("image/*");
+    private void uploadImage(Uri filePath, StorageReference storageReference, Product product) {
 
-        Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        pickIntent.setType("image/*");
-        Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{pickIntent});
-        startActivityForResult(chooserIntent, PICK_IMAGE);*/
+        if (filePath != null) {
+            final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();
+
+            StorageReference ref = storageReference.child("images/" + product.getTitle());
+            ref.putFile(filePath)
+                    .addOnSuccessListener(taskSnapshot -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(AdmCreateStoreItem.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                        Util.mDatabaseRef.child("product").child(product.getItemSKU()).setValue(product);
+                        title.setText("");
+                        description.setText("");
+                        price.setText("");
+                        image.setImageDrawable(null);
+                        Toast.makeText(getApplicationContext(), "Produto criado com sucesso", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(AdmCreateStoreItem.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnProgressListener(taskSnapshot -> {
+                        double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                                .getTotalByteCount());
+                        progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                    });
+        }
     }
 }

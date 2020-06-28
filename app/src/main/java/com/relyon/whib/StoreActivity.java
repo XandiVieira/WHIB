@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,6 +37,7 @@ public class StoreActivity extends AppCompatActivity {
         Util.mDatabaseRef.child("product").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                productList.clear();
                 for (DataSnapshot snap : dataSnapshot.getChildren()) {
                     Product product = snap.getValue(Product.class);
                     if (product != null) {
@@ -44,7 +46,11 @@ public class StoreActivity extends AppCompatActivity {
                 }
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, true);
                 layoutManager.setStackFromEnd(true);
-                RecyclerViewProductAdapter adapter = new RecyclerViewProductAdapter(productList, StoreActivity.this);
+                RecyclerViewProductAdapter adapter = new RecyclerViewProductAdapter(productList, getApplicationContext(), StoreActivity.this);
+                DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(productsRV.getContext(),
+                        layoutManager.getOrientation());
+                productsRV.addItemDecoration(dividerItemDecoration);
+                productsRV.setLayoutManager(layoutManager);
                 productsRV.setAdapter(adapter);
             }
 
@@ -58,6 +64,13 @@ public class StoreActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(new Intent(getApplicationContext(), AboutActivity.class));
+        finish();
+        Intent intent;
+        if (Util.getServer() != null) {
+            intent = new Intent(getApplicationContext(), TimelineActivity.class);
+        } else {
+            intent = new Intent(getApplicationContext(), MainActivity.class);
+        }
+        startActivity(intent);
     }
 }

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.relyon.whib.modelo.Util;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -29,8 +30,14 @@ public class SettingsActivity extends AppCompatActivity {
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
         ImageView back = findViewById(R.id.back);
+
         back.setOnClickListener(v -> {
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            Intent intent;
+            if (Util.getServer() != null) {
+                intent = new Intent(getApplicationContext(), TimelineActivity.class);
+            } else {
+                intent = new Intent(getApplicationContext(), MainActivity.class);
+            }
             startActivity(intent);
         });
     }

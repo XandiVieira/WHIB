@@ -1,9 +1,14 @@
 package com.relyon.whib;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
@@ -53,6 +58,7 @@ public class TimelineActivity extends AppCompatActivity {
     private TextView emptyList;
     private Subject subjectObj;
     private RecyclerView rvComments;
+    private LinearLayoutManager layoutManager;
     private AppCompatActivity activity;
     private Spinner spinner;
     private boolean canPost = true;
@@ -68,6 +74,26 @@ public class TimelineActivity extends AppCompatActivity {
     private FancyShowCaseQueue queue = new FancyShowCaseQueue();
     private Query query;
 
+    int menuWidth;
+    int menuHeight;
+    float menuX;
+    float menuY;
+
+    int commentWidth;
+    int commentHeight;
+    float commentX;
+    float commentY;
+
+    int spinnerWidth;
+    int spinnerHeight;
+    float spinnerX;
+    float spinnerY;
+
+    int firstCommentWidth;
+    int firstCommentHeight;
+    float firstCommentX;
+    float firstCommentY;
+
     public TimelineActivity() {
     }
 
@@ -75,6 +101,26 @@ public class TimelineActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+
+        if (Util.getServer() != null) {
+            Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("activated").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Boolean active = dataSnapshot.getValue(Boolean.class);
+                    if (active != null && !active) {
+                        Toast.makeText(getApplicationContext(), "Servidor Lotado", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        } else {
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        }
 
         if (!Util.getUser().isFirstTime()) {
             List<String> testDeviceIds = Collections.singletonList("3DF6979E4CCB56C2A91510C1A9BCC253");
@@ -90,12 +136,73 @@ public class TimelineActivity extends AppCompatActivity {
         TextView subject = findViewById(R.id.subject);
         final ImageButton commentBt = findViewById(R.id.commentIcon);
         leaveCommentLayout = findViewById(R.id.leaveCommentLayout);
-        Toast.makeText(getApplicationContext(), String.valueOf(leaveCommentLayout.getHeight()), Toast.LENGTH_SHORT).show();
         menu = findViewById(R.id.menu);
         rvComments = findViewById(R.id.rvComments);
         emptyList = findViewById(R.id.emptyList);
-
         spinner = findViewById(R.id.filters);
+
+        activity = this;
+
+        subjectObj = Util.getServer().getSubject();
+        if (subjectObj != null) {
+            subject.setText(Util.getServer().getSubject().getTitle());
+        }
+
+        leaveCommentLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                leaveCommentLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                commentHeight = leaveCommentLayout.getHeight();
+                commentWidth = leaveCommentLayout.getWidth();
+                int[] location = new int[2];
+                leaveCommentLayout.getLocationOnScreen(location);
+                commentX = location[0];
+                commentY = location[1];
+
+                spinner.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        spinner.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        spinnerHeight = spinner.getHeight();
+                        spinnerWidth = spinner.getWidth();
+                        int[] location = new int[2];
+                        spinner.getLocationOnScreen(location);
+                        spinnerX = location[0];
+                        spinnerY = location[1];
+
+                        menu.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                            @Override
+                            public void onGlobalLayout() {
+                                menu.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                menuHeight = menu.getHeight();
+                                menuWidth = menu.getWidth();
+                                int[] location = new int[2];
+                                menu.getLocationOnScreen(location);
+                                menuX = location[0];
+                                menuY = location[1];
+
+                                layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                                    @Override
+                                    public void onGlobalLayout() {
+                                        layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                        firstCommentHeight = layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getHeight();
+                                        firstCommentWidth = layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getWidth();
+                                        int[] location = new int[2];
+                                        layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getLocationOnScreen(location);
+                                        firstCommentX = location[0];
+                                        firstCommentY = location[1];
+                                        IntentFilter intentFilter = new IntentFilter();
+                                        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+                                        registerReceiver(menuReceiver, intentFilter);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
         ArrayAdapter<CharSequence> filterAdapter = ArrayAdapter.createFromResource(this,
                 R.array.comment_filters, android.R.layout.simple_spinner_item);
         filterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -127,15 +234,6 @@ public class TimelineActivity extends AppCompatActivity {
 
             }
         });
-
-        activity = this;
-
-        if (getIntent() != null && getIntent().getExtras() != null) {
-            subjectObj = getIntent().getExtras().getParcelable("subject");
-            if (subjectObj != null) {
-                subject.setText(subjectObj.getTitle());
-            }
-        }
 
         initRecyclerViewComment();
         getComments();
@@ -210,6 +308,14 @@ public class TimelineActivity extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
                     startActivity(intent);
                     return true;
+                } else if (item.getTitle().equals(getString(R.string.tips))) {
+                    Intent intent = new Intent(getApplicationContext(), TipsActivity.class);
+                    startActivity(intent);
+                    return true;
+                } else if (item.getTitle().equals(getString(R.string.tips))) {
+                    Intent intent = new Intent(getApplicationContext(), TipsActivity.class);
+                    startActivity(intent);
+                    return true;
                 } else if (item.getTitle().equals(getString(R.string.about))) {
                     Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
                     startActivity(intent);
@@ -245,10 +351,6 @@ public class TimelineActivity extends AppCompatActivity {
 
             }
         });
-
-        if (Util.getUser().isFirstTime()) {
-            callTour();
-        }
     }
 
     private void backToMainScreen() {
@@ -259,12 +361,11 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void initRecyclerViewComment() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
+        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
         rvComments = findViewById(R.id.rvComments);
         layoutManager.setStackFromEnd(true);
         rvComments.setLayoutManager(layoutManager);
         adapter = new RecyclerViewCommentAdapter(getApplicationContext(), activity);
-
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvComments.getContext(),
                 layoutManager.getOrientation());
         rvComments.addItemDecoration(dividerItemDecoration);
@@ -383,64 +484,59 @@ public class TimelineActivity extends AppCompatActivity {
                     customView(R.layout.custom_tour_timeline_comment, view -> {
                         view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false));
                     }).focusBorderSize(10)
-                    .focusRectAtPosition(100, 500, 2000, 550)
+                    .focusRectAtPosition((int) firstCommentX + (firstCommentWidth / 2), (int) firstCommentY + (firstCommentHeight / 4), firstCommentWidth, firstCommentHeight)
                     .build();
 
             final FancyShowCaseView fancyShowCaseView2 = new FancyShowCaseView.Builder(this).
                     customView(R.layout.custom_tour_timeline_make_comment, view -> {
-                        //view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false));
+
                     }).focusBorderSize(10)
-                    .focusRectAtPosition(100, 1800, 2000, 220)
+                    .focusRectAtPosition((int) commentX + (commentWidth / 2), (int) commentY, commentWidth, commentHeight)
                     .build();
 
             final FancyShowCaseView fancyShowCaseView3 = new FancyShowCaseView.Builder(this).
                     customView(R.layout.custom_tour_timeline_filter, view -> {
                         if (spinner.isShown()) {
-                            try {
-                                Thread.sleep(2000);
-                            } catch (InterruptedException e) {
-                                Log.d("Catch", e.getMessage());
-                            }
                             spinner.performClick();
                         }
                     }).focusBorderSize(10)
-                    .focusRectAtPosition(300, 210, 1500, 130)
+                    .focusRectAtPosition((int) spinnerX + (spinnerWidth / 2), (int) spinnerY - (spinnerHeight / 2), spinnerWidth, spinnerHeight)
                     .build();
 
             final FancyShowCaseView fancyShowCaseView4 = new FancyShowCaseView.Builder(this).
                     customView(R.layout.custom_tour_timeline_menu, view -> {
-                        //view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false));
                     }).focusBorderSize(10)
-                    .focusRectAtPosition(1005, 80, 25, 80)
+                    .focusRectAtPosition((int) menuX + (menuWidth / 2), (int) menuY, menuWidth, menuHeight)
                     .build();
 
-            final FancyShowCaseView fancyShowCaseView5 = new FancyShowCaseView.Builder(this).
+            FancyShowCaseView fancyShowCaseView5 = new FancyShowCaseView.Builder(this).
                     customView(R.layout.custom_tour_timeline_menu_opened, view -> {
                         if (menu.isShown()) {
                             menu.performClick();
                         }
                     }).focusBorderSize(10)
-                    .focusRectAtPosition(750, 475, 700, 700)
+                    .focusRectAtPosition(750, (int) (menuY + (menuHeight * 3.25)), 700, 850)
                     .build();
+
             queue.add(fancyShowCaseView);
             queue.add(fancyShowCaseView2);
             queue.add(fancyShowCaseView3);
             queue.add(fancyShowCaseView4);
             queue.add(fancyShowCaseView5);
+            queue.setCompleteListener(() -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false));
             queue.show();
         }
     }
 
-    private void callTour3() {
-        if (Util.getUser().isFirstTime()) {
-            new FancyShowCaseView.Builder(activity).customView(R.layout.custom_tour_timeline_menu_opened, view -> {
-                //view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false));
-            }).focusBorderSize(10)
-                    .focusRectAtPosition(750, 475, 700, 700)
-                    .build()
-                    .show();
+    private BroadcastReceiver menuReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Util.getUser().isFirstTime()) {
+                callTour();
+                unregisterReceiver(menuReceiver);
+            }
         }
-    }
+    };
 
     @Override
     protected void onStop() {

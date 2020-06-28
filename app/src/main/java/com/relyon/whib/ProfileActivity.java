@@ -209,6 +209,12 @@ public class ProfileActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
-        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        Intent intent;
+        if (Util.getServer() != null) {
+            intent = new Intent(getApplicationContext(), TimelineActivity.class);
+        } else {
+            intent = new Intent(getApplicationContext(), MainActivity.class);
+        }
+        startActivity(intent);
     }
 }

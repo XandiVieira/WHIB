@@ -25,6 +25,7 @@ public class User {
     private Preferences preferences;
     private String nickName;
     private boolean isAdmin;
+    private List<Product> products;
 
     public User() {
     }
@@ -219,5 +220,13 @@ public class User {
 
     public void setAdmin(boolean admin) {
         isAdmin = admin;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 }

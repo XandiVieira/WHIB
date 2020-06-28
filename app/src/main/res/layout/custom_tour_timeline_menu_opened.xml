@@ -6,15 +6,32 @@
     android:orientation="vertical">
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="90dp"
         android:layout_height="match_parent"
-        android:layout_marginTop="15dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="60dp"
+        android:layout_weight="1"
         android:fontFamily="@font/baloo"
-        android:gravity="center_vertical"
-        android:lineSpacingExtra="-15dp"
+        android:lineSpacingExtra="-5dp"
         android:text="Você tem todas estas opções para explorar"
         android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="@dimen/subtitle"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/normal_text"
         tools:ignore="RtlCompat" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="80dp"
+        android:layout_weight="1"
+        android:fontFamily="@font/baloo"
+        android:gravity="center_vertical"
+        android:lineSpacingExtra="-10dp"
+        android:text="Você está quase pronto. Agora acesse as DICAS para aprender mais sobre como funciona o app e tire o máximo proveito dele."
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/big_text"
+        tools:ignore="RtlCompat" />
+
 </LinearLayout>

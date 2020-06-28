@@ -429,4 +429,6 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         Comment comment = (Comment) elements.get(0);
         return comment.getRating();
     }
+
+
 }

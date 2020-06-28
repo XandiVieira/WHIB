@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,6 +38,7 @@ import com.relyon.whib.modelo.Valuation;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import me.toptas.fancyshowcase.FancyShowCaseQueue;
 import me.toptas.fancyshowcase.FancyShowCaseView;
 
 import static com.relyon.whib.modelo.Util.getCurrentDate;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> subjectList;
     private ArrayList<Server> serverList;
     private ArrayList<ArrayList> serverGroupList;
-    private ProgressBar progressBar;
+    private LinearLayout progressBar;
     private LinearLayout profile;
 
     private RecyclerView recyclerViewServers;
@@ -68,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         this.recyclerViewServers = findViewById(R.id.recyclerViewSec);
-        this.progressBar = findViewById(R.id.progressBar);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
         Button choseSubjectButton = findViewById(R.id.choseSubjectButton);
         profile = findViewById(R.id.profile);
 
@@ -181,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 initRecyclerViewGroup();
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
@@ -214,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
         Util.setmGroupDatabaseRef(mGroupDatabaseRef);
         Util.setmAdvantagesDatabaseRef(mAdvantagesDatabaseRef);
         Util.setmReportDatabaseRef(mReportsDatabaseRef);
+        Util.setServer(null);
     }
 
     //Get user from Firebase Database
@@ -256,14 +259,12 @@ public class MainActivity extends AppCompatActivity {
 
         Util.setUser(user);
         mUserDatabaseRef.child(fbUser.getUid()).setValue(user);
-
-        //Initiate the welcome tour
-        callTour();
     }
 
     private void callTour() {
+        FancyShowCaseQueue queue = new FancyShowCaseQueue();
         if (user.isFirstTime()) {
-            new FancyShowCaseView.Builder(this).customView(R.layout.custom_tour_servers, view -> {
+            FancyShowCaseView fancyShowCaseView = new FancyShowCaseView.Builder(this).customView(R.layout.custom_tour_servers, view -> {
                 view.findViewById(R.id.skip_tutorial).setOnClickListener(v -> {
                     Util.getUser().setFirstTime(false);
                     Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false);
@@ -271,8 +272,9 @@ public class MainActivity extends AppCompatActivity {
             }).focusOn(recyclerViewServers)
                     .focusBorderSize(10)
                     .focusCircleAtPosition(550, 800, 500)
-                    .build()
-                    .show();
+                    .build();
+            queue.add(fancyShowCaseView);
+            queue.show();
         }
     }
 

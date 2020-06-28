@@ -2,18 +2,19 @@ package com.relyon.whib.modelo;
 
 public class Product {
 
-    private String itemUID;
+    private String itemSKU;
     private String imagePath;
     private String title;
     private String description;
     private float price;
     private Long purchaseDate;
+    private int quantity = 0;
 
     public Product() {
     }
 
-    public Product(String itemUID, String imagePath, String title, String description, float price, Long purchaseDate) {
-        this.itemUID = itemUID;
+    public Product(String itemSKU, String imagePath, String title, String description, float price, Long purchaseDate) {
+        this.itemSKU = itemSKU;
         this.imagePath = imagePath;
         this.title = title;
         this.description = description;
@@ -21,12 +22,12 @@ public class Product {
         this.purchaseDate = purchaseDate;
     }
 
-    public String getItemUID() {
-        return itemUID;
+    public String getItemSKU() {
+        return itemSKU;
     }
 
-    public void setItemUID(String itemUID) {
-        this.itemUID = itemUID;
+    public void setItemSKU(String itemSKU) {
+        this.itemSKU = itemSKU;
     }
 
     public String getImagePath() {
@@ -67,5 +68,13 @@ public class Product {
 
     public void setPurchaseDate(Long purchaseDate) {
         this.purchaseDate = purchaseDate;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }

@@ -32,16 +32,58 @@
         android:textColor="@color/white"
         android:textSize="@dimen/normal_text" />
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="top"
-        android:layout_marginHorizontal="10dp"
         android:layout_weight="1"
-        android:fontFamily="@font/baloo"
-        android:gravity="top"
-        android:lineSpacingExtra="-5dp"
-        android:text="Nota: Comentários em branco saõ o padrão, em laranja são comentários destacados dos usuários premium e comentarios em lilás são grupos onde você pode entrar e participar do debate."
-        android:textColor="@color/white"
-        android:textSize="@dimen/normal_text" />
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginHorizontal="10dp"
+            android:fontFamily="@font/baloo"
+            android:gravity="top"
+            android:lineSpacingExtra="-5dp"
+            android:text="@string/note"
+            android:textColor="@color/lighterGrey"
+            android:textSize="@dimen/normal_text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginHorizontal="10dp"
+            android:fontFamily="@font/baloo"
+            android:gravity="top"
+            android:lineSpacingExtra="-5dp"
+            android:text="@string/white_comments"
+            android:textColor="@color/white"
+            android:textSize="@dimen/small_text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginHorizontal="10dp"
+            android:fontFamily="@font/baloo"
+            android:gravity="top"
+            android:lineSpacingExtra="-5dp"
+            android:text="@string/orange_comments"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/small_text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginHorizontal="10dp"
+            android:fontFamily="@font/baloo"
+            android:gravity="top"
+            android:lineSpacingExtra="-5dp"
+            android:text="@string/purple_comments"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/small_text" />
+    </LinearLayout>
 </LinearLayout>

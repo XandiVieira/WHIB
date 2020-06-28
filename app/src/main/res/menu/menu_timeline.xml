@@ -8,6 +8,9 @@
         android:id="@+id/menuProfile"
         android:title="@string/profile"/>
     <item
+        android:id="@+id/menuTips"
+        android:title="@string/tips"/>
+    <item
         android:id="@+id/menuSettings"
         android:title="@string/settings"/>
     <item

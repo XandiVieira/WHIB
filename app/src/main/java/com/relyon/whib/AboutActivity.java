@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.relyon.whib.modelo.Util;
+
 public class AboutActivity extends AppCompatActivity {
 
     @Override
@@ -59,6 +61,12 @@ public class AboutActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
-        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        Intent intent;
+        if (Util.getServer() != null) {
+            intent = new Intent(getApplicationContext(), TimelineActivity.class);
+        } else {
+            intent = new Intent(getApplicationContext(), MainActivity.class);
+        }
+        startActivity(intent);
     }
 }

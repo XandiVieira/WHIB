@@ -54,7 +54,7 @@
     <string name="profile">Perfil</string>
     <string name="rate">Avaliar!</string>
     <string name="group">Grupo</string>
-    <string name="free">Livre</string>
+    <string name="free">Grátis</string>
     <string name="time">Tempo</string>
     <string name="audio">Áudio</string>
     <string name="cancel">CANCELAR</string>
@@ -169,6 +169,12 @@
     <string name="next_step">Próximo</string>
     <string name="buy">Comprar</string>
     <string name="tips">Dicas</string>
+    <string name="alone_from_here"><u>Prefiro seguir sozinho</u></string>
+    <string name="keep_going">Continuar</string>
+    <string name="note">Nota:</string>
+    <string name="white_comments">- Comentários em branco são o padrão.</string>
+    <string name="orange_comments">- Em laranja são comentários destacados dos usuários premium.</string>
+    <string name="purple_comments">- Comentários em lilás são grupos onde você pode entrar e participar do debate.</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>
