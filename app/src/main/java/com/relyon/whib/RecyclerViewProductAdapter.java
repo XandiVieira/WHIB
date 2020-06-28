@@ -104,7 +104,6 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
         bld.create().show();
     }
 
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

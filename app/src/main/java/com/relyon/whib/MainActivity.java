@@ -216,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
         Util.setmGroupDatabaseRef(mGroupDatabaseRef);
         Util.setmAdvantagesDatabaseRef(mAdvantagesDatabaseRef);
         Util.setmReportDatabaseRef(mReportsDatabaseRef);
-        Util.setServer(null);
     }
 
     //Get user from Firebase Database

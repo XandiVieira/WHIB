@@ -542,8 +542,10 @@ public class TimelineActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("tempInfo").child("currentServer").setValue(null);
-        Util.getServer().getTempInfo().setQtdUsers(Util.getServer().getTempInfo().getQtdUsers() - 1);
-        Util.getmServerDatabaseRef().child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
+        if (Util.getServer() != null) {
+            Util.getServer().getTempInfo().setQtdUsers(Util.getServer().getTempInfo().getQtdUsers() - 1);
+            Util.getmServerDatabaseRef().child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
+        }
     }
 
     @Override
@@ -562,6 +564,7 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        Util.setServer(null);
         finish();
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
     }
