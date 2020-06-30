@@ -23,18 +23,41 @@
             android:background="@color/colorAccent">
 
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/tabItem2"
+                android:id="@+id/tabItem1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/colorAccent"
                 android:text="@string/valuations" />
 
             <com.google.android.material.tabs.TabItem
-                android:id="@+id/tabItem"
+                android:id="@+id/tabItem2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/colorAccent"
-                android:text="@string/history" />
+                android:text="@string/reports" />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/tabItem4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/colorAccent"
+                android:text="@string/gallery" />
+
+            <!-- <com.google.android.material.tabs.TabItem
+                 android:id="@+id/tabItem3"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:background="@color/colorAccent"
+                 android:text="@string/friends"
+                 android:visibility="visible" />
+
+             <com.google.android.material.tabs.TabItem
+                 android:id="@+id/tabItem5"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:background="@color/colorAccent"
+                 android:text="@string/history"
+                 android:visibility="visible" />-->
 
         </com.google.android.material.tabs.TabLayout>
     </com.google.android.material.appbar.AppBarLayout>

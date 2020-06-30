@@ -1,6 +1,7 @@
 package com.relyon.whib;
 
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -11,18 +12,13 @@ public class SectionPagerAdapter extends FragmentPagerAdapter {
         super(fm);
     }
 
+    @NonNull
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case 0:
-                TabPreferences tabPreferences = new TabPreferences();
-                return tabPreferences;
-            case 1:
-                TabWhibExtra tabWhibExtra = new TabWhibExtra();
-                return tabWhibExtra;
-            default:
-                return null;
+        if (position == 0) {
+            return new TabPreferences();
         }
+        return new TabWhibExtra();
     }
 
     @Override

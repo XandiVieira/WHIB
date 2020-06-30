@@ -1,6 +1,8 @@
 package com.relyon.whib.modelo;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class User {
 
@@ -25,7 +27,7 @@ public class User {
     private Preferences preferences;
     private String nickName;
     private boolean isAdmin;
-    private List<Product> products;
+    private HashMap<String, Product> products;
 
     public User() {
     }
@@ -222,11 +224,11 @@ public class User {
         isAdmin = admin;
     }
 
-    public List<Product> getProducts() {
+    public HashMap<String, Product> getProducts() {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
+    public void setProducts(HashMap<String, Product> products) {
         this.products = products;
     }
 }

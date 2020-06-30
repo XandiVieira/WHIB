@@ -27,11 +27,14 @@ import java.util.UUID;
 public class AdmCreateStoreItem extends AppCompatActivity {
 
     public static final int PICK_IMAGE = 1;
+    public static final int PICK_IMAGE_SHADOW = 2;
     public static final int PERMISSION_CODE = 16;
+    private Uri shadowPath;
     private EditText title;
     private EditText description;
     private EditText price;
     private ImageView image;
+    private ImageView shadow;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,12 +45,21 @@ public class AdmCreateStoreItem extends AppCompatActivity {
         description = findViewById(R.id.description);
         price = findViewById(R.id.price);
         image = findViewById(R.id.image);
+        shadow = findViewById(R.id.shadow);
 
         image.setOnClickListener(v -> {
             if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(AdmCreateStoreItem.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_CODE);
             } else {
-                openGallery();
+                openGallery(PICK_IMAGE);
+            }
+        });
+
+        shadow.setOnClickListener(v -> {
+            if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(AdmCreateStoreItem.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_CODE);
+            } else {
+                openGallery(PICK_IMAGE_SHADOW);
             }
         });
     }
@@ -55,16 +67,23 @@ public class AdmCreateStoreItem extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_SHADOW && data != null) {
+            shadowPath = data.getData();
+        }
         if (requestCode == PICK_IMAGE) {
             if (!title.getText().toString().trim().equals("")) {
                 if (!description.getText().toString().trim().equals("")) {
                     if (!price.getText().toString().trim().equals("")) {
                         if (data != null && data.getData() != null && !data.getData().toString().trim().equals("")) {
                             Glide.with(getApplicationContext()).load(data.getData()).into(image);
-                            Product product = new Product(UUID.randomUUID().toString(), data.getData().toString(), title.getText().toString(), description.getText().toString(), Float.parseFloat(price.getText().toString()), new Date().getTime());
+                            Product product = new Product(UUID.randomUUID().toString(), title.getText().toString().toLowerCase(), data.getData().toString(), title.getText().toString(), description.getText().toString(), Float.parseFloat(price.getText().toString()), new Date().getTime());
                             //Firebase
                             StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-                            uploadImage(data.getData(), storageReference, product);
+                            if (shadowPath != null) {
+                                uploadImage(data.getData(), shadowPath, storageReference, product);
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Não se esqueça da sombra", Toast.LENGTH_SHORT).show();
+                            }
                         } else {
                             Toast.makeText(getApplicationContext(), "Não esqueça da imagem.", Toast.LENGTH_SHORT).show();
                         }
@@ -85,17 +104,17 @@ public class AdmCreateStoreItem extends AppCompatActivity {
         if (requestCode == PERMISSION_CODE) {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openGallery();
+                openGallery(PICK_IMAGE);
             }
         }
     }
 
-    private void openGallery() {
+    private void openGallery(int pickImage) {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(galleryIntent, PICK_IMAGE);
+        startActivityForResult(galleryIntent, pickImage);
     }
 
-    private void uploadImage(Uri filePath, StorageReference storageReference, Product product) {
+    private void uploadImage(Uri filePath, Uri fileShadow, StorageReference storageReference, Product product) {
 
         if (filePath != null) {
             final ProgressDialog progressDialog = new ProgressDialog(this);
@@ -103,11 +122,17 @@ public class AdmCreateStoreItem extends AppCompatActivity {
             progressDialog.show();
 
             StorageReference ref = storageReference.child("images/" + product.getTitle());
-            ref.putFile(filePath)
+            StorageReference refShadow = storageReference.child("images/" + product.getTitle() + "_shadow");
+
+            refShadow.putFile(fileShadow).addOnSuccessListener(taskSnapshot -> {
+
+            });
+
+            ref.putFile(fileShadow)
                     .addOnSuccessListener(taskSnapshot -> {
                         progressDialog.dismiss();
                         Toast.makeText(AdmCreateStoreItem.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                        Util.mDatabaseRef.child("product").child(product.getItemSKU()).setValue(product);
+                        Util.mDatabaseRef.child("product").child(product.getProductUID()).setValue(product);
                         title.setText("");
                         description.setText("");
                         price.setText("");

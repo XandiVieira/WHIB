@@ -29,69 +29,54 @@
             android:text="@string/tips"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="26sp" />
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="2dp"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="5dp"
         android:background="@color/white"
-        android:elevation="3dp"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:fontFamily="@font/baloo"
-            android:gravity="center"
-            android:text="@string/our_goal"
-            android:textColor="@color/black"
-            android:textSize="22sp" />
+            android:gravity="left"
+            android:lineSpacingExtra="-10dp"
+            android:text="@string/whib_is"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/normal_text" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/baloo"
+            android:gravity="left"
+            android:lineSpacingExtra="-10dp"
+            android:text="2. Você sabe o que é um argumento?"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/normal_text" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginLeft="15dp"
             android:layout_marginTop="-5dp"
             android:fontFamily="@font/baloo"
-            android:gravity="center"
-            android:text="@string/goal"
+            android:gravity="left"
+            android:lineSpacingExtra="-10dp"
+            android:text="@string/argument_definition"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="18sp" />
+            android:textSize="@dimen/small_text" />
 
-        <TextView
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:fontFamily="@font/baloo"
-            android:gravity="center"
-            android:text="@string/our_mission"
-            android:textColor="@color/black"
-            android:textSize="22sp" />
+            android:src="@mipmap/piramide" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-5dp"
-            android:fontFamily="@font/baloo"
-            android:gravity="center"
-            android:text="@string/mission"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="18sp" />
     </LinearLayout>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="30dp"
-        android:src="@mipmap/logo2" />
-
-    <TextView
-        android:id="@+id/version"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:fontFamily="@font/baloo"
-        android:text="@string/version" />
 </LinearLayout>
