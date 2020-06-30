@@ -28,7 +28,7 @@ public class GroupActivity extends AppCompatActivity {
 
     private RecyclerView rvArgument;
     private EditText inputMessage;
-    private ArrayList<Argument> argumentList;
+    private ArrayList<Argument> argumentList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,13 +115,19 @@ public class GroupActivity extends AppCompatActivity {
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(data);
-        Date data_atual = cal.getTime();
+        Date current_date = cal.getTime();
 
-        Sending sending = new Sending(type, data_atual.getTime(), Util.getUser().getUserName(), Util.getUser().getUserUID(), Util.getSubject());
-        Argument argument = new Argument(inputMessage.getText().toString(), audioPath, Util.getGroup().getGroupUID(), data_atual.getTime(), sending);
+        Sending sending = new Sending(type, current_date.getTime(), Util.getUser().getUserName(), Util.getUser().getUserUID(), Util.getSubject());
+        Argument argument = new Argument(inputMessage.getText().toString(), audioPath, Util.getGroup().getGroupUID(), current_date.getTime(), sending);
         Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline")
                 .child("commentList").child(Util.getGroup().getCommentUID())
                 .child("group").child("argumentList").push().setValue(argument);
+
+        if (argumentList.isEmpty() && !Util.getGroup().isReady() && Util.getUser().getUserUID().equals(Util.getComment().getAuthorsUID())) {
+            Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline")
+                    .child("commentList").child(Util.getGroup().getCommentUID())
+                    .child("group").child("ready").setValue(true);
+        }
     }
 
     private void leaveGroup() {

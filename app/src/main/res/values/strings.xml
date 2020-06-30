@@ -178,7 +178,8 @@
     <string name="friends">Amigos</string>
     <string name="gallery">Galeria</string>
     <string name="whib_is">1. WHIB é um app que incentiva fortemente debates saudáveis, com respeito entre as partes e alto nível de argumentos. Prezando pela racionalidade e debates de ideias</string>
-    <string name="argument_definition">- razão, raciocínio que conduz à indução ou dedução de algo. \n - prova que serve para afirmar ou negar um fato.</string>
+    <string name="argument_definition1">- razão, raciocínio que conduz à indução ou dedução de algo.</string>
+    <string name="argument_definition2">- prova que serve para afirmar ou negar um fato.</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

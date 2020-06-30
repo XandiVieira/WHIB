@@ -125,6 +125,9 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             holder.text.setColorClickableText(Color.BLUE);
 
             if (comment.isAGroup()) {
+                if (comment.getGroup().isReady()) {
+                    holder.entrance.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_exit_active));
+                }
                 holder.entrance.setVisibility(View.VISIBLE);
                 holder.ratingTV.setTextSize(14);
             } else {
@@ -245,22 +248,26 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     private void goToGroup(Comment comment) {
-        if ((comment.isAGroup() && comment.getGroup() != null && comment.getGroup().isReady()) || (Util.getUser().isExtra() || Util.getUser().isAdmin())) {
-            if (!comment.getGroup().getTempInfo().isFull()) {
-                Toast.makeText(context, "Entrou no grupo!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(context, GroupActivity.class);
-                if (comment.getGroup().getUserListUID() != null && !comment.getGroup().getUserListUID().contains(Util.getUser().getUserUID())) {
-                    comment.getGroup().getUserListUID().add(Util.getUser().getUserUID());
+        if ((comment.isAGroup() && comment.getGroup() != null)) {
+            if (comment.getGroup().isReady() || Util.getUser().getUserUID().equals(comment.getAuthorsUID())) {
+                if (!comment.getGroup().getTempInfo().isFull() || Util.getUser().getUserUID().equals(comment.getAuthorsUID()) || Util.getUser().isExtra()) {
+                    Toast.makeText(context, "Entrou no grupo!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, GroupActivity.class);
+                    if (comment.getGroup().getUserListUID() != null && !comment.getGroup().getUserListUID().contains(Util.getUser().getUserUID())) {
+                        comment.getGroup().getUserListUID().add(Util.getUser().getUserUID());
+                    }
+                    Util.getUser().getTempInfo().setCurrentGroup(comment.getGroup());
+                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("tempInfo").child("currentGroup").setValue(Util.getUser().getTempInfo().getCurrentGroup());
+                    Util.setComment(comment);
+                    Util.setGroup(comment.getGroup());
+                    context.startActivity(intent);
+                    activity.finish();
+                } else {
+                    WarnGroupFull warnGroupFull = new WarnGroupFull(activity);
+                    warnGroupFull.show();
                 }
-                Util.getUser().getTempInfo().setCurrentGroup(comment.getGroup());
-                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("tempInfo").child("currentGroup").setValue(Util.getUser().getTempInfo().getCurrentGroup());
-                Util.setComment(comment);
-                Util.setGroup(comment.getGroup());
-                context.startActivity(intent);
-                activity.finish();
             } else {
-                WarnGroupFull warnGroupFull = new WarnGroupFull(activity);
-                warnGroupFull.show();
+                Toast.makeText(context, "O dono ainda não ativou o grupo, Aguarde!", Toast.LENGTH_LONG).show();
             }
         }
     }
