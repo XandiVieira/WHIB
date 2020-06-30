@@ -53,6 +53,7 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
     private LinearLayout background;
     private Button confirm;
     private int color;
+    private Thread runLayout;
 
     // Does the user have an active subscription to the whib plan?
     boolean mSubscribedToWhib = false;
@@ -187,6 +188,7 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
         });
 
         confirm.setOnClickListener(v -> {
+            runLayout.interrupt();
             String payload = "";
 
             if (TextUtils.isEmpty(mSelectedSubscriptionPeriod)) {
@@ -237,7 +239,7 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
             changeColor(border3);
         });
 
-        new Thread(new Runnable() {
+        runLayout = new Thread(new Runnable() {
             @Override
             public void run() {
                 //Esse métedo será executado a cada período, ponha aqui a sua lógica
@@ -258,7 +260,8 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
                     });
                 }
             }
-        }).start();
+        });
+        runLayout.start();
     }
 
     public void handleColors() {
@@ -298,9 +301,6 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
         } else if (mPager.getCurrentItem() == 3) {
             option.setBackground(getContext().getResources().getDrawable(R.drawable.rounded_dark_purple));
         }
-    }
-
-    private void handleSelection() {
     }
 
     private void complain(String message) {

@@ -67,9 +67,7 @@ public class GroupActivity extends AppCompatActivity {
         });
 
         back.setOnClickListener(v -> {
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-            finish();
+            onBackPressed();
         });
 
         serverRoom.setText("Servidor " + Util.getServer().getTempInfo().getNumber() + " - Sala " + Util.getGroup().getNumber());
@@ -152,6 +150,19 @@ public class GroupActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        Intent intent;
+        if (Util.getServer() != null) {
+            intent = new Intent(getApplicationContext(), TimelineActivity.class);
+        } else {
+            intent = new Intent(getApplicationContext(), MainActivity.class);
+        }
+        startActivity(intent);
     }
 
     private void backToMainScreen() {
