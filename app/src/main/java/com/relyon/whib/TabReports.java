@@ -50,6 +50,7 @@ public class TabReports extends Fragment {
 
         if (profileActivity != null) {
             user = profileActivity.getUser();
+            loadReports();
             if (profileActivity.isLoadReports()) {
                 reportsLayout.setVisibility(View.VISIBLE);
             } else {
@@ -65,7 +66,7 @@ public class TabReports extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-    private void setUserProfile() {
+    private void loadReports() {
         final int[] countReceivedReports = {0};
         final int[] countSentReports = {0};
 
