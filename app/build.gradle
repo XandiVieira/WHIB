@@ -6,8 +6,8 @@ android {
         applicationId "com.relyon.whib"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 22
-        versionName "Teste interno - Tutorial Ready"
+        versionCode 23
+        versionName "Teste interno - Buy stickers and gallery"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }

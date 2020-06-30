@@ -99,7 +99,7 @@ public class TabReports extends Fragment {
                         for (DataSnapshot snap : dataSnapshot.getChildren()) {
                             Report report = snap.getValue(Report.class);
                             if (report != null) {
-                                countReceivedReports[0]++;
+                                countSentReports[0]++;
                             }
                         }
                         sentReports.setText(String.valueOf(countSentReports[0]));
