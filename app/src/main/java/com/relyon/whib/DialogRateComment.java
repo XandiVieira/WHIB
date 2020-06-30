@@ -37,13 +37,15 @@ public class DialogRateComment extends Dialog implements
     private float rating;
     public Comment comment;
     private List<Object> commentList;
+    private Boolean commentOwnerIsExtra;
 
-    DialogRateComment(Activity a, float rating, Comment comment, ArrayList<Object> elements) {
+    DialogRateComment(Activity a, float rating, Comment comment, ArrayList<Object> elements, Boolean commentOwnerIsExtra) {
         super(a);
         this.a = a;
         this.rating = rating;
         this.comment = comment;
         this.commentList = elements;
+        this.commentOwnerIsExtra = commentOwnerIsExtra;
     }
 
     @Override
@@ -99,7 +101,7 @@ public class DialogRateComment extends Dialog implements
                 }
             }
         }
-        if (((Util.getUser().isAdmin() || Util.getUser().isExtra()) && (comment.getNumberOfRatings() >= 5 && comment.getRating() >= 3)) || (comment.getNumberOfRatings() >= 10 && comment.getRating() >= 3.25)) {
+        if (commentOwnerIsExtra || (comment.getNumberOfRatings() >= 10 && comment.getRating() >= 3.25)) {
             if (!comment.isAGroup()) {
                 comment.setAGroup(true);
                 if (comment.getGroup() == null) {

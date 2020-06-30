@@ -76,11 +76,25 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     private void openRatingDialog(float rating, int position) {
-        DialogRateComment cdd = new DialogRateComment(activity, rating, (Comment) elements.get(position), elements);
-        if (cdd.getWindow() != null) {
-            cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            cdd.show();
-        }
+        Comment comment = (Comment) elements.get(position);
+        Util.mUserDatabaseRef.child(comment.getAuthorsUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if (user != null) {
+                    DialogRateComment cdd = new DialogRateComment(activity, rating, comment, elements, user.isExtra());
+                    if (cdd.getWindow() != null) {
+                        cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        cdd.show();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -132,6 +146,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
                     if (user != null) {
+                        holder.userName.setText(user.getUserName());
                         if (user.getPreferences().isShowPhoto()) {
                             Glide.with(context)
                                     .load(comment.getUserPhotoURL())
@@ -145,13 +160,10 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                             stars.getDrawable(0).setColorFilter(Color.parseColor("#2B4162"), PorterDuff.Mode.SRC_ATOP);
                             holder.bg.setBackgroundResource(R.drawable.rounded_accent_double);
                             holder.commentLayout.setBackgroundResource(R.drawable.rounded_accent_double);
+                        } else if (comment.isAGroup()) {
+                            holder.commentLayout.setBackgroundResource(R.drawable.rounded_primary_double);
+                            holder.bg.setBackgroundResource(R.drawable.rounded_primary_double);
                         }
-                    } else if (comment.isAGroup()) {
-                        holder.commentLayout.setBackgroundResource(R.drawable.rounded_primary_double);
-                        holder.bg.setBackgroundResource(R.drawable.rounded_primary_double);
-                    }
-                    if (user != null) {
-                        holder.userName.setText(user.getUserName());
                     }
                 }
 
@@ -429,6 +441,4 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         Comment comment = (Comment) elements.get(0);
         return comment.getRating();
     }
-
-
 }

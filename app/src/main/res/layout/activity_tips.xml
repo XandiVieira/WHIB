@@ -32,51 +32,191 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="5dp"
-        android:background="@color/white"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/baloo"
-            android:gravity="left"
-            android:lineSpacingExtra="-10dp"
-            android:text="@string/whib_is"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="@dimen/normal_text" />
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="5dp"
+            android:background="@color/white"
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:fontFamily="@font/baloo"
-            android:gravity="left"
-            android:lineSpacingExtra="-10dp"
-            android:text="2. Você sabe o que é um argumento?"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="@dimen/normal_text" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/baloo"
+                android:gravity="left"
+                android:lineSpacingExtra="-10dp"
+                android:text="@string/whib_is"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/normal_text" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="-5dp"
-            android:fontFamily="@font/baloo"
-            android:gravity="left"
-            android:lineSpacingExtra="-10dp"
-            android:text="@string/argument_definition"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="@dimen/small_text" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="left"
+                android:lineSpacingExtra="-10dp"
+                android:text="2. Você sabe o que é um argumento?"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/normal_text" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/piramide" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="-5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="left"
+                android:lineSpacingExtra="-10dp"
+                android:text="@string/argument_definition"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/small_text" />
 
-    </LinearLayout>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/piramide" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="left"
+                android:lineSpacingExtra="-10dp"
+                android:text="4. Não use a timeline para responder outros usuários"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/normal_text" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="left"
+                android:lineSpacingExtra="-10dp"
+                android:text="- Use a timeline para aprender mais sobre o assunto"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/small_text" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="left"
+                android:lineSpacingExtra="-10dp"
+                android:text="- Avalie os comentários que te chamam a atenção"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/small_text" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="left"
+                android:lineSpacingExtra="-10dp"
+                android:text="- Faça seu próprio comentário sempre que tenha algo relevante a acrescentar"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/small_text" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="left"
+                android:lineSpacingExtra="-10dp"
+                android:text="5. Você vai encontrar comentários de 3 tipos:"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/normal_text" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="start"
+                android:lineSpacingExtra="-10dp"
+                android:text="- Branco:"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/small_text" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/comment1" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="start"
+                android:lineSpacingExtra="-10dp"
+                android:text="- Laranja:"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/small_text" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/comment2" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="start"
+                android:lineSpacingExtra="-10dp"
+                android:text="- Lilás:"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/small_text" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/comment3" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="left"
+                android:lineSpacingExtra="-10dp"
+                android:text="6. Denúncias:"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/normal_text" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="left"
+                android:lineSpacingExtra="-10dp"
+                android:text="- Reporte comentários que não contribuam para um ambiente saudável de debate: ex.: Ofensas, xingamentos, comportamento tóxico, fugiu do assunto, não emitiu nenhuma opinião etc..."
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/normal_text" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="left"
+                android:lineSpacingExtra="-10dp"
+                android:text="- Você pode reportar um usuário clicando no ícone de denúncia no canto inferior esquerdo do comentário ou clicando e segurando no próprio comentário"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/small_text" />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
