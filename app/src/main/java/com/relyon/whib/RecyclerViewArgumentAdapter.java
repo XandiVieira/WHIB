@@ -5,12 +5,14 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.relyon.whib.modelo.Argument;
 import com.relyon.whib.modelo.Util;
 
@@ -50,6 +52,9 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
             holder.argument.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
             holder.time.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
         }
+        if (argument.getImagePath() != null){
+            Glide.with(context).load(argument.getImagePath()).into(holder.sticker);
+        }
         holder.argument.setText(argument.getText());
         holder.time.setText(dateFormat_time.format(argument.getTime()));
     }
@@ -66,6 +71,7 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
         private TextView argument;
         private TextView time;
         private TextView userName;
+        private ImageView sticker;
 
         ViewHolder(View rowView) {
             super(rowView);
@@ -74,6 +80,7 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
             time = rowView.findViewById(R.id.time);
             userName = rowView.findViewById(R.id.userName);
             argument = rowView.findViewById(R.id.argument);
+            sticker = rowView.findViewById(R.id.sticker);
         }
     }
 }

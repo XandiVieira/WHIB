@@ -31,7 +31,7 @@
             android:textSize="@dimen/very_small_text"
             android:visibility="gone" />
 
-        <TextView
+        <com.vanniktech.emoji.EmojiTextView
             android:id="@+id/argument"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,6 +42,11 @@
             android:text="bla bla bla  bla blablablabla blabla blabla blabla bla blablabl blabla bla"
             android:textColor="@color/white"
             android:textSize="@dimen/small_text" />
+
+        <ImageView
+            android:id="@+id/sticker"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/time"

@@ -148,60 +148,62 @@ public class TimelineActivity extends AppCompatActivity {
             subject.setText(Util.getServer().getSubject().getTitle());
         }
 
-        leaveCommentLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                leaveCommentLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                commentHeight = leaveCommentLayout.getHeight();
-                commentWidth = leaveCommentLayout.getWidth();
-                int[] location = new int[2];
-                leaveCommentLayout.getLocationOnScreen(location);
-                commentX = location[0];
-                commentY = location[1];
+        if (Util.getUser().isFirstTime()) {
+            leaveCommentLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    leaveCommentLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    commentHeight = leaveCommentLayout.getHeight();
+                    commentWidth = leaveCommentLayout.getWidth();
+                    int[] location = new int[2];
+                    leaveCommentLayout.getLocationOnScreen(location);
+                    commentX = location[0];
+                    commentY = location[1];
 
-                spinner.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        spinner.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        spinnerHeight = spinner.getHeight();
-                        spinnerWidth = spinner.getWidth();
-                        int[] location = new int[2];
-                        spinner.getLocationOnScreen(location);
-                        spinnerX = location[0];
-                        spinnerY = location[1];
+                    spinner.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            spinner.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            spinnerHeight = spinner.getHeight();
+                            spinnerWidth = spinner.getWidth();
+                            int[] location = new int[2];
+                            spinner.getLocationOnScreen(location);
+                            spinnerX = location[0];
+                            spinnerY = location[1];
 
-                        menu.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                            @Override
-                            public void onGlobalLayout() {
-                                menu.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                                menuHeight = menu.getHeight();
-                                menuWidth = menu.getWidth();
-                                int[] location = new int[2];
-                                menu.getLocationOnScreen(location);
-                                menuX = location[0];
-                                menuY = location[1];
+                            menu.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                                @Override
+                                public void onGlobalLayout() {
+                                    menu.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                    menuHeight = menu.getHeight();
+                                    menuWidth = menu.getWidth();
+                                    int[] location = new int[2];
+                                    menu.getLocationOnScreen(location);
+                                    menuX = location[0];
+                                    menuY = location[1];
 
-                                layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                                    @Override
-                                    public void onGlobalLayout() {
-                                        layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                                        firstCommentHeight = layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getHeight();
-                                        firstCommentWidth = layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getWidth();
-                                        int[] location = new int[2];
-                                        layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getLocationOnScreen(location);
-                                        firstCommentX = location[0];
-                                        firstCommentY = location[1];
-                                        IntentFilter intentFilter = new IntentFilter();
-                                        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-                                        registerReceiver(menuReceiver, intentFilter);
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-            }
-        });
+                                    layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                                        @Override
+                                        public void onGlobalLayout() {
+                                            layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                            firstCommentHeight = layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getHeight();
+                                            firstCommentWidth = layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getWidth();
+                                            int[] location = new int[2];
+                                            layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getLocationOnScreen(location);
+                                            firstCommentX = location[0];
+                                            firstCommentY = location[1];
+                                            IntentFilter intentFilter = new IntentFilter();
+                                            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+                                            registerReceiver(menuReceiver, intentFilter);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
 
         ArrayAdapter<CharSequence> filterAdapter = ArrayAdapter.createFromResource(this,
                 R.array.comment_filters, android.R.layout.simple_spinner_item);

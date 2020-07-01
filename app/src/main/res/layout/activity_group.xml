@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
     android:padding="@dimen/surround_paddings"
-    android:windowSoftInputMode="adjustNothing|adjustPan">
+    android:windowSoftInputMode="adjustNothing|adjustPan"
+    tools:context=".GroupActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -107,7 +108,14 @@
                     android:orientation="horizontal"
                     android:padding="@dimen/surround_paddings">
 
-                    <EditText
+                    <com.vanniktech.emoji.EmojiButton
+                        android:id="@+id/sendEmoji"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_emoji" />
+
+                    <com.vanniktech.emoji.EmojiEditText
                         android:id="@+id/inputMessage"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -118,6 +126,7 @@
                         android:fontFamily="@font/baloo"
                         android:hint="@string/wait_your_time"
                         android:inputType="text"
+                        android:paddingStart="@dimen/padding_horizontal"
                         android:paddingLeft="@dimen/padding_horizontal" />
 
                     <LinearLayout
@@ -142,7 +151,6 @@
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-
 
         </LinearLayout>
 

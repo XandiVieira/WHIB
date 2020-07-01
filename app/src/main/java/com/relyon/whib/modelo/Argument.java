@@ -3,7 +3,7 @@ package com.relyon.whib.modelo;
 public class Argument extends Sending {
 
     private String text;
-    private String audioPath;
+    private String imagePath;
     private String groupUID;
     private Long time;
 
@@ -11,20 +11,20 @@ public class Argument extends Sending {
     }
 
     public Argument(String type, Long date, String authorsName, String authorsUID, Subject subject, String text,
-                    String audioPath, String groupUID, Long time, Sending sending) {
+                    String imagePath, String groupUID, Long time, Sending sending) {
         super(type, date, authorsName, authorsUID, subject);
         this.text = text;
-        this.audioPath = audioPath;
+        this.imagePath = imagePath;
         this.groupUID = groupUID;
         this.text = text;
-        this.audioPath = audioPath;
+        this.imagePath = imagePath;
         this.groupUID = groupUID;
         this.time = time;
     }
 
-    public Argument(String text, String audioPath, String groupUID, Long time, Sending sending) {
+    public Argument(String text, String imagePath, String groupUID, Long time, Sending sending) {
         this.text = text;
-        this.audioPath = audioPath;
+        this.imagePath = imagePath;
         this.groupUID = groupUID;
         this.time = time;
         super.setAuthorsName(sending.getAuthorsName());
@@ -42,12 +42,12 @@ public class Argument extends Sending {
         this.text = text;
     }
 
-    public String getAudioPath() {
-        return audioPath;
+    public String getImagePath() {
+        return imagePath;
     }
 
-    public void setAudioPath(String audioPath) {
-        this.audioPath = audioPath;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public String getGroupUID() {
