@@ -108,6 +108,7 @@ public class GroupActivity extends AppCompatActivity {
                     argumentList.add(argument);
                 }
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
+                layoutManager.setStackFromEnd(true);
                 rvArgument.setLayoutManager(layoutManager);
                 RecyclerViewArgumentAdapter adapter = new RecyclerViewArgumentAdapter(getApplicationContext(), argumentList);
                 rvArgument.setAdapter(adapter);
@@ -136,7 +137,6 @@ public class GroupActivity extends AppCompatActivity {
                         emojiPopup.dismiss();
                     }
                     sendMessage();
-                    rvArgument.scrollToPosition(argumentList.size() - 1);
                     hideKeyboard(this);
                 }
             }
