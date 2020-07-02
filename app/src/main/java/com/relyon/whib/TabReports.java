@@ -31,7 +31,6 @@ public class TabReports extends Fragment {
     private RecyclerView reports;
     private List<Report> reportList = new ArrayList<>();
     private TextView empty;
-    private LinearLayout reportsLayout;
     private User user;
     private ProfileActivity profileActivity;
 
@@ -46,11 +45,16 @@ public class TabReports extends Fragment {
         receivedReports = rootView.findViewById(R.id.received_reports);
         reports = rootView.findViewById(R.id.reports);
         empty = rootView.findViewById(R.id.empty);
-        reportsLayout = rootView.findViewById(R.id.reportsLayout);
+        LinearLayout reportsLayout = rootView.findViewById(R.id.reportsLayout);
 
         if (profileActivity != null) {
             user = profileActivity.getUser();
-            loadReports();
+            if (user == null) {
+                user = Util.getUser();
+            }
+            if (user != null) {
+                loadReports();
+            }
             if (profileActivity.isLoadReports()) {
                 reportsLayout.setVisibility(View.VISIBLE);
             } else {
@@ -74,6 +78,7 @@ public class TabReports extends Fragment {
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                countReceivedReports[0] = 0;
                 for (DataSnapshot snap : dataSnapshot.getChildren()) {
                     Report report = snap.getValue(Report.class);
                     if (report != null) {
@@ -96,6 +101,7 @@ public class TabReports extends Fragment {
                 query.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        countSentReports[0] = 0;
                         for (DataSnapshot snap : dataSnapshot.getChildren()) {
                             Report report = snap.getValue(Report.class);
                             if (report != null) {

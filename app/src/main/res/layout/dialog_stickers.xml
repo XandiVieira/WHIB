@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:alpha="70"
+    android:background="@drawable/rounded_white"
+    android:orientation="vertical"
+    android:padding="@dimen/surround_paddings">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="10dp"
+        android:fontFamily="@font/baloo"
+        android:gravity="center"
+        android:text="@string/my_stickers"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/title" />
+
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="10dp"
+        android:fontFamily="@font/baloo"
+        android:gravity="center"
+        android:text="@string/you_have_no_stickers"
+        android:textColor="@color/lightGrey"
+        android:textSize="@dimen/normal_text" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/myStickers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

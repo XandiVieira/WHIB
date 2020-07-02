@@ -1,6 +1,8 @@
 package com.relyon.whib;
 
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -36,18 +38,6 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        SectionPagerProfileAdapter mSectionsPagerAdapter = new SectionPagerProfileAdapter(getSupportFragmentManager(), getApplicationContext());
-
-        // Set up the ViewPager with the sections adapter.
-        ViewPager mViewPager = findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        TabLayout tabLayout = findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
-
         ImageView back = findViewById(R.id.back);
         photo = findViewById(R.id.photo);
         ImageView settings = findViewById(R.id.settings);
@@ -79,7 +69,6 @@ public class ProfileActivity extends AppCompatActivity {
                 //user =
             }
         }
-
 
         back.setOnClickListener(v -> {
             if (nick.getText().toString().trim().equals("")) {
@@ -115,7 +104,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setUserProfile() {
-
         Glide.with(getApplicationContext()).load(user.getPhotoPath()).apply(RequestOptions.circleCropTransform()).into(photo);
 
         userName.setText(user.getUserName());
@@ -125,6 +113,18 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             nick.setEnabled(true);
         }
+
+        SectionPagerProfileAdapter mSectionsPagerAdapter = new SectionPagerProfileAdapter(getSupportFragmentManager(), getApplicationContext());
+
+        // Set up the ViewPager with the sections adapter.
+        ViewPager mViewPager = findViewById(R.id.container);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        TabLayout tabLayout = findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
     }
 
     @Override

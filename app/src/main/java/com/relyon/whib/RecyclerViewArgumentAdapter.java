@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.relyon.whib.modelo.Argument;
 import com.relyon.whib.modelo.Util;
 
@@ -24,10 +26,12 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
     private final ArrayList<Argument> elements;
     private Context context;
     SimpleDateFormat dateFormat_time = new SimpleDateFormat("HH:mm:ss");
+    private StorageReference storageReference;
 
     RecyclerViewArgumentAdapter(Context context, ArrayList<Argument> elements) {
         this.context = context;
         this.elements = elements;
+        storageReference = FirebaseStorage.getInstance().getReference();
     }
 
     @NonNull
@@ -52,8 +56,15 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
             holder.argument.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
             holder.time.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
         }
-        if (argument.getImagePath() != null){
-            Glide.with(context).load(argument.getImagePath()).into(holder.sticker);
+        if (argument.getImageTitle() != null) {
+            holder.argumentLayout.setBackground(context.getResources().getDrawable(R.drawable.square_primary_color));
+            holder.time.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
+            holder.sticker.setVisibility(View.VISIBLE);
+            holder.argument.setVisibility(View.GONE);
+            storageReference.child("images/" + argument.getImageTitle() + ".png").getDownloadUrl().addOnSuccessListener(uri -> Glide.with(context).load(uri).into(holder.sticker));
+            Glide.with(context).load(argument.getImageTitle()).into(holder.sticker);
+        } else {
+            holder.sticker.setVisibility(View.GONE);
         }
         holder.argument.setText(argument.getText());
         holder.time.setText(dateFormat_time.format(argument.getTime()));

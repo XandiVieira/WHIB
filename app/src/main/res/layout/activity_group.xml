@@ -110,10 +110,10 @@
 
                     <com.vanniktech.emoji.EmojiButton
                         android:id="@+id/sendEmoji"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/ic_emoji" />
+                        android:background="@drawable/ic_emoji" />
 
                     <com.vanniktech.emoji.EmojiEditText
                         android:id="@+id/inputMessage"
@@ -147,7 +147,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:src="@mipmap/send_icon" />
+                            android:src="@drawable/ic_sticker" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

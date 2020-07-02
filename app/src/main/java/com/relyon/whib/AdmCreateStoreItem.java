@@ -34,7 +34,6 @@ public class AdmCreateStoreItem extends AppCompatActivity {
     private EditText description;
     private EditText price;
     private ImageView image;
-    private ImageView shadow;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,7 +44,7 @@ public class AdmCreateStoreItem extends AppCompatActivity {
         description = findViewById(R.id.description);
         price = findViewById(R.id.price);
         image = findViewById(R.id.image);
-        shadow = findViewById(R.id.shadow);
+        ImageView shadow = findViewById(R.id.shadow);
 
         image.setOnClickListener(v -> {
             if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -68,7 +67,7 @@ public class AdmCreateStoreItem extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_SHADOW && data != null) {
-            shadowPath = data.getData();
+            shadowPath = Uri.parse(data.getData() + ".png");
         }
         if (requestCode == PICK_IMAGE) {
             if (!title.getText().toString().trim().equals("")) {
@@ -80,7 +79,7 @@ public class AdmCreateStoreItem extends AppCompatActivity {
                             //Firebase
                             StorageReference storageReference = FirebaseStorage.getInstance().getReference();
                             if (shadowPath != null) {
-                                uploadImage(data.getData(), shadowPath, storageReference, product);
+                                uploadImage(Uri.parse(data.getData() + ".png"), shadowPath, storageReference, product);
                             } else {
                                 Toast.makeText(getApplicationContext(), "Não se esqueça da sombra", Toast.LENGTH_SHORT).show();
                             }
@@ -121,14 +120,14 @@ public class AdmCreateStoreItem extends AppCompatActivity {
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
-            StorageReference ref = storageReference.child("images/" + product.getTitle());
-            StorageReference refShadow = storageReference.child("images/" + product.getTitle() + "_shadow");
+            StorageReference ref = storageReference.child("images/" + product.getItemSKU() + ".png");
+            StorageReference refShadow = storageReference.child("images/" + product.getItemSKU() + "_shadow.png");
 
             refShadow.putFile(fileShadow).addOnSuccessListener(taskSnapshot -> {
 
             });
 
-            ref.putFile(fileShadow)
+            ref.putFile(filePath)
                     .addOnSuccessListener(taskSnapshot -> {
                         progressDialog.dismiss();
                         Toast.makeText(AdmCreateStoreItem.this, "Uploaded", Toast.LENGTH_SHORT).show();

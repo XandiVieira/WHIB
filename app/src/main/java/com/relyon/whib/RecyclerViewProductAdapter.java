@@ -141,7 +141,7 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
     public void onBindViewHolder(@NonNull final RecyclerViewProductAdapter.ViewHolder holder, int position) {
         Product product = elements.get(position);
 
-        storageReference.child("images/" + product.getTitle()).getDownloadUrl().addOnSuccessListener(uri -> Glide.with(context).load(uri).into(holder.image));
+        storageReference.child("images/" + product.getItemSKU() + ".png").getDownloadUrl().addOnSuccessListener(uri -> Glide.with(context).load(uri).into(holder.image));
 
         if (product.getPrice() == 0) {
             holder.icon.setImageDrawable(context.getDrawable(R.drawable.ic_video));
@@ -290,7 +290,9 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
                     Util.getUser().setProducts(user.getProducts());
                 }
                 Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).removeEventListener(this);
-                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").child(myProduct.getProductUID()).setValue(myProduct);
+                if (myProduct != null) {
+                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").child(myProduct.getProductUID()).setValue(myProduct);
+                }
             }
 
             @Override

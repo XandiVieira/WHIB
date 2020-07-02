@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -25,12 +27,9 @@ import com.relyon.whib.modelo.Sending;
 import com.relyon.whib.modelo.Util;
 import com.vanniktech.emoji.EmojiButton;
 import com.vanniktech.emoji.EmojiEditText;
-import com.vanniktech.emoji.EmojiImageView;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.EmojiPopup;
-import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.google.GoogleEmojiProvider;
-import com.vanniktech.emoji.listeners.OnEmojiClickListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,10 +40,10 @@ public class GroupActivity extends AppCompatActivity {
     private RecyclerView rvArgument;
     private EmojiEditText inputMessage;
     private ArrayList<Argument> argumentList = new ArrayList<>();
-    private EmojiButton emojiButton;
-    private View view;
     private EmojiPopup emojiPopup;
+    private boolean isForSticker = true;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,22 +57,42 @@ public class GroupActivity extends AppCompatActivity {
         rvArgument = findViewById(R.id.rvArgument);
         inputMessage = findViewById(R.id.inputMessage);
         LinearLayout sendView = findViewById(R.id.sendView);
-        emojiButton = findViewById(R.id.sendEmoji);
+        EmojiButton emojiButton = findViewById(R.id.sendEmoji);
+        ImageView sendIcon = findViewById(R.id.sendIcon);
         ImageView leaveGroup = findViewById(R.id.leaveGroup);
 
         inputMessage.setOnClickListener(v -> emojiPopup.dismiss());
 
+        inputMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    sendIcon.setImageDrawable(getDrawable(R.mipmap.send_icon));
+                    isForSticker = false;
+                } else {
+                    sendIcon.setImageDrawable(getDrawable(R.drawable.ic_sticker));
+                    isForSticker = true;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         emojiButton.setOnClickListener(v -> {
             hideKeyboard(this);
-            emojiPopup = EmojiPopup.Builder.fromRootView(inputMessage).setOnEmojiClickListener(new OnEmojiClickListener() {
-                @RequiresApi(api = Build.VERSION_CODES.O)
-                @Override
-                public void onEmojiClick(@NonNull EmojiImageView emoji, @NonNull Emoji imageView) {
-                    String text = inputMessage.getText() != null ? inputMessage.getText().toString() : "";
-                    if (emoji.getTooltipText() != null) {
-                        inputMessage.setText(text + " " + emoji.getTooltipText().toString());
-                        inputMessage.setSelection(inputMessage.getText().length());
-                    }
+            emojiPopup = EmojiPopup.Builder.fromRootView(inputMessage).setOnEmojiClickListener((emoji, imageView) -> {
+                String text = inputMessage.getText() != null ? inputMessage.getText().toString() : "";
+                if (emoji.getTooltipText() != null) {
+                    inputMessage.setText(text + " " + emoji.getTooltipText().toString());
+                    inputMessage.setSelection(inputMessage.getText().length());
                 }
             }).build(inputMessage);
             emojiPopup.toggle(); // Toggles visibility of the Popup.
@@ -108,12 +127,18 @@ public class GroupActivity extends AppCompatActivity {
         subject.setText(Util.getServer().getSubject().getTitle());
 
         sendView.setOnClickListener(v -> {
-            if (inputMessage.getText() != null && !inputMessage.getText().toString().isEmpty()) {
-                if (emojiPopup.isShowing()) {
-                    emojiPopup.dismiss();
+            if (isForSticker) {
+                DialogStickers cdd = new DialogStickers(this, Util.getUser().getProducts() != null ? new ArrayList<>(Util.getUser().getProducts().values()) : new ArrayList<>(), argumentList);
+                cdd.show();
+            } else {
+                if (inputMessage.getText() != null && !inputMessage.getText().toString().isEmpty()) {
+                    if (emojiPopup != null && emojiPopup.isShowing()) {
+                        emojiPopup.dismiss();
+                    }
+                    sendMessage();
+                    rvArgument.scrollToPosition(argumentList.size() - 1);
+                    hideKeyboard(this);
                 }
-                sendMessage();
-                rvArgument.scrollToPosition(argumentList.size() - 1);
             }
         });
         leaveGroup.setOnClickListener(v -> leaveGroup());

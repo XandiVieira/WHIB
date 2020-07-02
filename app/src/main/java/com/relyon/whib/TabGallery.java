@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -24,7 +23,6 @@ import java.util.List;
 
 public class TabGallery extends Fragment {
 
-    private ProfileActivity profileActivity;
     private User user;
     private List<Product> stickersList = new ArrayList<>();
     private RecyclerView stickersRV;
@@ -34,7 +32,7 @@ public class TabGallery extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_gallery, container, false);
 
-        profileActivity = (ProfileActivity) getActivity();
+        ProfileActivity profileActivity = (ProfileActivity) getActivity();
         stickersRV = rootView.findViewById(R.id.stickers);
 
         if (profileActivity != null) {
@@ -44,11 +42,12 @@ public class TabGallery extends Fragment {
         Util.mDatabaseRef.child("product").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                stickersList.clear();
                 for (DataSnapshot snap : dataSnapshot.getChildren()) {
                     stickersList.add(snap.getValue(Product.class));
                 }
                 GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
-                RecyclerViewGalleryAdapter adapter = new RecyclerViewGalleryAdapter(stickersList, user.getProducts(), getContext(), getActivity());
+                RecyclerViewGalleryAdapter adapter = new RecyclerViewGalleryAdapter(stickersList, user.getProducts(), getContext(), getActivity(), false, null, null);
                 DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(stickersRV.getContext(),
                         layoutManager.getOrientation());
                 stickersRV.addItemDecoration(dividerItemDecoration);
@@ -63,10 +62,5 @@ public class TabGallery extends Fragment {
         });
 
         return rootView;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
     }
 }
