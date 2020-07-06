@@ -80,7 +80,7 @@
             <LinearLayout
                 android:id="@+id/ratingLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:gravity="bottom"
                 android:orientation="horizontal">
@@ -109,6 +109,23 @@
                     android:text="0.0"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="@dimen/big_text" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/stickersLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorAccent" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/stickers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

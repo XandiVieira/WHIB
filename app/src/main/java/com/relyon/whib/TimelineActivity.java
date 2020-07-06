@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,7 +62,6 @@ public class TimelineActivity extends AppCompatActivity {
     private LinearLayoutManager layoutManager;
     private AppCompatActivity activity;
     private Spinner spinner;
-    private boolean canPost = true;
     private int NUMBER_OF_ADS = 0;
     private List<UnifiedNativeAd> mNativeAds = new ArrayList<>();
     private RecyclerViewCommentAdapter adapter;
@@ -73,6 +73,7 @@ public class TimelineActivity extends AppCompatActivity {
     private int filter = 0;
     private FancyShowCaseQueue queue = new FancyShowCaseQueue();
     private Query query;
+    private ProgressBar progressBar;
 
     int menuWidth;
     int menuHeight;
@@ -102,26 +103,6 @@ public class TimelineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
-        if (Util.getServer() != null) {
-            Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("activated").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Boolean active = dataSnapshot.getValue(Boolean.class);
-                    if (active != null && !active) {
-                        Toast.makeText(getApplicationContext(), "Servidor Lotado", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-        } else {
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-        }
-
         if (!Util.getUser().isFirstTime()) {
             List<String> testDeviceIds = Collections.singletonList("3DF6979E4CCB56C2A91510C1A9BCC253");
             RequestConfiguration configuration =
@@ -140,69 +121,13 @@ public class TimelineActivity extends AppCompatActivity {
         rvComments = findViewById(R.id.rvComments);
         emptyList = findViewById(R.id.emptyList);
         spinner = findViewById(R.id.filters);
+        progressBar = findViewById(R.id.progressBar);
 
         activity = this;
 
         subjectObj = Util.getServer().getSubject();
         if (subjectObj != null) {
             subject.setText(Util.getServer().getSubject().getTitle());
-        }
-
-        if (Util.getUser().isFirstTime()) {
-            leaveCommentLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    leaveCommentLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    commentHeight = leaveCommentLayout.getHeight();
-                    commentWidth = leaveCommentLayout.getWidth();
-                    int[] location = new int[2];
-                    leaveCommentLayout.getLocationOnScreen(location);
-                    commentX = location[0];
-                    commentY = location[1];
-
-                    spinner.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                        @Override
-                        public void onGlobalLayout() {
-                            spinner.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                            spinnerHeight = spinner.getHeight();
-                            spinnerWidth = spinner.getWidth();
-                            int[] location = new int[2];
-                            spinner.getLocationOnScreen(location);
-                            spinnerX = location[0];
-                            spinnerY = location[1];
-
-                            menu.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                                @Override
-                                public void onGlobalLayout() {
-                                    menu.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                                    menuHeight = menu.getHeight();
-                                    menuWidth = menu.getWidth();
-                                    int[] location = new int[2];
-                                    menu.getLocationOnScreen(location);
-                                    menuX = location[0];
-                                    menuY = location[1];
-
-                                    layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                                        @Override
-                                        public void onGlobalLayout() {
-                                            layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                                            firstCommentHeight = layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getHeight();
-                                            firstCommentWidth = layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getWidth();
-                                            int[] location = new int[2];
-                                            layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getLocationOnScreen(location);
-                                            firstCommentX = location[0];
-                                            firstCommentY = location[1];
-                                            IntentFilter intentFilter = new IntentFilter();
-                                            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-                                            registerReceiver(menuReceiver, intentFilter);
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
-                }
-            });
         }
 
         ArrayAdapter<CharSequence> filterAdapter = ArrayAdapter.createFromResource(this,
@@ -240,40 +165,6 @@ public class TimelineActivity extends AppCompatActivity {
         initRecyclerViewComment();
         getComments();
 
-        Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if (mayPass) {
-                    List<Comment> comments = new ArrayList<>();
-                    comments.add(dataSnapshot.getValue(Comment.class));
-                    comments.get(0).setCommentUID(dataSnapshot.getKey());
-                    requireNonNull(comments.get(0)).setCommentUID(dataSnapshot.getKey());
-                    adapter.addAll(comments, true, true, false);
-                    emptyList.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
         rvComments.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -287,9 +178,6 @@ public class TimelineActivity extends AppCompatActivity {
         });
 
         menu.setOnClickListener(v -> {
-            if (Util.getUser().isFirstTime()) {
-                //callTour3();
-            }
             //Creating the instance of PopupMenu
             PopupMenu popup = new PopupMenu(TimelineActivity.this, menu);
             //Inflating the Popup using xml file
@@ -338,21 +226,6 @@ public class TimelineActivity extends AppCompatActivity {
         });
 
         leaveCommentLayout.setOnClickListener(v -> openCommentBox());
-
-        Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("tempInfo").child("activated").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                boolean activated = dataSnapshot.getValue(Boolean.class);
-                if (!activated) {
-                    backToMainScreen();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
 
     private void backToMainScreen() {
@@ -414,6 +287,7 @@ public class TimelineActivity extends AppCompatActivity {
                     }
                 }
                 adapter.addAll(comments, adapter.getLastItemId(false) == null, false, reset);
+                progressBar.setVisibility(View.GONE);
                 reset = false;
                 if (comments.size() > 0) {
                     emptyList.setVisibility(View.GONE);
@@ -471,6 +345,7 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void openCommentBox() {
+        boolean canPost = true;
         if (canPost) {
             mayPass = true;
             DialogPostComment cdd = new DialogPostComment(this, subjectObj, menu);
@@ -554,6 +429,119 @@ public class TimelineActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Util.getmServerDatabaseRef().child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
+
+        if (Util.getUser().isFirstTime()) {
+            leaveCommentLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    leaveCommentLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    commentHeight = leaveCommentLayout.getHeight();
+                    commentWidth = leaveCommentLayout.getWidth();
+                    int[] location = new int[2];
+                    leaveCommentLayout.getLocationOnScreen(location);
+                    commentX = location[0];
+                    commentY = location[1];
+
+                    spinner.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            spinner.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            spinnerHeight = spinner.getHeight();
+                            spinnerWidth = spinner.getWidth();
+                            int[] location = new int[2];
+                            spinner.getLocationOnScreen(location);
+                            spinnerX = location[0];
+                            spinnerY = location[1];
+
+                            menu.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                                @Override
+                                public void onGlobalLayout() {
+                                    menu.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                    menuHeight = menu.getHeight();
+                                    menuWidth = menu.getWidth();
+                                    int[] location = new int[2];
+                                    menu.getLocationOnScreen(location);
+                                    menuX = location[0];
+                                    menuY = location[1];
+
+                                    layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                                        @Override
+                                        public void onGlobalLayout() {
+                                            layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                            firstCommentHeight = layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getHeight();
+                                            firstCommentWidth = layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getWidth();
+                                            int[] location = new int[2];
+                                            layoutManager.findViewByPosition(layoutManager.findLastVisibleItemPosition()).getLocationOnScreen(location);
+                                            firstCommentX = location[0];
+                                            firstCommentY = location[1];
+                                            IntentFilter intentFilter = new IntentFilter();
+                                            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+                                            registerReceiver(menuReceiver, intentFilter);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+
+            Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    if (mayPass) {
+                        List<Comment> comments = new ArrayList<>();
+                        comments.add(dataSnapshot.getValue(Comment.class));
+                        comments.get(0).setCommentUID(dataSnapshot.getKey());
+                        requireNonNull(comments.get(0)).setCommentUID(dataSnapshot.getKey());
+                        adapter.addAll(comments, true, true, false);
+                        emptyList.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    adapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+
+        if (Util.getServer() != null) {
+            Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("activated").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Boolean active = dataSnapshot.getValue(Boolean.class);
+                    if (active != null && !active) {
+                        Toast.makeText(getApplicationContext(), "Servidor Lotado", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        } else {
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        }
     }
 
     @Override

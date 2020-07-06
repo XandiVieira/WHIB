@@ -20,6 +20,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.borjabravo.readmoretextview.ReadMoreTextView;
@@ -33,6 +35,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Comment;
+import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.Report;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
@@ -108,6 +111,35 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         } else {
             CommentViewHolder holder = (CommentViewHolder) holder1;
             final Comment comment = (Comment) elements.get(position);
+
+            GridLayoutManager layoutManager = new GridLayoutManager(context, 5);
+            Util.mDatabaseRef.child("product").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    List<Product> finalElements = new ArrayList<>();
+                    for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                        finalElements.add(snap.getValue(Product.class));
+                    }
+                    if (comment.getStickers() != null && comment.getStickers().size() > 0) {
+                        RecyclerViewStickerAdapter adapter = new RecyclerViewStickerAdapter(new ArrayList<>(comment.getStickers().values()), context);
+                        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(context,
+                                layoutManager.getOrientation());
+                        holder.stickers.addItemDecoration(dividerItemDecoration);
+                        holder.stickers.setLayoutManager(layoutManager);
+                        holder.stickers.setAdapter(adapter);
+                        holder.stickersLayout.setVisibility(View.VISIBLE);
+                        holder.stickers.setVisibility(View.VISIBLE);
+                    } else {
+                        holder.stickersLayout.setVisibility(View.GONE);
+                        holder.stickers.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
 
             holder.ratingBar.setNumStars(5);
             holder.ratingBar.setStepSize(0.01f);
@@ -195,14 +227,24 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                 }
             });
 
-            holder.ratingTV.setOnClickListener(v -> goToGroup(comment));
+            holder.text.setOnClickListener(v -> goToGroup(comment));
             holder.entrance.setOnClickListener(v -> goToGroup(comment));
             holder.report.setOnClickListener(v -> tryToReport(comment));
-            holder.text.setOnLongClickListener(v -> tryToReport(comment));
+            holder.text.setOnLongClickListener(v -> {
+                if (elements.get(position) instanceof Comment) {
+                    stickersDialog(position);
+                }
+                return true;
+            });
         }
     }
 
-    private boolean tryToReport(Comment comment) {
+    private void stickersDialog(int position) {
+        DialogStickers cdd = new DialogStickers(activity, Util.getUser().getProducts() != null ? new ArrayList<>(Util.getUser().getProducts().values()) : new ArrayList<>(), null, false, (Comment) elements.get(position));
+        cdd.show();
+    }
+
+    private void tryToReport(Comment comment) {
         Query query = Util.mDatabaseRef.child("report").orderByChild("userSenderUID").equalTo(Util.getUser().getUserUID());
         ValueEventListener listener = new ValueEventListener() {
             @Override
@@ -236,7 +278,6 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             }
         };
         query.addListenerForSingleValueEvent(listener);
-        return false;
     }
 
     private void openReportDialog(Comment comment) {
@@ -298,6 +339,8 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         private ImageView entrance;
         private LinearLayout userProfile;
         private ImageView report;
+        private RecyclerView stickers;
+        private LinearLayout stickersLayout;
 
         CommentViewHolder(View rowView) {
             super(rowView);
@@ -311,6 +354,8 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             entrance = rowView.findViewById(R.id.entrance);
             userProfile = rowView.findViewById(R.id.userProfile);
             report = rowView.findViewById(R.id.report);
+            stickers = rowView.findViewById(R.id.stickers);
+            stickersLayout = rowView.findViewById(R.id.stickersLayout);
         }
     }
 

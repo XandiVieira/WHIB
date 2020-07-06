@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import com.google.firebase.database.Exclude;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Comment extends Sending {
@@ -19,6 +20,7 @@ public class Comment extends Sending {
     private List<String> alreadyRatedList = new ArrayList<>();
     private boolean isAGroup;
     private Group group;
+    private HashMap<String, Product> stickers;
 
     public Comment() {
     }
@@ -149,5 +151,13 @@ public class Comment extends Sending {
         } else {
             return false;
         }
+    }
+
+    public HashMap<String, Product> getStickers() {
+        return stickers;
+    }
+
+    public void setStickers(HashMap<String, Product> stickers) {
+        this.stickers = stickers;
     }
 }

@@ -234,7 +234,7 @@
                 android:fontFamily="@font/baloo"
                 android:gravity="start"
                 android:lineSpacingExtra="-10dp"
-                android:text="- Você pode reportar um usuário clicando no ícone de denúncia no canto inferior esquerdo do comentário ou clicando e segurando no próprio comentário"
+                android:text="- Você pode reportar um usuário clicando no ícone de denúncia no canto inferior esquerdo do comentário"
                 android:textColor="@color/colorAccent"
                 android:textSize="@dimen/small_text" />
 
@@ -298,6 +298,91 @@
                 android:text="- Dentro do grupo você poderá debater livremente. Lembre-se sempre de manter um bom nível de argumentação"
                 android:textColor="@color/colorAccent"
                 android:textSize="@dimen/small_text" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="5dp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="start"
+                android:lineSpacingExtra="-10dp"
+                android:text="8. Figurinhas:"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/normal_text" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="center"
+                android:lineSpacingExtra="-10dp"
+                android:text="Atenção: figurinhas NÃO são argumentos nem respostas, o uso das figurinhas são apenas para agregar humor e tornar o WHIB um ambiente mais dinâmico e divertido."
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/big_text" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="start"
+                android:lineSpacingExtra="-10dp"
+                android:text="- Você pode mandar figurinhas nos grupos ou para os comentários"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/small_text" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="start"
+                android:lineSpacingExtra="-10dp"
+                android:text="- Para mandar figurinhas para comentários você deve clicar no texto e segurar, suas figurinhas vão aparecer e então você deve escolher a que deseja enviar."
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/small_text" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="start"
+                android:lineSpacingExtra="-10dp"
+                android:text="- Para adquirir figurinhas é muito fácil, "
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/small_text" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:fontFamily="@font/baloo"
+                    android:gravity="start"
+                    android:lineSpacingExtra="-10dp"
+                    android:text="basta clicar "
+                    android:textColor="@color/colorAccent"
+                    android:textSize="@dimen/small_text" />
+
+                <Button
+                    android:id="@+id/store"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_accent"
+                    android:fontFamily="@font/baloo"
+                    android:paddingHorizontal="10dp"
+                    android:text="AQUI"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/small_text" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

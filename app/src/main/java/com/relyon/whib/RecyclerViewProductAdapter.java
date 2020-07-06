@@ -199,8 +199,14 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
                 if (product.getItemSKU().equals(purchase.getSku())) {
                     product.setQuantity(5);
                     product.setPurchaseDate(new Date().getTime());
-                    Util.getUser().getProducts().put(product.getTitle(), product);
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").push().setValue(product);
+                    if (Util.getUser().getProducts().get(product.getProductUID()) != null) {
+                        Util.getUser().getProducts().get(product.getProductUID()).setQuantity(Util.getUser().getProducts().get(product.getProductUID()).getQuantity() + product.getQuantity());
+                        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").child(product.getProductUID()).child("quantity").setValue(product.getQuantity());
+                    } else {
+                        Util.getUser().getProducts().put(product.getProductUID(), product);
+                        HashMap<String, Product> map = new HashMap<>();
+                        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").push().setValue(map);
+                    }
                 }
             }
         }

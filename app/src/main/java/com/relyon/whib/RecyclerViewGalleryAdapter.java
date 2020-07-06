@@ -1,6 +1,5 @@
 package com.relyon.whib;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,13 +12,18 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.relyon.whib.modelo.Argument;
+import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.Sending;
 import com.relyon.whib.modelo.Util;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,21 +31,37 @@ import java.util.List;
 
 public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerViewGalleryAdapter.ViewHolder> {
 
-    private List<Product> elements;
+    private List<Product> allStickers;
     private HashMap<String, Product> myStickers;
     private StorageReference storageReference;
     private Context context;
-    private boolean isForDialog;
     private List<Argument> argumentList;
     private Dialog dialog;
+    private boolean isForDialog;
+    private boolean isForGallery;
+    private Comment comment;
 
-    public RecyclerViewGalleryAdapter(List<Product> elements, HashMap<String, Product> myStickers, Context context, Activity activity, boolean isForDialog, List<Argument> argumentList, Dialog dialog) {
-        this.elements = elements;
+    public RecyclerViewGalleryAdapter(List<Product> allStickers, HashMap<String, Product> myStickers, Context context, boolean isForGallery, boolean isForDialog, List<Argument> argumentList, Dialog dialog, Comment comment) {
+        this.allStickers = allStickers;
         this.myStickers = myStickers;
         this.context = context;
         this.isForDialog = isForDialog;
         this.argumentList = argumentList;
         this.dialog = dialog;
+        this.isForGallery = isForGallery;
+        this.comment = comment;
+        storageReference = FirebaseStorage.getInstance().getReference();
+    }
+
+    public RecyclerViewGalleryAdapter(HashMap<String, Product> myStickers, List<Product> allStickers, Context context, boolean isForGallery, boolean isForDialog, boolean isForComment, List<Argument> argumentList, Dialog dialog, Comment comment) {
+        this.allStickers = allStickers;
+        this.myStickers = myStickers;
+        this.context = context;
+        this.isForDialog = isForDialog;
+        this.argumentList = argumentList;
+        this.dialog = dialog;
+        this.isForGallery = isForGallery;
+        this.comment = comment;
         storageReference = FirebaseStorage.getInstance().getReference();
     }
 
@@ -54,32 +74,37 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public void onBindViewHolder(@NonNull final RecyclerViewGalleryAdapter.ViewHolder holder, int position) {
-        Product product = elements.get(position);
 
-        if (!isForDialog) {
+        if (isForGallery) {
+            Product product = allStickers.get(position);
             holder.title.setText(product.getTitle());
-            holder.title.setVisibility(View.VISIBLE);
-        } else {
-            holder.title.setVisibility(View.GONE);
-            holder.image.setOnClickListener(v -> sendSticker(elements.get(position).getItemSKU(), elements.get(position).getProductUID()));
-        }
-
-        if (product.isContained(myStickers) != null) {
-            storageReference.child("images/" + product.getItemSKU() + ".png").getDownloadUrl().addOnSuccessListener(uri -> Glide.with(context).load(uri).into(holder.image));
-            for (Product mine : myStickers.values()) {
-                if (mine.getItemSKU().equals(product.getItemSKU())) {
-                    holder.quantity.setText("(" + mine.getQuantity() + ")");
+            if (product.isContained(myStickers) != null) {
+                storageReference.child("images/" + product.getItemSKU() + ".png").getDownloadUrl().addOnSuccessListener(uri -> Glide.with(context).load(uri).into(holder.image));
+                for (Product mine : myStickers.values()) {
+                    if (mine.getItemSKU().equals(product.getItemSKU())) {
+                        holder.quantity.setText("(" + mine.getQuantity() + ")");
+                    }
                 }
+            } else {
+                holder.quantity.setText("(0)");
+                storageReference.child("images/" + product.getItemSKU() + "_shadow" + ".png").getDownloadUrl().addOnSuccessListener(uri -> Glide.with(context).load(uri).into(holder.image));
             }
-        } else if (!isForDialog) {
-            holder.quantity.setText("(0)");
-            storageReference.child("images/" + product.getItemSKU() + "_shadow" + ".png").getDownloadUrl().addOnSuccessListener(uri -> Glide.with(context).load(uri).into(holder.image));
+        } else {
+            if (myStickers != null && myStickers.size() > 0) {
+                List<Product> products = new ArrayList<>(myStickers.values());
+                Product product = products.get(position);
+                if (isForDialog && product.getQuantity() > 0) {
+                    storageReference.child("images/" + product.getItemSKU() + ".png").getDownloadUrl().addOnSuccessListener(uri -> Glide.with(context).load(uri).into(holder.image));
+                    holder.quantity.setText("(" + product.getQuantity() + ")");
+                }
+                holder.image.setOnClickListener(v -> sendSticker(allStickers.get(position).getItemSKU(), products.get(position).getProductUID(), position));
+            }
         }
     }
 
     @Override
     public int getItemCount() {
-        return elements.size();
+        return allStickers.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -96,36 +121,65 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
         }
     }
 
-    private void sendSticker(String sku, String id) {
+    private void sendSticker(String sku, String id, int position) {
 
-        Date data = new Date();
+        if (isForGallery) {
+            return;
+        }
 
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(data);
-        Date current_date = cal.getTime();
+        if (isForDialog && comment == null) {
+            Date data = new Date();
 
-        Sending sending = new Sending("text", current_date.getTime(), Util.getUser().getUserName(), Util.getUser().getUserUID(), Util.getSubject());
-        Argument argument = new Argument(null, sku, Util.getGroup().getGroupUID(), current_date.getTime(), sending);
-        Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline")
-                .child("commentList").child(Util.getGroup().getCommentUID())
-                .child("group").child("argumentList").push().setValue(argument);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(data);
+            Date current_date = cal.getTime();
 
-        for (Product product : Util.getUser().getProducts().values()) {
-            if (product.getProductUID().equals(id)) {
-                if (Util.getUser().getProducts() != null) {
-                    if (Util.getUser().getProducts().get(product.getProductUID()) != null) {
-                        Product product1 = Util.getUser().getProducts().get(product.getProductUID());
-                        if (product1 != null) {
-                            product1.setQuantity(product1.getQuantity() - 1);
-                            Util.getUser().getProducts().get(product1.getProductUID()).setQuantity(product1.getQuantity());
-                            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").child(id).child("quantity").setValue(product1.getQuantity());
+            Sending sending = new Sending("text", current_date.getTime(), Util.getUser().getUserName(), Util.getUser().getUserUID(), Util.getSubject());
+            Argument argument = new Argument(null, sku, Util.getGroup().getGroupUID(), current_date.getTime(), sending);
+            Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline")
+                    .child("commentList").child(Util.getGroup().getCommentUID())
+                    .child("group").child("argumentList").push().setValue(argument);
+            Util.getUser().getProducts().get(id).setQuantity(Util.getUser().getProducts().get(id).getQuantity() - 1);
+            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").child(id).child("quantity").setValue(Util.getUser().getProducts().get(id).getQuantity());
+        }
+
+        if (Util.getUser().getProducts().get(id) != null) {
+            Product userProduct = Util.getUser().getProducts().get(id);
+            if (isForDialog && comment != null) {
+                Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("stickers").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("stickers").child(id).removeEventListener(this);
+                        Product commentProduct = dataSnapshot.getValue(Product.class);
+                        if (comment.getStickers() == null) {
+                            comment.setStickers(new HashMap<>());
                         }
+                        int quantity = Util.getUser().getProducts().get(userProduct.getProductUID()).getQuantity() - 1;
+                        if (commentProduct != null) {
+                            if (comment.getStickers().get(id) != null) {
+                                comment.getStickers().get(id).setQuantity(comment.getStickers().get(id).getQuantity() + 1);
+                            } else {
+                                commentProduct.setQuantity(1);
+                                comment.getStickers().put(id, commentProduct);
+                            }
+                            Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("stickers").child(id).setValue(comment.getStickers().get(id));
+                        } else {
+                            userProduct.setQuantity(1);
+                            Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("stickers").child(id).setValue(userProduct);
+                        }
+                        Util.getUser().getProducts().get(userProduct.getProductUID()).setQuantity(quantity);
+                        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").child(userProduct.getProductUID()).child("quantity").setValue(quantity);
                     }
-                }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         }
 
-        if (argumentList != null && argumentList.isEmpty() && !Util.getGroup().isReady() && Util.getUser().getUserUID().equals(Util.getComment().getAuthorsUID())) {
+        if (argumentList != null && comment == null && argumentList.isEmpty() && !Util.getGroup().isReady() && Util.getUser().getUserUID().equals(Util.getComment().getAuthorsUID())) {
             Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline")
                     .child("commentList").child(Util.getGroup().getCommentUID())
                     .child("group").child("ready").setValue(true);

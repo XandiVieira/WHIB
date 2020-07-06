@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.relyon.whib.modelo.Argument;
+import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.Util;
 
@@ -23,12 +24,16 @@ public class DialogStickers extends Dialog {
     public Dialog d;
     private List<Product> productList;
     private List<Argument> argumentList;
+    private boolean isForChat;
+    private Comment comment;
 
-    DialogStickers(Activity a, List<Product> productList, List<Argument> argumentList) {
+    DialogStickers(Activity a, List<Product> productList, List<Argument> argumentList, boolean isForChat, Comment comment) {
         super(a);
         this.a = a;
         this.productList = productList;
         this.argumentList = argumentList;
+        this.isForChat = isForChat;
+        this.comment = comment;
     }
 
     @Override
@@ -47,7 +52,7 @@ public class DialogStickers extends Dialog {
         }
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
-        RecyclerViewGalleryAdapter adapter = new RecyclerViewGalleryAdapter(productList, Util.getUser().getProducts(), getContext(), a, true, argumentList, this);
+        RecyclerViewGalleryAdapter adapter = new RecyclerViewGalleryAdapter( Util.getUser().getProducts(), productList, getContext(), false, true, false, argumentList, this, comment);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
                 layoutManager.getOrientation());
         sticker.addItemDecoration(dividerItemDecoration);
