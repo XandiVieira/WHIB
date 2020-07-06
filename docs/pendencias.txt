@@ -1,0 +1,53 @@
+PENDÊNCIAS
+- Sobre (Sobre nós, Termos de uso, politica de privacidade, Fale conosco, FAQ)
+	- Comentários de usuários premium viram grupos automaticamente
+	- Tour de boas vindas
+	- Construir loja
+	- Ver video para ganhar selos grátis
+	- Retornar de volta para o servidor e não para a MainActivity
+- Notificações (configurar quais ações lannçam notif e quais o usuário deseja receber)
+	- Não permitir avaliar o próprio comentário
+	- Analisar possibilidade de armazenar nome de usuário no comentário para evitar consulta mais tarde
+	- Ratingbar (iniciar zerada para n influenciar usuário)
+- Remover setas ao lado do servidor quando houver apenas um servidor no assunto.
+	- "Ver mais" na timeline para não carregar todos comentários de uma vez
+	- "Ver mais" para cada comentário que seja muito grande
+- Encontrar proporção para virar um grupo
+	- Processo completo das denúncias (não está contando no perfil do usuário)
+	- Não permitir denunciar o mesmo comentário mais de uma vez
+	- Permitir consultar perfil de outros usuários (ao clicar na foto em um comentário)
+	- Sair dos grupos deve desconectar o usuário deste grupo
+	- Criação do Nickname (garantir que o nick seja único)
+	- Tela de dicas (mostrar como usar o app e explicar o que for conveniente)
+	- Galeria de selos (like, lacrada, me fez refletir...) ganha versão extra ao ganhar todos os selos
+	- Indicar quando um grupo está ativo
+	- Explicar ativação do grupo nas dicas
+	- Avaliar comentários com sticker? usuário que receber o sticker "ganha" ele? não
+	- Enviar stickers no chat
+	- Explicar os stickers nas dicas
+	- Fix (Abrir tela de usuario a partir do comentário)
+	- Dono do grupo deve entrar e fazer o primeiro comentário para ativar o grupo
+	- Abas na tela de perfil (Avaliações, reports, galeria de selos)
+- Corrigir erros e warnings de log
+	- Verificar lentidão ao trocar de activity
+	- Ajustar layout (show stickers of a comment)
+	- Ao clicar no sticker do comentário está crashando
+
+LOJA
+- Superpoderes (Direito de tornar meu comentário em grupo automaticamente)
+	- Itens de avaliação (itens que o usuário pode utilizar para avaliar comentários e mensagens ex.: likes, excelentes, bom argumento, me fez refletir, etc...
+
+FUTURO
+- Títulos ao receber x selos de um tipo (ex.: Maria - A lacradora, João - O Amado, Joana - A Odiada)... possibilidade de ocultar o título
+- Permitir ao dono deo grupo configurar filtros de quem pode entrar (apenas extra, por nota, por título...)
+- Adicionar amigos
+- Convidar amigos para grupos
+- Abas na tela de perfil (Amigos e histórico)
+- Enviar sticker para amigos
+- No modo debate (por tempo) ter um intervalo a cada rodada onde será exibido um anúncio em video.
+	- Chat auxiliar para perguntas direcionadas?
+- Fórum de membros
+- Avaliar com "Agree" ou "disagree"
+
+id do app: ca-app-pub-1676578761693318~6855911877
+id ad: ca-app-pub-1676578761693318/6552659541
