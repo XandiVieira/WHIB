@@ -1,14 +1,12 @@
 package com.relyon.whib;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.IntentFilter;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -26,23 +25,24 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.android.billingclient.api.AcknowledgePurchaseParams;
+import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
+import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.BillingFlowParams;
+import com.android.billingclient.api.Purchase;
+import com.android.billingclient.api.PurchasesUpdatedListener;
+import com.android.billingclient.api.SkuDetails;
+import com.android.billingclient.api.SkuDetailsParams;
 import com.relyon.whib.modelo.Util;
-import com.relyon.whib.util.IabBroadcastReceiver;
-import com.relyon.whib.util.IabHelper;
-import com.relyon.whib.util.IabResult;
-import com.relyon.whib.util.Inventory;
-import com.relyon.whib.util.Purchase;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.relyon.whib.TabWhibExtra.TAG;
 import static com.relyon.whib.util.Constants.SKU_WHIB_MONTHLY;
 import static com.relyon.whib.util.Constants.SKU_WHIB_SIXMONTH;
 import static com.relyon.whib.util.Constants.SKU_WHIB_YEARLY;
-import static com.relyon.whib.util.Constants.base64EncodedPublicKey;
 
-public class DialogChooseSubscription extends DialogFragment implements IabBroadcastReceiver.IabBroadcastListener {
+public class DialogChooseSubscription extends DialogFragment {
 
     public Dialog d;
     private static final int NUM_PAGES = 4;
@@ -54,15 +54,10 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
     private Button confirm;
     private int color;
     private Thread runLayout;
-
-    // Does the user have an active subscription to the whib plan?
-    boolean mSubscribedToWhib = false;
-
-    // Will the subscription auto-renew?
-    boolean mAutoRenewEnabled = false;
+    private List<SkuDetails> skuDetails;
+    private BillingClient billingClient;
 
     // Tracks the currently owned subscription, and the options in the Manage dialog
-    String mWhibSku = "";
     String mFirstChoiceSku = SKU_WHIB_MONTHLY;
     String mSecondChoiceSku = SKU_WHIB_SIXMONTH;
     String mThirdChoiceSku = SKU_WHIB_YEARLY;
@@ -70,25 +65,29 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
     // Used to select between subscribing on a monthly, three month, six month or yearly basis
     String mSelectedSubscriptionPeriod = mSecondChoiceSku;
 
-    // SKU for our subscription
+    public DialogChooseSubscription(Context context) {
 
-    // (arbitrary) request code for the purchase flow
-    static final int RC_REQUEST = 10001;
-
-    // The helper object
-    IabHelper mHelper;
-
-    // Provides purchase notification while this app is running
-    IabBroadcastReceiver mBroadcastReceiver;
-
-    public DialogChooseSubscription() {
-
+        PurchasesUpdatedListener purchasesUpdatedListener = (billingResult, purchases) -> {
+            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
+                    && purchases != null) {
+                for (Purchase purchase : purchases) {
+                    handlePurchase(purchase);
+                }
+            } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
+                Toast.makeText(getContext(), "Parece que você mudou de ideia. Tente novamente caso queira ser extra", Toast.LENGTH_LONG).show();
+            } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
+                Toast.makeText(getContext(), "Parece que você já assinou a versão extra e pode usufruir das vantagens", Toast.LENGTH_LONG).show();
+            }
+        };
+        billingClient = BillingClient.newBuilder(context)
+                .setListener(purchasesUpdatedListener)
+                .enablePendingPurchases()
+                .build();
     }
 
-    public static DialogChooseSubscription newInstance(String title) {
-        DialogChooseSubscription frag = new DialogChooseSubscription();
+    public static DialogChooseSubscription newInstance(Context context) {
+        DialogChooseSubscription frag = new DialogChooseSubscription(context);
         Bundle args = new Bundle();
-        args.putString("title", title);
         frag.setArguments(args);
         return frag;
     }
@@ -113,43 +112,33 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
             getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
 
-        // Create the helper, passing it our context and the public key to verify signatures with
-        Log.d(TAG, "Creating IAB helper.");
-        mHelper = new IabHelper(getContext(), base64EncodedPublicKey);
-
-        // enable debug logging (for a production application, you should set this to false).
-        mHelper.enableDebugLogging(true);
-
-        // Start setup. This is asynchronous and the specified listener
-        // will be called once setup completes.
-        Log.d(TAG, "Starting setup.");
-        mHelper.startSetup(result -> {
-            Log.d(TAG, "Setup finished.");
-
-            if (!result.isSuccess()) {
-                // Oh noes, there was a problem.
-                complain("Problem setting up in-app billing: " + result);
-                return;
-            }
-
-            // Have we been disposed of in the meantime? If so, quit.
-            if (mHelper == null) return;
-
-            mBroadcastReceiver = new IabBroadcastReceiver(this);
-            IntentFilter broadcastFilter = new IntentFilter(IabBroadcastReceiver.ACTION);
-            getContext().registerReceiver(mBroadcastReceiver, broadcastFilter);
-
-            // IAB is fully set up. Now, let's get an inventory of stuff we own.
-            Log.d(TAG, "Setup successful. Querying inventory.");
-            try {
-                mHelper.queryInventoryAsync(mGotInventoryListener);
-            } catch (IabHelper.IabAsyncInProgressException e) {
-                complain("Error querying inventory. Another async operation in progress.");
-            }
-        });
-
+        List<String> skuList = new ArrayList<>();
+        skuList.add(SKU_WHIB_MONTHLY);
+        skuList.add(SKU_WHIB_SIXMONTH);
+        skuList.add(SKU_WHIB_YEARLY);
+        SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
+        params.setSkusList(skuList).setType(BillingClient.SkuType.SUBS);
+        billingClient.querySkuDetailsAsync(params.build(),
+                (billingResult, skuDetailsList) -> skuDetails = skuDetailsList);
         return inflate;
     }
+
+    private void handlePurchase(Purchase purchase) {
+        if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
+            if (!purchase.isAcknowledged()) {
+                AcknowledgePurchaseParams acknowledgePurchaseParams =
+                        AcknowledgePurchaseParams.newBuilder()
+                                .setPurchaseToken(purchase.getPurchaseToken())
+                                .build();
+                billingClient.acknowledgePurchase(acknowledgePurchaseParams, acknowledgePurchaseResponseListener);
+            }
+        }
+    }
+
+    private AcknowledgePurchaseResponseListener acknowledgePurchaseResponseListener = billingResult -> {
+        Util.getUser().setExtra(true);
+        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);
+    };
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -189,28 +178,23 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
 
         confirm.setOnClickListener(v -> {
             runLayout.interrupt();
-            String payload = "";
 
             if (TextUtils.isEmpty(mSelectedSubscriptionPeriod)) {
                 // The user has not changed from the default selection
                 mSelectedSubscriptionPeriod = mFirstChoiceSku;
             }
 
-            List<String> oldSkus = null;
-            if (!TextUtils.isEmpty(mWhibSku)
-                    && !mWhibSku.equals(mSelectedSubscriptionPeriod)) {
-                // The user currently has a valid subscription, any purchase action is going to
-                // replace that subscription
-                oldSkus = new ArrayList<>();
-                oldSkus.add(mWhibSku);
+            if (skuDetails != null) {
+                for (SkuDetails skuDetails : skuDetails) {
+                    if (skuDetails.getSku().equals(mSelectedSubscriptionPeriod)) {
+                        BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder()
+                                .setSkuDetails(skuDetails)
+                                .build();
+                        billingClient.launchBillingFlow(getActivity(), billingFlowParams).getResponseCode();
+                    }
+                }
             }
 
-            try {
-                mHelper.launchPurchaseFlow(getActivity(), mSelectedSubscriptionPeriod, IabHelper.ITEM_TYPE_SUBS,
-                        oldSkus, RC_REQUEST, mPurchaseFinishedListener, payload);
-            } catch (IabHelper.IabAsyncInProgressException e) {
-                complain("Error launching purchase flow. Another async operation in progress.");
-            }
             // Reset the dialog options
             mSelectedSubscriptionPeriod = "";
             mFirstChoiceSku = "";
@@ -222,7 +206,6 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
             changeColor(border1);
             border2.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
             border3.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
-
         });
 
         border2.setOnClickListener(v -> {
@@ -303,69 +286,6 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
         }
     }
 
-    private void complain(String message) {
-        Log.e(TAG, "**** whib Error: " + message);
-        alert("Error: " + message);
-    }
-
-    private void alert(String message) {
-        AlertDialog.Builder bld = new AlertDialog.Builder(getActivity());
-        bld.setMessage(message);
-        bld.setNeutralButton("OK", null);
-        Log.d(TAG, "Showing alert dialog: " + message);
-        bld.create().show();
-    }
-
-    private boolean verifyDeveloperPayload(Purchase p) {
-        String payload = p.getDeveloperPayload();
-        return true;
-    }
-
-    // Callback for when a purchase is finished
-    private IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
-        public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
-            Log.d(TAG, "Purchase finished: " + result + ", purchase: " + purchase);
-
-            // if we were disposed of in the meantime, quit.
-            if (mHelper == null) return;
-
-            if (result.isFailure()) {
-                complain("Error purchasing: " + result);
-                return;
-            }
-            if (!verifyDeveloperPayload(purchase)) {
-                complain("Error purchasing. Authenticity verification failed.");
-                return;
-            }
-
-            Log.d(TAG, "Purchase successful.");
-
-            if (purchase.getSku().equals(SKU_WHIB_MONTHLY)
-                    || purchase.getSku().equals(SKU_WHIB_SIXMONTH)
-                    || purchase.getSku().equals(SKU_WHIB_YEARLY)) {
-                // bought the whib subscription
-                Log.d(TAG, "whib subscription purchased.");
-                alert("Thank you for subscribing to whib!");
-                mSubscribedToWhib = true;
-                mAutoRenewEnabled = purchase.isAutoRenewing();
-                mWhibSku = purchase.getSku();
-                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);
-            }
-        }
-    };
-
-    // Called when consumption is complete
-    IabHelper.OnConsumeFinishedListener mConsumeFinishedListener = new IabHelper.OnConsumeFinishedListener() {
-        public void onConsumeFinished(Purchase purchase, IabResult result) {
-            Log.d(TAG, "Consumption finished. Purchase: " + purchase + ", result: " + result);
-            Log.d(TAG, "End consumption flow.");
-        }
-    };
-
-    /**
-     * A simple pager adapter that represents 4 ScreenSlidePageFragment objects, in
-     * sequence.
-     */
     private static class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
@@ -393,65 +313,6 @@ public class DialogChooseSubscription extends DialogFragment implements IabBroad
         @Override
         public int getCount() {
             return NUM_PAGES;
-        }
-    }
-
-    // Listener that's called when we finish querying the items and subscriptions we own
-    private IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
-        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
-            Log.d(TAG, "Query inventory finished.");
-
-            // Have we been disposed of in the meantime? If so, quit.
-            if (mHelper == null) {
-                return;
-            }
-
-            // Is it a failure?
-            if (result.isFailure()) {
-                complain("Failed to query inventory: " + result);
-                return;
-            }
-
-            Log.d(TAG, "Query inventory was successful.");
-
-            // First find out which subscription is auto renewing
-            Purchase whibMonthly = inventory.getPurchase(SKU_WHIB_MONTHLY);
-            Purchase whibSixMonth = inventory.getPurchase(SKU_WHIB_SIXMONTH);
-            Purchase whibYearly = inventory.getPurchase(SKU_WHIB_YEARLY);
-            if (whibMonthly != null && whibMonthly.isAutoRenewing()) {
-                mWhibSku = SKU_WHIB_MONTHLY;
-                mAutoRenewEnabled = true;
-            } else if (whibSixMonth != null && whibSixMonth.isAutoRenewing()) {
-                mWhibSku = SKU_WHIB_SIXMONTH;
-                mAutoRenewEnabled = true;
-            } else if (whibYearly != null && whibYearly.isAutoRenewing()) {
-                mWhibSku = SKU_WHIB_YEARLY;
-                mAutoRenewEnabled = true;
-            } else {
-                mWhibSku = "";
-                mAutoRenewEnabled = false;
-            }
-
-            // The user is subscribed if either subscription exists, even if neither is auto
-            // renewing
-            mSubscribedToWhib = (whibMonthly != null && verifyDeveloperPayload(whibMonthly))
-                    || (whibSixMonth != null && verifyDeveloperPayload(whibSixMonth))
-                    || (whibYearly != null && verifyDeveloperPayload(whibYearly));
-            Log.d(TAG, "User " + (mSubscribedToWhib ? "HAS" : "DOES NOT HAVE")
-                    + " infinite gas subscription.");
-
-            Log.d(TAG, "Initial inventory query finished; enabling main UI.");
-        }
-    };
-
-    @Override
-    public void receivedBroadcast() {
-        // Received a broadcast notification that the inventory of items has changed
-        Log.d(TAG, "Received broadcast notification. Querying inventory.");
-        try {
-            mHelper.queryInventoryAsync(mGotInventoryListener);
-        } catch (IabHelper.IabAsyncInProgressException e) {
-            complain("Error querying inventory. Another async operation in progress.");
         }
     }
 }

@@ -6,8 +6,8 @@ android {
         applicationId "com.relyon.whib"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 24
-        versionName "Teste interno - valuate comments with stickers"
+        versionCode 25
+        versionName "Teste interno - New purchasing process"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }

@@ -5,11 +5,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +21,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.relyon.whib.modelo.Preferences;
@@ -34,6 +33,7 @@ import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.UserTempInfo;
 import com.relyon.whib.modelo.Util;
 import com.relyon.whib.modelo.Valuation;
+import com.relyon.whib.util.ApplicationLifecycle;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -66,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+        ApplicationLifecycle lifecycle = (ApplicationLifecycle) getApplication();
+        getApplication().registerActivityLifecycleCallbacks(lifecycle);
 
         this.recyclerViewServers = findViewById(R.id.recyclerViewSec);
         progressBar = findViewById(R.id.progressBar);
@@ -102,22 +105,20 @@ public class MainActivity extends AppCompatActivity {
                 if (Util.getUser().isExtra()) {
                     startActivity(new Intent(getApplicationContext(), NextSubjectVoting.class));
                 } else {
-                    //openExtraPromotion();
-                    FragmentTransaction fm = ((FragmentActivity) this).getSupportFragmentManager().beginTransaction();
-                    DialogChooseSubscription dialog = DialogChooseSubscription.newInstance("Some Title");
-                    dialog.show(fm, "fragment_edit_name");
+                    FragmentTransaction fm = this.getSupportFragmentManager().beginTransaction();
+                    DialogChooseSubscription dialog = DialogChooseSubscription.newInstance(getApplicationContext());
+                    dialog.show(fm, "");
                 }
             }
-            Toast.makeText(getApplicationContext(), "Em construção.", Toast.LENGTH_SHORT).show();
         });
     }
 
-    private void openExtraPromotion() {
-        //Dialog dialog = new Dialog();
-        Toast.makeText(this, "Assine a versão extra!", Toast.LENGTH_SHORT).show();
-        DialogPromoExtra cdd = new DialogPromoExtra(this);
-        cdd.show();
-        startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+    private void updateToken() {
+        String token = FirebaseInstanceId.getInstance().getToken();
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid != null) {
+            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("token").setValue(token);
+        }
     }
 
     private void goVoteScreen() {
@@ -230,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 //set user for the Util class
                 Util.setUser(user);
+                updateToken();
                 profile.setVisibility(View.VISIBLE);
                 if (user != null && user.isFirstTime()) {
                     callTour();
@@ -251,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
             photoPath = fbUser.getPhotoUrl().toString();
         }
 
-        user = new User(fbUser.getUid(), fbUser.getDisplayName(), photoPath,
+        user = new User(fbUser.getUid(), FirebaseInstanceId.getInstance().getToken(), fbUser.getDisplayName(), photoPath,
                 setUserTempInfo(), setUserValuation(), null, false, true,
                 false, null, null, 0, null, null,
                 false, false, 0, 0, setUserPreferences(), null, false);

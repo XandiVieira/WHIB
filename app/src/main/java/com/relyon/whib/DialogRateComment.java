@@ -17,11 +17,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Group;
 import com.relyon.whib.modelo.GroupTempInfo;
+import com.relyon.whib.modelo.Notification;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
 import com.relyon.whib.modelo.Valuation;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -113,6 +115,7 @@ public class DialogRateComment extends Dialog implements
         Util.mUserDatabaseRef.child(comment.getAuthorsUID()).child("valuation").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Util.mUserDatabaseRef.child(comment.getAuthorsUID()).child("valuation").removeEventListener(this);
                 Valuation valuation = dataSnapshot.getValue(Valuation.class);
                 if (valuation != null) {
                     valuation.setNumberOfRatings(valuation.getNumberOfRatings() + 1);
@@ -138,11 +141,27 @@ public class DialogRateComment extends Dialog implements
                 groupTempInfo, "text", new ArrayList<>(), userUIDList,
                 new ArrayList<>(), false, comment.getCommentUID());
         comment.setGroup(group);
-        //Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("commentGroup").setValue(group);
-        sendNotification();
+        Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("commentGroup").setValue(group);
+        //sendNotification();
     }
 
     private void sendNotification() {
+        Notification notification = new Notification(comment.getAuthorsUID(), "Parabéns, seu comentário foi muito bem avaliado e agora é um grupo", new Date().getTime());
+        Util.mUserDatabaseRef.child(comment.getAuthorsUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Util.mUserDatabaseRef.child(comment.getAuthorsUID()).removeEventListener(this);
+                User user = snapshot.getValue(User.class);
+                if (user != null) {
+                    Util.mDatabaseRef.child("notification").child(user.getToken()).setValue(notification);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void callTour() {

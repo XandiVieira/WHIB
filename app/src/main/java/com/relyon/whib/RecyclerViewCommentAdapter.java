@@ -292,8 +292,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         if ((comment.isAGroup() && comment.getGroup() != null)) {
             if (comment.getGroup().isReady() || Util.getUser().getUserUID().equals(comment.getAuthorsUID())) {
                 if (!comment.getGroup().getTempInfo().isFull() || Util.getUser().getUserUID().equals(comment.getAuthorsUID()) || Util.getUser().isExtra()) {
-                    Toast.makeText(context, "Entrou no grupo!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(context, GroupActivity.class);
+                    Intent intent = new Intent(context, GroupActivity.class).putExtra("serverId", Util.getServer().getServerUID()).putExtra("commentId", comment.getCommentUID());
                     if (comment.getGroup().getUserListUID() != null && !comment.getGroup().getUserListUID().contains(Util.getUser().getUserUID())) {
                         comment.getGroup().getUserListUID().add(Util.getUser().getUserUID());
                     }

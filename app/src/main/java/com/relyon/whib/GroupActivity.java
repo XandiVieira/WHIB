@@ -61,6 +61,35 @@ public class GroupActivity extends AppCompatActivity {
         ImageView sendIcon = findViewById(R.id.sendIcon);
         ImageView leaveGroup = findViewById(R.id.leaveGroup);
 
+        if (getIntent().hasExtra("serverId") && getIntent().hasExtra("commentId")) {
+            String serverId = getIntent().getStringExtra("serverId");
+            String commentId = getIntent().getStringExtra("commentId");
+
+            if (serverId != null && commentId != null) {
+                Util.mServerDatabaseRef.child(serverId).child("timeline")
+                        .child("commentList").child(commentId).child("group").child("argumentList").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        argumentList = new ArrayList<>();
+                        for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                            Argument argument = snap.getValue(Argument.class);
+                            argumentList.add(argument);
+                        }
+                        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
+                        layoutManager.setStackFromEnd(true);
+                        rvArgument.setLayoutManager(layoutManager);
+                        RecyclerViewArgumentAdapter adapter = new RecyclerViewArgumentAdapter(getApplicationContext(), argumentList);
+                        rvArgument.setAdapter(adapter);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }
+
         inputMessage.setOnClickListener(v -> emojiPopup.dismiss());
 
         inputMessage.addTextChangedListener(new TextWatcher() {
@@ -96,28 +125,6 @@ public class GroupActivity extends AppCompatActivity {
                 }
             }).build(inputMessage);
             emojiPopup.toggle(); // Toggles visibility of the Popup.
-        });
-
-        Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline")
-                .child("commentList").child(Util.getGroup().getCommentUID()).child("group").child("argumentList").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                argumentList = new ArrayList<>();
-                for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                    Argument argument = snap.getValue(Argument.class);
-                    argumentList.add(argument);
-                }
-                LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
-                layoutManager.setStackFromEnd(true);
-                rvArgument.setLayoutManager(layoutManager);
-                RecyclerViewArgumentAdapter adapter = new RecyclerViewArgumentAdapter(getApplicationContext(), argumentList);
-                rvArgument.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
         });
 
         back.setOnClickListener(v -> {

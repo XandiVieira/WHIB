@@ -7,6 +7,7 @@ import java.util.Map;
 public class User {
 
     private String userUID;
+    private String token;
     private String userName;
     private String photoPath;
     private UserTempInfo tempInfo;
@@ -32,8 +33,9 @@ public class User {
     public User() {
     }
 
-    public User(String userUID, String userName, String photoPath, UserTempInfo tempInfo, Valuation valuation, List<User> following, boolean blocked, boolean firstTime, boolean extra, List<String> groupsUIDList, History history, int followers, List<Complaint> pendingDoubts, List<Product> itemsListUID, boolean changedName, boolean changedPhoto, double totalInPurchase, int purchases, Preferences preferences, String nickName, boolean isAdmin) {
+    public User(String userUID, String token, String userName, String photoPath, UserTempInfo tempInfo, Valuation valuation, List<User> following, boolean blocked, boolean firstTime, boolean extra, List<String> groupsUIDList, History history, int followers, List<Complaint> pendingDoubts, List<Product> itemsListUID, boolean changedName, boolean changedPhoto, double totalInPurchase, int purchases, Preferences preferences, String nickName, boolean isAdmin) {
         this.userUID = userUID;
+        this.token = token;
         this.userName = userName;
         this.photoPath = photoPath;
         this.tempInfo = tempInfo;
@@ -62,6 +64,14 @@ public class User {
 
     public void setUserUID(String userUID) {
         this.userUID = userUID;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getUserName() {

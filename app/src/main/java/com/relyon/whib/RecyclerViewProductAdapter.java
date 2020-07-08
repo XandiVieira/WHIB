@@ -1,11 +1,8 @@
 package com.relyon.whib;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.IntentFilter;
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +12,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.billingclient.api.AcknowledgePurchaseParams;
+import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
+import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.BillingFlowParams;
+import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.Purchase;
+import com.android.billingclient.api.PurchasesUpdatedListener;
+import com.android.billingclient.api.SkuDetails;
+import com.android.billingclient.api.SkuDetailsParams;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
@@ -33,35 +40,34 @@ import com.google.firebase.storage.StorageReference;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
-import com.relyon.whib.util.IabBroadcastReceiver;
-import com.relyon.whib.util.IabHelper;
-import com.relyon.whib.util.IabResult;
-import com.relyon.whib.util.Inventory;
-import com.relyon.whib.util.Purchase;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.relyon.whib.util.Constants.base64EncodedPublicKey;
+import static com.relyon.whib.util.Constants.AMEI;
+import static com.relyon.whib.util.Constants.APROVE;
+import static com.relyon.whib.util.Constants.BURRO;
+import static com.relyon.whib.util.Constants.CONGRATS;
+import static com.relyon.whib.util.Constants.DEFINITION;
+import static com.relyon.whib.util.Constants.DISLIKE;
+import static com.relyon.whib.util.Constants.LACRADA;
+import static com.relyon.whib.util.Constants.LIKE;
+import static com.relyon.whib.util.Constants.LOL;
+import static com.relyon.whib.util.Constants.REFLEXAO;
 
-public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerViewProductAdapter.ViewHolder> implements IabBroadcastReceiver.IabBroadcastListener, RewardedVideoAdListener {
+public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerViewProductAdapter.ViewHolder> implements RewardedVideoAdListener {
 
     private List<Product> elements;
     private StorageReference storageReference;
     private Context context;
-    private Activity activity;
+    private List<SkuDetails> skuDetails;
     private RewardedVideoAd mRewardedVideoAd;
     private int selected;
-
-    // (arbitrary) request code for the purchase flow
-    static final int RC_REQUEST = 10001;
-    // The helper object
-    IabHelper mHelper;
-    // Provides purchase notification while this app is running
-    IabBroadcastReceiver mBroadcastReceiver;
-    static final String TAG = "StoreActivity";
+    private Activity activity;
+    private Product product;
+    private BillingClient billingClient;
 
     public RecyclerViewProductAdapter(List<Product> elements, Context context, Activity activity) {
         this.elements = elements;
@@ -79,55 +85,75 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
         mRewardedVideoAd.setRewardedVideoAdListener(this);
         loadRewardedVideoAd();
 
+        PurchasesUpdatedListener purchasesUpdatedListener = new PurchasesUpdatedListener() {
+            @Override
+            public void onPurchasesUpdated(@NonNull BillingResult billingResult, @Nullable List<Purchase> purchases) {
+                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
+                        && purchases != null) {
+                    for (Purchase purchase : purchases) {
+                        handlePurchase(purchase);
+                    }
+                } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
+                    Toast.makeText(context, "Parece que você mudou de ideia. Tente novamente.", Toast.LENGTH_LONG).show();
+                } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED && purchases != null) {
+                    for (Purchase purchase : purchases) {
+                        handlePurchase(purchase);
+                    }
+                }
+            }
+        };
+        billingClient = BillingClient.newBuilder(context)
+                .setListener(purchasesUpdatedListener)
+                .enablePendingPurchases()
+                .build();
+
         storageReference = FirebaseStorage.getInstance().getReference();
-        // Create the helper, passing it our context and the public key to verify signatures with
-        Log.d(TAG, "Creating IAB helper.");
-        mHelper = new IabHelper(context, base64EncodedPublicKey);
 
-        // enable debug logging (for a production application, you should set this to false).
-        mHelper.enableDebugLogging(true);
+        List<String> skuList = new ArrayList<>();
+        skuList.add(LIKE);
+        skuList.add(DISLIKE);
+        skuList.add(AMEI);
+        skuList.add(APROVE);
+        skuList.add(LACRADA);
+        skuList.add(LOL);
+        skuList.add(DEFINITION);
+        skuList.add(CONGRATS);
+        skuList.add(BURRO);
+        skuList.add(REFLEXAO);
 
-        // Start setup. This is asynchronous and the specified listener
-        // will be called once setup completes.
-        Log.d(TAG, "Starting setup.");
-        mHelper.startSetup(result -> {
-            Log.d(TAG, "Setup finished.");
+        SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
+        params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP);
+        billingClient.querySkuDetailsAsync(params.build(),
+                (billingResult, skuDetailsList) -> skuDetails = skuDetailsList);
+    }
 
-            if (!result.isSuccess()) {
-                // Oh noes, there was a problem.
-                complain("Problem setting up in-app billing: " + result);
-                return;
+    private void handlePurchase(Purchase purchase) {
+        if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
+            if (!purchase.isAcknowledged()) {
+                AcknowledgePurchaseParams acknowledgePurchaseParams =
+                        AcknowledgePurchaseParams.newBuilder()
+                                .setPurchaseToken(purchase.getPurchaseToken())
+                                .build();
+                billingClient.acknowledgePurchase(acknowledgePurchaseParams, acknowledgePurchaseResponseListener);
+                if (Util.getUser().getProducts() == null) {
+                    Util.getUser().setProducts(new HashMap<>());
+                }
+                if (Util.getUser().getProducts().get(purchase.getSku()) != null) {
+                    Util.getUser().getProducts().get(purchase.getSku()).setQuantity(Util.getUser().getProducts().get(purchase.getSku()).getQuantity() + 5);
+                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").child(purchase.getSku()).child("quantity").setValue(Util.getUser().getProducts().get(purchase.getSku()).getQuantity());
+                } else {
+                    if (product != null) {
+                        product.setQuantity(5);
+                        Util.getUser().getProducts().put(purchase.getSku(), product);
+                        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").child(purchase.getSku()).setValue(product);
+                    }
+                }
             }
-
-            // Have we been disposed of in the meantime? If so, quit.
-            if (mHelper == null) return;
-
-            mBroadcastReceiver = new IabBroadcastReceiver(this);
-            IntentFilter broadcastFilter = new IntentFilter(IabBroadcastReceiver.ACTION);
-            context.registerReceiver(mBroadcastReceiver, broadcastFilter);
-
-            // IAB is fully set up. Now, let's get an inventory of stuff we own.
-            Log.d(TAG, "Setup successful. Querying inventory.");
-            try {
-                mHelper.queryInventoryAsync(mGotInventoryListener);
-            } catch (IabHelper.IabAsyncInProgressException e) {
-                complain("Error querying inventory. Another async operation in progress.");
-            }
-        });
+        }
     }
 
-    private void complain(String message) {
-        Log.e(TAG, "**** whib Error: " + message);
-        alert("Error: " + message);
-    }
-
-    private void alert(String message) {
-        AlertDialog.Builder bld = new AlertDialog.Builder(context);
-        bld.setMessage(message);
-        bld.setNeutralButton("OK", null);
-        Log.d(TAG, "Showing alert dialog: " + message);
-        bld.create().show();
-    }
+    private AcknowledgePurchaseResponseListener acknowledgePurchaseResponseListener = billingResult -> {
+    };
 
     @NonNull
     @Override
@@ -139,7 +165,7 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(@NonNull final RecyclerViewProductAdapter.ViewHolder holder, int position) {
-        Product product = elements.get(position);
+        product = elements.get(position);
 
         storageReference.child("images/" + product.getItemSKU() + ".png").getDownloadUrl().addOnSuccessListener(uri -> Glide.with(context).load(uri).into(holder.image));
 
@@ -163,91 +189,24 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
                 } else {
                     Toast.makeText(context, "Não há videos disponíveis, por favor tente novamente!", Toast.LENGTH_LONG).show();
                 }
-            } else {
-                try {
-                    mHelper.launchPurchaseFlow(activity, elements.get(position).getItemSKU(), IabHelper.ITEM_TYPE_INAPP,
-                            null, RC_REQUEST, mPurchaseFinishedListener, "");
-                } catch (IabHelper.IabAsyncInProgressException e) {
-                    complain("Error launching purchase flow. Another async operation in progress.");
+            } else if (skuDetails != null){
+                for (SkuDetails skuDetails : skuDetails) {
+                    if (skuDetails.getSku().equals(product.getItemSKU())) {
+                        BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder()
+                                .setSkuDetails(skuDetails)
+                                .build();
+                        billingClient.launchBillingFlow(activity, billingFlowParams).getResponseCode();
+                    }
                 }
             }
         });
     }
-
-    // Callback for when a purchase is finished
-    private IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
-        public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
-            Log.d(TAG, "Purchase finished: " + result + ", purchase: " + purchase);
-
-            // if we were disposed of in the meantime, quit.
-            if (mHelper == null) return;
-
-            if (result.isFailure()) {
-                complain("Error purchasing: " + result);
-                return;
-            }
-            if (!verifyDeveloperPayload(purchase)) {
-                complain("Error purchasing. Authenticity verification failed.");
-                return;
-            }
-
-            Log.d(TAG, "Purchase successful.");
-
-            Toast.makeText(context, "Compra realizada com sucesso.", Toast.LENGTH_SHORT).show();
-
-            for (Product product : elements) {
-                if (product.getItemSKU().equals(purchase.getSku())) {
-                    product.setQuantity(5);
-                    product.setPurchaseDate(new Date().getTime());
-                    if (Util.getUser().getProducts().get(product.getProductUID()) != null) {
-                        Util.getUser().getProducts().get(product.getProductUID()).setQuantity(Util.getUser().getProducts().get(product.getProductUID()).getQuantity() + product.getQuantity());
-                        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").child(product.getProductUID()).child("quantity").setValue(product.getQuantity());
-                    } else {
-                        Util.getUser().getProducts().put(product.getProductUID(), product);
-                        HashMap<String, Product> map = new HashMap<>();
-                        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").push().setValue(map);
-                    }
-                }
-            }
-        }
-    };
 
     @Override
     public int getItemCount() {
         return elements.size();
     }
 
-    @Override
-    public void receivedBroadcast() {
-        Log.d(TAG, "Received broadcast notification. Querying inventory.");
-        try {
-            mHelper.queryInventoryAsync(mGotInventoryListener);
-        } catch (IabHelper.IabAsyncInProgressException e) {
-            complain("Error querying inventory. Another async operation in progress.");
-        }
-    }
-
-    // Listener that's called when we finish querying the items and subscriptions we own
-    private IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
-        public void onQueryInventoryFinished(IabResult result, Inventory inventory) {
-            Log.d(TAG, "Query inventory finished.");
-
-            // Have we been disposed of in the meantime? If so, quit.
-            if (mHelper == null) {
-                return;
-            }
-
-            // Is it a failure?
-            if (result.isFailure()) {
-                complain("Failed to query inventory: " + result);
-                return;
-            }
-
-            Log.d(TAG, "Query inventory was successful.");
-
-            Log.d(TAG, "Initial inventory query finished; enabling main UI.");
-        }
-    };
 
     @Override
     public void onRewardedVideoAdLoaded() {
@@ -341,11 +300,6 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
             buy = rowView.findViewById(R.id.buy);
             icon = rowView.findViewById(R.id.icon);
         }
-    }
-
-    private boolean verifyDeveloperPayload(Purchase p) {
-        String payload = p.getDeveloperPayload();
-        return true;
     }
 
     private void loadRewardedVideoAd() {

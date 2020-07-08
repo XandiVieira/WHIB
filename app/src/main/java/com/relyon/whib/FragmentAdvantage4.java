@@ -13,7 +13,6 @@ public class FragmentAdvantage4 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return (ViewGroup) inflater.inflate(
-                R.layout.fragment_advantage4, container, false);
+        return inflater.inflate(R.layout.fragment_advantage4, container, false);
     }
 }
