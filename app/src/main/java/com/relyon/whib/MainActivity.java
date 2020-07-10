@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
 
         user = new User(fbUser.getUid(), FirebaseInstanceId.getInstance().getToken(), fbUser.getDisplayName(), photoPath,
                 setUserTempInfo(), setUserValuation(), null, false, true,
-                false, null, null, 0, null, null,
+                false, null, 0, null, null,
                 false, false, 0, 0, setUserPreferences(), null, false);
 
         Util.setUser(user);

@@ -12,13 +12,11 @@ public class Group {
     private String mode;
     private List<Question> questionList;
     private List<String> userListUID;
-    private List<Participation> participationList;
     private boolean ready;
     private String commentUID;
 
     public Group(String groupUID, String subjectUID, int number, int serverNumber, GroupTempInfo tempInfo,
-                 String mode, List<Question> questionList, List<String> userListUID,
-                 List<Participation> participationList, boolean ready, String commentUID) {
+                 String mode, List<Question> questionList, List<String> userListUID, boolean ready, String commentUID) {
         this.groupUID = groupUID;
         this.subjectUID = subjectUID;
         this.number = number;
@@ -27,7 +25,6 @@ public class Group {
         this.mode = mode;
         this.questionList = questionList;
         this.userListUID = userListUID;
-        this.participationList = participationList;
         this.ready = ready;
         this.commentUID = commentUID;
     }
@@ -97,14 +94,6 @@ public class Group {
 
     public void setUserListUID(List<String> userListUID) {
         this.userListUID = userListUID;
-    }
-
-    public List<Participation> getParticipationList() {
-        return participationList;
-    }
-
-    public void setParticipationList(List<Participation> participationList) {
-        this.participationList = participationList;
     }
 
     public boolean isReady() {

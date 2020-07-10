@@ -92,7 +92,7 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
     public void onProductPurchased(String productId, TransactionDetails details) {
         for (Product product : productList) {
             if (product.getItemSKU().equals(productId)) {
-                rewardItem(product, 1);
+                rewardItem(product, Util.getUser().isExtra() ? 2 : 1);
             }
         }
     }

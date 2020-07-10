@@ -103,7 +103,7 @@ public class TimelineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
-        if (!Util.getUser().isFirstTime()) {
+        if (!Util.getUser().isFirstTime() && !Util.getUser().isExtra()) {
             List<String> testDeviceIds = Collections.singletonList("3DF6979E4CCB56C2A91510C1A9BCC253");
             RequestConfiguration configuration =
                     new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();

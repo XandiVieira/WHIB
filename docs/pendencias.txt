@@ -8,7 +8,7 @@ PENDÊNCIAS
 	- Não permitir avaliar o próprio comentário
 	- Analisar possibilidade de armazenar nome de usuário no comentário para evitar consulta mais tarde
 	- Ratingbar (iniciar zerada para n influenciar usuário)
-- Remover setas ao lado do servidor quando houver apenas um servidor no assunto.
+	- Remover setas ao lado do servidor quando houver apenas um servidor no assunto.
 	- "Ver mais" na timeline para não carregar todos comentários de uma vez
 	- "Ver mais" para cada comentário que seja muito grande
 - Encontrar proporção para virar um grupo
@@ -38,6 +38,8 @@ PENDÊNCIAS
 	- Encontrar forma que funcione para o in app billing
 	- Com 4 Tabs está quebrando o texto
 - Compra sendo efetuada mas recompensas não são atribuídas (method onProductPurchased is never called) 
+- Bloquear anúncios para usuário extra
+- Histórico para usuários extra (filtrar pelos melhore avaliados)
 
 LOJA
 - Superpoderes (Direito de tornar meu comentário em grupo automaticamente)

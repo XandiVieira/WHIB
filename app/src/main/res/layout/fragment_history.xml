@@ -6,6 +6,21 @@
     android:orientation="vertical"
     tools:context=".TabHistory">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:background="#A1C4E6">
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/filters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:popupBackground="@drawable/rounded_primary"
+            android:textAlignment="center" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/empty"
         android:layout_width="wrap_content"

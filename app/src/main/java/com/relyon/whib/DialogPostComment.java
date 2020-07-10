@@ -18,6 +18,7 @@ import com.relyon.whib.modelo.Sending;
 import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.Util;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import me.toptas.fancyshowcase.FancyShowCaseView;
@@ -99,6 +100,10 @@ public class DialogPostComment extends Dialog implements
         if (validateComment()) {
             Comment comment = new Comment(Util.getServer().getServerUID(), commentBox.getText().toString(), (float) 0.0, Util.getUser().getPhotoPath(), date, 0, (float) 0.0, sending, false, null);
             Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").push().setValue(comment);
+            if (Util.getUser().getCommentList() == null) {
+                Util.getUser().setCommentList(new ArrayList<>());
+            }
+            Util.getUser().getCommentList().add(new Comment(comment.getCommentUID(), comment.getServerUID(), comment.getText(), comment.getRating(), comment.getUserPhotoURL(), comment.getTime(), comment.getNumberOfRatings(), comment.getSumOfRatings(), comment.getStickers()));
             Toast.makeText(getContext(), "Comentário postado!", Toast.LENGTH_SHORT).show();
             // Clear input box
             commentBox.setText("");
