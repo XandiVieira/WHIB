@@ -1,8 +1,6 @@
 package com.relyon.whib;
 
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageView;

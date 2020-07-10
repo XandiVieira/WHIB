@@ -7,6 +7,8 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.relyon.whib.modelo.Util;
+
 public class TermsActivity extends AppCompatActivity {
 
     public static final String KEY_PAGE_LOCATION = "file:///android_asset/terms.html";
@@ -32,6 +34,10 @@ public class TermsActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
-        startActivity(new Intent(getApplicationContext(), AboutActivity.class));
+        if (Util.getUser() != null) {
+            startActivity(new Intent(getApplicationContext(), AboutActivity.class));
+        } else {
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        }
     }
 }

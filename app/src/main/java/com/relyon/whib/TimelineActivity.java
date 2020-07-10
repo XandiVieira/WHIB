@@ -228,13 +228,6 @@ public class TimelineActivity extends AppCompatActivity {
         leaveCommentLayout.setOnClickListener(v -> openCommentBox());
     }
 
-    private void backToMainScreen() {
-        Util.getUser().getTempInfo().setCurrentServer(null);
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
     private void initRecyclerViewComment() {
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
         rvComments = findViewById(R.id.rvComments);

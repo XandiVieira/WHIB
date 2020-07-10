@@ -1,12 +1,10 @@
 package com.relyon.whib;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,19 +13,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.relyon.whib.modelo.Server;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class RecyclerViewServerGroupAdapter extends RecyclerView.Adapter<RecyclerViewServerGroupAdapter.ViewHolder> {
 
-    private final Context context;
-    private ArrayList<ArrayList> elements;
-    private ArrayList<String> subjects;
-    private RecyclerView recyclerView;
+    private HashMap<String, Server> servers;
+    private List<String> subjects = new ArrayList<>();
 
-    RecyclerViewServerGroupAdapter(@NonNull Context context, ArrayList<ArrayList> elements, ArrayList<String> subjects, RecyclerView recyclerViewServers) {
-        this.context = context;
-        this.elements = elements;
-        this.subjects = subjects;
-        this.recyclerView = recyclerViewServers;
+    RecyclerViewServerGroupAdapter(HashMap<String, Server> servers) {
+        this.servers = servers;
+        for (Server server : servers.values()) {
+            if (!subjects.contains(server.getSubject().getTitle())) {
+                subjects.add(server.getSubject().getTitle());
+            }
+        }
     }
 
     @NonNull
@@ -44,28 +44,26 @@ public class RecyclerViewServerGroupAdapter extends RecyclerView.Adapter<Recycle
             holder.subject.setText("Indisponível");
         }
 
-        if (elements.size() > 2) {
+        ArrayList<Server> serversOfGroup = new ArrayList<>();
+
+        for (Server server : servers.values()) {
+            if (server.getSubject().getTitle().equals(subjects.get(position))) {
+                serversOfGroup.add(server);
+            }
+        }
+
+        if (serversOfGroup.size() > 1) {
             holder.nextServer.setVisibility(View.VISIBLE);
         } else {
             holder.nextServer.setVisibility(View.GONE);
         }
 
-        holder.initRecyclerView(elements.get(position));
-        /*if (elementos.length > 0 && elementos[position].size() > 0 && !elementos[position].get(0).getSubject().getTitle().equals("")) {
-            holder.initRecyclerView(elementos[position]);
-        } else {
-            holder.itemView.setVisibility(View.GONE);
-        }*/
-    }
-
-    private void goTimelineScreen(String subject, String status) {
-        Toast.makeText(context, subject + " - " + status, Toast.LENGTH_SHORT).show();
-        //Intent intent = new Intent();
+        holder.initRecyclerView(serversOfGroup);
     }
 
     @Override
     public int getItemCount() {
-        return elements.size();
+        return subjects.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -81,11 +79,11 @@ public class RecyclerViewServerGroupAdapter extends RecyclerView.Adapter<Recycle
             nextServer = rowView.findViewById(R.id.nextServer);
         }
 
-        private void initRecyclerView(ArrayList<Server> elementos) {
+        private void initRecyclerView(ArrayList<Server> elements) {
             LinearLayoutManager layoutManager2 = new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false);
             recyclerViewInner = itemView.findViewById(R.id.recyclerViewInner);
             recyclerViewInner.setLayoutManager(layoutManager2);
-            RecyclerViewServerAdapter adapter2 = new RecyclerViewServerAdapter(itemView.getContext(), elementos);
+            RecyclerViewServerAdapter adapter2 = new RecyclerViewServerAdapter(itemView.getContext(), elements);
             recyclerViewInner.setAdapter(adapter2);
         }
     }

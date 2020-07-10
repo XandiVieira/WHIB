@@ -97,7 +97,7 @@ public class DialogPostComment extends Dialog implements
         long date = new Date().getTime();
         Sending sending = new Sending("text", date, Util.getUser().getUserName(), Util.getUser().getUserUID(), subject);
         if (validateComment()) {
-            Comment comment = new Comment(commentBox.getText().toString(), (float) 0.0, Util.getUser().getPhotoPath(), date, 0, (float) 0.0, sending, false, null);
+            Comment comment = new Comment(Util.getServer().getServerUID(), commentBox.getText().toString(), (float) 0.0, Util.getUser().getPhotoPath(), date, 0, (float) 0.0, sending, false, null);
             Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").push().setValue(comment);
             Toast.makeText(getContext(), "Comentário postado!", Toast.LENGTH_SHORT).show();
             // Clear input box

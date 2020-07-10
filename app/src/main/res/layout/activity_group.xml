@@ -47,7 +47,8 @@
             android:layout_marginTop="@dimen/right_margin"
             android:layout_weight="0.5"
             android:padding="10dp"
-            android:src="@drawable/exit_icon" />
+            android:src="@drawable/exit_icon"
+            android:visibility="gone" />
 
     </LinearLayout>
 

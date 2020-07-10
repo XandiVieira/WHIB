@@ -24,18 +24,19 @@ public class SectionPagerProfileAdapter extends FragmentPagerAdapter {
                 return new TabValuations();
             case 1:
                 return new TabReports();
-            default:
+            case 2:
                 return new TabGallery();
+            default:
+                return new TabHistory();
             /*case 3:
                 return new TabFriends();
-            default:
-                return new TabHistory();*/
+            */
         }
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return 4;
     }
 
     @Override
@@ -45,12 +46,12 @@ public class SectionPagerProfileAdapter extends FragmentPagerAdapter {
                 return context.getString(R.string.valuations);
             case 1:
                 return context.getString(R.string.reports);
-            default:
+            case 2:
                 return context.getString(R.string.gallery);
-            /*case 3:
-                return context.getString(R.string.friends);
             default:
-                return context.getString(R.string.history);*/
+                return context.getString(R.string.history);
+            /*default:
+                return context.getString(R.string.friends);*/
         }
     }
 }

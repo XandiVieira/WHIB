@@ -80,8 +80,8 @@
     <string name="servers">Servidores</string>
     <string name="arroba">\@</string>
     <string name="rating">Média</string>
-    <string name="valuations">Avaliações</string>
-    <string name="reports">Denúncias</string>
+    <string name="valuations">Avaliação</string>
+    <string name="reports">Reportes</string>
     <string name="sent">Feitas:</string>
     <string name="received">Recebidas:</string>
     <string name="about_us">Sobre nós</string>
@@ -93,8 +93,8 @@
     <string name="privacy_policy">Política de privacidade</string>
     <string name="our_goal">Objetivo</string>
     <string name="our_mission">Missão</string>
-    <string name="mission">Ser um provedor de discussões  saudáveis sobre os assuntos mais  comentados do momento e assim  proporcionar que todos aprendam  e se  tornem mais informados e  tolerantes sobre tudo…</string>
-    <string name="goal">O app WHIB foi criado com o intuito de tornar o debate um hábito saudável entre os brasileiros, pois numa sociedade tão polarizada já não há conversa entre as partes.</string>
+    <string name="mission">Nós proporcionamos discussões saudáveis sobre os assuntos mais comentados do momento gerando tolerância sobre opiniões opostas</string>
+    <string name="goal">Tornar o debate um hábito saudável entre os brasileiros, pois numa sociedade tão polarizada já não há conversa entre as partes.</string>
     <string name="history">Histórico</string>
     <string name="consult_faq">Sua dúvida pode já ter sido respondida consulte nosso FAQ</string>
     <string name="frequent_questions">Perguntas Frequentes</string>
@@ -182,6 +182,7 @@
     <string name="argument_definition2">- prova que serve para afirmar ou negar um fato.</string>
     <string name="my_stickers">Minhas figurinhas</string>
     <string name="you_have_no_stickers">Você não tem nenhuma figurinha</string>
+    <string name="google_license_key">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1kIgbMkPuRow85OPOKyCbt30UrOY10n8s32NQLl+mJ6HnEyn/1jalwbvK9SuamdYq843c5OlqOwzxtF8wxt1TCCSUuvYVSzO5F/JHWO45i31bogZvP8cTsXwuB8/zdCyJFlA68DJee7db50VSuhUno7zm4J8CN0bUtOJJjb3Pma0eu4tvlkY/zpuOr9HbiLbhnEmQBFHFtrLhFIY9hni/1OtXfiqOwXop3ftdqI3PcFdGXTQkjiHPk13cnG0FzkqKOQsZRwAkNnp/T1AnkvntOtJ1R3Iz6mcXUaXdn17AFlATV4nQgCOzNz8k8aiVbKCF4dmKHNbcPREozaXwLFPywIDAQAB</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

@@ -143,6 +143,7 @@
             android:paddingHorizontal="15dp"
             android:text="@string/choose_next_subject"
             android:textAlignment="center"
-            android:textSize="@dimen/normal_text" />
+            android:textSize="@dimen/normal_text"
+            android:visibility="gone" />
     </LinearLayout>
 </LinearLayout>

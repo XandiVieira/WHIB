@@ -15,7 +15,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -25,18 +24,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.android.billingclient.api.AcknowledgePurchaseParams;
-import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
-import com.android.billingclient.api.BillingClient;
-import com.android.billingclient.api.BillingFlowParams;
-import com.android.billingclient.api.Purchase;
-import com.android.billingclient.api.PurchasesUpdatedListener;
-import com.android.billingclient.api.SkuDetails;
-import com.android.billingclient.api.SkuDetailsParams;
-import com.relyon.whib.modelo.Util;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.relyon.whib.util.SelectSubscription;
 
 import static com.relyon.whib.util.Constants.SKU_WHIB_MONTHLY;
 import static com.relyon.whib.util.Constants.SKU_WHIB_SIXMONTH;
@@ -54,8 +42,7 @@ public class DialogChooseSubscription extends DialogFragment {
     private Button confirm;
     private int color;
     private Thread runLayout;
-    private List<SkuDetails> skuDetails;
-    private BillingClient billingClient;
+    private SelectSubscription listener;
 
     // Tracks the currently owned subscription, and the options in the Manage dialog
     String mFirstChoiceSku = SKU_WHIB_MONTHLY;
@@ -66,23 +53,6 @@ public class DialogChooseSubscription extends DialogFragment {
     String mSelectedSubscriptionPeriod = mSecondChoiceSku;
 
     public DialogChooseSubscription(Context context) {
-
-        PurchasesUpdatedListener purchasesUpdatedListener = (billingResult, purchases) -> {
-            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
-                    && purchases != null) {
-                for (Purchase purchase : purchases) {
-                    handlePurchase(purchase);
-                }
-            } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
-                Toast.makeText(getContext(), "Parece que você mudou de ideia. Tente novamente caso queira ser extra", Toast.LENGTH_LONG).show();
-            } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
-                Toast.makeText(getContext(), "Parece que você já assinou a versão extra e pode usufruir das vantagens", Toast.LENGTH_LONG).show();
-            }
-        };
-        billingClient = BillingClient.newBuilder(context)
-                .setListener(purchasesUpdatedListener)
-                .enablePendingPurchases()
-                .build();
     }
 
     public static DialogChooseSubscription newInstance(Context context) {
@@ -111,34 +81,8 @@ public class DialogChooseSubscription extends DialogFragment {
             getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
             getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
-
-        List<String> skuList = new ArrayList<>();
-        skuList.add(SKU_WHIB_MONTHLY);
-        skuList.add(SKU_WHIB_SIXMONTH);
-        skuList.add(SKU_WHIB_YEARLY);
-        SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
-        params.setSkusList(skuList).setType(BillingClient.SkuType.SUBS);
-        billingClient.querySkuDetailsAsync(params.build(),
-                (billingResult, skuDetailsList) -> skuDetails = skuDetailsList);
         return inflate;
     }
-
-    private void handlePurchase(Purchase purchase) {
-        if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
-            if (!purchase.isAcknowledged()) {
-                AcknowledgePurchaseParams acknowledgePurchaseParams =
-                        AcknowledgePurchaseParams.newBuilder()
-                                .setPurchaseToken(purchase.getPurchaseToken())
-                                .build();
-                billingClient.acknowledgePurchase(acknowledgePurchaseParams, acknowledgePurchaseResponseListener);
-            }
-        }
-    }
-
-    private AcknowledgePurchaseResponseListener acknowledgePurchaseResponseListener = billingResult -> {
-        Util.getUser().setExtra(true);
-        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);
-    };
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -184,17 +128,8 @@ public class DialogChooseSubscription extends DialogFragment {
                 mSelectedSubscriptionPeriod = mFirstChoiceSku;
             }
 
-            if (skuDetails != null) {
-                for (SkuDetails skuDetails : skuDetails) {
-                    if (skuDetails.getSku().equals(mSelectedSubscriptionPeriod)) {
-                        BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder()
-                                .setSkuDetails(skuDetails)
-                                .build();
-                        billingClient.launchBillingFlow(getActivity(), billingFlowParams).getResponseCode();
-                    }
-                }
-            }
-
+            listener.onChoose(mSelectedSubscriptionPeriod);
+            this.dismiss();
             // Reset the dialog options
             mSelectedSubscriptionPeriod = "";
             mFirstChoiceSku = "";
@@ -313,6 +248,20 @@ public class DialogChooseSubscription extends DialogFragment {
         @Override
         public int getCount() {
             return NUM_PAGES;
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        // Verify that the host activity implements the callback interface
+        try {
+            // Instantiate the EditNameDialogListener so we can send events to the host
+            listener = (SelectSubscription) context;
+        } catch (ClassCastException e) {
+            // The activity doesn't implement the interface, throw exception
+            throw new ClassCastException(context.toString()
+                    + " must implement SelectSubscriptionDialogListener");
         }
     }
 }

@@ -5,13 +5,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.anjlab.android.iab.v3.BillingProcessor;
+import com.anjlab.android.iab.v3.TransactionDetails;
 import com.facebook.login.LoginManager;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,38 +30,32 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.relyon.whib.modelo.Preferences;
 import com.relyon.whib.modelo.Server;
-import com.relyon.whib.modelo.ServerTempInfo;
-import com.relyon.whib.modelo.Subject;
-import com.relyon.whib.modelo.Timeline;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.UserTempInfo;
 import com.relyon.whib.modelo.Util;
 import com.relyon.whib.modelo.Valuation;
 import com.relyon.whib.util.ApplicationLifecycle;
+import com.relyon.whib.util.SelectSubscription;
 
-import java.util.ArrayList;
-import java.util.UUID;
+import java.util.HashMap;
 
 import me.toptas.fancyshowcase.FancyShowCaseQueue;
 import me.toptas.fancyshowcase.FancyShowCaseView;
 
-import static com.relyon.whib.modelo.Util.getCurrentDate;
-import static com.relyon.whib.modelo.Util.setNewPopularity;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler, SelectSubscription {
 
     private FirebaseUser fbUser;
     private User user;
     private DatabaseReference mUserDatabaseRef;
     private DatabaseReference mServerDatabaseRef;
     private FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+    private BillingProcessor billingProcessor;
 
     //Layout elements
-    private ArrayList<String> subjectList;
-    private ArrayList<Server> serverList;
-    private ArrayList<ArrayList> serverGroupList;
+    private HashMap<String, Server> servers;
     private LinearLayout progressBar;
     private LinearLayout profile;
+    private Button choseSubjectButton;
 
     private RecyclerView recyclerViewServers;
 
@@ -70,10 +68,13 @@ public class MainActivity extends AppCompatActivity {
         ApplicationLifecycle lifecycle = (ApplicationLifecycle) getApplication();
         getApplication().registerActivityLifecycleCallbacks(lifecycle);
 
+        billingProcessor = new BillingProcessor(getApplicationContext(), getResources().getString(R.string.google_license_key), this);
+        billingProcessor.initialize();
+
         this.recyclerViewServers = findViewById(R.id.recyclerViewSec);
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
-        Button choseSubjectButton = findViewById(R.id.choseSubjectButton);
+        choseSubjectButton = findViewById(R.id.choseSubjectButton);
         profile = findViewById(R.id.profile);
 
         //Initiate firebase instances
@@ -95,8 +96,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         mFirebaseRemoteConfig.setConfigSettingsAsync(new FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(3600L).build());
-        //Retrieving the subjects
-        getSubjects();
 
         choseSubjectButton.setOnClickListener(v -> {
             if (user.isExtra()) {
@@ -106,8 +105,8 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(getApplicationContext(), NextSubjectVoting.class));
                 } else {
                     FragmentTransaction fm = this.getSupportFragmentManager().beginTransaction();
-                    DialogChooseSubscription dialog = DialogChooseSubscription.newInstance(getApplicationContext());
-                    dialog.show(fm, "");
+                    DialogChooseSubscription dialogChooseSubscription = DialogChooseSubscription.newInstance(getApplicationContext());
+                    dialogChooseSubscription.show(fm, "");
                 }
             }
         });
@@ -130,60 +129,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setSubjects() {
-        //createServers();
         setServers();
-    }
-
-    private void createServers() {
-        ArrayList<Server> serverList = new ArrayList<>();
-        subjectList = new ArrayList<>();
-        subjectList.add("Terceira Guerra Mundial");
-        subjectList.add("Gestões irresponsáveis em clubes de futebol");
-        subjectList.add("Erros do ENEM");
-        subjectList.add("Nazismo na política brasileira");
-        subjectList.add("Vestibulares e ingressos em Universidades");
-        subjectList.add("Começo de temporada no futebol brasileiro");
-        for (int i = 0; i < subjectList.size(); i++) {
-            if (!subjectList.get(i).equals("")) {
-                Subject subject2 = new Subject(UUID.randomUUID().toString(), subjectList.get(i),
-                        getCurrentDate(), setNewPopularity(), true);
-                ServerTempInfo serverTempInfo2 = new ServerTempInfo(0, true, serverList.size() + 1);
-                Timeline tl = new Timeline(null, subject2, null);
-                serverList.add(new Server(UUID.randomUUID().toString(), serverTempInfo2, subject2, tl));
-                mServerDatabaseRef.child(serverList.get(i).getServerUID()).setValue(serverList.get(i));
-            }
-        }
     }
 
     private void setServers() {
         mServerDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                serverList = new ArrayList<>();
-                subjectList = new ArrayList<>();
+                servers = new HashMap<>();
                 for (DataSnapshot snap : dataSnapshot.getChildren()) {
                     Server server = snap.getValue(Server.class);
                     if (server != null) {
-                        serverList.add(server);
-                        if (!subjectList.contains(server.getSubject().getTitle())) {
-                            subjectList.add(server.getSubject().getTitle());
-                        }
+                        servers.put(server.getServerUID(), server);
                     }
                 }
-                serverGroupList = new ArrayList<>();
-                for (int j = 0; j < subjectList.size(); j++) {
-                    serverGroupList.add(new ArrayList());
-                }
-                for (int i = 0; i < serverList.size(); i++) {
-                    for (int j = 0; j < subjectList.size(); j++) {
-                        if (serverList.get(i).getSubject().getTitle().equals(subjectList.get(j))) {
-                            serverGroupList.get(j).add(serverList.get(i));
-                            Util.setNumberOfServers(Util.getNumberOfServers() + 1);
-                        }
-                    }
-                }
+                Util.setNumberOfServers(servers.values().size());
                 initRecyclerViewGroup();
                 progressBar.setVisibility(View.GONE);
+                choseSubjectButton.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -197,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerViewServers = findViewById(R.id.recyclerViewSec);
         recyclerViewServers.setLayoutManager(layoutManager);
-        RecyclerViewServerGroupAdapter adapter = new RecyclerViewServerGroupAdapter(this, serverGroupList, subjectList, recyclerViewServers);
+        RecyclerViewServerGroupAdapter adapter = new RecyclerViewServerGroupAdapter(servers);
         recyclerViewServers.setAdapter(adapter);
     }
 
@@ -265,12 +228,10 @@ public class MainActivity extends AppCompatActivity {
     private void callTour() {
         FancyShowCaseQueue queue = new FancyShowCaseQueue();
         if (user.isFirstTime()) {
-            FancyShowCaseView fancyShowCaseView = new FancyShowCaseView.Builder(this).customView(R.layout.custom_tour_servers, view -> {
-                view.findViewById(R.id.skip_tutorial).setOnClickListener(v -> {
-                    Util.getUser().setFirstTime(false);
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false);
-                });
-            }).focusOn(recyclerViewServers)
+            FancyShowCaseView fancyShowCaseView = new FancyShowCaseView.Builder(this).customView(R.layout.custom_tour_servers, view -> view.findViewById(R.id.skip_tutorial).setOnClickListener(v -> {
+                Util.getUser().setFirstTime(false);
+                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false);
+            })).focusOn(recyclerViewServers)
                     .focusBorderSize(10)
                     .focusCircleAtPosition(550, 800, 500)
                     .build();
@@ -321,5 +282,53 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        //Retrieving the subjects
+        getSubjects();
+    }
+
+    @Override
+    public void onProductPurchased(String productId, TransactionDetails details) {
+        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);
+        Util.getUser().setExtra(true);
+        Toast.makeText(getApplicationContext(), "Parabéns, você agora pode utilizar todos os recursos do WHIB", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onPurchaseHistoryRestored() {
+
+    }
+
+    @Override
+    public void onBillingError(int errorCode, Throwable error) {
+
+    }
+
+    @Override
+    public void onBillingInitialized() {
+
+    }
+
+    private void subscribe(String sku) {
+        billingProcessor.subscribe(this, sku);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (billingProcessor.handleActivityResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (billingProcessor != null) {
+            billingProcessor.release();
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    public void onChoose(String sku) {
+        subscribe(sku);
     }
 }

@@ -42,6 +42,7 @@ public class GroupActivity extends AppCompatActivity {
     private ArrayList<Argument> argumentList = new ArrayList<>();
     private EmojiPopup emojiPopup;
     private boolean isForSticker = true;
+    private boolean cameFromProfile = false;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -49,6 +50,12 @@ public class GroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EmojiManager.install(new GoogleEmojiProvider());
         setContentView(R.layout.activity_group);
+
+        if (getIntent().hasExtra("cameFromProfile")) {
+            if (getIntent().getBooleanExtra("cameFromProfile", false)) {
+                cameFromProfile = true;
+            }
+        }
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         ImageView back = findViewById(R.id.back);
@@ -231,7 +238,9 @@ public class GroupActivity extends AppCompatActivity {
         super.onBackPressed();
         finish();
         Intent intent;
-        if (Util.getServer() != null) {
+        if (cameFromProfile) {
+            intent = new Intent(getApplicationContext(), ProfileActivity.class);
+        } else if (Util.getServer() != null) {
             intent = new Intent(getApplicationContext(), TimelineActivity.class);
         } else {
             intent = new Intent(getApplicationContext(), MainActivity.class);

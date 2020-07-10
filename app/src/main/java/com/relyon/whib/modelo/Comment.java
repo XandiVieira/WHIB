@@ -11,6 +11,7 @@ import java.util.List;
 public class Comment extends Sending {
 
     private String commentUID;
+    private String serverUID;
     private String text;
     private float rating;
     private String userPhotoURL;
@@ -25,10 +26,11 @@ public class Comment extends Sending {
     public Comment() {
     }
 
-    public Comment(String type, Long date, String authorsName, String authorsUID, Subject subject, String text,
+    public Comment(String serverUID, String type, Long date, String authorsName, String authorsUID, Subject subject, String text,
                    float rating, String userPhotoURL, Long time, int numberOfRatings, float sumOfRatings,
                    Sending sending, boolean isAGroup, Group group) {
         super(type, date, authorsName, authorsUID, subject);
+        this.serverUID = serverUID;
         this.text = text;
         this.rating = rating;
         this.userPhotoURL = userPhotoURL;
@@ -44,8 +46,9 @@ public class Comment extends Sending {
         super.setType(sending.getType());
     }
 
-    public Comment(String text, float rating, String userPhotoURL, Long time, int numberOfRatings, float sumOfRatings,
+    public Comment(String serverUID, String text, float rating, String userPhotoURL, Long time, int numberOfRatings, float sumOfRatings,
                    Sending sending, boolean isAGroup, Group group) {
+        this.serverUID = serverUID;
         this.text = text;
         this.rating = rating;
         this.userPhotoURL = userPhotoURL;
@@ -131,6 +134,14 @@ public class Comment extends Sending {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    public String getServerUID() {
+        return serverUID;
+    }
+
+    public void setServerUID(String serverUID) {
+        this.serverUID = serverUID;
     }
 
     @Exclude

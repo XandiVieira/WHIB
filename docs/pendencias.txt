@@ -1,5 +1,5 @@
 PENDÊNCIAS
-- Sobre (Sobre nós, Termos de uso, politica de privacidade, Fale conosco, FAQ)
+	- Sobre (Sobre nós, Termos de uso, politica de privacidade, Fale conosco)
 	- Comentários de usuários premium viram grupos automaticamente
 	- Tour de boas vindas
 	- Construir loja
@@ -32,6 +32,12 @@ PENDÊNCIAS
 	- Ajustar layout (show stickers of a comment)
 	- Ao clicar no sticker do comentário está crashando
 	- Dialog de assinatura
+	- Como acessar meus grupos
+	- Aba histórico com meus comentários
+	- Verificar porque todos stickers chamam video
+	- Encontrar forma que funcione para o in app billing
+	- Com 4 Tabs está quebrando o texto
+- Compra sendo efetuada mas recompensas não são atribuídas (method onProductPurchased is never called) 
 
 LOJA
 - Superpoderes (Direito de tornar meu comentário em grupo automaticamente)
@@ -39,6 +45,7 @@ LOJA
 
 FUTURO
 - Notificações (configurar quais ações lannçam notif e quais o usuário deseja receber)
+- FAQ
 - Títulos ao receber x selos de um tipo (ex.: Maria - A lacradora, João - O Amado, Joana - A Odiada)... possibilidade de ocultar o título
 - Permitir ao dono deo grupo configurar filtros de quem pode entrar (apenas extra, por nota, por título...)
 - Adicionar amigos

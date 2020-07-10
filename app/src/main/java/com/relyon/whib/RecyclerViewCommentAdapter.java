@@ -37,6 +37,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.Report;
+import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
 
@@ -53,11 +54,19 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     private static final int COMMENT_ITEM_VIEW_TYPE = 0;
     private static final int NATIVE_EXPRESS_AD_VIEW_TYPE = 1;
     int mPostsPerPage = 10;
+    private boolean isFromTabHistory;
 
     RecyclerViewCommentAdapter(@NonNull Context context, AppCompatActivity activity) {
         this.context = context;
         this.elements = new ArrayList<>();
         this.activity = activity;
+    }
+
+    RecyclerViewCommentAdapter(@NonNull Context context, AppCompatActivity activity, boolean isFromTabHistory) {
+        this.context = context;
+        this.elements = new ArrayList<>();
+        this.activity = activity;
+        this.isFromTabHistory = isFromTabHistory;
     }
 
     @NonNull
@@ -292,7 +301,26 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         if ((comment.isAGroup() && comment.getGroup() != null)) {
             if (comment.getGroup().isReady() || Util.getUser().getUserUID().equals(comment.getAuthorsUID())) {
                 if (!comment.getGroup().getTempInfo().isFull() || Util.getUser().getUserUID().equals(comment.getAuthorsUID()) || Util.getUser().isExtra()) {
-                    Intent intent = new Intent(context, GroupActivity.class).putExtra("serverId", Util.getServer().getServerUID()).putExtra("commentId", comment.getCommentUID());
+                    if (Util.getServer() == null) {
+                        Util.mServerDatabaseRef.child(comment.getServerUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                Util.setServer(snapshot.getValue(Server.class));
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
+                    Intent intent;
+                    if (isFromTabHistory) {
+                        intent = new Intent(context, GroupActivity.class).putExtra("serverId", comment.getServerUID()).putExtra("commentId", comment.getCommentUID()).putExtra("cameFromProfile", true);
+                    } else {
+                        intent = new Intent(context, GroupActivity.class).putExtra("serverId", Util.getServer().getServerUID()).putExtra("commentId", comment.getCommentUID());
+                    }
+
                     if (comment.getGroup().getUserListUID() != null && !comment.getGroup().getUserListUID().contains(Util.getUser().getUserUID())) {
                         comment.getGroup().getUserListUID().add(Util.getUser().getUserUID());
                     }
