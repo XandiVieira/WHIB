@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import com.google.firebase.database.Exclude;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -183,4 +184,8 @@ public class Comment extends Sending {
     public void setStickers(HashMap<String, Product> stickers) {
         this.stickers = stickers;
     }
+
+    public static Comparator<Comment> rateComparator = (c1, c2) -> (int) c2.getRating() - (int) c1.getRating();
+
+    public static Comparator<Comment> dateComparator = (c1, c2) -> (int) (c2.getTime() - c1.getTime());
 }

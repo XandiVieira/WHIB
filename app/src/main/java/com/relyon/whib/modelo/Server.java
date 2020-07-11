@@ -8,6 +8,8 @@ public class Server {
     private ServerTempInfo tempInfo; //server temporary data
     private Subject subject;
     private Timeline timeline;
+    private int numServers;
+    private int numComments;
 
     public Server(String serverUID, ServerTempInfo tempInfo, Subject subject, Timeline timeline) {
         this.serverUID = serverUID;
@@ -57,5 +59,20 @@ public class Server {
     public void setTimeline(Timeline timeline) {
         this.timeline = timeline;
     }
-}
 
+    public int getNumServers() {
+        return numServers;
+    }
+
+    public void setNumServers(int numServers) {
+        this.numServers = numServers;
+    }
+
+    public int getNumComments() {
+        return numComments;
+    }
+
+    public void setNumComments(int numComments) {
+        this.numComments = numComments;
+    }
+}

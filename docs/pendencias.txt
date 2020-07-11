@@ -37,9 +37,13 @@ PENDÊNCIAS
 	- Verificar porque todos stickers chamam video
 	- Encontrar forma que funcione para o in app billing
 	- Com 4 Tabs está quebrando o texto
-- Compra sendo efetuada mas recompensas não são atribuídas (method onProductPurchased is never called) 
-- Bloquear anúncios para usuário extra
-- Histórico para usuários extra (filtrar pelos melhore avaliados)
+	- Compra sendo efetuada mas recompensas não são atribuídas (method onProductPurchased is never called) 
+- Mostrar mensagem mais bonita para o usuário que se tornou extra
+	- Bloquear anúncios para usuário extra
+	- Histórico para usuários extra (filtrar pelos melhor avaliados)
+- Mostrar Stickers no tutorial
+- Set popularity of subjects
+- List subjects by popularity for adm
 
 LOJA
 - Superpoderes (Direito de tornar meu comentário em grupo automaticamente)

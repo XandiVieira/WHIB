@@ -123,22 +123,24 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
         Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).removeEventListener(this);
                 User user = dataSnapshot.getValue(User.class);
-                Product myProduct = null;
+                Product myProduct;
                 if (user != null) {
                     if (user.getProducts() == null) {
                         user.setProducts(new HashMap<>());
                     }
                     myProduct = product.isContained(user.getProducts());
-                    if (myProduct != null) {
-                        myProduct.setQuantity(myProduct.getQuantity() + (quantity * 5));
-                    } else {
+                    if (myProduct == null) {
                         myProduct = product;
                     }
+                    myProduct.setQuantity(myProduct.getQuantity() + (quantity * 5));
+                    if (user.getProducts().get(myProduct.getProductUID()) != null) {
+                        user.getProducts().get(myProduct.getProductUID()).setQuantity(myProduct.getQuantity());
+                    } else {
+                        user.getProducts().put(myProduct.getProductUID(), myProduct);
+                    }
                     Util.getUser().setProducts(user.getProducts());
-                }
-                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).removeEventListener(this);
-                if (myProduct != null) {
                     Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").child(myProduct.getProductUID()).setValue(myProduct);
                 }
             }

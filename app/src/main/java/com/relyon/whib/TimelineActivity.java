@@ -241,7 +241,7 @@ public class TimelineActivity extends AppCompatActivity {
         rvComments.setAdapter(adapter);
         query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage);
 
-        if (!Util.getUser().isFirstTime()) {
+        if (!Util.getUser().isFirstTime() && !Util.getUser().isExtra()) {
             new Thread(this::loadNativeAds).start();
         }
     }
@@ -299,7 +299,7 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void loadNativeAds() {
-        if (!Util.getUser().isFirstTime()) {
+        if (!Util.getUser().isFirstTime() && !Util.getUser().isExtra()) {
             mNativeAds.clear();
             AdLoader.Builder builder = new AdLoader.Builder(this, getString(R.string.ad_unit_id));
             // The AdLoader used to load ads.

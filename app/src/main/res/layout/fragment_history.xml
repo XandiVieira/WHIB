@@ -10,14 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="3dp"
-        android:background="#A1C4E6">
+        android:background="@color/colorAccent">
 
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/filters"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:popupBackground="@drawable/rounded_primary"
+            android:popupBackground="@drawable/rounded_accent"
             android:textAlignment="center" />
     </LinearLayout>
 
@@ -29,7 +29,7 @@
         android:text="Você não fez nenhum comentário ainda"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="@dimen/small_text"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <ProgressBar
         android:id="@+id/progress_bar"

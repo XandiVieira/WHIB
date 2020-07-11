@@ -30,6 +30,10 @@ public class AboutActivity extends AppCompatActivity {
         ImageView back = findViewById(R.id.back);
         TextView version = findViewById(R.id.version);
 
+        if (Util.getUser() == null) {
+            contactUs.setVisibility(View.GONE);
+        }
+
         try {
             PackageInfo pInfo = getApplicationContext().getPackageManager().getPackageInfo(getPackageName(), 0);
             String versionTxt = pInfo.versionName;

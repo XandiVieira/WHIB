@@ -84,13 +84,13 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
         }
         holder.title.setText(product.getTitle());
         holder.description.setText(product.getDescription());
-        if (product.getPrice() == 0) {
+        if (elements.get(position).getPrice() == 0) {
             holder.price.setText(context.getResources().getString(R.string.free));
         } else {
             holder.price.setText("R$ " + String.format("%.2f", product.getPrice()));
         }
         holder.buy.setOnClickListener(v -> {
-            if (product.getPrice() == 0) {
+            if (elements.get(position).getPrice() == 0) {
                 selected = position;
                 if (mRewardedVideoAd.isLoaded()) {
                     mRewardedVideoAd.show();
@@ -98,7 +98,7 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
                     Toast.makeText(context, "Não há videos disponíveis, por favor tente novamente!", Toast.LENGTH_LONG).show();
                 }
             } else {
-                listener.onChoose(product.getItemSKU());
+                listener.onChoose(elements.get(position).getItemSKU());
             }
         });
     }
@@ -141,6 +141,7 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
         Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).removeEventListener(this);
                 User user = dataSnapshot.getValue(User.class);
                 Product myProduct = null;
                 if (user != null) {
@@ -155,7 +156,6 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
                     }
                     Util.getUser().setProducts(user.getProducts());
                 }
-                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).removeEventListener(this);
                 if (myProduct != null) {
                     Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").child(myProduct.getProductUID()).setValue(myProduct);
                 }
