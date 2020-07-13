@@ -1,6 +1,5 @@
 package com.relyon.whib;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -15,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.relyon.whib.modelo.Popularity;
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.ServerTempInfo;
 import com.relyon.whib.modelo.Subject;
@@ -26,17 +24,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 public class AdmControlActivity extends AppCompatActivity {
 
     private ListView admServerList;
-    private List<Server> serverListComplete;
     private ArrayList<Server> serverListFiltered;
     private List<String> subjectsAdded;
     private AppCompatActivity activity;
-    private boolean update;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +41,6 @@ public class AdmControlActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_adm_control);
 
-        serverListComplete = new ArrayList<>();
         serverListFiltered = new ArrayList<>();
         subjectsAdded = new ArrayList<>();
         admServerList = findViewById(R.id.admServerList);
@@ -54,19 +50,20 @@ public class AdmControlActivity extends AppCompatActivity {
         storeItem.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), AdmCreateStoreItem.class)));
         activity = this;
 
-        Util.getmServerDatabaseRef().addValueEventListener(new ValueEventListener() {
+        Util.mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                serverListComplete = new ArrayList<>();
                 subjectsAdded = new ArrayList<>();
                 serverListFiltered = new ArrayList<>();
-                for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                    serverListComplete.add(snap.getValue(Server.class));
-                }
-                for (int i = 0; i < serverListComplete.size(); i++) {
-                    if (!subjectsAdded.contains(serverListComplete.get(i).getSubject().getTitle())) {
-                        serverListFiltered.add(serverListComplete.get(i));
-                        subjectsAdded.add(serverListComplete.get(i).getSubject().getTitle());
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Subject subject = snapshot.getValue(Subject.class);
+                    if (subject != null && subject.getServers() != null) {
+                        for (Server server : subject.getServers().values()) {
+                            if (!subjectsAdded.contains(server.getSubject())) {
+                                serverListFiltered.add(server);
+                                subjectsAdded.add(server.getSubject());
+                            }
+                        }
                     }
                 }
                 AdapterAdmServer adapter = new AdapterAdmServer(serverListFiltered, activity);
@@ -93,41 +90,30 @@ public class AdmControlActivity extends AppCompatActivity {
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                update = true;
-                createServer(input.getText().toString());
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        builder.setPositiveButton("OK", (dialog, which) -> createServer(input.getText().toString()));
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
         builder.show();
     }
 
     private void createServer(String newSubject) {
-        final Subject subject = new Subject(UUID.randomUUID().toString(), newSubject,
-                getCurrentDate(), setNewPopularity(), true);
         final List<Server> serverList = new ArrayList<>();
-        Util.getmServerDatabaseRef().addValueEventListener(new ValueEventListener() {
+        Util.mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (update) {
-                    for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                        Server server = snap.getValue(Server.class);
-                        serverList.add(server);
-                    }
-                    Timeline tl = new Timeline(null, subject, null);
-                    ServerTempInfo serverTempInfo = new ServerTempInfo(0, true, serverList.size() + 1);
-                    Server server = new Server(UUID.randomUUID().toString(), serverTempInfo, subject, tl);
-                    update = false;
-                    Util.mServerDatabaseRef.child(server.getServerUID()).setValue(server);
+                Util.mSubjectDatabaseRef.removeEventListener(this);
+                for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                    Server server = snap.getValue(Server.class);
+                    serverList.add(server);
                 }
+                Timeline tl = new Timeline(null, newSubject, null);
+                ServerTempInfo serverTempInfo = new ServerTempInfo(0, true, serverList.size() + 1);
+                Server server = new Server(UUID.randomUUID().toString(), serverTempInfo, newSubject, tl);
+                HashMap<String, Server> map = new HashMap<>();
+                map.put(server.getServerUID(), server);
+                final Subject subject = new Subject(UUID.randomUUID().toString(), map,
+                        getCurrentDate(), true);
+                Util.mSubjectDatabaseRef.child(server.getSubject()).setValue(subject);
             }
 
             @Override
@@ -147,9 +133,5 @@ public class AdmControlActivity extends AppCompatActivity {
         Date data_atual = cal.getTime();
 
         return dateFormat_hora.format(data_atual);
-    }
-
-    private Popularity setNewPopularity() {
-        return new Popularity(0, 0, 1);
     }
 }

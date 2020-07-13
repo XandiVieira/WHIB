@@ -6,10 +6,10 @@ public class Sending {
     private Long date;
     private String authorsName;
     private String authorsUID;
-    private Subject subject;
+    private String subject;
 
     public Sending(String type, Long date, String authorsName, String authorsUID,
-                   Subject subject) {
+                   String subject) {
         this.type = type;
         this.date = date;
         this.authorsName = authorsName;
@@ -52,11 +52,11 @@ public class Sending {
         this.authorsUID = authorsUID;
     }
 
-    public Subject getSubject() {
+    public String getSubject() {
         return subject;
     }
 
-    public void setSubject(Subject subject) {
+    public void setSubject(String subject) {
         this.subject = subject;
     }
 }

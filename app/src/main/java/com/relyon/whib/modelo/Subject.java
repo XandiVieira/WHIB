@@ -1,52 +1,34 @@
 package com.relyon.whib.modelo;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
-public class Subject implements Parcelable {
+import java.util.HashMap;
 
-    private String subjectUID;
+public class Subject {
+
     private String title;
+    private HashMap<String, Server> servers;
     private String date;
-    private Popularity popularity;
     private boolean on; //true - on / false - off
 
-    public Subject(String subjectUID, String title, String date, Popularity popularity, boolean on) {
-        this.subjectUID = subjectUID;
+    public Subject(String title, HashMap<String, Server> servers, String date, boolean on) {
         this.title = title;
+        this.servers = servers;
         this.date = date;
-        this.popularity = popularity;
         this.on = on;
     }
 
     public Subject() {
     }
 
+    public Subject(String title) {
+        this.title = title;
+    }
+
     protected Subject(Parcel in) {
-        subjectUID = in.readString();
         title = in.readString();
         date = in.readString();
         on = in.readByte() != 0;
-    }
-
-    public static final Creator<Subject> CREATOR = new Creator<Subject>() {
-        @Override
-        public Subject createFromParcel(Parcel in) {
-            return new Subject(in);
-        }
-
-        @Override
-        public Subject[] newArray(int size) {
-            return new Subject[size];
-        }
-    };
-
-    public String getSubjectUID() {
-        return subjectUID;
-    }
-
-    public void setSubjectUID(String subjectUID) {
-        this.subjectUID = subjectUID;
     }
 
     public String getTitle() {
@@ -65,14 +47,6 @@ public class Subject implements Parcelable {
         this.date = date;
     }
 
-    public Popularity getPopularity() {
-        return popularity;
-    }
-
-    public void setPopularity(Popularity popularity) {
-        this.popularity = popularity;
-    }
-
     public boolean isOn() {
         return on;
     }
@@ -81,16 +55,11 @@ public class Subject implements Parcelable {
         this.on = on;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public HashMap<String, Server> getServers() {
+        return servers;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(subjectUID);
-        dest.writeString(title);
-        dest.writeString(date);
-        dest.writeByte((byte) (on ? 1 : 0));
+    public void setServers(HashMap<String, Server> servers) {
+        this.servers = servers;
     }
 }

@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Server;
+import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
 
@@ -112,22 +113,27 @@ public class TabHistory extends Fragment {
                 adapter.addAll(commentList, true, false, true);
             }
         }
-        Util.mServerDatabaseRef.addValueEventListener(new ValueEventListener() {
+        Util.mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Server> serverList = new ArrayList<>();
                 for (DataSnapshot snap : snapshot.getChildren()) {
-                    Server server = snap.getValue(Server.class);
-                    if (server != null && server.getTimeline() != null) {
-                        serverList.add(server);
+                    Subject subject = snap.getValue(Subject.class);
+                    if (subject != null && subject.getServers() != null) {
+                        for (Server server : subject.getServers().values()) {
+                            if (server != null && server.getTimeline() != null) {
+                                serverList.add(server);
+                            }
+                        }
                     }
                 }
+
                 commentList = new ArrayList<>();
                 fixedCommentList = new ArrayList<>();
                 for (int i = 0; i < serverList.size(); i++) {
                     Server server = serverList.get(i);
                     int finalI = i;
-                    Util.mServerDatabaseRef.child(server.getServerUID()).child("timeline").child("commentList").addValueEventListener(new ValueEventListener() {
+                    Util.mSubjectDatabaseRef.child(server.getSubject()).child("servers").child(server.getServerUID()).child("timeline").child("commentList").addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             for (DataSnapshot snapshot1 : snapshot.getChildren()) {

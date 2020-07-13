@@ -10,7 +10,7 @@ public class Argument extends Sending {
     public Argument() {
     }
 
-    public Argument(String type, Long date, String authorsName, String authorsUID, Subject subject, String text,
+    public Argument(String type, Long date, String authorsName, String authorsUID, String subject, String text,
                     String imageTitle, String groupUID, Long time, Sending sending) {
         super(type, date, authorsName, authorsUID, subject);
         this.text = text;

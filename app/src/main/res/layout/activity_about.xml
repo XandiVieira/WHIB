@@ -32,158 +32,169 @@
             android:textSize="26sp" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/about_us"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="@color/white"
-        android:elevation="3dp"
-        android:padding="5dp">
+        android:layout_height="match_parent">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:fontFamily="@font/baloo"
-            android:gravity="left"
-            android:text="@string/about_us"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="26sp" />
-    </LinearLayout>
+            android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/tips"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="@color/white"
-        android:elevation="3dp"
-        android:padding="5dp">
+            <LinearLayout
+                android:id="@+id/about_us"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@color/white"
+                android:elevation="3dp"
+                android:padding="5dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:fontFamily="@font/baloo"
-            android:gravity="left"
-            android:text="@string/tips"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="26sp" />
-    </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/baloo"
+                    android:gravity="left"
+                    android:text="@string/about_us"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="26sp" />
+            </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/faq"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="@color/white"
-        android:elevation="3dp"
-        android:padding="5dp">
+            <LinearLayout
+                android:id="@+id/tips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@color/white"
+                android:elevation="3dp"
+                android:padding="5dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:fontFamily="@font/baloo"
-            android:gravity="left"
-            android:text="@string/faq"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="26sp" />
-    </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/baloo"
+                    android:gravity="left"
+                    android:text="@string/tips"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="26sp" />
+            </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/use_terms"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="@color/white"
-        android:elevation="3dp"
-        android:padding="5dp">
+            <LinearLayout
+                android:id="@+id/faq"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@color/white"
+                android:elevation="3dp"
+                android:padding="5dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:fontFamily="@font/baloo"
-            android:gravity="start"
-            android:text="@string/use_terms"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="26sp" />
-    </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/baloo"
+                    android:gravity="left"
+                    android:text="@string/faq"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="26sp" />
+            </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/privacy_policy"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="@color/white"
-        android:elevation="3dp"
-        android:padding="5dp">
+            <LinearLayout
+                android:id="@+id/use_terms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@color/white"
+                android:elevation="3dp"
+                android:padding="5dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:fontFamily="@font/baloo"
-            android:gravity="start"
-            android:text="@string/privacy_policy"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="26sp" />
-    </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/baloo"
+                    android:gravity="start"
+                    android:text="@string/use_terms"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="26sp" />
+            </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/contact_us"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="@color/white"
-        android:elevation="3dp"
-        android:orientation="vertical"
-        android:padding="5dp">
+            <LinearLayout
+                android:id="@+id/privacy_policy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@color/white"
+                android:elevation="3dp"
+                android:padding="5dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:fontFamily="@font/baloo"
-            android:gravity="start"
-            android:text="@string/contact_us"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="26sp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/baloo"
+                    android:gravity="start"
+                    android:text="@string/privacy_policy"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="26sp" />
+            </LinearLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="-5dp"
-            android:fontFamily="@font/baloo"
-            android:gravity="start"
-            android:text="@string/something_wrong"
-            android:textColor="@color/black"
-            android:textSize="12sp" />
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/contact_us"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@color/white"
+                android:elevation="3dp"
+                android:orientation="vertical"
+                android:padding="5dp">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="30dp"
-        android:src="@mipmap/logo2" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/baloo"
+                    android:gravity="start"
+                    android:text="@string/contact_us"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="26sp" />
 
-    <TextView
-        android:id="@+id/version"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:fontFamily="@font/baloo"
-        android:text="@string/version" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="-5dp"
+                    android:fontFamily="@font/baloo"
+                    android:gravity="start"
+                    android:text="@string/something_wrong"
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:src="@mipmap/logo2" />
+
+            <TextView
+                android:id="@+id/version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/baloo"
+                android:text="@string/version" />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

@@ -30,6 +30,9 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.relyon.whib.modelo.Preferences;
 import com.relyon.whib.modelo.Server;
+import com.relyon.whib.modelo.ServerTempInfo;
+import com.relyon.whib.modelo.Subject;
+import com.relyon.whib.modelo.Timeline;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.UserTempInfo;
 import com.relyon.whib.modelo.Util;
@@ -37,10 +40,15 @@ import com.relyon.whib.modelo.Valuation;
 import com.relyon.whib.util.ApplicationLifecycle;
 import com.relyon.whib.util.SelectSubscription;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 import me.toptas.fancyshowcase.FancyShowCaseQueue;
 import me.toptas.fancyshowcase.FancyShowCaseView;
+
+import static com.relyon.whib.modelo.Util.getCurrentDate;
 
 public class MainActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler, SelectSubscription {
 
@@ -48,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     private User user;
     private DatabaseReference mUserDatabaseRef;
     private DatabaseReference mServerDatabaseRef;
+    private DatabaseReference mSubjectDatabaseRef;
     private FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
     private BillingProcessor billingProcessor;
 
@@ -133,13 +142,20 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     }
 
     private void setServers() {
-        mServerDatabaseRef.addValueEventListener(new ValueEventListener() {
+        //createServers();
+        mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                servers = new HashMap<>();
+                List<Subject> subjects = new ArrayList<>();
                 for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                    Server server = snap.getValue(Server.class);
-                    if (server != null) {
+                    Subject subject = snap.getValue(Subject.class);
+                    if (subject != null) {
+                        subjects.add(subject);
+                    }
+                }
+                servers = new HashMap<>();
+                for (Subject subject : subjects) {
+                    for (Server server : subject.getServers().values()) {
                         servers.put(server.getServerUID(), server);
                     }
                 }
@@ -154,6 +170,28 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
 
             }
         });
+    }
+
+    private void createServers() {
+        ArrayList<Server> serverList = new ArrayList<>();
+        ArrayList<String> subjectList = new ArrayList<>();
+        subjectList.add("Isolamento social e suas consequências");
+        subjectList.add("Coronavirus");
+        subjectList.add("Cultura do Cancelamento");
+        subjectList.add("Impeachment Bolsonaro");
+        subjectList.add("BBB 20");
+        for (int i = 0; i < subjectList.size(); i++) {
+            if (!subjectList.get(i).equals("")) {
+                ServerTempInfo serverTempInfo2 = new ServerTempInfo(0, true, i + 1);
+                Timeline tl = new Timeline(null, subjectList.get(i), null);
+                HashMap<String, Server> servers = new HashMap<>();
+                String serverId = UUID.randomUUID().toString();
+                servers.put(serverId, new Server(serverId, serverTempInfo2, subjectList.get(i), tl));
+                Subject subject2 = new Subject(subjectList.get(i), servers,
+                        getCurrentDate(), true);
+                mSubjectDatabaseRef.child(subject2.getTitle()).setValue(subject2);
+            }
+        }
     }
 
     private void initRecyclerViewGroup() {
@@ -171,12 +209,14 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         DatabaseReference mDatabaseRef = mFirebaseDatabase.getReference();
         mUserDatabaseRef = mDatabaseRef.child("user");
         mServerDatabaseRef = mDatabaseRef.child("server");
+        mSubjectDatabaseRef = mDatabaseRef.child("subject");
         DatabaseReference mGroupDatabaseRef = mDatabaseRef.child("group");
         DatabaseReference mAdvantagesDatabaseRef = mDatabaseRef.child("advantage");
         DatabaseReference mReportsDatabaseRef = mDatabaseRef.child("report");
         Util.setmDatabaseRef(mDatabaseRef);
         Util.setmUserDatabaseRef(mUserDatabaseRef);
         Util.setmServerDatabaseRef(mServerDatabaseRef);
+        Util.setmSubjectDatabaseRef(mSubjectDatabaseRef);
         Util.setmGroupDatabaseRef(mGroupDatabaseRef);
         Util.setmAdvantagesDatabaseRef(mAdvantagesDatabaseRef);
         Util.setmReportDatabaseRef(mReportsDatabaseRef);
@@ -216,8 +256,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
             photoPath = fbUser.getPhotoUrl().toString();
         }
 
-        user = new User(fbUser.getUid(), FirebaseInstanceId.getInstance().getToken(), fbUser.getDisplayName(), photoPath,
-                setUserTempInfo(), setUserValuation(), null, false, true,
+        user = new User(fbUser.getUid(), FirebaseInstanceId.getInstance().getToken(), fbUser.getDisplayName(), photoPath, setUserValuation(), null, false, true,
                 false, null, 0, null, null,
                 false, false, 0, 0, setUserPreferences(), null, false);
 

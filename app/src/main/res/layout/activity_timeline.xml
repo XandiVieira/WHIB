@@ -17,7 +17,7 @@
         <ImageView
             android:id="@+id/back"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_weight="0.5"
             android:padding="5dp"
@@ -68,7 +68,8 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:popupBackground="@drawable/rounded_primary"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:visibility="gone" />
     </RelativeLayout>
 
     <View
@@ -91,12 +92,6 @@
         android:layout_height="match_parent"
         android:background="@drawable/rounded_dark_grey"
         android:orientation="vertical">
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvComments"

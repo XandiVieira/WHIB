@@ -41,9 +41,11 @@ PENDÊNCIAS
 - Mostrar mensagem mais bonita para o usuário que se tornou extra
 	- Bloquear anúncios para usuário extra
 	- Histórico para usuários extra (filtrar pelos melhor avaliados)
-- Mostrar Stickers no tutorial
-- Set popularity of subjects
-- List subjects by popularity for adm
+	- Set popularity of subjects
+	- List subjects by popularity for adm
+	- Reformular servidores (dentro de subjects)
+	- Entrar em grupo a partir do perfil crasha
+	- Mandar mensagem no grupo crasha
 
 LOJA
 - Superpoderes (Direito de tornar meu comentário em grupo automaticamente)
@@ -60,6 +62,7 @@ FUTURO
 - Enviar sticker para amigos
 - No modo debate (por tempo) ter um intervalo a cada rodada onde será exibido um anúncio em video.
 	- Chat auxiliar para perguntas direcionadas?
+- Modo debate: 1 pauta e 3 possibilidades (contra, a favor e contra... Mostrar a porcentagem em cada posição). Debatedores discutem e plateia decide de qual lado está, debatedores e plateia podem mudar de lado no meio da discussão. Organizar por rodadas, réplicas e tréplicas. Ou organizar com vários pontos de vista diferentes e usuário decide pra quem deseja perguntar ou contestar a resposta.
 - Fórum de membros
 - Avaliar com "Agree" ou "disagree"
 

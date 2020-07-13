@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Sending;
-import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.Util;
 
 import java.util.ArrayList;
@@ -32,11 +31,11 @@ public class DialogPostComment extends Dialog implements
     private EditText commentBox;
     private TextView counter;
     private int charactCounter;
-    private Subject subject;
+    private String subject;
     private static int MAX_COMMENT_SIZE = 600;
     private ImageView menu;
 
-    DialogPostComment(Activity a, Subject subjectObj, ImageView menu) {
+    DialogPostComment(Activity a, String subjectObj, ImageView menu) {
         super(a);
         this.activity = a;
         this.subject = subjectObj;
@@ -99,11 +98,11 @@ public class DialogPostComment extends Dialog implements
         Sending sending = new Sending("text", date, Util.getUser().getUserName(), Util.getUser().getUserUID(), subject);
         if (validateComment()) {
             Comment comment = new Comment(Util.getServer().getServerUID(), commentBox.getText().toString(), (float) 0.0, Util.getUser().getPhotoPath(), date, 0, (float) 0.0, sending, false, null);
-            Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").push().setValue(comment);
+            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").push().setValue(comment);
             if (Util.getUser().getCommentList() == null) {
                 Util.getUser().setCommentList(new ArrayList<>());
             }
-            Util.getUser().getCommentList().add(new Comment(comment.getCommentUID(), comment.getServerUID(), comment.getText(), comment.getRating(), comment.getUserPhotoURL(), comment.getTime(), comment.getNumberOfRatings(), comment.getSumOfRatings(), comment.getStickers()));
+            Util.getUser().getCommentList().add(new Comment(comment.getCommentUID(), comment.getServerUID(), Util.getServer().getSubject(), comment.getText(), comment.getRating(), comment.getUserPhotoURL(), comment.getTime(), comment.getNumberOfRatings(), comment.getSumOfRatings(), comment.getStickers()));
             Toast.makeText(getContext(), "Comentário postado!", Toast.LENGTH_SHORT).show();
             // Clear input box
             commentBox.setText("");

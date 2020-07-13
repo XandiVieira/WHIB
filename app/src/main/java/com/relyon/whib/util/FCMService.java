@@ -20,6 +20,6 @@ public class FCMService extends FirebaseMessagingService {
         if (data.get("serverId") == null || data.get("commentId") == null) {
             return;
         }
-        startActivity(new Intent(this, GroupActivity.class).putExtra("serverId", data.get("serverId")).putExtra("commentId", data.get("commentId")));
+        startActivity(new Intent(this, GroupActivity.class).putExtra("serverId", data.get("serverId")).putExtra("commentId", data.get("commentId")).putExtra("commentNumber", data.get("commentNumber")).putExtra("groupNumber", data.get("groupNumber")).putExtra("subject", data.get("subject")));
     }
 }

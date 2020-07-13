@@ -5,36 +5,36 @@ import java.util.List;
 
 public class Timeline {
 
-    private HashMap<String, Comment> commentMap;
-    private Subject subject;
+    private HashMap<String, Comment> commentList;
+    private String subject;
     private List<Group> groupList;
 
-    public Timeline(HashMap<String, Comment> commentMap, Subject subject, List<Group> groupList) {
-        this.commentMap = commentMap;
+    public Timeline(HashMap<String, Comment> commentList, String subject, List<Group> groupList) {
+        this.commentList = commentList;
         this.subject = subject;
         this.groupList = groupList;
     }
 
-    public Timeline(Subject subject) {
+    public Timeline(String subject) {
         this.subject = subject;
     }
 
     public Timeline() {
     }
 
-    public HashMap<String, Comment> getCommentMap() {
-        return commentMap;
+    public HashMap<String, Comment> getCommentList() {
+        return commentList;
     }
 
-    public void setCommentMap(HashMap<String, Comment> commentMap) {
-        this.commentMap = commentMap;
+    public void setCommentList(HashMap<String, Comment> commentList) {
+        this.commentList = commentList;
     }
 
-    public Subject getSubject() {
+    public String getSubject() {
         return subject;
     }
 
-    public void setSubject(Subject subject) {
+    public void setSubject(String subject) {
         this.subject = subject;
     }
 

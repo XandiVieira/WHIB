@@ -27,9 +27,10 @@ public class Comment extends Sending {
     public Comment() {
     }
 
-    public Comment(String commentUID, String serverUID, String text, float rating, String userPhotoURL, Long time, int numberOfRatings, float sumOfRatings, HashMap<String, Product> stickers) {
+    public Comment(String commentUID, String serverUID, String subject, String text, float rating, String userPhotoURL, Long time, int numberOfRatings, float sumOfRatings, HashMap<String, Product> stickers) {
         this.commentUID = commentUID;
         this.serverUID = serverUID;
+        super.setSubject(subject);;
         this.text = text;
         this.rating = rating;
         this.userPhotoURL = userPhotoURL;
@@ -39,7 +40,7 @@ public class Comment extends Sending {
         this.stickers = stickers;
     }
 
-    public Comment(String serverUID, String type, Long date, String authorsName, String authorsUID, Subject subject, String text,
+    public Comment(String serverUID, String type, Long date, String authorsName, String authorsUID, String subject, String text,
                    float rating, String userPhotoURL, Long time, int numberOfRatings, float sumOfRatings,
                    Sending sending, boolean isAGroup, Group group) {
         super(type, date, authorsName, authorsUID, subject);
@@ -175,6 +176,16 @@ public class Comment extends Sending {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public String getSubject() {
+        return super.getSubject();
+    }
+
+    @Override
+    public void setSubject(String subject) {
+        super.setSubject(subject);
     }
 
     public HashMap<String, Product> getStickers() {

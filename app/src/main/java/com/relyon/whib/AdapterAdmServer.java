@@ -25,7 +25,8 @@ public class AdapterAdmServer extends BaseAdapter {
 
     private final ArrayList<Server> admServerList;
     private final AppCompatActivity act;
-    private boolean update;
+    private int comments = 0;
+    private int servers = 0;
 
     AdapterAdmServer(ArrayList<Server> admServerList, AppCompatActivity act) {
         this.admServerList = admServerList;
@@ -51,30 +52,16 @@ public class AdapterAdmServer extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         final View view = act.getLayoutInflater().inflate(R.layout.item_adm_server, parent, false);
         final Server server = admServerList.get(position);
+        servers = 0;
+        comments = 0;
         TextView subjectTitle = view.findViewById(R.id.subjectTitle);
         final Switch disableSwitch = view.findViewById(R.id.disableServer);
         ImageButton deleteButton = view.findViewById(R.id.delete);
-        subjectTitle.setText(server.getSubject().getTitle());
+        TextView popularity = view.findViewById(R.id.popularity);
+        subjectTitle.setText(server.getSubject());
 
         deleteButton.setOnClickListener(v -> {
-            update = true;
-            Util.mServerDatabaseRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        Server server12 = snapshot.getValue(Server.class);
-                        if (update && server12 != null && server12.getSubject().getTitle().equals(admServerList.get(position).getSubject().getTitle())) {
-                            Util.getmServerDatabaseRef().child(server12.getServerUID()).removeValue();
-                        }
-                    }
-                    update = false;
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
+            Util.mSubjectDatabaseRef.child(server.getSubject()).removeValue();
         });
 
         disableSwitch.setChecked(server.getTempInfo().isActivated());
@@ -87,24 +74,45 @@ public class AdapterAdmServer extends BaseAdapter {
 
         subjectTitle.setOnClickListener(v -> callDialog(view, position));
 
+        Util.mSubjectDatabaseRef.child(server.getSubject()).child("servers").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                servers = 0;
+                Util.mSubjectDatabaseRef.child(server.getSubject()).removeEventListener(this);
+                for (DataSnapshot snap : snapshot.getChildren()) {
+                    Server server1 = snap.getValue(Server.class);
+                    if (server1 != null && server1.getTimeline() != null && server1.getTimeline().getCommentList() != null && server1.getTimeline().getCommentList().size() > 0) {
+                        comments = comments + (server1.getTimeline().getCommentList().values().size());
+                    }
+                    servers++;
+                }
+                int pop = servers * comments;
+                popularity.setText(pop + " ");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         disableSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            update = true;
             if (isChecked) {
                 disableSwitch.setText("Ativo");
             } else {
                 disableSwitch.setText("Desativo");
             }
             server.getTempInfo().setActivated(disableSwitch.isChecked());
-            Util.mServerDatabaseRef.addValueEventListener(new ValueEventListener() {
+            Util.mSubjectDatabaseRef.child(server.getSubject()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Util.mSubjectDatabaseRef.child(server.getSubject()).removeEventListener(this);
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Server server1 = snapshot.getValue(Server.class);
-                        if (update && server1 != null && server1.getSubject().getTitle().equals(server.getSubject().getTitle())) {
-                            Util.mServerDatabaseRef.child(server1.getServerUID()).child("tempInfo").child("activated").setValue(server.getTempInfo().isActivated());
+                        if (server1 != null && server1.getSubject().equals(server.getSubject())) {
+                            Util.mSubjectDatabaseRef.child(server1.getSubject()).child(server1.getServerUID()).child("tempInfo").child("activated").setValue(server.getTempInfo().isActivated());
                         }
                     }
-                    update = false;
                 }
 
                 @Override
@@ -123,24 +131,24 @@ public class AdapterAdmServer extends BaseAdapter {
 
 // Set up the input
         final EditText input = new EditText(view.getContext());
-        input.setText(admServerList.get(position).getSubject().getTitle());
+        input.setText(admServerList.get(position).getSubject());
 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
-// Set up the buttons
-        builder.setPositiveButton("OK", (dialog, which) -> Util.mServerDatabaseRef.addValueEventListener(new ValueEventListener() {
+        // Set up the buttons
+        builder.setPositiveButton("OK", (dialog, which) -> Util.mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<Server> helperList = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Server server = snapshot.getValue(Server.class);
-                    if (server != null && server.getSubject() != null && server.getSubject().getTitle() != null && server.getSubject().getTitle().equals(admServerList.get(position).getSubject().getTitle())) {
+                    if (server != null && server.getSubject() != null && server.getSubject() != null && server.getSubject().equals(admServerList.get(position).getSubject())) {
                         helperList.add(server);
                     }
                 }
                 for (Server server : helperList) {
-                    Util.mServerDatabaseRef.child(server.getServerUID()).child("subject").child("title").setValue(input.getText().toString());
+                    Util.mSubjectDatabaseRef.child(server.getSubject()).child(server.getServerUID()).child("subject").child("title").setValue(input.getText().toString());
                 }
             }
 

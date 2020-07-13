@@ -134,9 +134,9 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
             cal.setTime(data);
             Date current_date = cal.getTime();
 
-            Sending sending = new Sending("text", current_date.getTime(), Util.getUser().getUserName(), Util.getUser().getUserUID(), Util.getSubject());
+            Sending sending = new Sending("text", current_date.getTime(), Util.getUser().getUserName(), Util.getUser().getUserUID(), Util.getSubject().getTitle());
             Argument argument = new Argument(null, sku, Util.getGroup().getGroupUID(), current_date.getTime(), sending);
-            Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline")
+            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline")
                     .child("commentList").child(Util.getGroup().getCommentUID())
                     .child("group").child("argumentList").push().setValue(argument);
             Util.getUser().getProducts().get(id).setQuantity(Util.getUser().getProducts().get(id).getQuantity() - 1);
@@ -146,10 +146,10 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
         if (Util.getUser().getProducts().get(id) != null) {
             Product userProduct = Util.getUser().getProducts().get(id);
             if (isForDialog && comment != null) {
-                Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("stickers").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+                Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("stickers").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("stickers").child(id).removeEventListener(this);
+                        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("stickers").child(id).removeEventListener(this);
                         Product commentProduct = dataSnapshot.getValue(Product.class);
                         if (comment.getStickers() == null) {
                             comment.setStickers(new HashMap<>());
@@ -162,10 +162,10 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
                                 commentProduct.setQuantity(1);
                                 comment.getStickers().put(id, commentProduct);
                             }
-                            Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("stickers").child(id).setValue(comment.getStickers().get(id));
+                            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("stickers").child(id).setValue(comment.getStickers().get(id));
                         } else {
                             userProduct.setQuantity(1);
-                            Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("stickers").child(id).setValue(userProduct);
+                            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("stickers").child(id).setValue(userProduct);
                         }
                         Util.getUser().getProducts().get(userProduct.getProductUID()).setQuantity(quantity);
                         Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").child(userProduct.getProductUID()).child("quantity").setValue(quantity);
@@ -180,7 +180,7 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
         }
 
         if (argumentList != null && comment == null && argumentList.isEmpty() && !Util.getGroup().isReady() && Util.getUser().getUserUID().equals(Util.getComment().getAuthorsUID())) {
-            Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline")
+            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline")
                     .child("commentList").child(Util.getGroup().getCommentUID())
                     .child("group").child("ready").setValue(true);
         }

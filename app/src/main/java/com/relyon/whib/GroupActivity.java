@@ -43,6 +43,7 @@ public class GroupActivity extends AppCompatActivity {
     private EmojiPopup emojiPopup;
     private boolean isForSticker = true;
     private boolean cameFromProfile = false;
+    private TextView empty;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -63,17 +64,22 @@ public class GroupActivity extends AppCompatActivity {
         TextView subject = findViewById(R.id.subject);
         rvArgument = findViewById(R.id.rvArgument);
         inputMessage = findViewById(R.id.inputMessage);
+        empty = findViewById(R.id.empty);
         LinearLayout sendView = findViewById(R.id.sendView);
         EmojiButton emojiButton = findViewById(R.id.sendEmoji);
         ImageView sendIcon = findViewById(R.id.sendIcon);
         ImageView leaveGroup = findViewById(R.id.leaveGroup);
+
+        if (argumentList.isEmpty() && !Util.getGroup().isReady() && Util.getUser().getUserUID().equals(Util.getComment().getAuthorsUID())) {
+            empty.setVisibility(View.VISIBLE);
+        }
 
         if (getIntent().hasExtra("serverId") && getIntent().hasExtra("commentId")) {
             String serverId = getIntent().getStringExtra("serverId");
             String commentId = getIntent().getStringExtra("commentId");
 
             if (serverId != null && commentId != null) {
-                Util.mServerDatabaseRef.child(serverId).child("timeline")
+                Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(serverId).child("timeline")
                         .child("commentList").child(commentId).child("group").child("argumentList").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -108,10 +114,10 @@ public class GroupActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() > 0) {
-                    sendIcon.setImageDrawable(getDrawable(R.mipmap.send_icon));
+                    sendIcon.setImageDrawable(getResources().getDrawable(R.mipmap.send_icon));
                     isForSticker = false;
                 } else {
-                    sendIcon.setImageDrawable(getDrawable(R.drawable.ic_sticker));
+                    sendIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_sticker));
                     isForSticker = true;
                 }
             }
@@ -139,7 +145,7 @@ public class GroupActivity extends AppCompatActivity {
         });
 
         serverRoom.setText("Servidor " + Util.getServer().getTempInfo().getNumber() + " - Sala " + Util.getGroup().getNumber());
-        subject.setText(Util.getServer().getSubject().getTitle());
+        subject.setText(Util.getServer().getSubject());
 
         sendView.setOnClickListener(v -> {
             if (isForSticker) {
@@ -157,7 +163,7 @@ public class GroupActivity extends AppCompatActivity {
         });
         leaveGroup.setOnClickListener(v -> leaveGroup());
 
-        Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("tempInfo").child("activated").addListenerForSingleValueEvent(new ValueEventListener() {
+        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("tempInfo").child("activated").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 boolean activated = dataSnapshot.getValue(Boolean.class);
@@ -196,16 +202,17 @@ public class GroupActivity extends AppCompatActivity {
         cal.setTime(data);
         Date current_date = cal.getTime();
 
-        Sending sending = new Sending(type, current_date.getTime(), Util.getUser().getUserName(), Util.getUser().getUserUID(), Util.getSubject());
+        Sending sending = new Sending(type, current_date.getTime(), Util.getUser().getUserName(), Util.getUser().getUserUID(), Util.getSubject().getTitle());
         Argument argument = new Argument(inputMessage.getText().toString(), audioPath, Util.getGroup().getGroupUID(), current_date.getTime(), sending);
-        Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline")
+        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline")
                 .child("commentList").child(Util.getGroup().getCommentUID())
                 .child("group").child("argumentList").push().setValue(argument);
 
         if (argumentList.isEmpty() && !Util.getGroup().isReady() && Util.getUser().getUserUID().equals(Util.getComment().getAuthorsUID())) {
-            Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline")
+            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline")
                     .child("commentList").child(Util.getGroup().getCommentUID())
                     .child("group").child("ready").setValue(true);
+            empty.setVisibility(View.GONE);
         }
     }
 
@@ -213,17 +220,16 @@ public class GroupActivity extends AppCompatActivity {
         for (int i = 0; i < Util.getComment().getGroup().getUserListUID().size(); i++) {
             if (Util.getComment().getGroup().getUserListUID().get(i).equals(Util.getUser().getUserUID())) {
                 Util.getComment().getGroup().getUserListUID().remove(i);
-                Util.getUser().getTempInfo().setCurrentGroup(null);
             }
         }
         if (Util.getComment().getGroup().getUserListUID().isEmpty()) {
             Util.setComment(null);
             Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("tempInfo").child("currentGroup").setValue(null);
-            Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline")
+            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline")
                     .child("commentList").child(Util.getGroup().getCommentUID()).setValue(null);
         } else {
             Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("tempInfo").child("currentGroup").setValue(null);
-            Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline")
+            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline")
                     .child("commentList").child(Util.getGroup().getCommentUID())
                     .child("group").child("userListUID").setValue(Util.getComment().getGroup().getUserListUID());
 
@@ -249,7 +255,6 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void backToMainScreen() {
-        Util.getUser().getTempInfo().setCurrentServer(null);
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         finish();
         startActivity(intent);

@@ -38,6 +38,7 @@ import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.Report;
 import com.relyon.whib.modelo.Server;
+import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
 
@@ -249,8 +250,13 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     private void stickersDialog(int position) {
-        DialogStickers cdd = new DialogStickers(activity, Util.getUser().getProducts() != null ? new ArrayList<>(Util.getUser().getProducts().values()) : new ArrayList<>(), null, false, (Comment) elements.get(position));
-        cdd.show();
+        Comment comment = (Comment) elements.get(position);
+        if (comment != null && !comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
+            DialogStickers cdd = new DialogStickers(activity, Util.getUser().getProducts() != null ? new ArrayList<>(Util.getUser().getProducts().values()) : new ArrayList<>(), null, false, (Comment) elements.get(position));
+            cdd.show();
+        } else {
+            Toast.makeText(context, "Você não pode enviar figurinhas para seu próprio comentário.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void tryToReport(Comment comment) {
@@ -302,7 +308,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             if (comment.getGroup().isReady() || Util.getUser().getUserUID().equals(comment.getAuthorsUID())) {
                 if (!comment.getGroup().getTempInfo().isFull() || Util.getUser().getUserUID().equals(comment.getAuthorsUID()) || Util.getUser().isExtra()) {
                     if (Util.getServer() == null) {
-                        Util.mServerDatabaseRef.child(comment.getServerUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        Util.mSubjectDatabaseRef.child(comment.getSubject()).child(comment.getServerUID()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 Util.setServer(snapshot.getValue(Server.class));
@@ -314,22 +320,38 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                             }
                         });
                     }
-                    Intent intent;
                     if (isFromTabHistory) {
-                        intent = new Intent(context, GroupActivity.class).putExtra("serverId", comment.getServerUID()).putExtra("commentId", comment.getCommentUID()).putExtra("cameFromProfile", true);
-                    } else {
-                        intent = new Intent(context, GroupActivity.class).putExtra("serverId", Util.getServer().getServerUID()).putExtra("commentId", comment.getCommentUID());
-                    }
+                        Util.mSubjectDatabaseRef.child(comment.getSubject()).child("servers").child(comment.getServerUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                Server server = snapshot.getValue(Server.class);
+                                if (server != null) {
+                                    Util.setServer(server);
+                                    Util.setSubject((new Subject(server.getSubject())));
+                                    if (comment.getGroup().getUserListUID() != null && !comment.getGroup().getUserListUID().contains(Util.getUser().getUserUID())) {
+                                        comment.getGroup().getUserListUID().add(Util.getUser().getUserUID());
+                                    }
+                                    Util.setComment(comment);
+                                    Util.setGroup(comment.getGroup());
+                                    context.startActivity(new Intent(context, GroupActivity.class).putExtra("serverId", comment.getServerUID()).putExtra("commentId", comment.getCommentUID()).putExtra("cameFromProfile", true).putExtra("commentNumber", comment.getGroup().getServerNumber()).putExtra("groupNumber", comment.getGroup().getNumber()).putExtra("subject", comment.getSubject()));
+                                    activity.finish();
+                                }
+                            }
 
-                    if (comment.getGroup().getUserListUID() != null && !comment.getGroup().getUserListUID().contains(Util.getUser().getUserUID())) {
-                        comment.getGroup().getUserListUID().add(Util.getUser().getUserUID());
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    } else {
+                        if (comment.getGroup().getUserListUID() != null && !comment.getGroup().getUserListUID().contains(Util.getUser().getUserUID())) {
+                            comment.getGroup().getUserListUID().add(Util.getUser().getUserUID());
+                        }
+                        Util.setComment(comment);
+                        Util.setGroup(comment.getGroup());
+                        context.startActivity(new Intent(context, GroupActivity.class).putExtra("serverId", Util.getServer().getServerUID()).putExtra("commentId", comment.getCommentUID()).putExtra("commentNumber", comment.getGroup().getServerNumber()).putExtra("groupNumber", comment.getGroup().getNumber()).putExtra("subject", comment.getSubject()));
+                        activity.finish();
                     }
-                    Util.getUser().getTempInfo().setCurrentGroup(comment.getGroup());
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("tempInfo").child("currentGroup").setValue(Util.getUser().getTempInfo().getCurrentGroup());
-                    Util.setComment(comment);
-                    Util.setGroup(comment.getGroup());
-                    context.startActivity(intent);
-                    activity.finish();
                 } else {
                     WarnGroupFull warnGroupFull = new WarnGroupFull(activity);
                     warnGroupFull.show();
@@ -517,7 +539,11 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     float getLastRate() {
-        Comment comment = (Comment) elements.get(0);
-        return comment.getRating();
+        if (elements != null && elements.size() > 0) {
+            Comment comment = (Comment) elements.get(0);
+            return comment.getRating();
+        } else {
+            return 0;
+        }
     }
 }

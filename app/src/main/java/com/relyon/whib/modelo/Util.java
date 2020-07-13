@@ -15,6 +15,7 @@ public class Util {
     public static DatabaseReference mDatabaseRef;
     public static DatabaseReference mUserDatabaseRef;
     public static DatabaseReference mServerDatabaseRef;
+    public static DatabaseReference mSubjectDatabaseRef;
     public static DatabaseReference mGroupDatabaseRef;
     public static DatabaseReference mAdvantagesDatabaseRef;
     public static DatabaseReference mReportDatabaseRef;
@@ -160,6 +161,14 @@ public class Util {
     public static Popularity setNewPopularity() {
 
         return new Popularity(0, 0, 1);
+    }
+
+    public static DatabaseReference getmSubjectDatabaseRef() {
+        return mSubjectDatabaseRef;
+    }
+
+    public static void setmSubjectDatabaseRef(DatabaseReference mSubjectDatabaseRef) {
+        Util.mSubjectDatabaseRef = mSubjectDatabaseRef;
     }
 
     public static String getCurrentDate() {

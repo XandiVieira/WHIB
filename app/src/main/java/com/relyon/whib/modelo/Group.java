@@ -5,7 +5,7 @@ import java.util.List;
 public class Group {
 
     private String groupUID;
-    private String subjectUID;
+    private String subjectTitle;
     private int number;
     private int serverNumber;
     private GroupTempInfo tempInfo;
@@ -15,10 +15,10 @@ public class Group {
     private boolean ready;
     private String commentUID;
 
-    public Group(String groupUID, String subjectUID, int number, int serverNumber, GroupTempInfo tempInfo,
+    public Group(String groupUID, String subjectTitle, int number, int serverNumber, GroupTempInfo tempInfo,
                  String mode, List<Question> questionList, List<String> userListUID, boolean ready, String commentUID) {
         this.groupUID = groupUID;
-        this.subjectUID = subjectUID;
+        this.subjectTitle = subjectTitle;
         this.number = number;
         this.serverNumber = serverNumber;
         this.tempInfo = tempInfo;
@@ -40,12 +40,12 @@ public class Group {
         this.groupUID = groupUID;
     }
 
-    public String getSubjectUID() {
-        return subjectUID;
+    public String getSubjectTitle() {
+        return subjectTitle;
     }
 
-    public void setSubjectUID(String subjectUID) {
-        this.subjectUID = subjectUID;
+    public void setSubjectTitle(String subjectTitle) {
+        this.subjectTitle = subjectTitle;
     }
 
     public int getNumber() {

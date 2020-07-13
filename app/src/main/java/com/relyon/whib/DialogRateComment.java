@@ -111,7 +111,7 @@ public class DialogRateComment extends Dialog implements
                 }
             }
         }
-        Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).setValue(comment);
+        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).setValue(comment);
         Util.mUserDatabaseRef.child(comment.getAuthorsUID()).child("valuation").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -137,10 +137,10 @@ public class DialogRateComment extends Dialog implements
         List<User> users = new ArrayList<>();
         users.add(Util.getUser());
         GroupTempInfo groupTempInfo = new GroupTempInfo(users, false);
-        Group group = new Group(UUID.randomUUID().toString(), comment.getSubject().getSubjectUID(), i, Util.getServer().getTempInfo().getNumber(),
+        Group group = new Group(UUID.randomUUID().toString(), comment.getSubject(), i, Util.getServer().getTempInfo().getNumber(),
                 groupTempInfo, "text", new ArrayList<>(), userUIDList, false, comment.getCommentUID());
         comment.setGroup(group);
-        Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("commentGroup").setValue(group);
+        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("commentGroup").setValue(group);
         //sendNotification();
     }
 

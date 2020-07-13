@@ -15,7 +15,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,7 +39,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Comment;
-import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.Util;
 
 import java.util.ArrayList;
@@ -57,7 +55,7 @@ public class TimelineActivity extends AppCompatActivity {
     private ImageView menu;
     private LinearLayout leaveCommentLayout;
     private TextView emptyList;
-    private Subject subjectObj;
+    private String subjectObj;
     private RecyclerView rvComments;
     private LinearLayoutManager layoutManager;
     private AppCompatActivity activity;
@@ -73,7 +71,6 @@ public class TimelineActivity extends AppCompatActivity {
     private int filter = 0;
     private FancyShowCaseQueue queue = new FancyShowCaseQueue();
     private Query query;
-    private ProgressBar progressBar;
 
     int menuWidth;
     int menuHeight;
@@ -111,6 +108,40 @@ public class TimelineActivity extends AppCompatActivity {
             MobileAds.setRequestConfiguration(configuration);
             MobileAds.initialize(this,
                     getString(R.string.admob_app_id));
+
+            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    if (mayPass) {
+                        List<Comment> comments = new ArrayList<>();
+                        comments.add(dataSnapshot.getValue(Comment.class));
+                        comments.get(0).setCommentUID(dataSnapshot.getKey());
+                        requireNonNull(comments.get(0)).setCommentUID(dataSnapshot.getKey());
+                        adapter.addAll(comments, true, true, false);
+                        emptyList.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    adapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
         }
 
         final ImageView back = findViewById(R.id.back);
@@ -121,13 +152,12 @@ public class TimelineActivity extends AppCompatActivity {
         rvComments = findViewById(R.id.rvComments);
         emptyList = findViewById(R.id.emptyList);
         spinner = findViewById(R.id.filters);
-        progressBar = findViewById(R.id.progressBar);
 
         activity = this;
 
         subjectObj = Util.getServer().getSubject();
         if (subjectObj != null) {
-            subject.setText(Util.getServer().getSubject().getTitle());
+            subject.setText(Util.getServer().getSubject());
         }
 
         ArrayAdapter<CharSequence> filterAdapter = ArrayAdapter.createFromResource(this,
@@ -141,13 +171,13 @@ public class TimelineActivity extends AppCompatActivity {
                 if (hasPassed) {
                     if (position == 0) {
                         filter = 0;
-                        query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage);
+                        query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage);
                     } else if (position == 1) {
                         filter = 1;
-                        query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("rating").endAt(adapter.getLastRate()).limitToLast(adapter.mPostsPerPage + 2);
+                        query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("rating").endAt(adapter.getLastRate()).limitToLast(adapter.mPostsPerPage + 2);
                     } else if (position == 2) {
                         filter = 2;
-                        query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("agroup").equalTo(true).limitToLast(adapter.mPostsPerPage + 2);
+                        query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("agroup").equalTo(true).limitToLast(adapter.mPostsPerPage + 2);
                     }
                     isFirst = true;
                     reset = true;
@@ -186,6 +216,9 @@ public class TimelineActivity extends AppCompatActivity {
 
             //registering popup with OnMenuItemClickListener
             popup.setOnMenuItemClickListener(item -> {
+                if (Util.getUser().isFirstTime()) {
+                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false);
+                }
                 if (item.getTitle().equals(getString(R.string.settings))) {
                     Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
                     startActivity(intent);
@@ -239,7 +272,7 @@ public class TimelineActivity extends AppCompatActivity {
         rvComments.addItemDecoration(dividerItemDecoration);
         dividerItemDecoration.setDrawable(requireNonNull(ContextCompat.getDrawable(getApplicationContext(), R.drawable.divider)));
         rvComments.setAdapter(adapter);
-        query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage);
+        query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage);
 
         if (!Util.getUser().isFirstTime() && !Util.getUser().isExtra()) {
             new Thread(this::loadNativeAds).start();
@@ -249,18 +282,18 @@ public class TimelineActivity extends AppCompatActivity {
     private void getComments() {
         mIsLoading = true;
         if (filter == 2) {
-            query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("agroup").equalTo(true).limitToLast(adapter.mPostsPerPage + 2);
+            query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("agroup").equalTo(true).limitToLast(adapter.mPostsPerPage + 2);
         } else if (filter == 1) {
             if (isFirst) {
-                query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("rating").limitToLast(adapter.mPostsPerPage + 2);
+                query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("rating").limitToLast(adapter.mPostsPerPage + 2);
             } else {
-                query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("rating").endAt(adapter.getLastRate()).limitToLast(adapter.mPostsPerPage + 2);
+                query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("rating").endAt(adapter.getLastRate()).limitToLast(adapter.mPostsPerPage + 2);
             }
         } else {
             if (isFirst) {
-                query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage + 2);
+                query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage + 2);
             } else {
-                query = Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().endAt(adapter.getLastItemId(false)).limitToLast(adapter.mPostsPerPage + 2);
+                query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().endAt(adapter.getLastItemId(false)).limitToLast(adapter.mPostsPerPage + 2);
             }
         }
 
@@ -280,10 +313,10 @@ public class TimelineActivity extends AppCompatActivity {
                     }
                 }
                 adapter.addAll(comments, adapter.getLastItemId(false) == null, false, reset);
-                progressBar.setVisibility(View.GONE);
                 reset = false;
                 if (comments.size() > 0) {
                     emptyList.setVisibility(View.GONE);
+                    spinner.setVisibility(View.VISIBLE);
                 }
                 mIsLoading = false;
                 NUMBER_OF_ADS = comments.size() / 3;
@@ -338,14 +371,9 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void openCommentBox() {
-        boolean canPost = true;
-        if (canPost) {
-            mayPass = true;
-            DialogPostComment cdd = new DialogPostComment(this, subjectObj, menu);
-            cdd.show();
-        } else {
-            Toast.makeText(getApplicationContext(), "Você já postou um comentário neste servidor ou já faz parte de um grupo!", Toast.LENGTH_SHORT).show();
-        }
+        mayPass = true;
+        DialogPostComment cdd = new DialogPostComment(this, subjectObj, menu);
+        cdd.show();
     }
 
     private void callTour() {
@@ -414,14 +442,14 @@ public class TimelineActivity extends AppCompatActivity {
         Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("tempInfo").child("currentServer").setValue(null);
         if (Util.getServer() != null) {
             Util.getServer().getTempInfo().setQtdUsers(Util.getServer().getTempInfo().getQtdUsers() - 1);
-            Util.getmServerDatabaseRef().child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
+            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
         }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Util.getmServerDatabaseRef().child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
+        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
 
         if (Util.getUser().isFirstTime()) {
             leaveCommentLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -478,46 +506,10 @@ public class TimelineActivity extends AppCompatActivity {
                     });
                 }
             });
-
-            Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("timeline").child("commentList").addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    if (mayPass) {
-                        List<Comment> comments = new ArrayList<>();
-                        comments.add(dataSnapshot.getValue(Comment.class));
-                        comments.get(0).setCommentUID(dataSnapshot.getKey());
-                        requireNonNull(comments.get(0)).setCommentUID(dataSnapshot.getKey());
-                        adapter.addAll(comments, true, true, false);
-                        emptyList.setVisibility(View.GONE);
-                        progressBar.setVisibility(View.GONE);
-                    }
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    adapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-
         }
 
         if (Util.getServer() != null) {
-            Util.mServerDatabaseRef.child(Util.getServer().getServerUID()).child("activated").addValueEventListener(new ValueEventListener() {
+            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("activated").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Boolean active = dataSnapshot.getValue(Boolean.class);
@@ -541,7 +533,7 @@ public class TimelineActivity extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
         Util.getServer().getTempInfo().setQtdUsers(Util.getServer().getTempInfo().getQtdUsers() + 1);
-        Util.getmServerDatabaseRef().child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
+        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
     }
 
     @Override

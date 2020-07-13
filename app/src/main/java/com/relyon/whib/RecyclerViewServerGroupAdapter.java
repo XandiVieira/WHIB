@@ -24,8 +24,8 @@ public class RecyclerViewServerGroupAdapter extends RecyclerView.Adapter<Recycle
     RecyclerViewServerGroupAdapter(HashMap<String, Server> servers) {
         this.servers = servers;
         for (Server server : servers.values()) {
-            if (!subjects.contains(server.getSubject().getTitle())) {
-                subjects.add(server.getSubject().getTitle());
+            if (!subjects.contains(server.getSubject())) {
+                subjects.add(server.getSubject());
             }
         }
     }
@@ -47,7 +47,7 @@ public class RecyclerViewServerGroupAdapter extends RecyclerView.Adapter<Recycle
         ArrayList<Server> serversOfGroup = new ArrayList<>();
 
         for (Server server : servers.values()) {
-            if (server.getSubject().getTitle().equals(subjects.get(position))) {
+            if (server.getSubject().equals(subjects.get(position))) {
                 serversOfGroup.add(server);
             }
         }

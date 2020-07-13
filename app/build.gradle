@@ -6,8 +6,8 @@ android {
         applicationId "com.relyon.whib"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 28
-        versionName "Teste interno - Compras e assinaturas"
+        versionCode 30
+        versionName "teste - 0.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }

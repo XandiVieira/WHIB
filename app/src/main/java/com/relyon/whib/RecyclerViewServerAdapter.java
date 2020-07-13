@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.ServerTempInfo;
-import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.Timeline;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
@@ -122,8 +121,7 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
         } else if (server.getTempInfo().getQtdUsers() >= 100) {
             Toast.makeText(context, "Servidor Lotado!", Toast.LENGTH_SHORT).show();
         }
-        Util.getmServerDatabaseRef().child(server.getServerUID()).child("tempInfo").setValue(server.getTempInfo());
-
+        Util.mSubjectDatabaseRef.child(server.getSubject()).child("servers").child(server.getServerUID()).child("tempInfo").setValue(server.getTempInfo());
     }
 
     private void goToServer(Server server, ViewHolder holder, int position) {
@@ -137,20 +135,18 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     private void createNewServer() {
-        Subject subject2 = elements.get(0).getSubject();
+        String subject2 = elements.get(0).getSubject();
         ServerTempInfo serverTempInfo2 = new ServerTempInfo(0, true, Util.getNumberOfServers() + 1);
         Timeline tl = new Timeline(null, subject2, null);
         Server server = new Server(UUID.randomUUID().toString(), serverTempInfo2, subject2, tl);
-        Util.mServerDatabaseRef.child(server.getServerUID()).setValue(server);
+        Util.mSubjectDatabaseRef.child(server.getSubject()).child("servers").child(server.getServerUID()).setValue(server);
         Util.setNumberOfServers(Util.getNumberOfServers() + 1);
     }
 
     private void goTimelineScreen(String serverNumber, String status, int position) {
         Toast.makeText(context, serverNumber + " - " + status, Toast.LENGTH_SHORT).show();
-        Util.getUser().getTempInfo().setCurrentServer(elements.get(position));
         Util.setServer(elements.get(position));
         User user = Util.getUser();
-        user.getTempInfo().setCurrentServer(elements.get(position));
         Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).setValue(user);
         Intent intent = new Intent(context, TimelineActivity.class);
         intent.putExtra("subject", elements.get(position).getSubject());
