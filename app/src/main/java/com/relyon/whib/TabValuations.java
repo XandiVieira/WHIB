@@ -56,7 +56,7 @@ public class TabValuations extends Fragment {
             rating.setText(String.format("%.2f", user.getValuation().getSumOfRatings() / user.getValuation().getNumberOfRatings()));
         } else {
             ratingBar.setRating(0);
-            rating.setText(String.format("%.2f", 0));
+            rating.setText(String.format("%.2f", 0f));
         }
         ratingBar.setIsIndicator(true);
         goodValuation.setText(user.getValuation().getGoodPercentage() + "%");

@@ -9,15 +9,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary">
+        android:background="@color/colorPrimary"
+        android:padding="10dp">
 
         <ImageView
             android:id="@+id/back"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
             android:layout_weight="9"
             android:background="@color/colorPrimary"
-            android:padding="5dp"
             android:src="@drawable/back_arrow" />
 
         <TextView
@@ -70,6 +71,15 @@
             android:background="@color/colorAccent"
             android:fontFamily="@font/baloo"
             android:text="create" />
+
+        <Button
+            android:id="@+id/end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:background="@color/colorAccent"
+            android:fontFamily="@font/baloo"
+            android:text="end" />
     </LinearLayout>
 
 
@@ -96,7 +106,18 @@
             android:fontFamily="@font/baloo"
             android:gravity="center"
             android:text="✓ Seu voto foi computado com sucesso!"
-            android:textColor="@color/green"
+            android:textColor="@color/darkGreen"
             android:visibility="gone" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:fontFamily="@font/baloo"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/small_text" />
 </LinearLayout>

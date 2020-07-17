@@ -17,16 +17,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Complaint;
 import com.relyon.whib.modelo.Util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class ContactActivity extends AppCompatActivity {
 
-    private ArrayList<Complaint> complaintList = new ArrayList<>();
+    private List<Complaint> complaintList = new ArrayList<>();
     private TextView empty;
 
     @Override
@@ -59,6 +62,7 @@ public class ContactActivity extends AppCompatActivity {
                 }
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
                 myComplaints.setLayoutManager(layoutManager);
+                Collections.sort(complaintList, Complaint.dateComparator);
                 RecyclerViewComplaintAdapter adapter = new RecyclerViewComplaintAdapter(getApplicationContext(), complaintList);
                 myComplaints.setAdapter(adapter);
             }

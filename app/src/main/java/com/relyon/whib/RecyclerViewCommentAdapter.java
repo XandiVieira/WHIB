@@ -38,7 +38,6 @@ import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.Report;
 import com.relyon.whib.modelo.Server;
-import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
 
@@ -327,7 +326,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                                 Server server = snapshot.getValue(Server.class);
                                 if (server != null) {
                                     Util.setServer(server);
-                                    Util.setSubject((new Subject(server.getSubject())));
+                                    Util.setSubject(server.getSubject());
                                     if (comment.getGroup().getUserListUID() != null && !comment.getGroup().getUserListUID().contains(Util.getUser().getUserUID())) {
                                         comment.getGroup().getUserListUID().add(Util.getUser().getUserUID());
                                     }

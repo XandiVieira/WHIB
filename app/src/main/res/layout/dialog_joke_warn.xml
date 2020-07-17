@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:elevation="@dimen/elevation1"
     app:cardBackgroundColor="@android:color/transparent"
-    app:cardCornerRadius="25dp"
-    android:elevation="@dimen/elevation1">
+    app:cardCornerRadius="25dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@drawable/rounded_primary">
+        android:background="@drawable/rounded_primary"
+        android:orientation="vertical">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/logo70"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo70" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/joke_text"
-        android:fontFamily="@font/baloo"
-        android:gravity="center"
-        android:layout_marginTop="5dp"
-        android:textColor="@color/black"
-        android:textSize="@dimen/subtitle"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:text="@string/joke_text"
+            android:textColor="@color/black"
+            android:textSize="@dimen/subtitle" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/reported"
-        android:fontFamily="@font/baloo"
-        android:gravity="center"
-        android:textColor="@color/red"
-        android:textSize="@dimen/subtitle"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:text="@string/reported"
+            android:textColor="@color/red"
+            android:textSize="@dimen/subtitle" />
 
     </LinearLayout>
 

@@ -40,6 +40,11 @@ public class SettingsActivity extends AppCompatActivity implements BillingProces
 
         ImageView back = findViewById(R.id.back);
 
+        if (getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false)) {
+            DialogFinalWarn warn = new DialogFinalWarn(this);
+            warn.show();
+        }
+
         back.setOnClickListener(v -> {
             Intent intent;
             if (Util.getServer() != null) {

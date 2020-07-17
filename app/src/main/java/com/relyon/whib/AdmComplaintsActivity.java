@@ -16,11 +16,12 @@ import com.relyon.whib.modelo.Complaint;
 import com.relyon.whib.modelo.Util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class AdmComplaintsActivity extends AppCompatActivity {
 
     private RecyclerView complaints;
-    private ArrayList<Complaint> complainList = new ArrayList<>();
+    private ArrayList<Complaint> complaintList = new ArrayList<>();
     private RecyclerViewComplaintAdapter recyclerViewComplaintAdapter;
     private TextView empty;
 
@@ -38,17 +39,18 @@ public class AdmComplaintsActivity extends AppCompatActivity {
                 for (DataSnapshot snap : dataSnapshot.getChildren()) {
                     Complaint complaint = snap.getValue(Complaint.class);
                     if (complaint != null) {
-                        complainList.add(complaint);
+                        complaintList.add(complaint);
                     }
                 }
-                if (complainList.size() > 0) {
+                if (complaintList.size() > 0) {
                     empty.setVisibility(View.GONE);
                 } else {
                     empty.setVisibility(View.VISIBLE);
                 }
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
                 complaints.setLayoutManager(layoutManager);
-                recyclerViewComplaintAdapter = new RecyclerViewComplaintAdapter(getApplicationContext(), complainList);
+                Collections.sort(complaintList, Complaint.dateComparator);
+                recyclerViewComplaintAdapter = new RecyclerViewComplaintAdapter(getApplicationContext(), complaintList);
                 complaints.setAdapter(recyclerViewComplaintAdapter);
             }
 

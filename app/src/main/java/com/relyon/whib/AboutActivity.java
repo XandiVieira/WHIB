@@ -30,6 +30,11 @@ public class AboutActivity extends AppCompatActivity {
         ImageView back = findViewById(R.id.back);
         TextView version = findViewById(R.id.version);
 
+        if (getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false)) {
+            DialogFinalWarn warn = new DialogFinalWarn(this);
+            warn.show();
+        }
+
         if (Util.getUser() == null) {
             contactUs.setVisibility(View.GONE);
         }

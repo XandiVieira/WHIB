@@ -42,6 +42,11 @@ public class ProfileActivity extends AppCompatActivity {
         userName = findViewById(R.id.userName);
         nick = findViewById(R.id.nick);
 
+        if (getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false)) {
+            DialogFinalWarn warn = new DialogFinalWarn(this);
+            warn.show();
+        }
+
         if (getIntent().hasExtra("userId") && !getIntent().getStringExtra("userId").equals(Util.getUser().getUserUID())) {
             Util.mUserDatabaseRef.child(getIntent().getStringExtra("userId")).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override

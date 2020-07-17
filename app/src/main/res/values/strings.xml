@@ -183,6 +183,7 @@
     <string name="my_stickers">Minhas figurinhas</string>
     <string name="you_have_no_stickers">Você não tem nenhuma figurinha</string>
     <string name="google_license_key">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1kIgbMkPuRow85OPOKyCbt30UrOY10n8s32NQLl+mJ6HnEyn/1jalwbvK9SuamdYq843c5OlqOwzxtF8wxt1TCCSUuvYVSzO5F/JHWO45i31bogZvP8cTsXwuB8/zdCyJFlA68DJee7db50VSuhUno7zm4J8CN0bUtOJJjb3Pma0eu4tvlkY/zpuOr9HbiLbhnEmQBFHFtrLhFIY9hni/1OtXfiqOwXop3ftdqI3PcFdGXTQkjiHPk13cnG0FzkqKOQsZRwAkNnp/T1AnkvntOtJ1R3Iz6mcXUaXdn17AFlATV4nQgCOzNz8k8aiVbKCF4dmKHNbcPREozaXwLFPywIDAQAB</string>
+    <string name="last_warn">Um último recado para você</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

@@ -1,5 +1,7 @@
 package com.relyon.whib.modelo;
 
+import java.util.Comparator;
+
 public class Report {
 
     private String id;
@@ -97,4 +99,6 @@ public class Report {
     public void setCommentUID(String commentUID) {
         this.commentUID = commentUID;
     }
+
+    public static Comparator<Complaint> dateComparator = (c1, c2) -> (int) (c2.getDateQuestion() - c1.getDateQuestion());
 }

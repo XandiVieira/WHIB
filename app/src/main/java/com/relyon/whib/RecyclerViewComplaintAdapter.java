@@ -17,16 +17,16 @@ import com.relyon.whib.modelo.Complaint;
 import com.relyon.whib.modelo.Util;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class RecyclerViewComplaintAdapter extends RecyclerView.Adapter<RecyclerViewComplaintAdapter.ViewHolder> {
 
-    private final ArrayList<Complaint> elements;
+    private final List<Complaint> elements;
     private Context context;
     SimpleDateFormat dateFormat_time = new SimpleDateFormat("dd/MM//yy HH:mm:ss");
 
-    RecyclerViewComplaintAdapter(Context context, ArrayList<Complaint> elements) {
+    RecyclerViewComplaintAdapter(Context context, List<Complaint> elements) {
         this.context = context;
         this.elements = elements;
     }

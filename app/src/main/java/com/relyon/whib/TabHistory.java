@@ -175,6 +175,7 @@ public class TabHistory extends Fragment {
                         }
                     });
                 }
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override

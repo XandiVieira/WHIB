@@ -17,9 +17,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Server;
+import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.Util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class AdapterAdmServer extends BaseAdapter {
 
@@ -78,7 +83,7 @@ public class AdapterAdmServer extends BaseAdapter {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 servers = 0;
-                Util.mSubjectDatabaseRef.child(server.getSubject()).removeEventListener(this);
+                Util.mSubjectDatabaseRef.child(server.getSubject()).child("servers").removeEventListener(this);
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     Server server1 = snap.getValue(Server.class);
                     if (server1 != null && server1.getTimeline() != null && server1.getTimeline().getCommentList() != null && server1.getTimeline().getCommentList().size() > 0) {
@@ -129,10 +134,10 @@ public class AdapterAdmServer extends BaseAdapter {
         AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
         builder.setTitle("Title");
 
-// Set up the input
+        // Set up the input
         final EditText input = new EditText(view.getContext());
         input.setText(admServerList.get(position).getSubject());
-// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
@@ -140,16 +145,23 @@ public class AdapterAdmServer extends BaseAdapter {
         builder.setPositiveButton("OK", (dialog, which) -> Util.mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<Server> helperList = new ArrayList<>();
+                ArrayList<Integer> helperList = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Server server = snapshot.getValue(Server.class);
-                    if (server != null && server.getSubject() != null && server.getSubject() != null && server.getSubject().equals(admServerList.get(position).getSubject())) {
-                        helperList.add(server);
+                    Subject subject1 = snapshot.getValue(Subject.class);
+                    if (subject1 != null && subject1.getServers() != null) {
+                        for (Server server : subject1.getServers().values()) {
+                            helperList.add(server.getTempInfo().getNumber());
+                        }
                     }
                 }
-                for (Server server : helperList) {
-                    Util.mSubjectDatabaseRef.child(server.getSubject()).child(server.getServerUID()).child("subject").child("title").setValue(input.getText().toString());
-                }
+                Integer[] number = new Integer[helperList.size()];
+                helperList.toArray(number);
+                Arrays.sort(number);
+                HashMap<String, Server> map = new HashMap<>();
+                Subject newSubject = new Subject(input.getText().toString(), map, new Date().getTime(), true);
+                map.put(input.getText().toString(), new Server(UUID.randomUUID().toString(), newSubject.getTitle(),(number.length > 0 && number[0] != null && number[number.length - 1] != null) ? findFirstMissing(number) : 0));
+                newSubject.setServers(map);
+                Util.mSubjectDatabaseRef.push().setValue(newSubject);
             }
 
             @Override
@@ -159,5 +171,23 @@ public class AdapterAdmServer extends BaseAdapter {
         }));
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
         builder.show();
+    }
+
+    public int findFirstMissing(Integer[] numbers) {
+        for (int i = 0; i < numbers.length; i++) {
+            int target = numbers[i];
+            while (target < numbers.length && target != numbers[target]) {
+                int new_target = numbers[target];
+                numbers[target] = target;
+                target = new_target;
+            }
+        }
+
+        for (int i = 0; i < numbers.length; i++) {
+            if (numbers[i] != i) {
+                return i;
+            }
+        }
+        return numbers.length;
     }
 }

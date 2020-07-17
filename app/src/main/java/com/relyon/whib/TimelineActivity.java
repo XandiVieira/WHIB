@@ -108,41 +108,41 @@ public class TimelineActivity extends AppCompatActivity {
             MobileAds.setRequestConfiguration(configuration);
             MobileAds.initialize(this,
                     getString(R.string.admob_app_id));
-
-            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    if (mayPass) {
-                        List<Comment> comments = new ArrayList<>();
-                        comments.add(dataSnapshot.getValue(Comment.class));
-                        comments.get(0).setCommentUID(dataSnapshot.getKey());
-                        requireNonNull(comments.get(0)).setCommentUID(dataSnapshot.getKey());
-                        adapter.addAll(comments, true, true, false);
-                        emptyList.setVisibility(View.GONE);
-                    }
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    adapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
         }
+
+        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if (mayPass) {
+                    List<Comment> comments = new ArrayList<>();
+                    comments.add(dataSnapshot.getValue(Comment.class));
+                    comments.get(0).setCommentUID(dataSnapshot.getKey());
+                    requireNonNull(comments.get(0)).setCommentUID(dataSnapshot.getKey());
+                    adapter.addAll(comments, true, true, false);
+                    emptyList.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         final ImageView back = findViewById(R.id.back);
         TextView subject = findViewById(R.id.subject);
@@ -220,27 +220,23 @@ public class TimelineActivity extends AppCompatActivity {
                     Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false);
                 }
                 if (item.getTitle().equals(getString(R.string.settings))) {
-                    Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), SettingsActivity.class).putExtra("showLastWarn", Util.getUser().isFirstTime());
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.store))) {
-                    Intent intent = new Intent(getApplicationContext(), StoreActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), StoreActivity.class).putExtra("showLastWarn", Util.getUser().isFirstTime());
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.profile))) {
-                    Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), ProfileActivity.class).putExtra("showLastWarn", Util.getUser().isFirstTime());
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.tips))) {
-                    Intent intent = new Intent(getApplicationContext(), TipsActivity.class);
-                    startActivity(intent);
-                    return true;
-                } else if (item.getTitle().equals(getString(R.string.tips))) {
-                    Intent intent = new Intent(getApplicationContext(), TipsActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), TipsActivity.class).putExtra("cameFromTimeline", Util.getUser().isFirstTime()).putExtra("showLastWarn", true);
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.about))) {
-                    Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), AboutActivity.class).putExtra("showLastWarn", Util.getUser().isFirstTime());
                     startActivity(intent);
                     return true;
                 }
@@ -313,6 +309,9 @@ public class TimelineActivity extends AppCompatActivity {
                     }
                 }
                 adapter.addAll(comments, adapter.getLastItemId(false) == null, false, reset);
+                if (comments.size() == 0 && Util.getUser().isFirstTime()) {
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class).putExtra("serverEmpty", true));
+                }
                 reset = false;
                 if (comments.size() > 0) {
                     emptyList.setVisibility(View.GONE);
@@ -421,7 +420,11 @@ public class TimelineActivity extends AppCompatActivity {
             queue.add(fancyShowCaseView3);
             queue.add(fancyShowCaseView4);
             queue.add(fancyShowCaseView5);
-            queue.setCompleteListener(() -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false));
+            queue.setCompleteListener(() -> {
+                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false);
+                DialogFinalWarn warn = new DialogFinalWarn(activity);
+                warn.show();
+            });
             queue.show();
         }
     }
@@ -507,7 +510,6 @@ public class TimelineActivity extends AppCompatActivity {
                 }
             });
         }
-
         if (Util.getServer() != null) {
             Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("activated").addValueEventListener(new ValueEventListener() {
                 @Override

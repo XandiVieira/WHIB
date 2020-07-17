@@ -1,5 +1,7 @@
 package com.relyon.whib.modelo;
 
+import java.util.Comparator;
+
 public class Complaint {
 
     private String complaintId;
@@ -76,4 +78,6 @@ public class Complaint {
     public void setAnswered(boolean answered) {
         this.answered = answered;
     }
+
+    public static Comparator<Complaint> dateComparator = (c1, c2) -> (int) (c2.getDateQuestion() - c1.getDateQuestion());
 }

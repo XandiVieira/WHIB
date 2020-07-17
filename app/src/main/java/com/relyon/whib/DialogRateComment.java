@@ -67,6 +67,7 @@ public class DialogRateComment extends Dialog implements
         ratingBar.setOnRatingBarChangeListener((ratingBar1, rating, fromUser) -> {
             ratingTV.setText(String.valueOf(rating));
             ratingBar1.setRating(rating);
+            this.rating = rating;
         });
     }
 
@@ -75,14 +76,11 @@ public class DialogRateComment extends Dialog implements
         switch (v.getId()) {
             case R.id.rate_Button:
                 confirmRate();
-                callTour();
                 break;
             case R.id.cancel_button:
                 a.closeContextMenu();
-                callTour();
                 break;
             default:
-                callTour();
                 break;
         }
         dismiss();

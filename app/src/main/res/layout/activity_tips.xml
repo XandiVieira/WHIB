@@ -272,6 +272,17 @@
                 android:textColor="@color/colorAccent"
                 android:textSize="@dimen/small_text" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="start"
+                android:lineSpacingExtra="-10dp"
+                android:text="- Comentários de usuários premium viram grupos automaticamente apos receber a primeira avaliação"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/small_text" />
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

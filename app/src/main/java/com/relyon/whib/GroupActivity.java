@@ -168,7 +168,7 @@ public class GroupActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 boolean activated = dataSnapshot.getValue(Boolean.class);
                 if (!activated) {
-                    backToMainScreen();
+                    onBackPressed();
                 }
             }
 
@@ -202,7 +202,7 @@ public class GroupActivity extends AppCompatActivity {
         cal.setTime(data);
         Date current_date = cal.getTime();
 
-        Sending sending = new Sending(type, current_date.getTime(), Util.getUser().getUserName(), Util.getUser().getUserUID(), Util.getSubject().getTitle());
+        Sending sending = new Sending(type, current_date.getTime(), Util.getUser().getUserName(), Util.getUser().getUserUID(), Util.getSubject());
         Argument argument = new Argument(inputMessage.getText().toString(), audioPath, Util.getGroup().getGroupUID(), current_date.getTime(), sending);
         Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline")
                 .child("commentList").child(Util.getGroup().getCommentUID())
@@ -232,11 +232,8 @@ public class GroupActivity extends AppCompatActivity {
             Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline")
                     .child("commentList").child(Util.getGroup().getCommentUID())
                     .child("group").child("userListUID").setValue(Util.getComment().getGroup().getUserListUID());
-
         }
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-        finish();
+        onBackPressed();
     }
 
     @Override
@@ -251,12 +248,6 @@ public class GroupActivity extends AppCompatActivity {
         } else {
             intent = new Intent(getApplicationContext(), MainActivity.class);
         }
-        startActivity(intent);
-    }
-
-    private void backToMainScreen() {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        finish();
         startActivity(intent);
     }
 

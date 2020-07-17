@@ -20,7 +20,7 @@ public class Util {
     public static DatabaseReference mAdvantagesDatabaseRef;
     public static DatabaseReference mReportDatabaseRef;
     public static int numberOfServers;
-    public static Subject subject;
+    public static String subject;
     public static Server server;
     public static Comment comment;
     public static Group group;
@@ -82,11 +82,11 @@ public class Util {
         Util.numberOfServers = numberOfServers;
     }
 
-    public static Subject getSubject() {
+    public static String getSubject() {
         return subject;
     }
 
-    public static void setSubject(Subject subject) {
+    public static void setSubject(String subject) {
         Util.subject = subject;
     }
 

@@ -40,6 +40,11 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
         billingProcessor = new BillingProcessor(getApplicationContext(), getString(R.string.google_license_key), this);
         billingProcessor.initialize();
 
+        if (getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false)) {
+            DialogFinalWarn warn = new DialogFinalWarn(this);
+            warn.show();
+        }
+
         productsRV = findViewById(R.id.products);
         ImageView back = findViewById(R.id.back);
         back.setOnClickListener(v -> onBackPressed());
@@ -142,6 +147,7 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
                     }
                     Util.getUser().setProducts(user.getProducts());
                     Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").child(myProduct.getProductUID()).setValue(myProduct);
+                    Toast.makeText(getApplicationContext(), "As figurinhas foram adicionadas à sua galeria com sucesso", Toast.LENGTH_LONG).show();
                 }
             }
 

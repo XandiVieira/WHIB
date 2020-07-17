@@ -26,6 +26,11 @@ public class TipsActivity extends AppCompatActivity {
 
         store.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), StoreActivity.class)));
 
+        if (getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false)) {
+            DialogFinalWarn warn = new DialogFinalWarn(this);
+            warn.show();
+        }
+
         piramide.setOnClickListener(v -> {
             Dialog fullScreen = new Dialog(this);
             if (fullScreen.getWindow() != null) {
@@ -42,7 +47,11 @@ public class TipsActivity extends AppCompatActivity {
         finish();
         Intent intent;
         if (Util.getServer() != null) {
-            intent = new Intent(getApplicationContext(), TimelineActivity.class);
+            if (getIntent().hasExtra("cameFromTimeline")) {
+                intent = new Intent(getApplicationContext(), TimelineActivity.class);
+            } else {
+                intent = new Intent(getApplicationContext(), AboutActivity.class);
+            }
         } else {
             intent = new Intent(getApplicationContext(), MainActivity.class);
         }

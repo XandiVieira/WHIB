@@ -13,7 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/surround_margins"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingVertical="10dp">
 
         <ImageView
             android:id="@+id/back"
@@ -90,28 +91,34 @@
                 android:layout_weight="2"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/empty"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/baloo"
-                    android:lineSpacingExtra="-7dp"
-                    android:padding="12dp"
-                    android:text="Envie a primeira mensagem para ativar o grupo e permitir a entrada dos usuários no grupo"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="@dimen/small_text"
-                    android:visibility="gone" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvArgument"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="@dimen/surround_margins"
                     android:layout_weight="1"
-                    android:background="@drawable/rounded_primary_double"
-                    android:divider="@color/colorAccent"
-                    android:dividerHeight="1.3dp"
-                    android:padding="9dp" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/empty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/baloo"
+                        android:lineSpacingExtra="-7dp"
+                        android:padding="12dp"
+                        android:text="Envie a primeira mensagem para ativar o grupo e permitir a entrada dos usuários no grupo"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/small_text"
+                        android:visibility="gone" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvArgument"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/surround_margins"
+                        android:background="@drawable/rounded_primary_double"
+                        android:divider="@color/colorAccent"
+                        android:dividerHeight="1.3dp"
+                        android:padding="9dp" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"

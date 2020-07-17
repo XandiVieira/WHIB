@@ -8,10 +8,10 @@ public class Subject {
 
     private String title;
     private HashMap<String, Server> servers;
-    private String date;
+    private Long date;
     private boolean on; //true - on / false - off
 
-    public Subject(String title, HashMap<String, Server> servers, String date, boolean on) {
+    public Subject(String title, HashMap<String, Server> servers, Long date, boolean on) {
         this.title = title;
         this.servers = servers;
         this.date = date;
@@ -27,7 +27,7 @@ public class Subject {
 
     protected Subject(Parcel in) {
         title = in.readString();
-        date = in.readString();
+        date = in.readLong();
         on = in.readByte() != 0;
     }
 
@@ -39,11 +39,11 @@ public class Subject {
         this.title = title;
     }
 
-    public String getDate() {
+    public Long getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Long date) {
         this.date = date;
     }
 

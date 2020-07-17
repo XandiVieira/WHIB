@@ -46,6 +46,15 @@ PENDÊNCIAS
 	- Reformular servidores (dentro de subjects)
 	- Entrar em grupo a partir do perfil crasha
 	- Mandar mensagem no grupo crasha
+	- Finalizar votação e criar servidor automaticamente (removendo o menos popular)
+	- Comentários longos são cortados antes do indicado pela box
+	- Dialog com aviso final sobre como deve ser o comportamento dentro do app (dps do tutorial(
+- Login com google
+- Novas diretrizes de assinaturas (até 1º de novembro)
+	- Fix create and end survey
+	- Create server (ao entrar crasha)
+	- Show tost to empty server
+- Não permitir finalização da enquete antes da data de término
 
 LOJA
 - Superpoderes (Direito de tornar meu comentário em grupo automaticamente)

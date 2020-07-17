@@ -20,9 +20,8 @@ import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.Timeline;
 import com.relyon.whib.modelo.Util;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -97,22 +96,29 @@ public class AdmControlActivity extends AppCompatActivity {
     }
 
     private void createServer(String newSubject) {
-        final List<Server> serverList = new ArrayList<>();
         Util.mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Integer> helperList = new ArrayList<>();
                 Util.mSubjectDatabaseRef.removeEventListener(this);
-                for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                    Server server = snap.getValue(Server.class);
-                    serverList.add(server);
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Subject subject1 = snapshot.getValue(Subject.class);
+                    if (subject1 != null && subject1.getServers() != null) {
+                        for (Server server : subject1.getServers().values()) {
+                            helperList.add(server.getTempInfo().getNumber());
+                        }
+                    }
                 }
+                Integer[] number = new Integer[helperList.size()];
+                helperList.toArray(number);
+                Arrays.sort(number);
                 Timeline tl = new Timeline(null, newSubject, null);
-                ServerTempInfo serverTempInfo = new ServerTempInfo(0, true, serverList.size() + 1);
+                ServerTempInfo serverTempInfo = new ServerTempInfo(0, true, (number.length > 0 && number[0] != null && number[number.length - 1] != null) ? findFirstMissing(number) : 0);
                 Server server = new Server(UUID.randomUUID().toString(), serverTempInfo, newSubject, tl);
                 HashMap<String, Server> map = new HashMap<>();
                 map.put(server.getServerUID(), server);
-                final Subject subject = new Subject(UUID.randomUUID().toString(), map,
-                        getCurrentDate(), true);
+                final Subject subject = new Subject(newSubject, map,
+                        new Date().getTime(), true);
                 Util.mSubjectDatabaseRef.child(server.getSubject()).setValue(subject);
             }
 
@@ -123,15 +129,21 @@ public class AdmControlActivity extends AppCompatActivity {
         });
     }
 
-    private String getCurrentDate() {
-        SimpleDateFormat dateFormat_hora = new SimpleDateFormat("yyyy/MM/dd - HH:mm:ss");
+    public int findFirstMissing(Integer[] numbers) {
+        for (int i = 0; i < numbers.length; i++) {
+            int target = numbers[i];
+            while (target < numbers.length && target != numbers[target]) {
+                int new_target = numbers[target];
+                numbers[target] = target;
+                target = new_target;
+            }
+        }
 
-        Date data = new Date();
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(data);
-        Date data_atual = cal.getTime();
-
-        return dateFormat_hora.format(data_atual);
+        for (int i = 0; i < numbers.length; i++) {
+            if (numbers[i] != i) {
+                return i;
+            }
+        }
+        return numbers.length;
     }
 }

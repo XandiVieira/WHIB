@@ -13,13 +13,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.ServerTempInfo;
+import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.Timeline;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerViewServerAdapter.ViewHolder> {
@@ -83,7 +88,7 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
             holder.full4.setVisibility(View.GONE);
         }
 
-        holder.serverNumber.setText("Servidor #" + elements.get(position).getTempInfo().getNumber());
+        holder.serverNumber.setText("Servidor #" + (elements.get(position).getTempInfo().getNumber() + 1));
 
         if (elements.get(position).getTempInfo().getQtdUsers() < 100) {
             holder.serverStatus.setText("Disponível");
@@ -135,12 +140,35 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     private void createNewServer() {
-        String subject2 = elements.get(0).getSubject();
-        ServerTempInfo serverTempInfo2 = new ServerTempInfo(0, true, Util.getNumberOfServers() + 1);
-        Timeline tl = new Timeline(null, subject2, null);
-        Server server = new Server(UUID.randomUUID().toString(), serverTempInfo2, subject2, tl);
-        Util.mSubjectDatabaseRef.child(server.getSubject()).child("servers").child(server.getServerUID()).setValue(server);
-        Util.setNumberOfServers(Util.getNumberOfServers() + 1);
+        Util.mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Util.mSubjectDatabaseRef.removeEventListener(this);
+                ArrayList<Integer> helperList = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Subject subject1 = snapshot.getValue(Subject.class);
+                    if (subject1 != null && subject1.getServers() != null) {
+                        for (Server server : subject1.getServers().values()) {
+                            helperList.add(server.getTempInfo().getNumber());
+                        }
+                    }
+                }
+                String subject2 = elements.get(0).getSubject();
+                Integer[] number = new Integer[helperList.size()];
+                helperList.toArray(number);
+                Arrays.sort(number);
+                ServerTempInfo serverTempInfo2 = new ServerTempInfo(0, true, findFirstMissing(number));
+                Timeline tl = new Timeline(null, subject2, null);
+                Server server = new Server(UUID.randomUUID().toString(), serverTempInfo2, subject2, tl);
+                Util.mSubjectDatabaseRef.child(server.getSubject()).child("servers").child(server.getServerUID()).setValue(server);
+                Util.setNumberOfServers(Util.getNumberOfServers() + 1);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void goTimelineScreen(String serverNumber, String status, int position) {
@@ -176,5 +204,23 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
             this.full3 = rowView.findViewById(R.id.full3);
             this.full4 = rowView.findViewById(R.id.full4);
         }
+    }
+
+    public int findFirstMissing(Integer[] numbers) {
+        for (int i = 0; i < numbers.length; i++) {
+            int target = numbers[i];
+            while (target < numbers.length && target != numbers[target]) {
+                int new_target = numbers[target];
+                numbers[target] = target;
+                target = new_target;
+            }
+        }
+
+        for (int i = 0; i < numbers.length; i++) {
+            if (numbers[i] != i) {
+                return i;
+            }
+        }
+        return numbers.length;
     }
 }
