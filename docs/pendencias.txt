@@ -38,7 +38,7 @@ PENDÊNCIAS
 	- Encontrar forma que funcione para o in app billing
 	- Com 4 Tabs está quebrando o texto
 	- Compra sendo efetuada mas recompensas não são atribuídas (method onProductPurchased is never called) 
-- Mostrar mensagem mais bonita para o usuário que se tornou extra
+	- Mostrar mensagem mais bonita para o usuário que se tornou extra
 	- Bloquear anúncios para usuário extra
 	- Histórico para usuários extra (filtrar pelos melhor avaliados)
 	- Set popularity of subjects
@@ -55,16 +55,22 @@ PENDÊNCIAS
 	- Create server (ao entrar crasha)
 	- Show tost to empty server
 - Não permitir finalização da enquete antes da data de término
+- Remover acesso extra do usuário quando expirar sua assinatura
+	- Clicar em ver mais abre o grupo
+	- Abrir grupo crasha
+	- Acessar perfil crasha
+	- Acessar perfil de outras pessoas crasha
+	- Verificar as dicas (Se está tudo correto)
 
 LOJA
 - Superpoderes (Direito de tornar meu comentário em grupo automaticamente)
 	- Itens de avaliação (itens que o usuário pode utilizar para avaliar comentários e mensagens ex.: likes, excelentes, bom argumento, me fez refletir, etc...
 
 FUTURO
-- Notificações (configurar quais ações lannçam notif e quais o usuário deseja receber)
+- Notificações (configurar quais ações lançam notif e quais o usuário deseja receber)
 - FAQ
 - Títulos ao receber x selos de um tipo (ex.: Maria - A lacradora, João - O Amado, Joana - A Odiada)... possibilidade de ocultar o título
-- Permitir ao dono deo grupo configurar filtros de quem pode entrar (apenas extra, por nota, por título...)
+- Permitir ao dono do grupo configurar filtros de quem pode entrar (apenas extra, por nota, por título...)
 - Adicionar amigos
 - Convidar amigos para grupos
 - Abas na tela de perfil (Amigos e histórico)

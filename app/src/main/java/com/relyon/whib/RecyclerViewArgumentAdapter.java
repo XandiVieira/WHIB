@@ -48,13 +48,26 @@ public class RecyclerViewArgumentAdapter extends RecyclerView.Adapter<RecyclerVi
             holder.userName.setVisibility(View.GONE);
             holder.argumentLayout.setBackground(context.getResources().getDrawable(R.drawable.square_primary_dark));
             holder.layout.setGravity(Gravity.END);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(150, 7, 5, 7);
+            params.gravity = Gravity.END;
+            holder.layout.setLayoutParams(params);
         } else {
             holder.userName.setVisibility(View.VISIBLE);
             holder.userName.setText(argument.getAuthorsName());
             holder.argumentLayout.setBackground(context.getResources().getDrawable(R.drawable.square_white));
-            holder.layout.setGravity(Gravity.START);
             holder.argument.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
             holder.time.setTextColor(context.getResources().getColor(R.color.colorPrimaryDark));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(5, 7, 150, 7);
+            params.gravity = Gravity.START;
+            holder.layout.setLayoutParams(params);
         }
         if (argument.getImageTitle() != null) {
             holder.argumentLayout.setBackground(context.getResources().getDrawable(R.drawable.square_primary_color));

@@ -1,5 +1,6 @@
 package com.relyon.whib;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -36,7 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class NextSubjectVoting extends AppCompatActivity {
+public class NextSubjectVotingActivity extends AppCompatActivity {
 
     private RecyclerView alternativesRV;
     private TextView successMessage;
@@ -50,11 +51,14 @@ public class NextSubjectVoting extends AppCompatActivity {
     private ArrayAdapter arrayAdapter;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd - HH:mm");
     private TextView date;
+    private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_next_subject_voting);
+
+        activity = this;
 
         ImageView back = findViewById(R.id.back);
         alternativesRV = findViewById(R.id.alternatives);
@@ -69,7 +73,7 @@ public class NextSubjectVoting extends AppCompatActivity {
 
         if (Util.getUser().isAdmin()) {
             adminLayout.setVisibility(View.VISIBLE);
-            arrayAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, alternatives);
+            arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, alternatives);
             subjectsAdded.setAdapter(arrayAdapter);
         } else {
             adminLayout.setVisibility(View.GONE);
@@ -85,7 +89,7 @@ public class NextSubjectVoting extends AppCompatActivity {
                 newAlternative.setText("");
                 subjectsAdded.setAdapter(arrayAdapter);
             } else {
-                Toast.makeText(getApplicationContext(), "O campo não deve estar vazio.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "O campo não deve estar vazio.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -143,7 +147,7 @@ public class NextSubjectVoting extends AppCompatActivity {
                             Util.mSubjectDatabaseRef.child(finalSubject).setValue(newSubject);
                             Util.mDatabaseRef.child("survey").removeValue();
                             finish();
-                            startActivity(new Intent(getApplicationContext(), NextSubjectVoting.class));
+                            startActivity(new Intent(activity, NextSubjectVotingActivity.class));
                         }
                     }
 
@@ -154,7 +158,7 @@ public class NextSubjectVoting extends AppCompatActivity {
                 });
 
             } else {
-                Toast.makeText(getApplicationContext(), "Data de término ainda não chegou", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Data de término ainda não chegou", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -162,7 +166,7 @@ public class NextSubjectVoting extends AppCompatActivity {
             Util.mDatabaseRef.child("survey").removeValue();
             Util.mDatabaseRef.child("survey").setValue(newSurvey);
             finish();
-            startActivity(new Intent(getApplicationContext(), NextSubjectVoting.class));
+            startActivity(new Intent(this, NextSubjectVotingActivity.class));
         });
 
         back.setOnClickListener(v -> onBackPressed());
@@ -172,8 +176,8 @@ public class NextSubjectVoting extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 survey = dataSnapshot.getValue(Survey.class);
                 if (survey != null && survey.getAlternatives() != null) {
-                    adapter = new RecyclerViewAlternativeAdapter(getApplicationContext(), survey, alternativesRV);
-                    alternativesRV.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    adapter = new RecyclerViewAlternativeAdapter(activity, survey, alternativesRV);
+                    alternativesRV.setLayoutManager(new LinearLayoutManager(activity));
                     alternativesRV.setAdapter(adapter);
                     date.setText(dateFormat.format(survey.getEndDate()));
                 }

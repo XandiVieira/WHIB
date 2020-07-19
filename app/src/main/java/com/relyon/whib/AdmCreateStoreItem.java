@@ -47,7 +47,7 @@ public class AdmCreateStoreItem extends AppCompatActivity {
         ImageView shadow = findViewById(R.id.shadow);
 
         image.setOnClickListener(v -> {
-            if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(AdmCreateStoreItem.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_CODE);
             } else {
                 openGallery(PICK_IMAGE);
@@ -55,7 +55,7 @@ public class AdmCreateStoreItem extends AppCompatActivity {
         });
 
         shadow.setOnClickListener(v -> {
-            if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(AdmCreateStoreItem.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_CODE);
             } else {
                 openGallery(PICK_IMAGE_SHADOW);
@@ -74,26 +74,26 @@ public class AdmCreateStoreItem extends AppCompatActivity {
                 if (!description.getText().toString().trim().equals("")) {
                     if (!price.getText().toString().trim().equals("")) {
                         if (data != null && data.getData() != null && !data.getData().toString().trim().equals("")) {
-                            Glide.with(getApplicationContext()).load(data.getData()).into(image);
+                            Glide.with(this).load(data.getData()).into(image);
                             Product product = new Product(UUID.randomUUID().toString(), title.getText().toString().toLowerCase(), data.getData().toString(), title.getText().toString(), description.getText().toString(), Float.parseFloat(price.getText().toString()), new Date().getTime());
                             //Firebase
                             StorageReference storageReference = FirebaseStorage.getInstance().getReference();
                             if (shadowPath != null) {
                                 uploadImage(Uri.parse(data.getData() + ".png"), shadowPath, storageReference, product);
                             } else {
-                                Toast.makeText(getApplicationContext(), "Não se esqueça da sombra", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, "Não se esqueça da sombra", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            Toast.makeText(getApplicationContext(), "Não esqueça da imagem.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Não esqueça da imagem.", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(getApplicationContext(), "Dê um preço ao item.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Dê um preço ao item.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(getApplicationContext(), "Dê uma descrição ao item.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Dê uma descrição ao item.", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(getApplicationContext(), "Dê um nome ao item.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Dê um nome ao item.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -136,7 +136,7 @@ public class AdmCreateStoreItem extends AppCompatActivity {
                         description.setText("");
                         price.setText("");
                         image.setImageDrawable(null);
-                        Toast.makeText(getApplicationContext(), "Produto criado com sucesso", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Produto criado com sucesso", Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e -> {
                         progressDialog.dismiss();

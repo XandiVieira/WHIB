@@ -139,7 +139,7 @@ public class DialogRateComment extends Dialog implements
                 groupTempInfo, "text", new ArrayList<>(), userUIDList, false, comment.getCommentUID());
         comment.setGroup(group);
         Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("commentGroup").setValue(group);
-        //sendNotification();
+        sendNotification();
     }
 
     private void sendNotification() {

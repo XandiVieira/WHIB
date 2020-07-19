@@ -1,5 +1,6 @@
 package com.relyon.whib.modelo;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class Group {
@@ -14,6 +15,7 @@ public class Group {
     private List<String> userListUID;
     private boolean ready;
     private String commentUID;
+    private HashMap<String, Argument> argumentList;
 
     public Group(String groupUID, String subjectTitle, int number, int serverNumber, GroupTempInfo tempInfo,
                  String mode, List<Question> questionList, List<String> userListUID, boolean ready, String commentUID) {
@@ -110,5 +112,13 @@ public class Group {
 
     public void setCommentUID(String commentUID) {
         this.commentUID = commentUID;
+    }
+
+    public HashMap<String, Argument> getArgumentList() {
+        return argumentList;
+    }
+
+    public void setArgumentList(HashMap<String, Argument> argumentList) {
+        this.argumentList = argumentList;
     }
 }

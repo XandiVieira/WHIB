@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -93,7 +92,8 @@ public class TabWhibExtra extends Fragment implements BillingProcessor.IBillingH
     public void onProductPurchased(String productId, TransactionDetails details) {
         Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);
         Util.getUser().setExtra(true);
-        Toast.makeText(getContext(), "Parabéns, você agora pode utilizar todos os recursos do WHIB", Toast.LENGTH_LONG).show();
+        DialogCongratsSubscription dialogCongratsSubscription = new DialogCongratsSubscription(getActivity());
+        dialogCongratsSubscription.show();
     }
 
     @Override

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/dialog"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:elevation="@dimen/elevation1"
+    app:cardBackgroundColor="@android:color/transparent"
+    app:cardCornerRadius="25dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/rounded_white"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:lineSpacingExtra="-10dp"
+            android:text="@string/congrats_subscription"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/subtitle" />
+
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/whib_extra50" />
+
+        <TextView
+            android:id="@+id/advantages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:lineSpacingExtra="-10dp"
+            android:text="@string/all_advantages"
+            android:textColor="@color/black"
+            android:textSize="@dimen/normal_text" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:lineSpacingExtra="-10dp"
+            android:text="Atenciosamente, equipe WHIB!"
+            android:textColor="@color/red"
+            android:textSize="@dimen/subtitle" />
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

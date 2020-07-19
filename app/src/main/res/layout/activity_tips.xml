@@ -295,7 +295,7 @@
                 android:fontFamily="@font/baloo"
                 android:gravity="start"
                 android:lineSpacingExtra="-10dp"
-                android:text="- Para entrar em um grupo encontre algum comentário que possua o ícone que indica a entrada em grupo do lado direito do comentário e clique nele ou em cima do texto do comentário"
+                android:text="- Para entrar em um grupo encontre algum comentário que possua o ícone que indica a entrada em grupo do lado direito do comentário e clique nele."
                 android:textColor="@color/colorAccent"
                 android:textSize="@dimen/small_text" />
 
@@ -352,7 +352,7 @@
                 android:fontFamily="@font/baloo"
                 android:gravity="start"
                 android:lineSpacingExtra="-10dp"
-                android:text="- Para mandar figurinhas para comentários você deve clicar no texto e segurar, suas figurinhas vão aparecer e então você deve escolher a que deseja enviar."
+                android:text="- Para mandar figurinhas para comentários você deve clicar no texto, suas figurinhas vão aparecer e então você deve escolher a que deseja enviar."
                 android:textColor="@color/colorAccent"
                 android:textSize="@dimen/small_text" />
 

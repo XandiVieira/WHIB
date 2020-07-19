@@ -35,9 +35,9 @@ public class TermsActivity extends AppCompatActivity {
         super.onBackPressed();
         finish();
         if (Util.getUser() != null) {
-            startActivity(new Intent(getApplicationContext(), AboutActivity.class));
+            startActivity(new Intent(this, AboutActivity.class));
         } else {
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
         }
     }
 }

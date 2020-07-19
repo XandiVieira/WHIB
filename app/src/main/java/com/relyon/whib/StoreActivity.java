@@ -1,5 +1,6 @@
 package com.relyon.whib;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -31,13 +32,16 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
     private RecyclerView productsRV;
     private List<Product> productList = new ArrayList<>();
     private BillingProcessor billingProcessor;
+    private Activity activity;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store);
 
-        billingProcessor = new BillingProcessor(getApplicationContext(), getString(R.string.google_license_key), this);
+        activity = this;
+
+        billingProcessor = new BillingProcessor(this, getString(R.string.google_license_key), this);
         billingProcessor.initialize();
 
         if (getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false)) {
@@ -56,9 +60,9 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
         finish();
         Intent intent;
         if (Util.getServer() != null) {
-            intent = new Intent(getApplicationContext(), TimelineActivity.class);
+            intent = new Intent(this, TimelineActivity.class);
         } else {
-            intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent = new Intent(this, MainActivity.class);
         }
         startActivity(intent);
     }
@@ -77,8 +81,8 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
                         productList.add(product);
                     }
                 }
-                LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
-                RecyclerViewProductAdapter adapter = new RecyclerViewProductAdapter(productList, getApplicationContext(), StoreActivity.this);
+                LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
+                RecyclerViewProductAdapter adapter = new RecyclerViewProductAdapter(productList, activity, StoreActivity.this);
                 DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(productsRV.getContext(),
                         layoutManager.getOrientation());
                 productsRV.addItemDecoration(dividerItemDecoration);
@@ -109,7 +113,7 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
 
     @Override
     public void onBillingError(int errorCode, Throwable error) {
-        Toast.makeText(getApplicationContext(), "Ops! Houve um erro, por favor tente novamente.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Ops! Houve um erro, por favor tente novamente.", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -147,7 +151,7 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
                     }
                     Util.getUser().setProducts(user.getProducts());
                     Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").child(myProduct.getProductUID()).setValue(myProduct);
-                    Toast.makeText(getApplicationContext(), "As figurinhas foram adicionadas à sua galeria com sucesso", Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, "As figurinhas foram adicionadas à sua galeria com sucesso", Toast.LENGTH_LONG).show();
                 }
             }
 

@@ -108,7 +108,7 @@ public class TabHistory extends Fragment {
             if (commentList != null && commentList.size() > 0) {
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
                 rvComments.setLayoutManager(layoutManager);
-                adapter = new RecyclerViewCommentAdapter(getContext(), profileActivity, true);
+                adapter = new RecyclerViewCommentAdapter(getContext(), profileActivity, true, false);
                 rvComments.setAdapter(adapter);
                 adapter.addAll(commentList, true, false, true);
             }
@@ -152,7 +152,7 @@ public class TabHistory extends Fragment {
                                         if (commentList.size() > Util.getUser().getCommentList().size()) {
                                             LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
                                             rvComments.setLayoutManager(layoutManager);
-                                            adapter = new RecyclerViewCommentAdapter(getContext(), profileActivity, true);
+                                            adapter = new RecyclerViewCommentAdapter(getContext(), profileActivity, true, false);
                                             rvComments.setAdapter(adapter);
                                             adapter.addAll(commentList, true, false, true);
                                             empty.setVisibility(View.GONE);
@@ -160,7 +160,7 @@ public class TabHistory extends Fragment {
                                     } else {
                                         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
                                         rvComments.setLayoutManager(layoutManager);
-                                        adapter = new RecyclerViewCommentAdapter(getContext(), profileActivity, true);
+                                        adapter = new RecyclerViewCommentAdapter(getContext(), profileActivity, true, false);
                                         rvComments.setAdapter(adapter);
                                         adapter.addAll(commentList, true, false, true);
                                         empty.setVisibility(View.GONE);

@@ -1,5 +1,6 @@
 package com.relyon.whib;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -24,11 +25,14 @@ public class AdmReportsActivity extends AppCompatActivity {
     private List<Report> reportList;
     private RecyclerViewReportAdapter recyclerViewReportAdapter;
     private TextView empty;
+    private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adm_reports);
+
+        activity = this;
 
         reports = findViewById(R.id.reports);
         empty = findViewById(R.id.empty);
@@ -46,7 +50,7 @@ public class AdmReportsActivity extends AppCompatActivity {
                     }
                 }
                 recyclerViewReportAdapter = new RecyclerViewReportAdapter(reportList);
-                reports.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                reports.setLayoutManager(new LinearLayoutManager(activity));
                 reports.setAdapter(recyclerViewReportAdapter);
             }
 

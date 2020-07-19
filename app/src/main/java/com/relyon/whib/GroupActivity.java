@@ -14,15 +14,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Argument;
+import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Sending;
 import com.relyon.whib.modelo.Util;
 import com.vanniktech.emoji.EmojiButton;
@@ -44,6 +47,9 @@ public class GroupActivity extends AppCompatActivity {
     private boolean isForSticker = true;
     private boolean cameFromProfile = false;
     private TextView empty;
+    private Activity activity;
+    private Comment comment;
+    private boolean isFirst = true;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -51,6 +57,8 @@ public class GroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EmojiManager.install(new GoogleEmojiProvider());
         setContentView(R.layout.activity_group);
+
+        activity = this;
 
         if (getIntent().hasExtra("cameFromProfile")) {
             if (getIntent().getBooleanExtra("cameFromProfile", false)) {
@@ -68,7 +76,7 @@ public class GroupActivity extends AppCompatActivity {
         LinearLayout sendView = findViewById(R.id.sendView);
         EmojiButton emojiButton = findViewById(R.id.sendEmoji);
         ImageView sendIcon = findViewById(R.id.sendIcon);
-        ImageView leaveGroup = findViewById(R.id.leaveGroup);
+        ImageView showComment = findViewById(R.id.showComment);
 
         if (argumentList.isEmpty() && !Util.getGroup().isReady() && Util.getUser().getUserUID().equals(Util.getComment().getAuthorsUID())) {
             empty.setVisibility(View.VISIBLE);
@@ -80,19 +88,13 @@ public class GroupActivity extends AppCompatActivity {
 
             if (serverId != null && commentId != null) {
                 Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(serverId).child("timeline")
-                        .child("commentList").child(commentId).child("group").child("argumentList").addValueEventListener(new ValueEventListener() {
+                        .child("commentList").child(commentId).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        argumentList = new ArrayList<>();
-                        for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                            Argument argument = snap.getValue(Argument.class);
-                            argumentList.add(argument);
-                        }
-                        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
-                        layoutManager.setStackFromEnd(true);
-                        rvArgument.setLayoutManager(layoutManager);
-                        RecyclerViewArgumentAdapter adapter = new RecyclerViewArgumentAdapter(getApplicationContext(), argumentList);
-                        rvArgument.setAdapter(adapter);
+                        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(serverId).child("timeline")
+                                .child("commentList").child(commentId).removeEventListener(this);
+                        comment = dataSnapshot.getValue(Comment.class);
+                        showComment.setVisibility(View.VISIBLE);
                     }
 
                     @Override
@@ -100,10 +102,60 @@ public class GroupActivity extends AppCompatActivity {
 
                     }
                 });
+
+                Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(serverId).child("timeline")
+                        .child("commentList").child(commentId).child("group").child("argumentList").addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                        if (argumentList == null) {
+                            argumentList = new ArrayList<>();
+                        }
+                        argumentList.add(snapshot.getValue(Argument.class));
+                        if (comment != null && comment.getGroup() != null && comment.getGroup().getArgumentList() != null) {
+                            LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
+                            layoutManager.setStackFromEnd(false);
+                            rvArgument.setLayoutManager(layoutManager);
+                            RecyclerViewArgumentAdapter adapter = null;
+                            if (isFirst) {
+                                adapter = new RecyclerViewArgumentAdapter(activity, argumentList);
+                                rvArgument.setAdapter(adapter);
+                            }
+                            if (!isFirst && adapter != null) {
+                                adapter.notifyDataSetChanged();
+                            }
+                            isFirst = false;
+                            rvArgument.scrollToPosition(argumentList.size() - 1);
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
         }
 
-        inputMessage.setOnClickListener(v -> emojiPopup.dismiss());
+        inputMessage.setOnClickListener(v -> {
+            if (emojiPopup != null) {
+                emojiPopup.dismiss();
+            }
+        });
 
         inputMessage.addTextChangedListener(new TextWatcher() {
             @Override
@@ -161,7 +213,7 @@ public class GroupActivity extends AppCompatActivity {
                 }
             }
         });
-        leaveGroup.setOnClickListener(v -> leaveGroup());
+        showComment.setOnClickListener(v -> showComment());
 
         Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("tempInfo").child("activated").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -177,6 +229,11 @@ public class GroupActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void showComment() {
+        DialogShowComment dialogShowComment = new DialogShowComment(GroupActivity.this, this, comment);
+        dialogShowComment.show();
     }
 
     private void sendMessage() {
@@ -242,11 +299,11 @@ public class GroupActivity extends AppCompatActivity {
         finish();
         Intent intent;
         if (cameFromProfile) {
-            intent = new Intent(getApplicationContext(), ProfileActivity.class);
+            intent = new Intent(this, ProfileActivity.class);
         } else if (Util.getServer() != null) {
-            intent = new Intent(getApplicationContext(), TimelineActivity.class);
+            intent = new Intent(this, TimelineActivity.class);
         } else {
-            intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent = new Intent(this, MainActivity.class);
         }
         startActivity(intent);
     }

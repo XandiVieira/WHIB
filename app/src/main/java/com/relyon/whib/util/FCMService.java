@@ -4,6 +4,8 @@ import android.content.Intent;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.relyon.whib.GroupActivity;
@@ -20,6 +22,9 @@ public class FCMService extends FirebaseMessagingService {
         if (data.get("serverId") == null || data.get("commentId") == null) {
             return;
         }
-        startActivity(new Intent(this, GroupActivity.class).putExtra("serverId", data.get("serverId")).putExtra("commentId", data.get("commentId")).putExtra("commentNumber", data.get("commentNumber")).putExtra("groupNumber", data.get("groupNumber")).putExtra("subject", data.get("subject")));
+        final Intent intent = new Intent(this, GroupActivity.class);
+        FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference mDatabaseRef = mFirebaseDatabase.getReference();
+        //mDatabaseRef.child("user").child("")
     }
 }

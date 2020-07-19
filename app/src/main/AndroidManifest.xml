@@ -22,7 +22,7 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".NextSubjectVoting" />
+        <activity android:name=".NextSubjectVotingActivity" />
         <activity android:name=".ContactActivity" />
         <activity android:name=".PrivacyPolicyActivity" />
         <activity android:name=".TermsActivity" />

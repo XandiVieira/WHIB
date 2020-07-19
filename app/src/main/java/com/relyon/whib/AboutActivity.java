@@ -40,28 +40,28 @@ public class AboutActivity extends AppCompatActivity {
         }
 
         try {
-            PackageInfo pInfo = getApplicationContext().getPackageManager().getPackageInfo(getPackageName(), 0);
+            PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
             String versionTxt = pInfo.versionName;
             version.setText("Version " + versionTxt);
         } catch (PackageManager.NameNotFoundException e) {
             Log.e("Error", e.getMessage());
         }
 
-        aboutUs.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), AboutUsActivity.class)));
+        aboutUs.setOnClickListener(v -> startActivity(new Intent(this, AboutUsActivity.class)));
 
-        tips.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), TipsActivity.class)));
+        tips.setOnClickListener(v -> startActivity(new Intent(this, TipsActivity.class)));
 
-        faq.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), FaqActivity.class)));
+        faq.setOnClickListener(v -> startActivity(new Intent(this, FaqActivity.class)));
 
         terms.setOnClickListener(v -> {
-            startActivity(new Intent(getApplicationContext(), TermsActivity.class));
+            startActivity(new Intent(this, TermsActivity.class));
         });
 
         privacyPolicy.setOnClickListener(v -> {
-            startActivity(new Intent(getApplicationContext(), PrivacyPolicyActivity.class));
+            startActivity(new Intent(this, PrivacyPolicyActivity.class));
         });
 
-        contactUs.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), ContactActivity.class)));
+        contactUs.setOnClickListener(v -> startActivity(new Intent(this, ContactActivity.class)));
 
         back.setOnClickListener(v -> onBackPressed());
     }
@@ -72,9 +72,9 @@ public class AboutActivity extends AppCompatActivity {
         finish();
         Intent intent;
         if (Util.getServer() != null) {
-            intent = new Intent(getApplicationContext(), TimelineActivity.class);
+            intent = new Intent(this, TimelineActivity.class);
         } else {
-            intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent = new Intent(this, MainActivity.class);
         }
         startActivity(intent);
     }

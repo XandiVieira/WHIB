@@ -1,5 +1,6 @@
 package com.relyon.whib;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
@@ -30,11 +31,14 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageView photo;
     private TextView userName;
     private boolean loadReports = false;
+    private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        activity = this;
 
         ImageView back = findViewById(R.id.back);
         photo = findViewById(R.id.photo);
@@ -87,7 +91,7 @@ public class ProfileActivity extends AppCompatActivity {
                             nicknames.add(snap.getValue(String.class));
                         }
                         if (nicknames.contains(nickname)) {
-                            Toast.makeText(getApplicationContext(), "Este nome de usuário já está sendo utilizado.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "Este nome de usuário já está sendo utilizado.", Toast.LENGTH_SHORT).show();
                         } else {
                             Util.getmUserDatabaseRef().child(user.getUserUID()).setValue(user);
                             Util.getmUserDatabaseRef().child("nickname").push().setValue(user.getNickName());
@@ -103,11 +107,11 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        settings.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), SettingsActivity.class)));
+        settings.setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
     }
 
     private void setUserProfile() {
-        Glide.with(getApplicationContext()).load(user.getPhotoPath()).apply(RequestOptions.circleCropTransform()).into(photo);
+        Glide.with(this).load(user.getPhotoPath()).apply(RequestOptions.circleCropTransform()).into(photo);
 
         userName.setText(user.getUserName());
 
@@ -117,7 +121,7 @@ public class ProfileActivity extends AppCompatActivity {
             nick.setEnabled(true);
         }
 
-        SectionPagerProfileAdapter mSectionsPagerAdapter = new SectionPagerProfileAdapter(getSupportFragmentManager(), getApplicationContext());
+        SectionPagerProfileAdapter mSectionsPagerAdapter = new SectionPagerProfileAdapter(getSupportFragmentManager(), this);
 
         // Set up the ViewPager with the sections adapter.
         ViewPager mViewPager = findViewById(R.id.container);
@@ -136,9 +140,9 @@ public class ProfileActivity extends AppCompatActivity {
         finish();
         Intent intent;
         if (Util.getServer() != null) {
-            intent = new Intent(getApplicationContext(), TimelineActivity.class);
+            intent = new Intent(this, TimelineActivity.class);
         } else {
-            intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent = new Intent(this, MainActivity.class);
         }
         startActivity(intent);
     }

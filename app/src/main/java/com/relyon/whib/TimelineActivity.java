@@ -220,23 +220,23 @@ public class TimelineActivity extends AppCompatActivity {
                     Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false);
                 }
                 if (item.getTitle().equals(getString(R.string.settings))) {
-                    Intent intent = new Intent(getApplicationContext(), SettingsActivity.class).putExtra("showLastWarn", Util.getUser().isFirstTime());
+                    Intent intent = new Intent(this, SettingsActivity.class).putExtra("showLastWarn", Util.getUser().isFirstTime());
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.store))) {
-                    Intent intent = new Intent(getApplicationContext(), StoreActivity.class).putExtra("showLastWarn", Util.getUser().isFirstTime());
+                    Intent intent = new Intent(this, StoreActivity.class).putExtra("showLastWarn", Util.getUser().isFirstTime());
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.profile))) {
-                    Intent intent = new Intent(getApplicationContext(), ProfileActivity.class).putExtra("showLastWarn", Util.getUser().isFirstTime());
+                    Intent intent = new Intent(this, ProfileActivity.class).putExtra("showLastWarn", Util.getUser().isFirstTime());
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.tips))) {
-                    Intent intent = new Intent(getApplicationContext(), TipsActivity.class).putExtra("cameFromTimeline", Util.getUser().isFirstTime()).putExtra("showLastWarn", true);
+                    Intent intent = new Intent(this, TipsActivity.class).putExtra("cameFromTimeline", Util.getUser().isFirstTime()).putExtra("showLastWarn", true);
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.about))) {
-                    Intent intent = new Intent(getApplicationContext(), AboutActivity.class).putExtra("showLastWarn", Util.getUser().isFirstTime());
+                    Intent intent = new Intent(this, AboutActivity.class).putExtra("showLastWarn", Util.getUser().isFirstTime());
                     startActivity(intent);
                     return true;
                 }
@@ -262,11 +262,11 @@ public class TimelineActivity extends AppCompatActivity {
         rvComments = findViewById(R.id.rvComments);
         layoutManager.setStackFromEnd(true);
         rvComments.setLayoutManager(layoutManager);
-        adapter = new RecyclerViewCommentAdapter(getApplicationContext(), activity);
+        adapter = new RecyclerViewCommentAdapter(this, activity);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvComments.getContext(),
                 layoutManager.getOrientation());
         rvComments.addItemDecoration(dividerItemDecoration);
-        dividerItemDecoration.setDrawable(requireNonNull(ContextCompat.getDrawable(getApplicationContext(), R.drawable.divider)));
+        dividerItemDecoration.setDrawable(requireNonNull(ContextCompat.getDrawable(this, R.drawable.divider)));
         rvComments.setAdapter(adapter);
         query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage);
 
@@ -310,7 +310,7 @@ public class TimelineActivity extends AppCompatActivity {
                 }
                 adapter.addAll(comments, adapter.getLastItemId(false) == null, false, reset);
                 if (comments.size() == 0 && Util.getUser().isFirstTime()) {
-                    startActivity(new Intent(getApplicationContext(), MainActivity.class).putExtra("serverEmpty", true));
+                    startActivity(new Intent(activity, MainActivity.class).putExtra("serverEmpty", true));
                 }
                 reset = false;
                 if (comments.size() > 0) {
@@ -516,8 +516,8 @@ public class TimelineActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Boolean active = dataSnapshot.getValue(Boolean.class);
                     if (active != null && !active) {
-                        Toast.makeText(getApplicationContext(), "Servidor Lotado", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        Toast.makeText(activity, "Servidor Lotado", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(activity, MainActivity.class));
                     }
                 }
 
@@ -527,7 +527,7 @@ public class TimelineActivity extends AppCompatActivity {
                 }
             });
         } else {
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
         }
     }
 
@@ -543,7 +543,7 @@ public class TimelineActivity extends AppCompatActivity {
         super.onBackPressed();
         Util.setServer(null);
         finish();
-        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        startActivity(new Intent(this, MainActivity.class));
     }
 
     @Override

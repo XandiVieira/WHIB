@@ -23,7 +23,7 @@ public class SettingsActivity extends AppCompatActivity implements BillingProces
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        billingProcessor = new BillingProcessor(getApplicationContext(), getResources().getString(R.string.google_license_key), this);
+        billingProcessor = new BillingProcessor(this, getResources().getString(R.string.google_license_key), this);
         billingProcessor.initialize();
 
         SectionPagerAdapter mSectionsPagerAdapter = new SectionPagerAdapter(getSupportFragmentManager());
@@ -48,9 +48,9 @@ public class SettingsActivity extends AppCompatActivity implements BillingProces
         back.setOnClickListener(v -> {
             Intent intent;
             if (Util.getServer() != null) {
-                intent = new Intent(getApplicationContext(), TimelineActivity.class);
+                intent = new Intent(this, TimelineActivity.class);
             } else {
-                intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent = new Intent(this, MainActivity.class);
             }
             startActivity(intent);
         });
@@ -84,7 +84,8 @@ public class SettingsActivity extends AppCompatActivity implements BillingProces
     public void onProductPurchased(String productId, TransactionDetails details) {
         Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);
         Util.getUser().setExtra(true);
-        Toast.makeText(getApplicationContext(), "Parabéns, você agora pode utilizar todos os recursos do WHIB", Toast.LENGTH_LONG).show();
+        DialogCongratsSubscription warn = new DialogCongratsSubscription(this);
+        warn.show();
     }
 
     @Override

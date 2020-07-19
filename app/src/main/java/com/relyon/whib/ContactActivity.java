@@ -1,5 +1,6 @@
 package com.relyon.whib;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -31,11 +32,14 @@ public class ContactActivity extends AppCompatActivity {
 
     private List<Complaint> complaintList = new ArrayList<>();
     private TextView empty;
+    private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
+
+        activity = this;
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
@@ -60,10 +64,10 @@ public class ContactActivity extends AppCompatActivity {
                 } else {
                     empty.setText(getString(R.string.no_requests));
                 }
-                LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
+                LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
                 myComplaints.setLayoutManager(layoutManager);
                 Collections.sort(complaintList, Complaint.dateComparator);
-                RecyclerViewComplaintAdapter adapter = new RecyclerViewComplaintAdapter(getApplicationContext(), complaintList);
+                RecyclerViewComplaintAdapter adapter = new RecyclerViewComplaintAdapter(activity, complaintList);
                 myComplaints.setAdapter(adapter);
             }
 
@@ -79,16 +83,16 @@ public class ContactActivity extends AppCompatActivity {
 
         btFaq.setOnClickListener(v -> {
             finish();
-            startActivity(new Intent(getApplicationContext(), FaqActivity.class));
+            startActivity(new Intent(this, FaqActivity.class));
         });
 
         send.setOnClickListener(v -> {
             if (complaintTxt.getText().toString().isEmpty() || complaintTxt.getText().toString().length() < 10) {
-                Toast.makeText(getApplicationContext(), "Detalhe melhor o seu problema.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Detalhe melhor o seu problema.", Toast.LENGTH_SHORT).show();
             } else {
                 Complaint complaint = new Complaint(UUID.randomUUID().toString(), Util.getUser().getUserUID(), complaintTxt.getText().toString(), new Date().getTime());
                 Util.mDatabaseRef.child("complaint").child(complaint.getComplaintId()).setValue(complaint);
-                Toast.makeText(getApplicationContext(), "Requisição enviada com sucesso!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Requisição enviada com sucesso!", Toast.LENGTH_SHORT).show();
                 complaintTxt.setText("");
             }
         });
@@ -98,6 +102,6 @@ public class ContactActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
-        startActivity(new Intent(getApplicationContext(), AboutActivity.class));
+        startActivity(new Intent(this, AboutActivity.class));
     }
 }

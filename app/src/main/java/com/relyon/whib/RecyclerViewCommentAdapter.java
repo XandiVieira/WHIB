@@ -55,6 +55,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     private static final int NATIVE_EXPRESS_AD_VIEW_TYPE = 1;
     int mPostsPerPage = 10;
     private boolean isFromTabHistory;
+    private boolean isFromGroup = false;
 
     RecyclerViewCommentAdapter(@NonNull Context context, AppCompatActivity activity) {
         this.context = context;
@@ -62,11 +63,12 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         this.activity = activity;
     }
 
-    RecyclerViewCommentAdapter(@NonNull Context context, AppCompatActivity activity, boolean isFromTabHistory) {
+    RecyclerViewCommentAdapter(@NonNull Context context, AppCompatActivity activity, boolean isFromTabHistory, boolean isFromGroup) {
         this.context = context;
         this.elements = new ArrayList<>();
         this.activity = activity;
         this.isFromTabHistory = isFromTabHistory;
+        this.isFromGroup = isFromGroup;
     }
 
     @NonNull
@@ -165,7 +167,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             holder.text.setTrimLines(4);
             holder.text.setColorClickableText(Color.BLUE);
 
-            if (comment.isAGroup()) {
+            if (comment.isAGroup() && !isFromGroup) {
                 if (comment.getGroup().isReady()) {
                     holder.entrance.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_exit_active));
                 }
@@ -175,7 +177,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                 holder.entrance.setVisibility(View.GONE);
             }
 
-            holder.userProfile.setOnClickListener(v -> context.startActivity(new Intent(context, ProfileActivity.class).putExtra("userId", comment.getAuthorsUID())));
+            holder.userProfile.setOnClickListener(v -> context.startActivity(new Intent(context, ProfileActivity.class).putExtra("userId", comment.getAuthorsUID()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
 
             Typeface face = ResourcesCompat.getFont(context, R.font.baloo);
             holder.text.setTypeface(face);
@@ -235,9 +237,10 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                     Toast.makeText(context, "Você já avaliou este comentário!", Toast.LENGTH_SHORT).show();
                 }
             });
-
-            holder.text.setOnClickListener(v -> goToGroup(comment));
             holder.entrance.setOnClickListener(v -> goToGroup(comment));
+            if (isFromGroup) {
+                holder.report.setVisibility(View.INVISIBLE);
+            }
             holder.report.setOnClickListener(v -> tryToReport(comment));
             holder.text.setOnLongClickListener(v -> {
                 if (elements.get(position) instanceof Comment) {
@@ -332,7 +335,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                                     }
                                     Util.setComment(comment);
                                     Util.setGroup(comment.getGroup());
-                                    context.startActivity(new Intent(context, GroupActivity.class).putExtra("serverId", comment.getServerUID()).putExtra("commentId", comment.getCommentUID()).putExtra("cameFromProfile", true).putExtra("commentNumber", comment.getGroup().getServerNumber()).putExtra("groupNumber", comment.getGroup().getNumber()).putExtra("subject", comment.getSubject()));
+                                    context.startActivity(new Intent(context, GroupActivity.class).putExtra("serverId", comment.getServerUID()).putExtra("commentId", comment.getCommentUID()).putExtra("cameFromProfile", true).putExtra("commentNumber", comment.getGroup().getServerNumber()).putExtra("groupNumber", comment.getGroup().getNumber()).putExtra("subject", comment.getSubject()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                                     activity.finish();
                                 }
                             }
@@ -348,7 +351,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                         }
                         Util.setComment(comment);
                         Util.setGroup(comment.getGroup());
-                        context.startActivity(new Intent(context, GroupActivity.class).putExtra("serverId", Util.getServer().getServerUID()).putExtra("commentId", comment.getCommentUID()).putExtra("commentNumber", comment.getGroup().getServerNumber()).putExtra("groupNumber", comment.getGroup().getNumber()).putExtra("subject", comment.getSubject()));
+                        context.startActivity(new Intent(context, GroupActivity.class).putExtra("serverId", Util.getServer().getServerUID()).putExtra("commentId", comment.getCommentUID()).putExtra("commentNumber", comment.getGroup().getServerNumber()).putExtra("groupNumber", comment.getGroup().getNumber()).putExtra("subject", comment.getSubject()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                         activity.finish();
                     }
                 } else {

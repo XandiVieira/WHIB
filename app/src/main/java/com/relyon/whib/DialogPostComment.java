@@ -111,8 +111,8 @@ public class DialogPostComment extends Dialog implements
     }
 
     private boolean validateComment() {
-        if (commentBox.getText().length() < 50 && !Util.getUser().isAdmin()) {
-            Toast.makeText(getContext(), "O comentário deve possuir pelo menos 50 caracteres!", Toast.LENGTH_SHORT).show();
+        if (commentBox.getText().length() < 30 && !Util.getUser().isAdmin()) {
+            Toast.makeText(getContext(), "O comentário deve possuir pelo menos 30 caracteres!", Toast.LENGTH_SHORT).show();
             return false;
         }
         if (commentBox.getText().length() > MAX_COMMENT_SIZE) {

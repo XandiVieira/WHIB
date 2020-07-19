@@ -24,7 +24,7 @@ public class TipsActivity extends AppCompatActivity {
         Button store = findViewById(R.id.store);
         back.setOnClickListener(v -> onBackPressed());
 
-        store.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), StoreActivity.class)));
+        store.setOnClickListener(v -> startActivity(new Intent(this, StoreActivity.class)));
 
         if (getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false)) {
             DialogFinalWarn warn = new DialogFinalWarn(this);
@@ -48,12 +48,12 @@ public class TipsActivity extends AppCompatActivity {
         Intent intent;
         if (Util.getServer() != null) {
             if (getIntent().hasExtra("cameFromTimeline")) {
-                intent = new Intent(getApplicationContext(), TimelineActivity.class);
+                intent = new Intent(this, TimelineActivity.class);
             } else {
-                intent = new Intent(getApplicationContext(), AboutActivity.class);
+                intent = new Intent(this, AboutActivity.class);
             }
         } else {
-            intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent = new Intent(this, MainActivity.class);
         }
         startActivity(intent);
     }

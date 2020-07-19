@@ -177,7 +177,7 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
         User user = Util.getUser();
         Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).setValue(user);
         Intent intent = new Intent(context, TimelineActivity.class);
-        intent.putExtra("subject", elements.get(position).getSubject());
+        intent.putExtra("subject", elements.get(position).getSubject()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 

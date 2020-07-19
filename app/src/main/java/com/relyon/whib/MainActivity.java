@@ -1,5 +1,6 @@
 package com.relyon.whib;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -46,12 +47,15 @@ import java.util.List;
 import me.toptas.fancyshowcase.FancyShowCaseQueue;
 import me.toptas.fancyshowcase.FancyShowCaseView;
 
+import static com.relyon.whib.util.Constants.SKU_WHIB_MONTHLY;
+import static com.relyon.whib.util.Constants.SKU_WHIB_SIXMONTH;
+import static com.relyon.whib.util.Constants.SKU_WHIB_YEARLY;
+
 public class MainActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler, SelectSubscription {
 
     private FirebaseUser fbUser;
     private User user;
     private DatabaseReference mUserDatabaseRef;
-    private DatabaseReference mServerDatabaseRef;
     private DatabaseReference mSubjectDatabaseRef;
     private FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
     private BillingProcessor billingProcessor;
@@ -63,17 +67,19 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     private Button choseSubjectButton;
 
     private RecyclerView recyclerViewServers;
+    private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+
+        activity = this;
 
         ApplicationLifecycle lifecycle = (ApplicationLifecycle) getApplication();
         getApplication().registerActivityLifecycleCallbacks(lifecycle);
 
-        billingProcessor = new BillingProcessor(getApplicationContext(), getResources().getString(R.string.google_license_key), this);
+        billingProcessor = new BillingProcessor(this, getResources().getString(R.string.google_license_key), this);
         billingProcessor.initialize();
 
         this.recyclerViewServers = findViewById(R.id.recyclerViewSec);
@@ -107,10 +113,10 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                 goVoteScreen();
             } else {
                 if (Util.getUser().isExtra()) {
-                    startActivity(new Intent(getApplicationContext(), NextSubjectVoting.class));
+                    startActivity(new Intent(this, NextSubjectVotingActivity.class));
                 } else {
                     FragmentTransaction fm = this.getSupportFragmentManager().beginTransaction();
-                    DialogChooseSubscription dialogChooseSubscription = DialogChooseSubscription.newInstance(getApplicationContext());
+                    DialogChooseSubscription dialogChooseSubscription = DialogChooseSubscription.newInstance(this);
                     dialogChooseSubscription.show(fm, "");
                 }
             }
@@ -126,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     }
 
     private void goVoteScreen() {
-        startActivity(new Intent(getApplicationContext(), NextSubjectVoting.class));
+        startActivity(new Intent(this, NextSubjectVotingActivity.class));
     }
 
     private void getSubjects() {
@@ -182,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference mDatabaseRef = mFirebaseDatabase.getReference();
         mUserDatabaseRef = mDatabaseRef.child("user");
-        mServerDatabaseRef = mDatabaseRef.child("server");
+        DatabaseReference mServerDatabaseRef = mDatabaseRef.child("server");
         mSubjectDatabaseRef = mDatabaseRef.child("subject");
         DatabaseReference mGroupDatabaseRef = mDatabaseRef.child("group");
         DatabaseReference mAdvantagesDatabaseRef = mDatabaseRef.child("advantage");
@@ -208,11 +214,18 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                 }
                 //set user for the Util class
                 Util.setUser(user);
+                if (userIsSubscribed()) {
+                    Util.getUser().setExtra(true);
+                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);
+                } else {
+                    Util.getUser().setExtra(false);
+                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(false);
+                }
                 updateToken();
                 profile.setVisibility(View.VISIBLE);
                 if (user != null && user.isFirstTime()) {
                     if (getIntent().hasExtra("serverEmpty")) {
-                        Toast tag = Toast.makeText(getApplicationContext(), "Este servidor está vazio, por favor escolha outro para começar.", Toast.LENGTH_LONG);
+                        Toast tag = Toast.makeText(activity, "Este servidor está vazio, por favor escolha outro para começar.", Toast.LENGTH_LONG);
                         new CountDownTimer(3000, 3500) {
 
                             public void onTick(long millisUntilFinished) {
@@ -316,7 +329,8 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     public void onProductPurchased(String productId, TransactionDetails details) {
         Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);
         Util.getUser().setExtra(true);
-        Toast.makeText(getApplicationContext(), "Parabéns, você agora pode utilizar todos os recursos do WHIB", Toast.LENGTH_LONG).show();
+        DialogCongratsSubscription dialogCongratsSubscription = new DialogCongratsSubscription(this);
+        dialogCongratsSubscription.show();
     }
 
     @Override
@@ -356,5 +370,20 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     @Override
     public void onChoose(String sku) {
         subscribe(sku);
+    }
+
+    public boolean userIsSubscribed() {
+        boolean purchaseResult = billingProcessor.loadOwnedPurchasesFromGoogle();
+        if (purchaseResult) {
+            List<String> ids = new ArrayList<>();
+            ids.add(SKU_WHIB_MONTHLY);
+            ids.add(SKU_WHIB_SIXMONTH);
+            ids.add(SKU_WHIB_YEARLY);
+            for (String id : ids) {
+                TransactionDetails subscriptionTransactionDetails = billingProcessor.getSubscriptionTransactionDetails(id);
+                return subscriptionTransactionDetails != null;
+            }
+        }
+        return false;
     }
 }

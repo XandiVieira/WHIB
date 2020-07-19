@@ -21,7 +21,7 @@ public class AboutUsActivity extends AppCompatActivity {
         ImageView back = findViewById(R.id.back);
         TextView version = findViewById(R.id.version);
         try {
-            PackageInfo pInfo = getApplicationContext().getPackageManager().getPackageInfo(getPackageName(), 0);
+            PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
             String versionTxt = pInfo.versionName;
             version.setText("Version " + versionTxt);
         } catch (PackageManager.NameNotFoundException e) {
@@ -35,6 +35,6 @@ public class AboutUsActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
-        startActivity(new Intent(getApplicationContext(), AboutActivity.class));
+        startActivity(new Intent(this, AboutActivity.class));
     }
 }

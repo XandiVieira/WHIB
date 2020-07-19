@@ -1,5 +1,6 @@
 package com.relyon.whib;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -24,11 +25,14 @@ public class AdmComplaintsActivity extends AppCompatActivity {
     private ArrayList<Complaint> complaintList = new ArrayList<>();
     private RecyclerViewComplaintAdapter recyclerViewComplaintAdapter;
     private TextView empty;
+    private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adm_complaints);
+
+        activity = this;
 
         complaints = findViewById(R.id.reports);
         empty = findViewById(R.id.empty);
@@ -47,10 +51,10 @@ public class AdmComplaintsActivity extends AppCompatActivity {
                 } else {
                     empty.setVisibility(View.VISIBLE);
                 }
-                LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
+                LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
                 complaints.setLayoutManager(layoutManager);
                 Collections.sort(complaintList, Complaint.dateComparator);
-                recyclerViewComplaintAdapter = new RecyclerViewComplaintAdapter(getApplicationContext(), complaintList);
+                recyclerViewComplaintAdapter = new RecyclerViewComplaintAdapter(activity, complaintList);
                 complaints.setAdapter(recyclerViewComplaintAdapter);
             }
 

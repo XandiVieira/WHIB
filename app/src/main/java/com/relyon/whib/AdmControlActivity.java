@@ -46,7 +46,7 @@ public class AdmControlActivity extends AppCompatActivity {
         Button reports = findViewById(R.id.reports);
         Button complaints = findViewById(R.id.complaints);
         Button storeItem = findViewById(R.id.storeItem);
-        storeItem.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), AdmCreateStoreItem.class)));
+        storeItem.setOnClickListener(v -> startActivity(new Intent(this, AdmCreateStoreItem.class)));
         activity = this;
 
         Util.mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
@@ -77,8 +77,8 @@ public class AdmControlActivity extends AppCompatActivity {
         Button createServer = findViewById(R.id.createServerButton);
 
         createServer.setOnClickListener(v -> callDialog());
-        reports.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), AdmReportsActivity.class)));
-        complaints.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), AdmComplaintsActivity.class)));
+        reports.setOnClickListener(v -> startActivity(new Intent(this, AdmReportsActivity.class)));
+        complaints.setOnClickListener(v -> startActivity(new Intent(this, AdmComplaintsActivity.class)));
     }
 
     private void callDialog() {

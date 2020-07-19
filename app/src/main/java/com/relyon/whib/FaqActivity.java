@@ -23,6 +23,6 @@ public class FaqActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
-        startActivity(new Intent(getApplicationContext(), AboutActivity.class));
+        startActivity(new Intent(this, AboutActivity.class));
     }
 }

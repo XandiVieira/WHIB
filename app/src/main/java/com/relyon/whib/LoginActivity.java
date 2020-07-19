@@ -1,6 +1,7 @@
 package com.relyon.whib;
 
 import android.animation.Animator;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -49,10 +50,9 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
     private ProgressBar progressBar;
     private ImageView logo;
-    private TextView terms;
-    private TextView privacyPolicy;
     private ArrayList<Techniques> techniques = new ArrayList<>();
     private Random random = new Random();
+    private Activity activity;
 
     /**
      * The number of pages (wizard steps) to show in this demo.
@@ -83,6 +83,8 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        activity = this;
+
         progressBar = findViewById(R.id.progressBar);
 
         callbackManager = CallbackManager.Factory.create();
@@ -91,20 +93,20 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
 
         logo = findViewById(R.id.logo);
 
-        terms = findViewById(R.id.terms);
+        TextView terms = findViewById(R.id.terms);
 
-        privacyPolicy = findViewById(R.id.privacyPolicy);
+        TextView privacyPolicy = findViewById(R.id.privacyPolicy);
 
-        terms.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), TermsActivity.class)));
+        terms.setOnClickListener(v -> startActivity(new Intent(this, TermsActivity.class)));
 
-        privacyPolicy.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), PrivacyPolicyActivity.class)));
+        privacyPolicy.setOnClickListener(v -> startActivity(new Intent(this, PrivacyPolicyActivity.class)));
 
         TextView version1 = findViewById(R.id.version);
 
         loginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
 
         try {
-            PackageInfo pInfo = getApplicationContext().getPackageManager().getPackageInfo(getPackageName(), 0);
+            PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
             String version = pInfo.versionName;
             version1.setText("Version " + version);
         } catch (PackageManager.NameNotFoundException e) {
@@ -119,12 +121,12 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
 
             @Override
             public void onCancel() {
-                Toast.makeText(getApplicationContext(), R.string.cancel_login, Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, R.string.cancel_login, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(FacebookException error) {
-                Toast.makeText(getApplicationContext(), R.string.error_login, Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, R.string.error_login, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -184,7 +186,7 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (!task.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), R.string.firebase_error_login, Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, R.string.firebase_error_login, Toast.LENGTH_LONG).show();
                 }
                 progressBar.setVisibility(View.GONE);
                 loginButton.setVisibility(View.VISIBLE);
