@@ -40,6 +40,7 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
     private boolean isForDialog;
     private boolean isForGallery;
     private Comment comment;
+    private RecyclerViewCommentAdapter recyclerViewCommentAdapter;
 
     public RecyclerViewGalleryAdapter(List<Product> allStickers, HashMap<String, Product> myStickers, Context context, boolean isForGallery, boolean isForDialog, List<Argument> argumentList, Dialog dialog, Comment comment) {
         this.allStickers = allStickers;
@@ -53,7 +54,7 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
         storageReference = FirebaseStorage.getInstance().getReference();
     }
 
-    public RecyclerViewGalleryAdapter(HashMap<String, Product> myStickers, List<Product> allStickers, Context context, boolean isForGallery, boolean isForDialog, boolean isForComment, List<Argument> argumentList, Dialog dialog, Comment comment) {
+    public RecyclerViewGalleryAdapter(HashMap<String, Product> myStickers, List<Product> allStickers, Context context, boolean isForGallery, boolean isForDialog, boolean isForComment, List<Argument> argumentList, Dialog dialog, Comment comment, RecyclerViewCommentAdapter recyclerViewCommentAdapter) {
         this.allStickers = allStickers;
         this.myStickers = myStickers;
         this.context = context;
@@ -62,6 +63,7 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
         this.dialog = dialog;
         this.isForGallery = isForGallery;
         this.comment = comment;
+        this.recyclerViewCommentAdapter = recyclerViewCommentAdapter;
         storageReference = FirebaseStorage.getInstance().getReference();
     }
 
@@ -169,6 +171,9 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
                         }
                         Util.getUser().getProducts().get(userProduct.getProductUID()).setQuantity(quantity);
                         Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").child(userProduct.getProductUID()).child("quantity").setValue(quantity);
+                        if (recyclerViewCommentAdapter != null) {
+                            recyclerViewCommentAdapter.notifyDataSetChanged();
+                        }
                     }
 
                     @Override

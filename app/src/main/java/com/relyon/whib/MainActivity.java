@@ -30,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Preferences;
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.Subject;
@@ -223,22 +224,65 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                 }
                 updateToken();
                 profile.setVisibility(View.VISIBLE);
-                if (user != null && user.isFirstTime()) {
-                    if (getIntent().hasExtra("serverEmpty")) {
-                        Toast tag = Toast.makeText(activity, "Este servidor está vazio, por favor escolha outro para começar.", Toast.LENGTH_LONG);
-                        new CountDownTimer(3000, 3500) {
+                if (user != null) {
+                    if (user.isFirstTime()) {
+                        if (getIntent().hasExtra("serverEmpty")) {
+                            Toast tag = Toast.makeText(activity, "Este servidor está vazio, por favor escolha outro para começar.", Toast.LENGTH_LONG);
+                            new CountDownTimer(3000, 3500) {
+                                public void onTick(long millisUntilFinished) {
+                                    tag.show();
+                                }
 
-                            public void onTick(long millisUntilFinished) {
-                                tag.show();
-                            }
+                                public void onFinish() {
+                                    tag.show();
+                                }
 
-                            public void onFinish() {
-                                tag.show();
-                            }
-
-                        }.start();
+                            }.start();
+                        }
+                        callTour();
                     }
-                    callTour();
+                    //for push notification
+                    if (getIntent().hasExtra("serverId") && getIntent().hasExtra("commentId")) {
+                        String commentId = getIntent().getStringExtra("commentId");
+                        String serverId = getIntent().getStringExtra("serverId");
+                        Util.mSubjectDatabaseRef.orderByChild("server").equalTo(serverId).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                boolean pushWorked = false;
+                                Subject subject = snapshot.getValue(Subject.class);
+                                if (subject != null) {
+                                    Util.setSubject(subject.getTitle());
+                                    if (subject.getServers() != null) {
+                                        Util.setServer(subject.getServers().get(serverId));
+                                        if (subject.getServers().get(serverId) != null && subject.getServers().get(serverId).getTimeline() != null) {
+                                            if (subject.getServers().get(serverId).getTimeline().getCommentList() != null) {
+                                                for (Comment comment : subject.getServers().get(serverId).getTimeline().getCommentList().values()) {
+                                                    if (comment.getCommentUID().equals(commentId)) {
+                                                        Util.setComment(comment);
+                                                        if (comment.getGroup() != null) {
+                                                            Util.setGroup(comment.getGroup());
+                                                            pushWorked = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                if (pushWorked) {
+                                    startActivity(new Intent(activity, TimelineActivity.class).putExtra("serverId", serverId).putExtra("commentId", commentId).putExtra("comment", Util.getComment()));
+                                } else {
+                                    startActivity(new Intent(activity, ProfileActivity.class));
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
                 }
             }
 

@@ -67,14 +67,10 @@ public class ProfileActivity extends AppCompatActivity {
 
                 }
             });
-        } else {
-            if (Util.getUser() != null) {
-                user = Util.getUser();
-                loadReports = true;
-                setUserProfile();
-            } else {
-                //user =
-            }
+        } else if (Util.getUser() != null) {
+            user = Util.getUser();
+            loadReports = true;
+            setUserProfile();
         }
 
         back.setOnClickListener(v -> {
@@ -93,6 +89,7 @@ public class ProfileActivity extends AppCompatActivity {
                         if (nicknames.contains(nickname)) {
                             Toast.makeText(activity, "Este nome de usuário já está sendo utilizado.", Toast.LENGTH_SHORT).show();
                         } else {
+                            Util.getmUserDatabaseRef().child("nickname").removeEventListener(this);
                             Util.getmUserDatabaseRef().child(user.getUserUID()).setValue(user);
                             Util.getmUserDatabaseRef().child("nickname").push().setValue(user.getNickName());
                             onBackPressed();

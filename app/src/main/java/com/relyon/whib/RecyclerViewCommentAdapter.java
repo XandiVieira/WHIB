@@ -254,7 +254,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     private void stickersDialog(int position) {
         Comment comment = (Comment) elements.get(position);
         if (comment != null && !comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
-            DialogStickers cdd = new DialogStickers(activity, Util.getUser().getProducts() != null ? new ArrayList<>(Util.getUser().getProducts().values()) : new ArrayList<>(), null, false, (Comment) elements.get(position));
+            DialogStickers cdd = new DialogStickers(activity, Util.getUser().getProducts() != null ? new ArrayList<>(Util.getUser().getProducts().values()) : new ArrayList<>(), null, false, (Comment) elements.get(position), this);
             cdd.show();
         } else {
             Toast.makeText(context, "Você não pode enviar figurinhas para seu próprio comentário.", Toast.LENGTH_SHORT).show();

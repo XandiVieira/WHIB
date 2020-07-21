@@ -49,7 +49,6 @@ PENDÊNCIAS
 	- Finalizar votação e criar servidor automaticamente (removendo o menos popular)
 	- Comentários longos são cortados antes do indicado pela box
 	- Dialog com aviso final sobre como deve ser o comportamento dentro do app (dps do tutorial(
-- Login com google
 - Novas diretrizes de assinaturas (até 1º de novembro)
 	- Fix create and end survey
 	- Create server (ao entrar crasha)
@@ -61,17 +60,22 @@ PENDÊNCIAS
 	- Acessar perfil crasha
 	- Acessar perfil de outras pessoas crasha
 	- Verificar as dicas (Se está tudo correto)
+- Processo de compra está duplicado em algum lugar (tabs, recyclerview etc...)
+- Fazer Sticker aparecer automaticamente no comentário (hoje precisa sair e voltar para a tela)
+- Tornar Dicas mais decente (atualmente está feio)
+- Verificar contagem de usuários nos servidores
 
 LOJA
 - Superpoderes (Direito de tornar meu comentário em grupo automaticamente)
 	- Itens de avaliação (itens que o usuário pode utilizar para avaliar comentários e mensagens ex.: likes, excelentes, bom argumento, me fez refletir, etc...
 
 FUTURO
-- Notificações (configurar quais ações lançam notif e quais o usuário deseja receber)
 - FAQ
+- Login com google
 - Títulos ao receber x selos de um tipo (ex.: Maria - A lacradora, João - O Amado, Joana - A Odiada)... possibilidade de ocultar o título
 - Permitir ao dono do grupo configurar filtros de quem pode entrar (apenas extra, por nota, por título...)
 - Adicionar amigos
+- Notificações (configurar quais ações lançam notif e quais o usuário deseja receber)... Exige versão paga para enviar notificações
 - Convidar amigos para grupos
 - Abas na tela de perfil (Amigos e histórico)
 - Enviar sticker para amigos
@@ -80,6 +84,7 @@ FUTURO
 - Modo debate: 1 pauta e 3 possibilidades (contra, a favor e contra... Mostrar a porcentagem em cada posição). Debatedores discutem e plateia decide de qual lado está, debatedores e plateia podem mudar de lado no meio da discussão. Organizar por rodadas, réplicas e tréplicas. Ou organizar com vários pontos de vista diferentes e usuário decide pra quem deseja perguntar ou contestar a resposta.
 - Fórum de membros
 - Avaliar com "Agree" ou "disagree"
+- Compartilhar um comentário nas redes sociais (facebook, tt, insta...)
 
 id do app: ca-app-pub-1676578761693318~6855911877
 id ad: ca-app-pub-1676578761693318/6552659541

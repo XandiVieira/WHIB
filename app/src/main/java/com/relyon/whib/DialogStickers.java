@@ -26,14 +26,16 @@ public class DialogStickers extends Dialog {
     private List<Argument> argumentList;
     private boolean isForChat;
     private Comment comment;
+    private RecyclerViewCommentAdapter recyclerViewCommentAdapter;
 
-    DialogStickers(Activity a, List<Product> productList, List<Argument> argumentList, boolean isForChat, Comment comment) {
+    DialogStickers(Activity a, List<Product> productList, List<Argument> argumentList, boolean isForChat, Comment comment, RecyclerViewCommentAdapter recyclerViewCommentAdapter) {
         super(a);
         this.a = a;
         this.productList = productList;
         this.argumentList = argumentList;
         this.isForChat = isForChat;
         this.comment = comment;
+        this.recyclerViewCommentAdapter = recyclerViewCommentAdapter;
     }
 
     @Override
@@ -52,7 +54,7 @@ public class DialogStickers extends Dialog {
         }
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
-        RecyclerViewGalleryAdapter adapter = new RecyclerViewGalleryAdapter( Util.getUser().getProducts(), productList, getContext(), false, true, false, argumentList, this, comment);
+        RecyclerViewGalleryAdapter adapter = new RecyclerViewGalleryAdapter( Util.getUser().getProducts(), productList, getContext(), false, true, false, argumentList, this, comment, recyclerViewCommentAdapter);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
                 layoutManager.getOrientation());
         sticker.addItemDecoration(dividerItemDecoration);

@@ -1,5 +1,8 @@
 package com.relyon.whib.modelo;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.Nullable;
 
 import com.google.firebase.database.Exclude;
@@ -9,7 +12,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-public class Comment extends Sending {
+public class Comment extends Sending implements Parcelable {
 
     private String commentUID;
     private String serverUID;
@@ -77,6 +80,35 @@ public class Comment extends Sending {
         super.setSubject(sending.getSubject());
         super.setType(sending.getType());
     }
+
+    protected Comment(Parcel in) {
+        commentUID = in.readString();
+        serverUID = in.readString();
+        text = in.readString();
+        rating = in.readFloat();
+        userPhotoURL = in.readString();
+        if (in.readByte() == 0) {
+            time = null;
+        } else {
+            time = in.readLong();
+        }
+        numberOfRatings = in.readInt();
+        sumOfRatings = in.readFloat();
+        alreadyRatedList = in.createStringArrayList();
+        isAGroup = in.readByte() != 0;
+    }
+
+    public static final Creator<Comment> CREATOR = new Creator<Comment>() {
+        @Override
+        public Comment createFromParcel(Parcel in) {
+            return new Comment(in);
+        }
+
+        @Override
+        public Comment[] newArray(int size) {
+            return new Comment[size];
+        }
+    };
 
     public String getText() {
         return text;
@@ -199,4 +231,29 @@ public class Comment extends Sending {
     public static Comparator<Comment> rateComparator = (c1, c2) -> (int) c2.getRating() - (int) c1.getRating();
 
     public static Comparator<Comment> dateComparator = (c1, c2) -> (int) (c2.getTime() - c1.getTime());
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeString(commentUID);
+        dest.writeString(serverUID);
+        dest.writeString(text);
+        dest.writeFloat(rating);
+        dest.writeString(userPhotoURL);
+        if (time == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(time);
+        }
+        dest.writeInt(numberOfRatings);
+        dest.writeFloat(sumOfRatings);
+        dest.writeStringList(alreadyRatedList);
+        dest.writeByte((byte) (isAGroup ? 1 : 0));
+    }
 }
