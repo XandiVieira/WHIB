@@ -79,7 +79,7 @@ public class ProfileActivity extends AppCompatActivity {
             } else if (user.getNickName() == null && !nick.getText().toString().replace("@", "").equals("")) {
                 String nickname = nick.getText().toString().replace("@", "");
                 user.setNickName(nickname);
-                Util.getmUserDatabaseRef().child("nickname").addValueEventListener(new ValueEventListener() {
+                Util.getmDatabaseRef().child("nickname").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         List<String> nicknames = new ArrayList<>();
@@ -89,9 +89,9 @@ public class ProfileActivity extends AppCompatActivity {
                         if (nicknames.contains(nickname)) {
                             Toast.makeText(activity, "Este nome de usuário já está sendo utilizado.", Toast.LENGTH_SHORT).show();
                         } else {
-                            Util.getmUserDatabaseRef().child("nickname").removeEventListener(this);
+                            Util.getmDatabaseRef().child("nickname").removeEventListener(this);
                             Util.getmUserDatabaseRef().child(user.getUserUID()).setValue(user);
-                            Util.getmUserDatabaseRef().child("nickname").push().setValue(user.getNickName());
+                            Util.getmDatabaseRef().child("nickname").push().setValue(user.getNickName());
                             onBackPressed();
                         }
                     }

@@ -201,7 +201,7 @@ public class GroupActivity extends AppCompatActivity {
 
         sendView.setOnClickListener(v -> {
             if (isForSticker) {
-                DialogStickers cdd = new DialogStickers(this, Util.getUser().getProducts() != null ? new ArrayList<>(Util.getUser().getProducts().values()) : new ArrayList<>(), argumentList, true, null, null);
+                DialogStickers cdd = new DialogStickers(this, Util.getUser().getProducts() != null ? new ArrayList<>(Util.getUser().getProducts().values()) : new ArrayList<>(), argumentList, true, null, null, null);
                 cdd.show();
             } else {
                 if (inputMessage.getText() != null && !inputMessage.getText().toString().isEmpty()) {

@@ -41,7 +41,6 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
     private Context context;
     private RewardedVideoAd mRewardedVideoAd;
     private int selected;
-    private Product product;
     private SelectSubscription listener;
 
     public RecyclerViewProductAdapter(List<Product> elements, Context context, Activity activity) {
@@ -73,7 +72,7 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public void onBindViewHolder(@NonNull final RecyclerViewProductAdapter.ViewHolder holder, int position) {
-        product = elements.get(position);
+        Product product = elements.get(position);
 
         storageReference.child("images/" + product.getItemSKU() + ".png").getDownloadUrl().addOnSuccessListener(uri -> Glide.with(context).load(uri).into(holder.image));
 

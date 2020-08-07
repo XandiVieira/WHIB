@@ -26,7 +26,7 @@ public class TipsActivity extends AppCompatActivity {
 
         store.setOnClickListener(v -> startActivity(new Intent(this, StoreActivity.class)));
 
-        if (getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false)) {
+        if (Util.getUser().isFirstTime() || getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false)) {
             DialogFinalWarn warn = new DialogFinalWarn(this);
             warn.show();
         }

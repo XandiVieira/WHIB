@@ -7,10 +7,14 @@ import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Argument;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Product;
@@ -27,8 +31,9 @@ public class DialogStickers extends Dialog {
     private boolean isForChat;
     private Comment comment;
     private RecyclerViewCommentAdapter recyclerViewCommentAdapter;
+    private int position;
 
-    DialogStickers(Activity a, List<Product> productList, List<Argument> argumentList, boolean isForChat, Comment comment, RecyclerViewCommentAdapter recyclerViewCommentAdapter) {
+    DialogStickers(Activity a, List<Product> productList, List<Argument> argumentList, boolean isForChat, Comment comment, RecyclerViewCommentAdapter recyclerViewCommentAdapter, Integer position) {
         super(a);
         this.a = a;
         this.productList = productList;
@@ -36,6 +41,8 @@ public class DialogStickers extends Dialog {
         this.isForChat = isForChat;
         this.comment = comment;
         this.recyclerViewCommentAdapter = recyclerViewCommentAdapter;
+        this.position = position;
+        this.d = this;
     }
 
     @Override
@@ -54,11 +61,25 @@ public class DialogStickers extends Dialog {
         }
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
-        RecyclerViewGalleryAdapter adapter = new RecyclerViewGalleryAdapter( Util.getUser().getProducts(), productList, getContext(), false, true, false, argumentList, this, comment, recyclerViewCommentAdapter);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
-                layoutManager.getOrientation());
-        sticker.addItemDecoration(dividerItemDecoration);
-        sticker.setLayoutManager(layoutManager);
-        sticker.setAdapter(adapter);
+        Util.mSubjectDatabaseRef.child(comment.getSubject()).child("servers").child(comment.getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Comment comment = snapshot.getValue(Comment.class);
+                if (comment != null) {
+                    comment.setCommentUID(snapshot.getKey());
+                    RecyclerViewGalleryAdapter adapter = new RecyclerViewGalleryAdapter(Util.getUser().getProducts(), productList, getContext(), false, true, false, argumentList, d, comment, recyclerViewCommentAdapter, position, a);
+                    DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
+                            layoutManager.getOrientation());
+                    sticker.addItemDecoration(dividerItemDecoration);
+                    sticker.setLayoutManager(layoutManager);
+                    sticker.setAdapter(adapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }

@@ -5,6 +5,7 @@ import android.app.Application;
 import android.os.Bundle;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.relyon.whib.TimelineActivity;
 import com.relyon.whib.modelo.Util;
 
 public class ApplicationLifecycle extends Application implements Application.ActivityLifecycleCallbacks {
@@ -35,11 +36,18 @@ public class ApplicationLifecycle extends Application implements Application.Act
     @Override
     public void onActivityPaused(Activity activity) {
         setOnline(false);
+
     }
 
     @Override
     public void onActivityStopped(Activity activity) {
-
+        if (Util.getUser() != null && Util.getServer() != null) {
+            if (activity instanceof TimelineActivity) {
+                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("tempInfo").child("currentServer").setValue(null);
+                Util.getServer().getTempInfo().setQtdUsers(Util.getServer().getTempInfo().getQtdUsers() - 1);
+                Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
+            }
+        }
     }
 
     @Override

@@ -132,7 +132,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                         finalElements.add(snap.getValue(Product.class));
                     }
                     if (comment.getStickers() != null && comment.getStickers().size() > 0) {
-                        RecyclerViewStickerAdapter adapter = new RecyclerViewStickerAdapter(new ArrayList<>(comment.getStickers().values()), context);
+                        RecyclerViewStickerAdapter adapter = new RecyclerViewStickerAdapter(new ArrayList<>(comment.getStickers().values()), context, comment);
                         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(context,
                                 layoutManager.getOrientation());
                         holder.stickers.addItemDecoration(dividerItemDecoration);
@@ -254,7 +254,15 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     private void stickersDialog(int position) {
         Comment comment = (Comment) elements.get(position);
         if (comment != null && !comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
-            DialogStickers cdd = new DialogStickers(activity, Util.getUser().getProducts() != null ? new ArrayList<>(Util.getUser().getProducts().values()) : new ArrayList<>(), null, false, (Comment) elements.get(position), this);
+            List<Product> products = new ArrayList<>();
+            if (Util.getUser().getProducts() != null) {
+                for (Product product : Util.getUser().getProducts().values()) {
+                    if (product != null && product.getQuantity() > 0) {
+                        products.add(product);
+                    }
+                }
+            }
+            DialogStickers cdd = new DialogStickers(activity, products, null, false, (Comment) elements.get(position), this, position);
             cdd.show();
         } else {
             Toast.makeText(context, "Você não pode enviar figurinhas para seu próprio comentário.", Toast.LENGTH_SHORT).show();
