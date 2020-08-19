@@ -16,7 +16,6 @@ public class DialogConfirmDeleteAcc extends Dialog implements View.OnClickListen
     public Dialog d;
     public TextView confirmDeletionMessage;
 
-
     public DialogConfirmDeleteAcc(FragmentActivity a) {
         super(a);
         this.c = a;

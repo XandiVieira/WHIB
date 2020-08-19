@@ -103,9 +103,7 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
 
         holder.serverNumber.setOnClickListener(v -> beforeGroup(position, holder));
 
-        holder.itemView.setOnClickListener(v -> {
-            beforeGroup(position, holder);
-        });
+        holder.itemView.setOnClickListener(v -> beforeGroup(position, holder));
     }
 
     private void beforeGroup(int position, ViewHolder holder) {
@@ -113,13 +111,13 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
         if (server.getTempInfo().getQtdUsers() < 95) {
             goToServer(server, holder, position);
         } else if (server.getTempInfo().getQtdUsers() >= 95 && server.getTempInfo().getQtdUsers() < 100) {
-            boolean todosLotados = true;
+            boolean allFull = true;
             for (int i = 0; i < elements.size(); i++) {
                 if (elements.get(i).getTempInfo().getQtdUsers() < 95) {
-                    todosLotados = false;
+                    allFull = false;
                 }
             }
-            if (todosLotados) {
+            if (allFull) {
                 createNewServer();
             }
             goToServer(server, holder, position);

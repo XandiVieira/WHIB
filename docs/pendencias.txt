@@ -1,4 +1,4 @@
-PENDÊNCIAS
+﻿PENDÊNCIAS
 	- Sobre (Sobre nós, Termos de uso, politica de privacidade, Fale conosco)
 	- Comentários de usuários premium viram grupos automaticamente
 	- Tour de boas vindas
@@ -61,9 +61,9 @@ PENDÊNCIAS
 	- Acessar perfil de outras pessoas crasha
 	- Verificar as dicas (Se está tudo correto)
 - Processo de compra está duplicado em algum lugar (tabs, recyclerview etc...)
-- Fazer Sticker aparecer automaticamente no comentário (hoje precisa sair e voltar para a tela)
+	- Fazer Sticker aparecer automaticamente no comentário (hoje precisa sair e voltar para a tela)
 - Tornar Dicas mais decente (atualmente está feio)
-- Verificar contagem de usuários nos servidores
+	- Verificar contagem de usuários nos servidores
 
 LOJA
 - Superpoderes (Direito de tornar meu comentário em grupo automaticamente)

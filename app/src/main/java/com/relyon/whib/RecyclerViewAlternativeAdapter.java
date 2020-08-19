@@ -1,6 +1,5 @@
 package com.relyon.whib;
 
-import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
@@ -27,14 +26,12 @@ import java.util.Objects;
 
 public class RecyclerViewAlternativeAdapter extends RecyclerView.Adapter<RecyclerViewAlternativeAdapter.ViewHolder> {
 
-    private final Context context;
     private RecyclerView recyclerView;
     private Survey survey;
     private boolean notYet = true;
     private List<Integer> colors = new ArrayList<>();
 
-    public RecyclerViewAlternativeAdapter(@NonNull Context context, Survey survey, RecyclerView recyclerView) {
-        this.context = context;
+    public RecyclerViewAlternativeAdapter(Survey survey, RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
         this.survey = survey;
         colors.add(Color.RED);
@@ -63,34 +60,32 @@ public class RecyclerViewAlternativeAdapter extends RecyclerView.Adapter<Recycle
         holder.text.setText(alternative.getText());
         if (!survey.getAlreadyVoted().contains(Util.getUser().getUserUID())) {
             holder.partials.setVisibility(View.GONE);
-            holder.bg.setOnClickListener(v -> {
-                Util.getmDatabaseRef().child("survey").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (notYet) {
-                            notYet = false;
-                            survey = dataSnapshot.getValue(Survey.class);
-                            if (survey != null) {
-                                survey.setNumVotes(survey.getNumVotes() + 1);
-                                if (survey.getAlreadyVoted() == null) {
-                                    survey.setAlreadyVoted(new ArrayList<>());
-                                }
-                                survey.getAlreadyVoted().add(Util.getUser().getUserUID());
-                                survey.getAlternatives().get(position).setNumVotes(survey.getAlternatives().get(position).getNumVotes() + 1);
-                                survey.getAlternatives().get(position).getVotedForMe().add(Util.getUser().getUserUID());
-                                Util.getmDatabaseRef().child("survey").setValue(survey);
-                                updateUI(holder);
+            holder.bg.setOnClickListener(v -> Util.getmDatabaseRef().child("survey").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (notYet) {
+                        notYet = false;
+                        survey = dataSnapshot.getValue(Survey.class);
+                        if (survey != null) {
+                            survey.setNumVotes(survey.getNumVotes() + 1);
+                            if (survey.getAlreadyVoted() == null) {
+                                survey.setAlreadyVoted(new ArrayList<>());
                             }
+                            survey.getAlreadyVoted().add(Util.getUser().getUserUID());
+                            survey.getAlternatives().get(position).setNumVotes(survey.getAlternatives().get(position).getNumVotes() + 1);
+                            survey.getAlternatives().get(position).getVotedForMe().add(Util.getUser().getUserUID());
+                            Util.getmDatabaseRef().child("survey").setValue(survey);
+                            updateUI(holder);
                         }
-                        Objects.requireNonNull(recyclerView.getAdapter()).notifyItemRangeChanged(0, survey.getAlternatives().size());
                     }
+                    Objects.requireNonNull(recyclerView.getAdapter()).notifyItemRangeChanged(0, survey.getAlternatives().size());
+                }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    }
-                });
-            });
+                }
+            }));
         } else {
             updateUI(holder);
             holder.percentage.setText(percentage + "%");

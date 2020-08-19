@@ -67,7 +67,7 @@ public class DialogStickers extends Dialog {
                 Comment comment = snapshot.getValue(Comment.class);
                 if (comment != null) {
                     comment.setCommentUID(snapshot.getKey());
-                    RecyclerViewGalleryAdapter adapter = new RecyclerViewGalleryAdapter(Util.getUser().getProducts(), productList, getContext(), false, true, false, argumentList, d, comment, recyclerViewCommentAdapter, position, a);
+                    RecyclerViewGalleryAdapter adapter = new RecyclerViewGalleryAdapter(Util.getUser().getProducts(), productList, getContext(), false, true, false, argumentList, d, comment, recyclerViewCommentAdapter, position);
                     DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
                             layoutManager.getOrientation());
                     sticker.addItemDecoration(dividerItemDecoration);

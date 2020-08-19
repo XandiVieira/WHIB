@@ -176,7 +176,7 @@ public class NextSubjectVotingActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 survey = dataSnapshot.getValue(Survey.class);
                 if (survey != null && survey.getAlternatives() != null) {
-                    adapter = new RecyclerViewAlternativeAdapter(activity, survey, alternativesRV);
+                    adapter = new RecyclerViewAlternativeAdapter(survey, alternativesRV);
                     alternativesRV.setLayoutManager(new LinearLayoutManager(activity));
                     alternativesRV.setAdapter(adapter);
                     date.setText(dateFormat.format(survey.getEndDate()));

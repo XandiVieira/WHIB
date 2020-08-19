@@ -1,6 +1,5 @@
 package com.relyon.whib;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -41,7 +40,6 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
     private boolean isForDialog;
     private boolean isForGallery;
     private Comment comment;
-    private Activity activity;
     private RecyclerViewCommentAdapter recyclerViewCommentAdapter;
     private Integer commentPosition;
 
@@ -57,7 +55,7 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
         storageReference = FirebaseStorage.getInstance().getReference();
     }
 
-    public RecyclerViewGalleryAdapter(HashMap<String, Product> myStickers, List<Product> allStickers, Context context, boolean isForGallery, boolean isForDialog, boolean isForComment, List<Argument> argumentList, Dialog dialog, Comment comment, RecyclerViewCommentAdapter recyclerViewCommentAdapter, int commentPosition, Activity activity) {
+    public RecyclerViewGalleryAdapter(HashMap<String, Product> myStickers, List<Product> allStickers, Context context, boolean isForGallery, boolean isForDialog, boolean isForComment, List<Argument> argumentList, Dialog dialog, Comment comment, RecyclerViewCommentAdapter recyclerViewCommentAdapter, int commentPosition) {
         this.allStickers = allStickers;
         this.myStickers = myStickers;
         this.context = context;
@@ -69,7 +67,6 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
         this.recyclerViewCommentAdapter = recyclerViewCommentAdapter;
         storageReference = FirebaseStorage.getInstance().getReference();
         this.commentPosition = commentPosition;
-        this.activity = activity;
     }
 
     @NonNull
