@@ -124,15 +124,15 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             final Comment comment = (Comment) elements.get(position);
 
             GridLayoutManager layoutManager = new GridLayoutManager(context, 5);
-            Util.mDatabaseRef.child("product").addValueEventListener(new ValueEventListener() {
+            Util.mSubjectDatabaseRef.child(comment.getSubject()).child("servers").child(comment.getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("stickers").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    List<Product> finalElements = new ArrayList<>();
+                    List<Product> stickers = new ArrayList<>();
                     for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                        finalElements.add(snap.getValue(Product.class));
+                        stickers.add(snap.getValue(Product.class));
                     }
-                    if (comment.getStickers() != null && comment.getStickers().size() > 0) {
-                        RecyclerViewStickerAdapter adapter = new RecyclerViewStickerAdapter(new ArrayList<>(comment.getStickers().values()), context, comment);
+                    if (stickers.size() > 0) {
+                        RecyclerViewStickerAdapter adapter = new RecyclerViewStickerAdapter(stickers, context, comment);
                         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(context,
                                 layoutManager.getOrientation());
                         holder.stickers.addItemDecoration(dividerItemDecoration);
@@ -555,5 +555,9 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         } else {
             return 0;
         }
+    }
+
+    public void refreshToShowSticker(int position) {
+        notifyItemChanged(position);
     }
 }

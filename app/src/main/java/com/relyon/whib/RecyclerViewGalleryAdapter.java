@@ -177,7 +177,7 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
                         Util.getUser().getProducts().get(userProduct.getProductUID()).setQuantity(quantity);
                         Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").child(userProduct.getProductUID()).child("quantity").setValue(quantity);
                         if (recyclerViewCommentAdapter != null && commentPosition != null) {
-                            recyclerViewCommentAdapter.notifyItemRangeChanged(commentPosition, recyclerViewCommentAdapter.getItemCount() - 1);
+                            recyclerViewCommentAdapter.refreshToShowSticker(commentPosition);
                         }
                     }
 
