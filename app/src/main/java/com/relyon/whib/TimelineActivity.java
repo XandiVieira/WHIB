@@ -450,18 +450,28 @@ public class TimelineActivity extends AppCompatActivity {
     };
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("tempInfo").child("currentServer").setValue(null);
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
         if (Util.getServer() != null) {
             Util.getServer().getTempInfo().setQtdUsers(Util.getServer().getTempInfo().getQtdUsers() - 1);
             Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
         }
+        Util.setServer(null);
+        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("tempInfo").child("currentServer").setValue(null);
+        finish();
+        startActivity(new Intent(this, MainActivity.class));
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
+        Util.getServer().getTempInfo().setQtdUsers(Util.getServer().getTempInfo().getQtdUsers() + 1);
         Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
 
         if (Util.getUser().isFirstTime()) {
@@ -542,22 +552,11 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-        Util.getServer().getTempInfo().setQtdUsers(Util.getServer().getTempInfo().getQtdUsers() + 1);
-        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Util.setServer(null);
-        finish();
-        startActivity(new Intent(this, MainActivity.class));
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    protected void onStop() {
+        super.onStop();
+        if (Util.getServer() != null) {
+            Util.getServer().getTempInfo().setQtdUsers(Util.getServer().getTempInfo().getQtdUsers() - 1);
+            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
+        }
     }
 }

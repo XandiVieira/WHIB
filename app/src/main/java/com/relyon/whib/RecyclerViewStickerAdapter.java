@@ -47,29 +47,31 @@ public class RecyclerViewStickerAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public void onBindViewHolder(@NonNull final RecyclerViewStickerAdapter.ViewHolder holder, int position) {
-        Product product = ownStickers.get(position);
-        storageReference.child("images/" + product.getItemSKU() + ".png").getDownloadUrl().addOnSuccessListener(uri -> Glide.with(context).load(uri).into(holder.image));
-        holder.image.setMaxHeight(50);
-        holder.image.setMaxWidth(50);
-        holder.quantity.setText("(" + product.getQuantity() + ")");
+        if (context != null) {
+            Product product = ownStickers.get(position);
+            storageReference.child("images/" + product.getItemSKU() + ".png").getDownloadUrl().addOnSuccessListener(uri -> Glide.with(context.getApplicationContext()).load(uri).into(holder.image));
+            holder.image.setMaxHeight(50);
+            holder.image.setMaxWidth(50);
+            holder.quantity.setText("(" + product.getQuantity() + ")");
 
-        if (comment != null && comment.isAGroup()){
-            Util.mUserDatabaseRef.child(comment.getAuthorsUID()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    User user = snapshot.getValue(User.class);
-                    if (user != null && user.isExtra()){
-                        holder.bg.setBackground(context.getResources().getDrawable(R.drawable.rounded_accent));
-                    }else {
-                        holder.bg.setBackground(context.getResources().getDrawable(R.drawable.rounded_primary));
+            if (comment != null && comment.isAGroup()) {
+                Util.mUserDatabaseRef.child(comment.getAuthorsUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        User user = snapshot.getValue(User.class);
+                        if (user != null && user.isExtra()) {
+                            holder.bg.setBackground(context.getResources().getDrawable(R.drawable.rounded_accent));
+                        } else {
+                            holder.bg.setBackground(context.getResources().getDrawable(R.drawable.rounded_primary));
+                        }
                     }
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
-                }
-            });
+                    }
+                });
+            }
         }
     }
 

@@ -131,7 +131,6 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
 
     private void goToServer(Server server, ViewHolder holder, int position) {
         if (server.getTempInfo().isActivated()) {
-            server.getTempInfo().setQtdUsers(server.getTempInfo().getQtdUsers() + 1);
             goTimelineScreen(holder.serverNumber.getText().toString(),
                     holder.serverStatus.getText().toString(), position);
         } else {

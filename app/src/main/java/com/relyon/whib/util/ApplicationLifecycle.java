@@ -41,13 +41,6 @@ public class ApplicationLifecycle extends Application implements Application.Act
 
     @Override
     public void onActivityStopped(Activity activity) {
-        if (Util.getUser() != null && Util.getServer() != null) {
-            if (activity instanceof TimelineActivity) {
-                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("tempInfo").child("currentServer").setValue(null);
-                Util.getServer().getTempInfo().setQtdUsers(Util.getServer().getTempInfo().getQtdUsers() - 1);
-                Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
-            }
-        }
     }
 
     @Override
