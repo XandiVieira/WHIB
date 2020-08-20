@@ -30,7 +30,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
-import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Preferences;
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.Subject;
@@ -47,10 +46,6 @@ import java.util.List;
 
 import me.toptas.fancyshowcase.FancyShowCaseQueue;
 import me.toptas.fancyshowcase.FancyShowCaseView;
-
-import static com.relyon.whib.util.Constants.SKU_WHIB_MONTHLY;
-import static com.relyon.whib.util.Constants.SKU_WHIB_SIXMONTH;
-import static com.relyon.whib.util.Constants.SKU_WHIB_YEARLY;
 
 public class MainActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler, SelectSubscription {
 
@@ -83,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         billingProcessor = new BillingProcessor(this, getResources().getString(R.string.google_license_key), this);
         billingProcessor.initialize();
 
-        this.recyclerViewServers = findViewById(R.id.recyclerViewSec);
+        recyclerViewServers = findViewById(R.id.recyclerViewSec);
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
         choseSubjectButton = findViewById(R.id.choseSubjectButton);
@@ -105,6 +100,8 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
             Util.setNumberOfServers(0);
             //retrieve user data from Firebase
             getUserFromFB();
+        } else {
+            userIsSubscribed();
         }
 
         mFirebaseRemoteConfig.setConfigSettingsAsync(new FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(3600L).build());
@@ -215,13 +212,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                 }
                 //set user for the Util class
                 Util.setUser(user);
-                if (userIsSubscribed()) {
-                    Util.getUser().setExtra(true);
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);
-                } else {
-                    Util.getUser().setExtra(false);
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(false);
-                }
+
                 updateToken();
                 profile.setVisibility(View.VISIBLE);
                 if (user != null) {
@@ -241,49 +232,8 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                         }
                         callTour();
                     }
-                    //for push notification
-                    if (getIntent().hasExtra("serverId") && getIntent().hasExtra("commentId")) {
-                        String commentId = getIntent().getStringExtra("commentId");
-                        String serverId = getIntent().getStringExtra("serverId");
-                        Util.mSubjectDatabaseRef.orderByChild("server").equalTo(serverId).addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                boolean pushWorked = false;
-                                Subject subject = snapshot.getValue(Subject.class);
-                                if (subject != null) {
-                                    Util.setSubject(subject.getTitle());
-                                    if (subject.getServers() != null) {
-                                        Util.setServer(subject.getServers().get(serverId));
-                                        if (subject.getServers().get(serverId) != null && subject.getServers().get(serverId).getTimeline() != null) {
-                                            if (subject.getServers().get(serverId).getTimeline().getCommentList() != null) {
-                                                for (Comment comment : subject.getServers().get(serverId).getTimeline().getCommentList().values()) {
-                                                    if (comment.getCommentUID().equals(commentId)) {
-                                                        Util.setComment(comment);
-                                                        if (comment.getGroup() != null) {
-                                                            Util.setGroup(comment.getGroup());
-                                                            pushWorked = true;
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                if (pushWorked) {
-                                    startActivity(new Intent(activity, TimelineActivity.class).putExtra("serverId", serverId).putExtra("commentId", commentId).putExtra("comment", Util.getComment()));
-                                } else {
-                                    startActivity(new Intent(activity, ProfileActivity.class));
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
-                    }
                 }
+                userIsSubscribed();
             }
 
             @Override
@@ -324,7 +274,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     }
 
     //Methods for completing user setting
-//Attributes no set here - Complaints - History -  Following - groupList - Doubts - Items
+    //Attributes no set here - Complaints - History -  Following - groupList - Doubts - Items
 
     private Preferences setUserPreferences() {
         return new Preferences(true, true, true, true);
@@ -416,18 +366,13 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         subscribe(sku);
     }
 
-    public boolean userIsSubscribed() {
-        boolean purchaseResult = billingProcessor.loadOwnedPurchasesFromGoogle();
-        if (purchaseResult) {
-            List<String> ids = new ArrayList<>();
-            ids.add(SKU_WHIB_MONTHLY);
-            ids.add(SKU_WHIB_SIXMONTH);
-            ids.add(SKU_WHIB_YEARLY);
-            for (String id : ids) {
-                TransactionDetails subscriptionTransactionDetails = billingProcessor.getSubscriptionTransactionDetails(id);
-                return subscriptionTransactionDetails != null;
-            }
+    public void userIsSubscribed() {
+        if (billingProcessor.loadOwnedPurchasesFromGoogle()) {
+            Util.getUser().setExtra(true);
+            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);
+        } else {
+            Util.getUser().setExtra(false);
+            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(false);
         }
-        return false;
     }
 }

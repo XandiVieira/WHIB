@@ -100,16 +100,6 @@ public class TimelineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
-        //for push notification
-        if (getIntent().hasExtra("serverId") && getIntent().hasExtra("commentId") && getIntent().hasExtra("comment")) {
-            Comment comment = getIntent().getExtras().getParcelable("comment");
-            if (comment != null) {
-                String commentId = getIntent().getStringExtra("commentId");
-                String serverId = getIntent().getStringExtra("serverId");
-                startActivity(new Intent(activity, GroupActivity.class).putExtra("serverId", serverId).putExtra("commentId", commentId).putExtra("commentNumber", comment.getGroup().getServerNumber()).putExtra("groupNumber", comment.getGroup().getNumber()).putExtra("subject", comment.getSubject()));
-            }
-        }
-
         if (!Util.getUser().isFirstTime() && !Util.getUser().isExtra()) {
             List<String> testDeviceIds = Collections.singletonList("3DF6979E4CCB56C2A91510C1A9BCC253");
             RequestConfiguration configuration =

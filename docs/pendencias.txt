@@ -49,7 +49,7 @@
 	- Finalizar votação e criar servidor automaticamente (removendo o menos popular)
 	- Comentários longos são cortados antes do indicado pela box
 	- Dialog com aviso final sobre como deve ser o comportamento dentro do app (dps do tutorial(
-- Novas diretrizes de assinaturas (até 1º de novembro)
+	- Novas diretrizes de assinaturas (até 1º de novembro)
 	- Fix create and end survey
 	- Create server (ao entrar crasha)
 	- Show tost to empty server
