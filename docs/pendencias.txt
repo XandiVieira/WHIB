@@ -53,7 +53,7 @@
 	- Fix create and end survey
 	- Create server (ao entrar crasha)
 	- Show tost to empty server
-- Não permitir finalização da enquete antes da data de término
+	- Não permitir finalização da enquete antes da data de término
 - Remover acesso extra do usuário quando expirar sua assinatura
 	- Clicar em ver mais abre o grupo
 	- Abrir grupo crasha
@@ -62,8 +62,9 @@
 	- Verificar as dicas (Se está tudo correto)
 - Processo de compra está duplicado em algum lugar (tabs, recyclerview etc...)
 	- Fazer Sticker aparecer automaticamente no comentário (hoje precisa sair e voltar para a tela)
-- Tornar Dicas mais decente (atualmente está feio)
+	- Tornar Dicas mais decente (atualmente está feio)
 	- Verificar contagem de usuários nos servidores
+- Testar uma timeline com muitos comentários
 
 LOJA
 - Superpoderes (Direito de tornar meu comentário em grupo automaticamente)

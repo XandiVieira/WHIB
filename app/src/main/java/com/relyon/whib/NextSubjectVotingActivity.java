@@ -94,7 +94,7 @@ public class NextSubjectVotingActivity extends AppCompatActivity {
         });
 
         end.setOnClickListener(v -> {
-            if (survey != null/* && new Date().getTime() >= survey.getEndDate()*/) {
+            if (survey != null && new Date().getTime() >= survey.getEndDate()) {
                 String subject = null;
                 int percentage = 0;
                 for (Alternative alt : survey.getAlternatives()) {

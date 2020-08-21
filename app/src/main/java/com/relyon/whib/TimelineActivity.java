@@ -232,7 +232,7 @@ public class TimelineActivity extends AppCompatActivity {
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.tips))) {
-                    Intent intent = new Intent(this, TipsActivity.class).putExtra("cameFromTimeline", Util.getUser().isFirstTime()).putExtra("showLastWarn", true);
+                    Intent intent = new Intent(this, TipsActivity.class).putExtra("cameFromTimeline", true).putExtra("showLastWarn", Util.getUser().isFirstTime());
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.about))) {
@@ -242,9 +242,8 @@ public class TimelineActivity extends AppCompatActivity {
                 }
                 return false;
             });
-
-            popup.show(); //showing popup menu
-        }); //closing the setOnClickListener method
+            popup.show();
+        });
 
         back.setOnClickListener(v -> {
             onBackPressed();

@@ -26,7 +26,7 @@ public class TipsActivity extends AppCompatActivity {
 
         store.setOnClickListener(v -> startActivity(new Intent(this, StoreActivity.class)));
 
-        if (Util.getUser().isFirstTime() || getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false)) {
+        if (Util.getUser().isFirstTime() || getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false) && Util.getUser().isFirstTime()) {
             DialogFinalWarn warn = new DialogFinalWarn(this);
             warn.show();
         }
@@ -53,7 +53,7 @@ public class TipsActivity extends AppCompatActivity {
                 intent = new Intent(this, AboutActivity.class);
             }
         } else {
-            intent = new Intent(this, MainActivity.class);
+            intent = new Intent(this, ProfileActivity.class);
         }
         startActivity(intent);
     }

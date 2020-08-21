@@ -30,7 +30,7 @@ public class AboutActivity extends AppCompatActivity {
         ImageView back = findViewById(R.id.back);
         TextView version = findViewById(R.id.version);
 
-        if (getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false)) {
+        if (getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false) && Util.getUser().isFirstTime()) {
             DialogFinalWarn warn = new DialogFinalWarn(this);
             warn.show();
         }
@@ -74,7 +74,7 @@ public class AboutActivity extends AppCompatActivity {
         if (Util.getServer() != null) {
             intent = new Intent(this, TimelineActivity.class);
         } else {
-            intent = new Intent(this, MainActivity.class);
+            intent = new Intent(this, ProfileActivity.class);
         }
         startActivity(intent);
     }

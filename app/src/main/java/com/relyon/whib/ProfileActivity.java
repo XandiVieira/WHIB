@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    private ImageView menu;
     private EditText nick;
     private User user;
     private ImageView photo;
@@ -45,8 +47,9 @@ public class ProfileActivity extends AppCompatActivity {
         ImageView settings = findViewById(R.id.settings);
         userName = findViewById(R.id.userName);
         nick = findViewById(R.id.nick);
+        menu = findViewById(R.id.menu);
 
-        if (getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false)) {
+        if (getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false) && Util.getUser().isFirstTime()) {
             DialogFinalWarn warn = new DialogFinalWarn(this);
             warn.show();
         }
@@ -105,6 +108,44 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         settings.setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
+
+        menu.setOnClickListener(v -> {
+            //Creating the instance of PopupMenu
+            PopupMenu popup = new PopupMenu(ProfileActivity.this, menu);
+            //Inflating the Popup using xml file
+            popup.getMenuInflater()
+                    .inflate(R.menu.menu_timeline, popup.getMenu());
+
+            //registering popup with OnMenuItemClickListener
+            popup.setOnMenuItemClickListener(item -> {
+                if (Util.getUser().isFirstTime()) {
+                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false);
+                }
+                if (item.getTitle().equals(getString(R.string.settings))) {
+                    Intent intent = new Intent(this, SettingsActivity.class);
+                    startActivity(intent);
+                    return true;
+                } else if (item.getTitle().equals(getString(R.string.store))) {
+                    Intent intent = new Intent(this, StoreActivity.class);
+                    startActivity(intent);
+                    return true;
+                } else if (item.getTitle().equals(getString(R.string.profile))) {
+                    Intent intent = new Intent(this, ProfileActivity.class);
+                    startActivity(intent);
+                    return true;
+                } else if (item.getTitle().equals(getString(R.string.tips))) {
+                    Intent intent = new Intent(this, TipsActivity.class).putExtra("cameFromTimeline", false);
+                    startActivity(intent);
+                    return true;
+                } else if (item.getTitle().equals(getString(R.string.about))) {
+                    Intent intent = new Intent(this, AboutActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+                return false;
+            });
+            popup.show();
+        });
     }
 
     private void setUserProfile() {

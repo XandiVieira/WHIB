@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
             //retrieve user data from Firebase
             getUserFromFB();
         } else {
-            userIsSubscribed();
+            updateUserSubscription();
         }
 
         mFirebaseRemoteConfig.setConfigSettingsAsync(new FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(3600L).build());
@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                         callTour();
                     }
                 }
-                userIsSubscribed();
+                updateUserSubscription();
             }
 
             @Override
@@ -366,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         subscribe(sku);
     }
 
-    public void userIsSubscribed() {
+    public void updateUserSubscription() {
         if (billingProcessor.loadOwnedPurchasesFromGoogle()) {
             Util.getUser().setExtra(true);
             Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);

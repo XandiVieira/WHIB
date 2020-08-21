@@ -3,7 +3,9 @@ package com.relyon.whib;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,6 +35,7 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
     private List<Product> productList = new ArrayList<>();
     private BillingProcessor billingProcessor;
     private Activity activity;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,12 +47,13 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
         billingProcessor = new BillingProcessor(this, getString(R.string.google_license_key), this);
         billingProcessor.initialize();
 
-        if (getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false)) {
+        if (getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false) && Util.getUser().isFirstTime()) {
             DialogFinalWarn warn = new DialogFinalWarn(this);
             warn.show();
         }
 
         productsRV = findViewById(R.id.products);
+        progressBar = findViewById(R.id.progress_bar);
         ImageView back = findViewById(R.id.back);
         back.setOnClickListener(v -> onBackPressed());
     }
@@ -88,6 +92,8 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
                 productsRV.addItemDecoration(dividerItemDecoration);
                 productsRV.setLayoutManager(layoutManager);
                 productsRV.setAdapter(adapter);
+                progressBar.setVisibility(View.GONE);
+                productsRV.setVisibility(View.VISIBLE);
             }
 
             @Override
