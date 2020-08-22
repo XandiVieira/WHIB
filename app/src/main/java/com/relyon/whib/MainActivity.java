@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
+import com.anjlab.android.iab.v3.PurchaseState;
 import com.anjlab.android.iab.v3.TransactionDetails;
 import com.facebook.login.LoginManager;
 import com.google.firebase.FirebaseApp;
@@ -46,6 +47,10 @@ import java.util.List;
 
 import me.toptas.fancyshowcase.FancyShowCaseQueue;
 import me.toptas.fancyshowcase.FancyShowCaseView;
+
+import static com.relyon.whib.util.Constants.SKU_WHIB_MONTHLY;
+import static com.relyon.whib.util.Constants.SKU_WHIB_SIXMONTH;
+import static com.relyon.whib.util.Constants.SKU_WHIB_YEARLY;
 
 public class MainActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler, SelectSubscription {
 
@@ -108,15 +113,11 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
 
         choseSubjectButton.setOnClickListener(v -> {
             if (user.isExtra() || user.isAdmin()) {
-                goVoteScreen();
+                startActivity(new Intent(this, NextSubjectVotingActivity.class));
             } else {
-                if (Util.getUser().isExtra()) {
-                    startActivity(new Intent(this, NextSubjectVotingActivity.class));
-                } else {
-                    FragmentTransaction fm = this.getSupportFragmentManager().beginTransaction();
-                    DialogChooseSubscription dialogChooseSubscription = DialogChooseSubscription.newInstance(this);
-                    dialogChooseSubscription.show(fm, "");
-                }
+                FragmentTransaction fm = this.getSupportFragmentManager().beginTransaction();
+                DialogChooseSubscription dialogChooseSubscription = DialogChooseSubscription.newInstance(this);
+                dialogChooseSubscription.show(fm, "");
             }
         });
     }
@@ -127,10 +128,6 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         if (uid != null) {
             Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("token").setValue(token);
         }
-    }
-
-    private void goVoteScreen() {
-        startActivity(new Intent(this, NextSubjectVotingActivity.class));
     }
 
     private void getSubjects() {
@@ -367,12 +364,25 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     }
 
     public void updateUserSubscription() {
-        if (billingProcessor.loadOwnedPurchasesFromGoogle()) {
-            Util.getUser().setExtra(true);
-            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);
-        } else {
-            Util.getUser().setExtra(false);
-            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(false);
+        boolean purchaseResult = billingProcessor.loadOwnedPurchasesFromGoogle();
+        List<String> subscriptions = new ArrayList<>();
+        subscriptions.add(SKU_WHIB_MONTHLY);
+        subscriptions.add(SKU_WHIB_SIXMONTH);
+        subscriptions.add(SKU_WHIB_YEARLY);
+        if (purchaseResult) {
+            for (int i = 0; i < subscriptions.size(); i++) {
+                TransactionDetails subscriptionTransactionDetails =
+                        billingProcessor.getSubscriptionTransactionDetails(subscriptions.get(i));
+
+                if (subscriptionTransactionDetails != null && subscriptionTransactionDetails.purchaseInfo.purchaseData.purchaseState == PurchaseState.PurchasedSuccessfully) {
+                    Util.getUser().setExtra(true);
+                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);
+                    break;
+                } else {
+                    Util.getUser().setExtra(false);
+                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(false);
+                }
+            }
         }
     }
 }

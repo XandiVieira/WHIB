@@ -10,12 +10,7 @@ public class ServerTempInfo {
         this.qtdUsers = qtdUsers;
         this.number = number;
 
-        if (number>99){
-            this.activated = false;
-        }else {
-            this.activated = true;
-        }
-
+        this.activated = number <= 99;
     }
 
     public ServerTempInfo() {

@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import me.toptas.fancyshowcase.FancyShowCaseView;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 public class DialogRateComment extends Dialog implements
@@ -40,14 +39,20 @@ public class DialogRateComment extends Dialog implements
     public Comment comment;
     private List<Object> commentList;
     private Boolean commentOwnerIsExtra;
+    private Integer qtdUsers;
 
-    DialogRateComment(Activity a, float rating, Comment comment, ArrayList<Object> elements, Boolean commentOwnerIsExtra) {
+    DialogRateComment(Activity a, float rating, Comment comment, ArrayList<Object> elements, Boolean commentOwnerIsExtra, Integer qtdUsers) {
         super(a);
         this.a = a;
         this.rating = rating;
         this.comment = comment;
         this.commentList = elements;
         this.commentOwnerIsExtra = commentOwnerIsExtra;
+        if (qtdUsers == null || qtdUsers <= 15) {
+            this.qtdUsers = 15;
+        } else {
+            this.qtdUsers = qtdUsers;
+        }
     }
 
     @Override
@@ -101,7 +106,7 @@ public class DialogRateComment extends Dialog implements
                 }
             }
         }
-        if (commentOwnerIsExtra || (comment.getNumberOfRatings() >= 10 && comment.getRating() >= 3.25)) {
+        if (commentOwnerIsExtra || (comment.getNumberOfRatings() >= ((qtdUsers / 100) * 15) && comment.getRating() >= 3.25)) {
             if (!comment.isAGroup()) {
                 comment.setAGroup(true);
                 if (comment.getGroup() == null) {
@@ -159,15 +164,5 @@ public class DialogRateComment extends Dialog implements
 
             }
         });
-    }
-
-    private void callTour() {
-        if (Util.getUser().isFirstTime()) {
-            new FancyShowCaseView.Builder(a).customView(R.layout.custom_tour_timeline_make_comment, view -> {
-            }).focusBorderSize(10)
-                    .focusRectAtPosition(100, 1800, 2000, 200)
-                    .build()
-                    .show();
-        }
     }
 }

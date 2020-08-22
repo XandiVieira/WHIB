@@ -96,11 +96,22 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 if (user != null) {
-                    DialogRateComment cdd = new DialogRateComment(activity, rating, comment, elements, user.isExtra());
-                    if (cdd.getWindow() != null) {
-                        cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                        cdd.show();
-                    }
+                    Util.mSubjectDatabaseRef.child(comment.getSubject()).child("servers").child(comment.getServerUID()).child("tempInfo").child("qtdUsers").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            Integer qtdUsers = snapshot.getValue(Integer.class);
+                            DialogRateComment cdd = new DialogRateComment(activity, rating, comment, elements, user.isExtra(), qtdUsers);
+                            if (cdd.getWindow() != null) {
+                                cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                cdd.show();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                 }
             }
 
@@ -204,6 +215,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                             stars.getDrawable(2).setColorFilter(Color.parseColor("#AFC2D5"), PorterDuff.Mode.SRC_ATOP);
                             stars.getDrawable(1).setColorFilter(Color.parseColor("#2B4162"), PorterDuff.Mode.SRC_ATOP);
                             stars.getDrawable(0).setColorFilter(Color.parseColor("#2B4162"), PorterDuff.Mode.SRC_ATOP);
+                            holder.bg.setBackgroundResource(R.drawable.rounded_accent_double);
                             holder.bg.setBackgroundResource(R.drawable.rounded_accent_double);
                             holder.commentLayout.setBackgroundResource(R.drawable.rounded_accent_double);
                         } else if (comment.isAGroup()) {

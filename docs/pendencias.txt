@@ -11,7 +11,7 @@
 	- Remover setas ao lado do servidor quando houver apenas um servidor no assunto.
 	- "Ver mais" na timeline para não carregar todos comentários de uma vez
 	- "Ver mais" para cada comentário que seja muito grande
-- Encontrar proporção para virar um grupo
+- Encontrar proporção para virar um grupo (15% da quantidade dos usuários no servidor)
 	- Processo completo das denúncias (não está contando no perfil do usuário)
 	- Não permitir denunciar o mesmo comentário mais de uma vez
 	- Permitir consultar perfil de outros usuários (ao clicar na foto em um comentário)
@@ -64,7 +64,7 @@
 	- Fazer Sticker aparecer automaticamente no comentário (hoje precisa sair e voltar para a tela)
 	- Tornar Dicas mais decente (atualmente está feio)
 	- Verificar contagem de usuários nos servidores
-- Testar uma timeline com muitos comentários
+	- Testar uma timeline com muitos comentários
 
 LOJA
 - Superpoderes (Direito de tornar meu comentário em grupo automaticamente)

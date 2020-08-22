@@ -370,7 +370,7 @@ public class TimelineActivity extends AppCompatActivity {
 
     private void openCommentBox() {
         mayPass = true;
-        DialogPostComment cdd = new DialogPostComment(this, subjectObj, menu);
+        DialogPostComment cdd = new DialogPostComment(this, subjectObj);
         cdd.show();
     }
 

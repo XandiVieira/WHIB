@@ -54,15 +54,17 @@ public class RecyclerViewStickerAdapter extends RecyclerView.Adapter<RecyclerVie
             holder.image.setMaxWidth(50);
             holder.quantity.setText("(" + product.getQuantity() + ")");
 
-            if (comment != null && comment.isAGroup()) {
+            if (comment != null) {
                 Util.mUserDatabaseRef.child(comment.getAuthorsUID()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         User user = snapshot.getValue(User.class);
                         if (user != null && user.isExtra()) {
-                            holder.bg.setBackground(context.getResources().getDrawable(R.drawable.rounded_accent));
-                        } else {
-                            holder.bg.setBackground(context.getResources().getDrawable(R.drawable.rounded_primary));
+                            if (user.isExtra()) {
+                                holder.bg.setBackground(context.getResources().getDrawable(R.drawable.rounded_accent));
+                            } else if (comment.isAGroup()) {
+                                holder.bg.setBackground(context.getResources().getDrawable(R.drawable.rounded_primary));
+                            }
                         }
                     }
 
