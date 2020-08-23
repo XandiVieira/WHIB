@@ -139,7 +139,6 @@ public class TabHistory extends Fragment {
                             for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                                 Comment comment = snapshot1.getValue(Comment.class);
                                 if (comment != null && comment.getAuthorsUID().equals(user.getUserUID())) {
-                                    comment.setCommentUID(snapshot1.getKey());
                                     commentList.add(comment);
                                     fixedCommentList.add(comment);
                                     empty.setVisibility(View.GONE);

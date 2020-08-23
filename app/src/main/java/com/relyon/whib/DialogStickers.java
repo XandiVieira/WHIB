@@ -20,25 +20,28 @@ import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.Util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DialogStickers extends Dialog {
 
-    private Activity a;
     public Dialog d;
     private List<Product> productList;
     private List<Argument> argumentList;
-    private boolean isForChat;
     private Comment comment;
     private RecyclerViewCommentAdapter recyclerViewCommentAdapter;
-    private int position;
+    private Integer position;
 
-    DialogStickers(Activity a, List<Product> productList, List<Argument> argumentList, boolean isForChat, Comment comment, RecyclerViewCommentAdapter recyclerViewCommentAdapter, Integer position) {
+    DialogStickers(Activity a, List<Product> productList, List<Argument> argumentList, Comment comment, RecyclerViewCommentAdapter recyclerViewCommentAdapter, Integer position) {
         super(a);
-        this.a = a;
-        this.productList = productList;
+        List<Product> stickers = new ArrayList<>();
+        for (Product sticker : productList) {
+            if (sticker != null && sticker.getQuantity() > 0) {
+                stickers.add(sticker);
+            }
+        }
+        this.productList = stickers;
         this.argumentList = argumentList;
-        this.isForChat = isForChat;
         this.comment = comment;
         this.recyclerViewCommentAdapter = recyclerViewCommentAdapter;
         this.position = position;
@@ -66,7 +69,6 @@ public class DialogStickers extends Dialog {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Comment comment = snapshot.getValue(Comment.class);
                 if (comment != null) {
-                    comment.setCommentUID(snapshot.getKey());
                     RecyclerViewGalleryAdapter adapter = new RecyclerViewGalleryAdapter(Util.getUser().getProducts(), productList, getContext(), false, true, false, argumentList, d, comment, recyclerViewCommentAdapter, position);
                     DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
                             layoutManager.getOrientation());

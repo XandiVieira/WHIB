@@ -55,7 +55,7 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
         storageReference = FirebaseStorage.getInstance().getReference();
     }
 
-    public RecyclerViewGalleryAdapter(HashMap<String, Product> myStickers, List<Product> allStickers, Context context, boolean isForGallery, boolean isForDialog, boolean isForComment, List<Argument> argumentList, Dialog dialog, Comment comment, RecyclerViewCommentAdapter recyclerViewCommentAdapter, int commentPosition) {
+    public RecyclerViewGalleryAdapter(HashMap<String, Product> myStickers, List<Product> allStickers, Context context, boolean isForGallery, boolean isForDialog, boolean isForComment, List<Argument> argumentList, Dialog dialog, Comment comment, RecyclerViewCommentAdapter recyclerViewCommentAdapter, Integer commentPosition) {
         this.allStickers = allStickers;
         this.myStickers = myStickers;
         this.context = context;

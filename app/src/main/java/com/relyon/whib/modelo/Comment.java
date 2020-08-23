@@ -1,18 +1,13 @@
 package com.relyon.whib.modelo;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import androidx.annotation.Nullable;
-
-import com.google.firebase.database.Exclude;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-public class Comment extends Sending implements Parcelable {
+public class Comment extends Sending {
 
     private String commentUID;
     private String serverUID;
@@ -30,24 +25,10 @@ public class Comment extends Sending implements Parcelable {
     public Comment() {
     }
 
-    public Comment(String commentUID, String serverUID, String subject, String text, float rating, String userPhotoURL, Long time, int numberOfRatings, float sumOfRatings, HashMap<String, Product> stickers) {
+    public Comment(String commentUID, String serverUID, String text, float rating, String userPhotoURL, Long time, int numberOfRatings, float sumOfRatings,
+                   Sending sending, boolean isAGroup, Group group) {
         this.commentUID = commentUID;
         this.serverUID = serverUID;
-        super.setSubject(subject);;
-        this.text = text;
-        this.rating = rating;
-        this.userPhotoURL = userPhotoURL;
-        this.time = time;
-        this.numberOfRatings = numberOfRatings;
-        this.sumOfRatings = sumOfRatings;
-        this.stickers = stickers;
-    }
-
-    public Comment(String serverUID, String type, Long date, String authorsName, String authorsUID, String subject, String text,
-                   float rating, String userPhotoURL, Long time, int numberOfRatings, float sumOfRatings,
-                   Sending sending, boolean isAGroup, Group group) {
-        super(type, date, authorsName, authorsUID, subject);
-        this.serverUID = serverUID;
         this.text = text;
         this.rating = rating;
         this.userPhotoURL = userPhotoURL;
@@ -62,53 +43,6 @@ public class Comment extends Sending implements Parcelable {
         super.setSubject(sending.getSubject());
         super.setType(sending.getType());
     }
-
-    public Comment(String serverUID, String text, float rating, String userPhotoURL, Long time, int numberOfRatings, float sumOfRatings,
-                   Sending sending, boolean isAGroup, Group group) {
-        this.serverUID = serverUID;
-        this.text = text;
-        this.rating = rating;
-        this.userPhotoURL = userPhotoURL;
-        this.time = time;
-        this.numberOfRatings = numberOfRatings;
-        this.sumOfRatings = sumOfRatings;
-        this.isAGroup = isAGroup;
-        this.group = group;
-        super.setAuthorsName(sending.getAuthorsName());
-        super.setAuthorsUID(sending.getAuthorsUID());
-        super.setDate(sending.getDate());
-        super.setSubject(sending.getSubject());
-        super.setType(sending.getType());
-    }
-
-    protected Comment(Parcel in) {
-        commentUID = in.readString();
-        serverUID = in.readString();
-        text = in.readString();
-        rating = in.readFloat();
-        userPhotoURL = in.readString();
-        if (in.readByte() == 0) {
-            time = null;
-        } else {
-            time = in.readLong();
-        }
-        numberOfRatings = in.readInt();
-        sumOfRatings = in.readFloat();
-        alreadyRatedList = in.createStringArrayList();
-        isAGroup = in.readByte() != 0;
-    }
-
-    public static final Creator<Comment> CREATOR = new Creator<Comment>() {
-        @Override
-        public Comment createFromParcel(Parcel in) {
-            return new Comment(in);
-        }
-
-        @Override
-        public Comment[] newArray(int size) {
-            return new Comment[size];
-        }
-    };
 
     public String getText() {
         return text;
@@ -190,12 +124,10 @@ public class Comment extends Sending implements Parcelable {
         this.serverUID = serverUID;
     }
 
-    @Exclude
     public String getCommentUID() {
         return commentUID;
     }
 
-    @Exclude
     public void setCommentUID(String commentUID) {
         this.commentUID = commentUID;
     }
@@ -231,29 +163,4 @@ public class Comment extends Sending implements Parcelable {
     public static Comparator<Comment> rateComparator = (c1, c2) -> (int) c2.getRating() - (int) c1.getRating();
 
     public static Comparator<Comment> dateComparator = (c1, c2) -> (int) (c2.getTime() - c1.getTime());
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-
-        dest.writeString(commentUID);
-        dest.writeString(serverUID);
-        dest.writeString(text);
-        dest.writeFloat(rating);
-        dest.writeString(userPhotoURL);
-        if (time == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(time);
-        }
-        dest.writeInt(numberOfRatings);
-        dest.writeFloat(sumOfRatings);
-        dest.writeStringList(alreadyRatedList);
-        dest.writeByte((byte) (isAGroup ? 1 : 0));
-    }
 }

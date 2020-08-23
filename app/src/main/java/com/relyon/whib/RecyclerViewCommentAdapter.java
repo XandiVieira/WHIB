@@ -274,7 +274,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                     }
                 }
             }
-            DialogStickers cdd = new DialogStickers(activity, products, null, false, (Comment) elements.get(position), this, position);
+            DialogStickers cdd = new DialogStickers(activity, products, null, (Comment) elements.get(position), this, position);
             cdd.show();
         } else {
             Toast.makeText(context, "Você não pode enviar figurinhas para seu próprio comentário.", Toast.LENGTH_SHORT).show();

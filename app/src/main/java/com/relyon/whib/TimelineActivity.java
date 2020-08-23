@@ -116,8 +116,6 @@ public class TimelineActivity extends AppCompatActivity {
                 if (mayPass) {
                     List<Comment> comments = new ArrayList<>();
                     comments.add(dataSnapshot.getValue(Comment.class));
-                    comments.get(0).setCommentUID(dataSnapshot.getKey());
-                    requireNonNull(comments.get(0)).setCommentUID(dataSnapshot.getKey());
                     adapter.addAll(comments, true, true, false);
                     emptyList.setVisibility(View.GONE);
                 }
@@ -300,7 +298,6 @@ public class TimelineActivity extends AppCompatActivity {
                     for (DataSnapshot snap : dataSnapshot.getChildren()) {
                         if (dataSnapshot.getChildrenCount() > 0) {
                             Comment comment = snap.getValue(Comment.class);
-                            requireNonNull(comment).setCommentUID(snap.getKey());
                             if (!adapter.commentExists(snap.getKey()) || reset) {
                                 comments.add(comment);
                             }

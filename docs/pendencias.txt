@@ -54,13 +54,13 @@
 	- Create server (ao entrar crasha)
 	- Show tost to empty server
 	- Não permitir finalização da enquete antes da data de término
-- Remover acesso extra do usuário quando expirar sua assinatura
+	- Remover acesso extra do usuário quando expirar sua assinatura
 	- Clicar em ver mais abre o grupo
 	- Abrir grupo crasha
 	- Acessar perfil crasha
 	- Acessar perfil de outras pessoas crasha
 	- Verificar as dicas (Se está tudo correto)
-- Processo de compra está duplicado em algum lugar (tabs, recyclerview etc...)
+	- Processo de compra está duplicado em algum lugar (tabs, recyclerview etc...)
 	- Fazer Sticker aparecer automaticamente no comentário (hoje precisa sair e voltar para a tela)
 	- Tornar Dicas mais decente (atualmente está feio)
 	- Verificar contagem de usuários nos servidores

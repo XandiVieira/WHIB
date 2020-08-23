@@ -19,6 +19,7 @@ import com.relyon.whib.modelo.Util;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 import me.toptas.fancyshowcase.FancyShowCaseView;
 
@@ -79,7 +80,7 @@ public class DialogPostComment extends Dialog implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.commentButton:
-                    postComment();
+                postComment();
                 break;
             case R.id.closeIcon:
                 activity.closeContextMenu();
@@ -96,16 +97,17 @@ public class DialogPostComment extends Dialog implements
         long date = new Date().getTime();
         Sending sending = new Sending("text", date, Util.getUser().getUserName(), Util.getUser().getUserUID(), subject);
         if (validateComment()) {
-                Comment comment = new Comment(Util.getServer().getServerUID(), commentBox.getText().toString(), (float) 0.0, Util.getUser().getPhotoPath(), date, 0, (float) 0.0, sending, false, null);
-                Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").push().setValue(comment);
-                if (Util.getUser().getCommentList() == null) {
-                    Util.getUser().setCommentList(new ArrayList<>());
-                }
-                Util.getUser().getCommentList().add(new Comment(comment.getCommentUID(), comment.getServerUID(), Util.getServer().getSubject(), comment.getText(), comment.getRating(), comment.getUserPhotoURL(), comment.getTime(), comment.getNumberOfRatings(), comment.getSumOfRatings(), comment.getStickers()));
-                Toast.makeText(getContext(), "Comentário postado!", Toast.LENGTH_SHORT).show();
-                // Clear input box
-                commentBox.setText("");
-                callTour();
+            String commentUid = UUID.randomUUID().toString();
+            Comment comment = new Comment(commentUid, Util.getServer().getServerUID(), commentBox.getText().toString(), (float) 0.0, Util.getUser().getPhotoPath(), date, 0, (float) 0.0, sending, false, null);
+            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").push().setValue(comment);
+            if (Util.getUser().getCommentList() == null) {
+                Util.getUser().setCommentList(new ArrayList<>());
+            }
+            Util.getUser().getCommentList().add(comment);
+            Toast.makeText(getContext(), "Comentário postado!", Toast.LENGTH_SHORT).show();
+            // Clear input box
+            commentBox.setText("");
+            callTour();
         }
     }
 

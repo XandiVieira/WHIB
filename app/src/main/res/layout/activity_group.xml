@@ -156,7 +156,8 @@
                         android:gravity="center"
                         android:orientation="vertical"
                         android:padding="@dimen/surround_paddings"
-                        android:src="@drawable/pencil_icon">
+                        android:src="@drawable/pencil_icon"
+                        android:visibility="gone">
 
                         <ImageView
                             android:id="@+id/sendIcon"
