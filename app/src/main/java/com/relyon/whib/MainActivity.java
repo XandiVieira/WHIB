@@ -35,10 +35,9 @@ import com.relyon.whib.modelo.Preferences;
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.User;
-import com.relyon.whib.modelo.UserTempInfo;
 import com.relyon.whib.modelo.Util;
 import com.relyon.whib.modelo.Valuation;
-import com.relyon.whib.util.ApplicationLifecycle;
+import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.SelectSubscription;
 
 import java.util.ArrayList;
@@ -48,26 +47,27 @@ import java.util.List;
 import me.toptas.fancyshowcase.FancyShowCaseQueue;
 import me.toptas.fancyshowcase.FancyShowCaseView;
 
+import static com.relyon.whib.util.Constants.DATABASE_REF_FIRST_TIME;
 import static com.relyon.whib.util.Constants.SKU_WHIB_MONTHLY;
 import static com.relyon.whib.util.Constants.SKU_WHIB_SIXMONTH;
 import static com.relyon.whib.util.Constants.SKU_WHIB_YEARLY;
 
 public class MainActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler, SelectSubscription {
 
-    private FirebaseUser fbUser;
+    private FirebaseUser firebaseUser;
     private User user;
     private DatabaseReference mUserDatabaseRef;
     private DatabaseReference mSubjectDatabaseRef;
-    private FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
     private BillingProcessor billingProcessor;
+    private String firebaseInstanceId;
 
     //Layout elements
-    private HashMap<String, Server> servers;
+    private HashMap<String, Server> serversMap;
     private LinearLayout progressBar;
-    private LinearLayout profile;
-    private Button choseSubjectButton;
+    private LinearLayout profileIcon;
+    private Button chooseSubjectButton;
+    private RecyclerView recyclerViewServerSection;
 
-    private RecyclerView recyclerViewServers;
     private Activity activity;
 
     @Override
@@ -76,42 +76,38 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         setContentView(R.layout.activity_main);
 
         activity = this;
-
-        ApplicationLifecycle lifecycle = (ApplicationLifecycle) getApplication();
-        getApplication().registerActivityLifecycleCallbacks(lifecycle);
+        FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
 
         billingProcessor = new BillingProcessor(this, getResources().getString(R.string.google_license_key), this);
         billingProcessor.initialize();
 
-        recyclerViewServers = findViewById(R.id.recyclerViewSec);
-        progressBar = findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.VISIBLE);
-        choseSubjectButton = findViewById(R.id.choseSubjectButton);
-        profile = findViewById(R.id.profile);
+        recyclerViewServerSection = findViewById(R.id.recycler_view_section);
+        progressBar = findViewById(R.id.progress_bar);
+        chooseSubjectButton = findViewById(R.id.choose_subject_button);
+        profileIcon = findViewById(R.id.profile_layout);
+        LinearLayout logoutLayout = findViewById(R.id.logout_layout);
 
-        //Initiate firebase instances
-        startFirebase();
+        startFirebaseInstances();
 
-        //getting firebase Facebook info user
-        fbUser = FirebaseAuth.getInstance().getCurrentUser();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(instanceIdResult -> firebaseInstanceId = instanceIdResult.getToken());
 
-        //verify the user is logged in
-        if (fbUser == null) {
-            //go to login activity
+        if (firebaseUser == null) {
             goLoginScreen();
         } else if (user == null) {
-            //set fbUser to Util class
-            Util.setFbUser(fbUser);
+            Util.setFbUser(firebaseUser);
             Util.setNumberOfServers(0);
-            //retrieve user data from Firebase
-            getUserFromFB();
+            getUserDataFromFirebase();
         } else {
-            updateUserSubscription();
+            verifyUserSubscriptionStatus();
         }
 
         mFirebaseRemoteConfig.setConfigSettingsAsync(new FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(3600L).build());
 
-        choseSubjectButton.setOnClickListener(v -> {
+        profileIcon.setOnClickListener(view -> goToProfile());
+        logoutLayout.setOnClickListener(view -> logout());
+
+        chooseSubjectButton.setOnClickListener(v -> {
             if (user.isExtra() || user.isAdmin()) {
                 startActivity(new Intent(this, NextSubjectVotingActivity.class));
             } else {
@@ -123,14 +119,13 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     }
 
     private void updateToken() {
-        String token = FirebaseInstanceId.getInstance().getToken();
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid != null) {
-            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("token").setValue(token);
+            mUserDatabaseRef.child(Util.getUser().getUserUID()).child("token").setValue(firebaseInstanceId);
         }
     }
 
-    private void getSubjects() {
+    private void retrieveSubjects() {
         setSubjects();
     }
 
@@ -139,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     }
 
     private void setServers() {
-        //createServers();
         mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -150,16 +144,16 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                         subjects.add(subject);
                     }
                 }
-                servers = new HashMap<>();
+                serversMap = new HashMap<>();
                 for (Subject subject : subjects) {
                     for (Server server : subject.getServers().values()) {
-                        servers.put(server.getServerUID(), server);
+                        serversMap.put(server.getServerUID(), server);
                     }
                 }
-                Util.setNumberOfServers(servers.values().size());
+                Util.setNumberOfServers(serversMap.values().size());
                 initRecyclerViewGroup();
                 progressBar.setVisibility(View.GONE);
-                choseSubjectButton.setVisibility(View.VISIBLE);
+                chooseSubjectButton.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -171,66 +165,46 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
 
     private void initRecyclerViewGroup() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerViewServers = findViewById(R.id.recyclerViewSec);
-        recyclerViewServers.setLayoutManager(layoutManager);
-        RecyclerViewServerGroupAdapter adapter = new RecyclerViewServerGroupAdapter(servers);
-        recyclerViewServers.setAdapter(adapter);
+        recyclerViewServerSection = findViewById(R.id.recycler_view_section);
+        recyclerViewServerSection.setLayoutManager(layoutManager);
+        RecyclerViewServerGroupAdapter adapter = new RecyclerViewServerGroupAdapter(serversMap);
+        recyclerViewServerSection.setAdapter(adapter);
     }
 
-    //Initiate Firebase instances
-    private void startFirebase() {
+    private void startFirebaseInstances() {
         FirebaseApp.initializeApp(this);
         FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference mDatabaseRef = mFirebaseDatabase.getReference();
-        mUserDatabaseRef = mDatabaseRef.child("user");
-        DatabaseReference mServerDatabaseRef = mDatabaseRef.child("server");
-        mSubjectDatabaseRef = mDatabaseRef.child("subject");
-        DatabaseReference mGroupDatabaseRef = mDatabaseRef.child("group");
-        DatabaseReference mAdvantagesDatabaseRef = mDatabaseRef.child("advantage");
-        DatabaseReference mReportsDatabaseRef = mDatabaseRef.child("report");
+        mUserDatabaseRef = mDatabaseRef.child(Constants.DATABASE_REF_USER);
+        mSubjectDatabaseRef = mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT);
+        DatabaseReference mGroupDatabaseRef = mDatabaseRef.child(Constants.DATABASE_REF_GROUP);
+        DatabaseReference mAdvantagesDatabaseRef = mDatabaseRef.child(Constants.DATABASE_REF_ADVANTAGE);
+        DatabaseReference mReportsDatabaseRef = mDatabaseRef.child(Constants.DATABASE_REF_REPORT);
         Util.setmDatabaseRef(mDatabaseRef);
         Util.setmUserDatabaseRef(mUserDatabaseRef);
-        Util.setmServerDatabaseRef(mServerDatabaseRef);
         Util.setmSubjectDatabaseRef(mSubjectDatabaseRef);
         Util.setmGroupDatabaseRef(mGroupDatabaseRef);
         Util.setmAdvantagesDatabaseRef(mAdvantagesDatabaseRef);
         Util.setmReportDatabaseRef(mReportsDatabaseRef);
     }
 
-    //Get user from Firebase Database
-    private void getUserFromFB() {
-        mUserDatabaseRef.child(fbUser.getUid()).addValueEventListener(new ValueEventListener() {
+    private void getUserDataFromFirebase() {
+        mUserDatabaseRef.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
                 if (user == null || user.getUserUID() == null) {
-                    //In case it has not found anything, create a new profile for the user
                     createUser();
                 }
-                //set user for the Util class
+
                 Util.setUser(user);
-
                 updateToken();
-                profile.setVisibility(View.VISIBLE);
-                if (user != null) {
-                    if (user.isFirstTime()) {
-                        if (getIntent().hasExtra("serverEmpty")) {
-                            Toast tag = Toast.makeText(activity, "Este servidor está vazio, por favor escolha outro para começar.", Toast.LENGTH_LONG);
-                            new CountDownTimer(3000, 3500) {
-                                public void onTick(long millisUntilFinished) {
-                                    tag.show();
-                                }
 
-                                public void onFinish() {
-                                    tag.show();
-                                }
+                profileIcon.setVisibility(View.VISIBLE);
 
-                            }.start();
-                        }
-                        callTour();
-                    }
-                }
-                updateUserSubscription();
+                callWelcomeTour();
+
+                verifyUserSubscriptionStatus();
             }
 
             @Override
@@ -242,36 +216,49 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
 
     //create a new profile for the user
     private void createUser() {
-        String photoPath = null;
-        if (fbUser.getPhotoUrl() != null) {
-            photoPath = fbUser.getPhotoUrl().toString();
+        String userPhotoPath = null;
+        if (firebaseUser.getPhotoUrl() != null) {
+            userPhotoPath = firebaseUser.getPhotoUrl().toString();
         }
 
-        user = new User(fbUser.getUid(), FirebaseInstanceId.getInstance().getToken(), fbUser.getDisplayName(), photoPath, setUserValuation(), null, false, true,
+        user = new User(firebaseUser.getUid(), firebaseInstanceId, firebaseUser.getDisplayName(), userPhotoPath, setUserValuation(), null, false, true,
                 false, null, 0, null, null,
                 false, false, 0, 0, setUserPreferences(), null, false);
 
         Util.setUser(user);
-        mUserDatabaseRef.child(fbUser.getUid()).setValue(user);
+        mUserDatabaseRef.child(firebaseUser.getUid()).setValue(user);
     }
 
-    private void callTour() {
-        FancyShowCaseQueue queue = new FancyShowCaseQueue();
-        if (user.isFirstTime()) {
-            FancyShowCaseView fancyShowCaseView = new FancyShowCaseView.Builder(this).customView(R.layout.custom_tour_servers, view -> view.findViewById(R.id.skip_tutorial).setOnClickListener(v -> {
-                Util.getUser().setFirstTime(false);
-                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false);
-            })).focusOn(recyclerViewServers)
-                    .focusBorderSize(10)
-                    .focusCircleAtPosition(550, 800, 500)
-                    .build();
-            queue.add(fancyShowCaseView);
-            queue.show();
+    private void callWelcomeTour() {
+        if (user != null) {
+            if (user.isFirstTime()) {
+                if (getIntent().hasExtra("serverEmpty")) {
+                    Toast tag = Toast.makeText(activity, getString(R.string.server_empty_plase_select_another), Toast.LENGTH_LONG);
+                    new CountDownTimer(3000, 3500) {
+                        public void onTick(long millisUntilFinished) {
+                            tag.show();
+                        }
+
+                        public void onFinish() {
+                            tag.show();
+                        }
+                    }.start();
+                }
+                FancyShowCaseQueue queue = new FancyShowCaseQueue();
+                if (user.isFirstTime()) {
+                    FancyShowCaseView fancyShowCaseView = new FancyShowCaseView.Builder(this).customView(R.layout.custom_tour_servers, view -> view.findViewById(R.id.skip_tutorial).setOnClickListener(v -> {
+                        Util.getUser().setFirstTime(false);
+                        mUserDatabaseRef.child(Util.getUser().getUserUID()).child(DATABASE_REF_FIRST_TIME).setValue(false);
+                    })).focusOn(recyclerViewServerSection)
+                            .focusBorderSize(10)
+                            .focusCircleAtPosition(550, 800, 500)
+                            .build();
+                    queue.add(fancyShowCaseView);
+                    queue.show();
+                }
+            }
         }
     }
-
-    //Methods for completing user setting
-    //Attributes no set here - Complaints - History -  Following - groupList - Doubts - Items
 
     private Preferences setUserPreferences() {
         return new Preferences(true, true, true, true);
@@ -279,10 +266,6 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
 
     private Valuation setUserValuation() {
         return new Valuation(0, 0, 0, 0, 0, 0);
-    }
-
-    private UserTempInfo setUserTempInfo() {
-        return new UserTempInfo(null, null, true, false);
     }
 
     //Go to login activity
@@ -293,16 +276,16 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     }
 
     //logout the user from application
-    public void logout(View view) {
+    public void logout() {
         FirebaseAuth.getInstance().signOut();
         LoginManager.getInstance().logOut();
         goLoginScreen();
     }
 
-    public void profile(View view) {
+    public void goToProfile() {
         Intent intent;
         if (Util.getUser().isAdmin()) {
-            intent = new Intent(this, AdmChoosingActivity.class);
+            intent = new Intent(this, AdmChoosingProfileActivity.class);
         } else {
             intent = new Intent(this, ProfileActivity.class);
         }
@@ -310,15 +293,8 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        //Retrieving the subjects
-        getSubjects();
-    }
-
-    @Override
-    public void onProductPurchased(String productId, TransactionDetails details) {
-        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);
+    public void onProductPurchased(@NonNull String productId, TransactionDetails details) {
+        mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_EXTRA).setValue(true);
         Util.getUser().setExtra(true);
         DialogCongratsSubscription dialogCongratsSubscription = new DialogCongratsSubscription(this);
         dialogCongratsSubscription.show();
@@ -339,8 +315,43 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
 
     }
 
+    @Override
+    public void onChoose(String sku) {
+        subscribe(sku);
+    }
+
     private void subscribe(String sku) {
         billingProcessor.subscribe(this, sku);
+    }
+
+    public void verifyUserSubscriptionStatus() {
+        boolean purchaseResult = billingProcessor.loadOwnedPurchasesFromGoogle();
+        List<String> subscriptionsSKU = new ArrayList<>();
+        subscriptionsSKU.add(SKU_WHIB_MONTHLY);
+        subscriptionsSKU.add(SKU_WHIB_SIXMONTH);
+        subscriptionsSKU.add(SKU_WHIB_YEARLY);
+        if (purchaseResult) {
+            for (int i = 0; i < subscriptionsSKU.size(); i++) {
+                if (updateUserSubscription(subscriptionsSKU.get(i))) {
+                    break;
+                }
+            }
+        }
+    }
+
+    private boolean updateUserSubscription(String subscriptionSKU) {
+        TransactionDetails subscriptionTransactionDetails =
+                billingProcessor.getSubscriptionTransactionDetails(subscriptionSKU);
+
+        if (subscriptionTransactionDetails != null && subscriptionTransactionDetails.purchaseInfo.purchaseData.purchaseState == PurchaseState.PurchasedSuccessfully) {
+            Util.getUser().setExtra(true);
+            mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);
+            return true;
+        } else {
+            Util.getUser().setExtra(false);
+            mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(false);
+            return false;
+        }
     }
 
     @Override
@@ -351,38 +362,16 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        retrieveSubjects();
+    }
+
+    @Override
     public void onDestroy() {
         if (billingProcessor != null) {
             billingProcessor.release();
         }
         super.onDestroy();
-    }
-
-    @Override
-    public void onChoose(String sku) {
-        subscribe(sku);
-    }
-
-    public void updateUserSubscription() {
-        boolean purchaseResult = billingProcessor.loadOwnedPurchasesFromGoogle();
-        List<String> subscriptions = new ArrayList<>();
-        subscriptions.add(SKU_WHIB_MONTHLY);
-        subscriptions.add(SKU_WHIB_SIXMONTH);
-        subscriptions.add(SKU_WHIB_YEARLY);
-        if (purchaseResult) {
-            for (int i = 0; i < subscriptions.size(); i++) {
-                TransactionDetails subscriptionTransactionDetails =
-                        billingProcessor.getSubscriptionTransactionDetails(subscriptions.get(i));
-
-                if (subscriptionTransactionDetails != null && subscriptionTransactionDetails.purchaseInfo.purchaseData.purchaseState == PurchaseState.PurchasedSuccessfully) {
-                    Util.getUser().setExtra(true);
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);
-                    break;
-                } else {
-                    Util.getUser().setExtra(false);
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(false);
-                }
-            }
-        }
     }
 }

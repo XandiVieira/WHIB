@@ -15,15 +15,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Report;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AdmReportsActivity extends AppCompatActivity {
 
-    private RecyclerView reports;
+    private RecyclerView rvReports;
     private List<Report> reportList;
-    private RecyclerViewReportAdapter recyclerViewReportAdapter;
+    private RecyclerViewReportAdapter reportAdapter;
     private TextView empty;
     private Activity activity;
 
@@ -34,10 +35,10 @@ public class AdmReportsActivity extends AppCompatActivity {
 
         activity = this;
 
-        reports = findViewById(R.id.reports);
+        rvReports = findViewById(R.id.reports);
         empty = findViewById(R.id.empty);
 
-        Util.mDatabaseRef.child("report").orderByChild("reviewed").equalTo(false).addValueEventListener(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_REPORT).orderByChild(Constants.DATABASE_REF_REVIEWED).equalTo(false).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 reportList = new ArrayList<>();
@@ -49,9 +50,9 @@ public class AdmReportsActivity extends AppCompatActivity {
                         empty.setVisibility(View.GONE);
                     }
                 }
-                recyclerViewReportAdapter = new RecyclerViewReportAdapter(reportList);
-                reports.setLayoutManager(new LinearLayoutManager(activity));
-                reports.setAdapter(recyclerViewReportAdapter);
+                reportAdapter = new RecyclerViewReportAdapter(reportList);
+                rvReports.setLayoutManager(new LinearLayoutManager(activity));
+                rvReports.setAdapter(reportAdapter);
             }
 
             @Override

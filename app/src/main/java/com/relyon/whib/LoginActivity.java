@@ -121,7 +121,6 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
 
             @Override
             public void onCancel() {
-                Toast.makeText(activity, R.string.cancel_login, Toast.LENGTH_SHORT).show();
             }
 
             @Override

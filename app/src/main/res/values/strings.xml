@@ -64,7 +64,7 @@
     <string name="support">Apoiar</string>
     <string name="report">Reportar</string>
     <string name="follow">Seguir</string>
-    <string name="version">Versão 1.0.0</string>
+    <string name="version">Versão %1$s</string>
     <string name="delete_account_text">Deletar conta!</string>
     <string name="title_activity_tabs_settings">tabs_settings</string>
     <string name="action_settings">Settings</string>
@@ -186,6 +186,8 @@
     <string name="last_warn">Um último recado para você</string>
     <string name="congrats_subscription">Parabéns! Agora você pode usufruir de todos os benefícios de ser um Extra.</string>
     <string name="all_advantages">Confira todas as vantagens que você pode aproveitar <u>AQUI</u></string>
+    <string name="server_empty_plase_select_another">Este servidor está vazio, por favor escolha outro para começar.</string>
+    <string name="error">"Error: "</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

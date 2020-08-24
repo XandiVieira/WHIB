@@ -15,15 +15,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Complaint;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class AdmComplaintsActivity extends AppCompatActivity {
 
-    private RecyclerView complaints;
-    private ArrayList<Complaint> complaintList = new ArrayList<>();
-    private RecyclerViewComplaintAdapter recyclerViewComplaintAdapter;
+    private RecyclerView rvComplaints;
+    private ArrayList<Complaint> complaintList;
+    private RecyclerViewComplaintAdapter complaintAdapter;
     private TextView empty;
     private Activity activity;
 
@@ -34,10 +35,11 @@ public class AdmComplaintsActivity extends AppCompatActivity {
 
         activity = this;
 
-        complaints = findViewById(R.id.reports);
+        complaintList = new ArrayList<>();
+        rvComplaints = findViewById(R.id.reports);
         empty = findViewById(R.id.empty);
 
-        Util.mDatabaseRef.child("complaint").orderByChild("answered").equalTo(false).addValueEventListener(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_COMPLAINT).orderByChild(Constants.DATABASE_REF_ANSWERED).equalTo(false).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snap : dataSnapshot.getChildren()) {
@@ -52,10 +54,10 @@ public class AdmComplaintsActivity extends AppCompatActivity {
                     empty.setVisibility(View.VISIBLE);
                 }
                 LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
-                complaints.setLayoutManager(layoutManager);
+                rvComplaints.setLayoutManager(layoutManager);
                 Collections.sort(complaintList, Complaint.dateComparator);
-                recyclerViewComplaintAdapter = new RecyclerViewComplaintAdapter(activity, complaintList);
-                complaints.setAdapter(recyclerViewComplaintAdapter);
+                complaintAdapter = new RecyclerViewComplaintAdapter(activity, complaintList);
+                rvComplaints.setAdapter(complaintAdapter);
             }
 
             @Override

@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -31,7 +30,7 @@ public class TabWhibExtra extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_whib_extra, container, false);
 
-        resourceLV = rootView.findViewById(R.id.resourceLV);
+        resourceLV = rootView.findViewById(R.id.lv_resources);
         Button subscribe = rootView.findViewById(R.id.signWhibExtraBT);
 
         subscribe.setOnClickListener(v -> {
@@ -47,7 +46,7 @@ public class TabWhibExtra extends Fragment {
                 for (DataSnapshot snap : dataSnapshot.getChildren()) {
                     advantages.add(snap.getValue(Advantage.class));
                 }
-                ArrayAdapter adapter = new AdvantageAdapter(getContext(), advantages);
+                AdvantageAdapter adapter = new AdvantageAdapter(getContext(), advantages);
                 resourceLV.setAdapter(adapter);
             }
 

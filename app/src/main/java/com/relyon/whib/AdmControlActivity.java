@@ -65,7 +65,7 @@ public class AdmControlActivity extends AppCompatActivity {
                         }
                     }
                 }
-                AdapterAdmServer adapter = new AdapterAdmServer(serverListFiltered, activity);
+                AdmServerAdapter adapter = new AdmServerAdapter(serverListFiltered, activity);
                 admServerList.setAdapter(adapter);
             }
 

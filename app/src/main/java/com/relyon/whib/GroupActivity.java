@@ -47,9 +47,8 @@ public class GroupActivity extends AppCompatActivity {
     private boolean isForSticker = true;
     private boolean cameFromProfile = false;
     private TextView empty;
-    private Activity activity;
     private Comment comment;
-    private boolean isFirst = true;
+    private RecyclerViewArgumentAdapter adapter;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -58,7 +57,8 @@ public class GroupActivity extends AppCompatActivity {
         EmojiManager.install(new GoogleEmojiProvider());
         setContentView(R.layout.activity_group);
 
-        activity = this;
+        adapter = null;
+        Activity activity = this;
 
         if (getIntent().hasExtra("cameFromProfile")) {
             if (getIntent().getBooleanExtra("cameFromProfile", false)) {
@@ -77,6 +77,12 @@ public class GroupActivity extends AppCompatActivity {
         EmojiButton emojiButton = findViewById(R.id.sendEmoji);
         ImageView sendIcon = findViewById(R.id.sendIcon);
         ImageView showComment = findViewById(R.id.showComment);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
+        layoutManager.setStackFromEnd(false);
+        rvArgument.setLayoutManager(layoutManager);
+        argumentList = new ArrayList<>();
+        adapter = new RecyclerViewArgumentAdapter(activity, argumentList);
 
         if (argumentList.isEmpty() && !Util.getGroup().isReady() && Util.getUser().getUserUID().equals(Util.getComment().getAuthorsUID())) {
             empty.setVisibility(View.VISIBLE);
@@ -108,30 +114,13 @@ public class GroupActivity extends AppCompatActivity {
                         .child("commentList").child(commentId).child("group").child("argumentList").addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                        if (argumentList == null) {
-                            argumentList = new ArrayList<>();
-                        }
                         argumentList.add(snapshot.getValue(Argument.class));
-                        if (comment != null && comment.getGroup() != null && comment.getGroup().getArgumentList() != null) {
-                            LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
-                            layoutManager.setStackFromEnd(false);
-                            rvArgument.setLayoutManager(layoutManager);
-                            RecyclerViewArgumentAdapter adapter = null;
-                            if (isFirst) {
-                                adapter = new RecyclerViewArgumentAdapter(activity, argumentList);
-                                rvArgument.setAdapter(adapter);
-                            }
-                            if (!isFirst && adapter != null) {
-                                adapter.notifyDataSetChanged();
-                            }
-                            isFirst = false;
-                            rvArgument.scrollToPosition(argumentList.size() - 1);
-                        }
+                        rvArgument.setAdapter(adapter);
+                        rvArgument.scrollToPosition(argumentList.size() - 1);
                     }
 
                     @Override
                     public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
                     }
 
                     @Override
@@ -202,7 +191,7 @@ public class GroupActivity extends AppCompatActivity {
 
         sendView.setOnClickListener(v -> {
             if (isForSticker) {
-                DialogStickers cdd = new DialogStickers(this, Util.getUser().getProducts() != null ? new ArrayList<>(Util.getUser().getProducts().values()) : new ArrayList<>(), argumentList, comment, null, null);
+                DialogStickers cdd = new DialogStickers(this, Util.getUser().getProducts() != null ? new ArrayList<>(Util.getUser().getProducts().values()) : new ArrayList<>(), argumentList, null, null, null);
                 cdd.show();
             } else {
                 if (inputMessage.getText() != null && !inputMessage.getText().toString().isEmpty()) {

@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Objects;
+
 public class AboutUsActivity extends AppCompatActivity {
 
     @Override
@@ -22,9 +24,9 @@ public class AboutUsActivity extends AppCompatActivity {
         try {
             PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
             String versionTxt = pInfo.versionName;
-            version.setText("Version " + versionTxt);
+            version.setText(getString(R.string.version, versionTxt));
         } catch (PackageManager.NameNotFoundException e) {
-            Log.e("Error", e.getMessage());
+            Log.e(getString(R.string.error), Objects.requireNonNull(e.getMessage()));
         }
 
         back.setOnClickListener(v -> onBackPressed());

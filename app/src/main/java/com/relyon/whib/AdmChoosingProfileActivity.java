@@ -6,15 +6,13 @@ import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.relyon.whib.modelo.Util;
-
-public class AdmChoosingActivity extends AppCompatActivity {
+public class AdmChoosingProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_adm_choosing);
+        setContentView(R.layout.activity_adm_choosing_profile);
 
         LinearLayout adm = findViewById(R.id.adm);
         LinearLayout extra = findViewById(R.id.extra);
@@ -26,15 +24,11 @@ public class AdmChoosingActivity extends AppCompatActivity {
         });
 
         extra.setOnClickListener(v -> {
-            Util.getUser().setExtra(true);
-            Util.getmUserDatabaseRef().child(Util.getUser().getUserUID()).setValue(Util.getUser());
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         });
 
         standard.setOnClickListener(v -> {
-            Util.getUser().setExtra(false);
-            Util.getmUserDatabaseRef().child(Util.getUser().getUserUID()).setValue(Util.getUser());
             Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);
         });

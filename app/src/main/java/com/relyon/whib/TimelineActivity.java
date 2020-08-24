@@ -147,7 +147,7 @@ public class TimelineActivity extends AppCompatActivity {
         final ImageButton commentBt = findViewById(R.id.commentIcon);
         leaveCommentLayout = findViewById(R.id.leaveCommentLayout);
         menu = findViewById(R.id.menu);
-        rvComments = findViewById(R.id.rvComments);
+        rvComments = findViewById(R.id.rv_comments);
         emptyList = findViewById(R.id.emptyList);
         spinner = findViewById(R.id.filters);
 
@@ -206,13 +206,10 @@ public class TimelineActivity extends AppCompatActivity {
         });
 
         menu.setOnClickListener(v -> {
-            //Creating the instance of PopupMenu
             PopupMenu popup = new PopupMenu(TimelineActivity.this, menu);
-            //Inflating the Popup using xml file
             popup.getMenuInflater()
                     .inflate(R.menu.menu_timeline, popup.getMenu());
 
-            //registering popup with OnMenuItemClickListener
             popup.setOnMenuItemClickListener(item -> {
                 if (Util.getUser().isFirstTime()) {
                     Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false);
@@ -256,8 +253,8 @@ public class TimelineActivity extends AppCompatActivity {
 
     private void initRecyclerViewComment() {
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
-        rvComments = findViewById(R.id.rvComments);
-        layoutManager.setStackFromEnd(true);
+        rvComments = findViewById(R.id.rv_comments);
+        layoutManager.setStackFromEnd(false);
         rvComments.setLayoutManager(layoutManager);
         adapter = new RecyclerViewCommentAdapter(this, activity);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvComments.getContext(),

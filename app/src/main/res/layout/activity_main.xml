@@ -17,11 +17,10 @@
         android:orientation="horizontal">
 
         <LinearLayout
-            android:id="@+id/profile"
+            android:id="@+id/profile_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:onClick="profile"
             android:orientation="vertical"
             android:visibility="gone">
 
@@ -31,7 +30,6 @@
                 android:layout_gravity="end"
                 android:layout_weight="1"
                 android:contentDescription="@string/profile"
-                android:onClick="profile"
                 android:src="@drawable/profile_icon"
                 android:text="@string/profile" />
 
@@ -40,7 +38,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/text_spacing"
                 android:gravity="center"
-                android:onClick="profile"
                 android:text="@string/profile"
                 android:textSize="@dimen/small_text" />
         </LinearLayout>
@@ -56,10 +53,10 @@
             android:textSize="@dimen/subtitle" />
 
         <LinearLayout
+            android:id="@+id/logout_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:onClick="logout"
             android:orientation="vertical">
 
             <ImageButton
@@ -97,16 +94,17 @@
             android:background="@color/colorAccent" />
 
         <LinearLayout
-            android:id="@+id/secondaryServersLayout"
+            android:id="@+id/secondary_servers_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/progressBar"
+                android:id="@+id/progress_bar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center">
+                android:gravity="center"
+                android:visibility="visible">
 
                 <ProgressBar
                     android:layout_width="wrap_content"
@@ -114,7 +112,7 @@
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewSec"
+                android:id="@+id/recycler_view_section"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical" />
@@ -131,7 +129,7 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/choseSubjectButton"
+            android:id="@+id/choose_subject_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

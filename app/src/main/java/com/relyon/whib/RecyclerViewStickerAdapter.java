@@ -59,7 +59,7 @@ public class RecyclerViewStickerAdapter extends RecyclerView.Adapter<RecyclerVie
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         User user = snapshot.getValue(User.class);
-                        if (user != null && user.isExtra()) {
+                        if (user != null) {
                             if (user.isExtra()) {
                                 holder.bg.setBackground(context.getResources().getDrawable(R.drawable.rounded_accent));
                             } else if (comment.isAGroup()) {

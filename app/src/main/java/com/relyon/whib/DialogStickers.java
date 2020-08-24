@@ -25,7 +25,7 @@ import java.util.List;
 
 public class DialogStickers extends Dialog {
 
-    public Dialog d;
+    public Dialog dialog;
     private List<Product> productList;
     private List<Argument> argumentList;
     private Comment comment;
@@ -45,7 +45,7 @@ public class DialogStickers extends Dialog {
         this.comment = comment;
         this.recyclerViewCommentAdapter = recyclerViewCommentAdapter;
         this.position = position;
-        this.d = this;
+        this.dialog = this;
     }
 
     @Override
@@ -62,26 +62,31 @@ public class DialogStickers extends Dialog {
         } else {
             empty.setVisibility(View.GONE);
         }
-
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
-        Util.mSubjectDatabaseRef.child(comment.getSubject()).child("servers").child(comment.getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Comment comment = snapshot.getValue(Comment.class);
-                if (comment != null) {
-                    RecyclerViewGalleryAdapter adapter = new RecyclerViewGalleryAdapter(Util.getUser().getProducts(), productList, getContext(), false, true, false, argumentList, d, comment, recyclerViewCommentAdapter, position);
-                    DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
-                            layoutManager.getOrientation());
-                    sticker.addItemDecoration(dividerItemDecoration);
-                    sticker.setLayoutManager(layoutManager);
-                    sticker.setAdapter(adapter);
+        final RecyclerViewGalleryAdapter[] adapter = new RecyclerViewGalleryAdapter[1];
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
+                layoutManager.getOrientation());
+        sticker.addItemDecoration(dividerItemDecoration);
+        sticker.setLayoutManager(layoutManager);
+        if (comment != null) {
+            Util.mSubjectDatabaseRef.child(comment.getSubject()).child("servers").child(comment.getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Comment comment = snapshot.getValue(Comment.class);
+                    if (comment != null) {
+                        adapter[0] = new RecyclerViewGalleryAdapter(Util.getUser().getProducts(), productList, getContext(), false, true, false, argumentList, dialog, comment, recyclerViewCommentAdapter, position);
+                        sticker.setAdapter(adapter[0]);
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
+                }
+            });
+        } else {
+            adapter[0] = new RecyclerViewGalleryAdapter(Util.getUser().getProducts(), productList, getContext(), false, true, false, argumentList, dialog, null, recyclerViewCommentAdapter, position);
+            sticker.setAdapter(adapter[0]);
+        }
     }
 }

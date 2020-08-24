@@ -17,8 +17,6 @@ import java.util.List;
 
 public class DialogShowComment extends Dialog {
 
-    private RecyclerView rvComment;
-    private LinearLayout bg;
     private AppCompatActivity a;
     private Context context;
     private List<Comment> comment = new ArrayList<>();
@@ -35,8 +33,8 @@ public class DialogShowComment extends Dialog {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_show_comment);
-        rvComment = findViewById(R.id.rvComment);
-        bg = findViewById(R.id.bg);
+        RecyclerView rvComment = findViewById(R.id.rvComment);
+        LinearLayout bg = findViewById(R.id.bg);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(a, LinearLayoutManager.VERTICAL, true);
         layoutManager.setStackFromEnd(true);

@@ -26,14 +26,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class AdapterAdmServer extends BaseAdapter {
+public class AdmServerAdapter extends BaseAdapter {
 
     private final ArrayList<Server> admServerList;
     private final AppCompatActivity act;
     private int comments = 0;
     private int servers = 0;
 
-    AdapterAdmServer(ArrayList<Server> admServerList, AppCompatActivity act) {
+    AdmServerAdapter(ArrayList<Server> admServerList, AppCompatActivity act) {
         this.admServerList = admServerList;
         this.act = act;
     }

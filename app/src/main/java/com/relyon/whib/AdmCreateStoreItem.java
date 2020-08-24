@@ -29,7 +29,7 @@ public class AdmCreateStoreItem extends AppCompatActivity {
     public static final int PICK_IMAGE = 1;
     public static final int PICK_IMAGE_SHADOW = 2;
     public static final int PERMISSION_CODE = 16;
-    private Uri shadowPath;
+    private Uri imageShadowURI;
     private EditText title;
     private EditText description;
     private EditText price;
@@ -67,7 +67,7 @@ public class AdmCreateStoreItem extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_SHADOW && data != null) {
-            shadowPath = Uri.parse(data.getData() + ".png");
+            imageShadowURI = Uri.parse(data.getData() + ".png");
         }
         if (requestCode == PICK_IMAGE) {
             if (!title.getText().toString().trim().equals("")) {
@@ -78,8 +78,8 @@ public class AdmCreateStoreItem extends AppCompatActivity {
                             Product product = new Product(UUID.randomUUID().toString(), title.getText().toString().toLowerCase(), data.getData().toString(), title.getText().toString(), description.getText().toString(), Float.parseFloat(price.getText().toString()), new Date().getTime());
                             //Firebase
                             StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-                            if (shadowPath != null) {
-                                uploadImage(Uri.parse(data.getData() + ".png"), shadowPath, storageReference, product);
+                            if (imageShadowURI != null) {
+                                uploadImage(Uri.parse(data.getData() + ".png"), imageShadowURI, storageReference, product);
                             } else {
                                 Toast.makeText(this, "Não se esqueça da sombra", Toast.LENGTH_SHORT).show();
                             }

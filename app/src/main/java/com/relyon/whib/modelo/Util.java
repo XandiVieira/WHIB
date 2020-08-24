@@ -14,7 +14,6 @@ public class Util {
     public static FirebaseUser fbUser;
     public static DatabaseReference mDatabaseRef;
     public static DatabaseReference mUserDatabaseRef;
-    public static DatabaseReference mServerDatabaseRef;
     public static DatabaseReference mSubjectDatabaseRef;
     public static DatabaseReference mGroupDatabaseRef;
     public static DatabaseReference mAdvantagesDatabaseRef;
@@ -64,14 +63,6 @@ public class Util {
 
     public static void setmUserDatabaseRef(DatabaseReference mUserDatabaseRef) {
         Util.mUserDatabaseRef = mUserDatabaseRef;
-    }
-
-    public static DatabaseReference getmServerDatabaseRef() {
-        return mServerDatabaseRef;
-    }
-
-    public static void setmServerDatabaseRef(DatabaseReference mServerDatabaseRef) {
-        Util.mServerDatabaseRef = mServerDatabaseRef;
     }
 
     public static int getNumberOfServers() {
@@ -171,16 +162,21 @@ public class Util {
         Util.mSubjectDatabaseRef = mSubjectDatabaseRef;
     }
 
-    public static String getCurrentDate() {
+    public static String getCurrentDate(String pattern) {
 
-        SimpleDateFormat dateFormat_hora = new SimpleDateFormat("yyyy/MM/dd - HH:mm:ss");
+        //yyyy/MM/dd - HH:mm:ss
+        SimpleDateFormat date_format = new SimpleDateFormat(pattern);
 
         Date data = new Date();
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(data);
-        Date data_atual = cal.getTime();
+        Date current_date = cal.getTime();
 
-        return dateFormat_hora.format(data_atual);
+        return date_format.format(current_date);
+    }
+
+    public static int retrieveNumberOfServer(){
+        return 0;
     }
 }
