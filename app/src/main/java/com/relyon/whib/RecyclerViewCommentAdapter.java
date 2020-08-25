@@ -481,35 +481,14 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         adView.setNativeAd(nativeAd);
     }
 
-    void addAll(List<Comment> newComments, boolean isFirst, boolean newComment, boolean reset) {
+    void addAll(List<Comment> newComments, boolean reset) {
         if (reset) {
             elements.clear();
             elements.addAll(newComments);
             notifyDataSetChanged();
         } else {
-            if (newComment) {
-                if (newComments.size() > 0) {
-                    elements.add(newComments.get(0));
-                    notifyItemRangeInserted(elements.size(), 1);
-                }
-            } else {
-                if (isFirst) {
-                    elements.addAll(newComments);
-                    notifyItemRangeInserted(0, newComments.size());
-                } else {
-                    if (newComments.size() > mPostsPerPage) {
-                        for (int i = newComments.size() - 1; i > 0; i--) {
-                            elements.add(0, newComments.get(i));
-                        }
-                        notifyItemRangeInserted(0, newComments.size() - 1);
-                    } else {
-                        for (int i = newComments.size() - 1; i >= 0; i--) {
-                            elements.add(0, newComments.get(i));
-                        }
-                        notifyItemRangeInserted(0, newComments.size());
-                    }
-                }
-            }
+            elements.addAll(newComments);
+            notifyItemRangeInserted(0, newComments.size());
         }
     }
 
@@ -531,15 +510,10 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         notifyDataSetChanged();
     }
 
-    String getLastItemId(boolean isFirst) {
+    String getLastItemId() {
         if (elements.size() > 0) {
-            if (isFirst) {
-                Comment comment = (Comment) elements.get(0);
-                return comment.getCommentUID();
-            } else {
-                Comment comment = (Comment) elements.get(0);
-                return comment.getCommentUID();
-            }
+            Comment comment = (Comment) elements.get(0);
+            return comment.getCommentUID();
         } else {
             return null;
         }

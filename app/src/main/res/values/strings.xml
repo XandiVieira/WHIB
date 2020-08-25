@@ -114,8 +114,6 @@
     <string name="report_sent">A sua denúncia foi enviada com sucesso!</string>
     <string name="cant_report_own_comment">Você não pode reportar seu próprio comentário!</string>
     <string name="select_a_reason">Selecione uma das razões anteriores!</string>
-    <string name="admob_app_id">ca-app-pub-1676578761693318~6855911877</string>
-    <string name="ad_unit_id">ca-app-pub-1676578761693318/6552659541</string>
     <string name="make_first_comment">Seja o primeiro a comentar sobre este assunto!</string>
     <string name="reportReason">Motivo:</string>
     <string name="comment">Comentário:</string>
@@ -188,6 +186,7 @@
     <string name="all_advantages">Confira todas as vantagens que você pode aproveitar <u>AQUI</u></string>
     <string name="server_empty_plase_select_another">Este servidor está vazio, por favor escolha outro para começar.</string>
     <string name="error">"Error: "</string>
+    <string name="full_server">Servidor Lotado</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

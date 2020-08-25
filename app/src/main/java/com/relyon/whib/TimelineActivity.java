@@ -30,16 +30,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Comment;
+import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,25 +56,25 @@ import static java.util.Objects.requireNonNull;
 
 public class TimelineActivity extends AppCompatActivity {
 
-    private ImageView menu;
+    private User user;
+    private ImageView menuIcon;
     private LinearLayout leaveCommentLayout;
     private TextView emptyList;
-    private String subjectObj;
+    private String subject;
     private RecyclerView rvComments;
     private LinearLayoutManager layoutManager;
     private AppCompatActivity activity;
     private Spinner spinner;
-    private int NUMBER_OF_ADS = 0;
-    private List<UnifiedNativeAd> mNativeAds = new ArrayList<>();
-    private RecyclerViewCommentAdapter adapter;
+    private int number_of_ads = 0;
+    private List<UnifiedNativeAd> nativeAdsList = new ArrayList<>();
+    private RecyclerViewCommentAdapter commentAdapter;
     private boolean mIsLoading = false;
-    private boolean isFirst = true;
-    private boolean mayPass = false;
     private boolean reset = false;
-    private boolean hasPassed = false;
-    private int filter = 0;
+    private boolean spinnerWasCalledYet = false;
+    private int spinnerFilterOption = 0;
     private FancyShowCaseQueue queue = new FancyShowCaseQueue();
     private Query query;
+    private DatabaseReference baseReference;
 
     int menuWidth;
     int menuHeight;
@@ -100,30 +104,18 @@ public class TimelineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
-        if (!Util.getUser().isFirstTime() && !Util.getUser().isExtra()) {
-            List<String> testDeviceIds = Collections.singletonList("3DF6979E4CCB56C2A91510C1A9BCC253");
-            RequestConfiguration configuration =
-                    new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
-
-            MobileAds.setRequestConfiguration(configuration);
-            MobileAds.initialize(this,
-                    getString(R.string.admob_app_id));
-        }
-
-        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").addChildEventListener(new ChildEventListener() {
+        baseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                if (mayPass) {
-                    List<Comment> comments = new ArrayList<>();
-                    comments.add(dataSnapshot.getValue(Comment.class));
-                    adapter.addAll(comments, true, true, false);
-                    emptyList.setVisibility(View.GONE);
-                }
+                List<Comment> comments = new ArrayList<>();
+                comments.add(dataSnapshot.getValue(Comment.class));
+                commentAdapter.addAll(comments, false);
+                emptyList.setVisibility(View.GONE);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                adapter.notifyDataSetChanged();
+                commentAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -146,15 +138,15 @@ public class TimelineActivity extends AppCompatActivity {
         TextView subject = findViewById(R.id.subject);
         final ImageButton commentBt = findViewById(R.id.commentIcon);
         leaveCommentLayout = findViewById(R.id.leaveCommentLayout);
-        menu = findViewById(R.id.menu);
+        menuIcon = findViewById(R.id.menu);
         rvComments = findViewById(R.id.rv_comments);
         emptyList = findViewById(R.id.emptyList);
         spinner = findViewById(R.id.filters);
 
         activity = this;
 
-        subjectObj = Util.getServer().getSubject();
-        if (subjectObj != null) {
+        this.subject = Util.getServer().getSubject();
+        if (this.subject != null) {
             subject.setText(Util.getServer().getSubject());
         }
 
@@ -166,22 +158,19 @@ public class TimelineActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (hasPassed) {
+                if (spinnerWasCalledYet) {
                     if (position == 0) {
-                        filter = 0;
-                        query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage);
+                        query = baseReference.orderByKey().limitToLast(commentAdapter.mPostsPerPage);
                     } else if (position == 1) {
-                        filter = 1;
-                        query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("rating").endAt(adapter.getLastRate()).limitToLast(adapter.mPostsPerPage + 2);
+                        query = baseReference.orderByChild("rating").endAt(commentAdapter.getLastRate()).limitToLast(commentAdapter.mPostsPerPage + 2);
                     } else if (position == 2) {
-                        filter = 2;
-                        query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("agroup").equalTo(true).limitToLast(adapter.mPostsPerPage + 2);
+                        query = baseReference.orderByChild("agroup").equalTo(true).limitToLast(commentAdapter.mPostsPerPage + 2);
                     }
-                    isFirst = true;
+                    spinnerFilterOption = position;
                     reset = true;
                     getComments();
                 }
-                hasPassed = true;
+                spinnerWasCalledYet = true;
             }
 
             @Override
@@ -189,9 +178,6 @@ public class TimelineActivity extends AppCompatActivity {
 
             }
         });
-
-        initRecyclerViewComment();
-        getComments();
 
         rvComments.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -205,33 +191,33 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
 
-        menu.setOnClickListener(v -> {
-            PopupMenu popup = new PopupMenu(TimelineActivity.this, menu);
+        menuIcon.setOnClickListener(v -> {
+            PopupMenu popup = new PopupMenu(TimelineActivity.this, menuIcon);
             popup.getMenuInflater()
                     .inflate(R.menu.menu_timeline, popup.getMenu());
 
             popup.setOnMenuItemClickListener(item -> {
-                if (Util.getUser().isFirstTime()) {
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false);
+                if (user.isFirstTime()) {
+                    Util.mUserDatabaseRef.child(user.getUserUID()).child("firstTime").setValue(false);
                 }
                 if (item.getTitle().equals(getString(R.string.settings))) {
-                    Intent intent = new Intent(this, SettingsActivity.class).putExtra("showLastWarn", Util.getUser().isFirstTime());
+                    Intent intent = new Intent(this, SettingsActivity.class).putExtra("showLastWarn", user.isFirstTime());
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.store))) {
-                    Intent intent = new Intent(this, StoreActivity.class).putExtra("showLastWarn", Util.getUser().isFirstTime());
+                    Intent intent = new Intent(this, StoreActivity.class).putExtra("showLastWarn", user.isFirstTime());
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.profile))) {
-                    Intent intent = new Intent(this, ProfileActivity.class).putExtra("showLastWarn", Util.getUser().isFirstTime());
+                    Intent intent = new Intent(this, ProfileActivity.class).putExtra("showLastWarn", user.isFirstTime());
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.tips))) {
-                    Intent intent = new Intent(this, TipsActivity.class).putExtra("cameFromTimeline", true).putExtra("showLastWarn", Util.getUser().isFirstTime());
+                    Intent intent = new Intent(this, TipsActivity.class).putExtra("cameFromTimeline", true).putExtra("showLastWarn", user.isFirstTime());
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.about))) {
-                    Intent intent = new Intent(this, AboutActivity.class).putExtra("showLastWarn", Util.getUser().isFirstTime());
+                    Intent intent = new Intent(this, AboutActivity.class).putExtra("showLastWarn", user.isFirstTime());
                     startActivity(intent);
                     return true;
                 }
@@ -240,51 +226,51 @@ public class TimelineActivity extends AppCompatActivity {
             popup.show();
         });
 
-        back.setOnClickListener(v -> {
-            onBackPressed();
-        });
+        back.setOnClickListener(v -> onBackPressed());
 
-        commentBt.setOnClickListener(v -> {
-            openCommentBox();
-        });
+        commentBt.setOnClickListener(v -> openCommentBox());
 
         leaveCommentLayout.setOnClickListener(v -> openCommentBox());
     }
 
+    private void initializeAds() {
+        if (!user.isFirstTime() && !user.isExtra()) {
+            List<String> testDeviceIds = Collections.singletonList(Constants.TEST_DEVICE_ID);
+            RequestConfiguration configuration =
+                    new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+            MobileAds.setRequestConfiguration(configuration);
+            MobileAds.initialize(this,
+                    Constants.ADMOB_APP_ID);
+            if (!user.isFirstTime() && !user.isExtra()) {
+                new Thread(this::loadNativeAds).start();
+            }
+        }
+    }
+
     private void initRecyclerViewComment() {
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
-        rvComments = findViewById(R.id.rv_comments);
         layoutManager.setStackFromEnd(false);
+        rvComments = findViewById(R.id.rv_comments);
         rvComments.setLayoutManager(layoutManager);
-        adapter = new RecyclerViewCommentAdapter(this, activity);
+        commentAdapter = new RecyclerViewCommentAdapter(this, activity);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvComments.getContext(),
                 layoutManager.getOrientation());
         rvComments.addItemDecoration(dividerItemDecoration);
         dividerItemDecoration.setDrawable(requireNonNull(ContextCompat.getDrawable(this, R.drawable.divider)));
-        rvComments.setAdapter(adapter);
-        query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage);
+        rvComments.setAdapter(commentAdapter);
+        query = baseReference.orderByKey().limitToLast(commentAdapter.mPostsPerPage);
 
-        if (!Util.getUser().isFirstTime() && !Util.getUser().isExtra()) {
-            new Thread(this::loadNativeAds).start();
-        }
+        initializeAds();
     }
 
     private void getComments() {
         mIsLoading = true;
-        if (filter == 2) {
-            query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("agroup").equalTo(true).limitToLast(adapter.mPostsPerPage + 2);
-        } else if (filter == 1) {
-            if (isFirst) {
-                query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("rating").limitToLast(adapter.mPostsPerPage + 2);
-            } else {
-                query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByChild("rating").endAt(adapter.getLastRate()).limitToLast(adapter.mPostsPerPage + 2);
-            }
+        if (spinnerFilterOption == 2) {
+            query = baseReference.orderByChild("agroup").equalTo(true).limitToLast(commentAdapter.mPostsPerPage + 2);
+        } else if (spinnerFilterOption == 1) {
+            query = baseReference.orderByChild("rating").endAt(commentAdapter.getLastRate()).limitToLast(commentAdapter.mPostsPerPage + 2);
         } else {
-            if (isFirst) {
-                query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().limitToLast(adapter.mPostsPerPage + 2);
-            } else {
-                query = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").orderByKey().endAt(adapter.getLastItemId(false)).limitToLast(adapter.mPostsPerPage + 2);
-            }
+            query = baseReference.orderByKey().endAt(commentAdapter.getLastItemId()).limitToLast(commentAdapter.mPostsPerPage + 2);
         }
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -295,14 +281,14 @@ public class TimelineActivity extends AppCompatActivity {
                     for (DataSnapshot snap : dataSnapshot.getChildren()) {
                         if (dataSnapshot.getChildrenCount() > 0) {
                             Comment comment = snap.getValue(Comment.class);
-                            if (!adapter.commentExists(snap.getKey()) || reset) {
+                            if (!commentAdapter.commentExists(snap.getKey()) || reset) {
                                 comments.add(comment);
                             }
                         }
                     }
                 }
-                adapter.addAll(comments, adapter.getLastItemId(false) == null, false, reset);
-                if (comments.size() == 0 && Util.getUser().isFirstTime()) {
+                commentAdapter.addAll(comments, reset);
+                if (comments.size() == 0 && user.isFirstTime()) {
                     startActivity(new Intent(activity, MainActivity.class).putExtra("serverEmpty", true));
                 }
                 reset = false;
@@ -311,8 +297,7 @@ public class TimelineActivity extends AppCompatActivity {
                     spinner.setVisibility(View.VISIBLE);
                 }
                 mIsLoading = false;
-                NUMBER_OF_ADS = comments.size() / 3;
-                isFirst = false;
+                number_of_ads = comments.size() / 3;
                 new Thread(() -> loadNativeAds()).start();
             }
 
@@ -324,26 +309,23 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void loadNativeAds() {
-        if (!Util.getUser().isFirstTime() && !Util.getUser().isExtra()) {
-            mNativeAds.clear();
-            AdLoader.Builder builder = new AdLoader.Builder(this, getString(R.string.ad_unit_id));
+        if (!user.isFirstTime() && !user.isExtra()) {
+            nativeAdsList.clear();
+            AdLoader.Builder builder = new AdLoader.Builder(this, Constants.AD_UNIT_ID);
             // The AdLoader used to load ads.
             AdLoader adLoader = builder.forUnifiedNativeAd(
-                    unifiedNativeAd -> {
-                        mNativeAds.add(unifiedNativeAd);
-                    }).withAdListener(
+                    unifiedNativeAd -> nativeAdsList.add(unifiedNativeAd)).withAdListener(
                     new AdListener() {
                         @Override
-                        public void onAdFailedToLoad(int errorCode) {
-                            Log.e("TimelineActivity", "The previous native ad failed to load. Attempting to"
-                                    + " load another.");
+                        public void onAdFailedToLoad(LoadAdError loadAdError) {
+                            Log.e(getString(R.string.error), loadAdError.getMessage());
                         }
 
                         @Override
                         public void onAdLoaded() {
                             super.onAdLoaded();
-                            if (mNativeAds.size() == NUMBER_OF_ADS && !Util.getUser().isFirstTime()) {
-                                insertAdsInMenuItems();
+                            if (nativeAdsList.size() == number_of_ads && !user.isFirstTime()) {
+                                insertAdsInTimeline();
                             }
                         }
                     }).build();
@@ -351,29 +333,26 @@ public class TimelineActivity extends AppCompatActivity {
             // Load the Native Express ad.
             try {
                 Thread.sleep(3000);
-                adLoader.loadAds(new AdRequest.Builder().build(), NUMBER_OF_ADS);
+                adLoader.loadAds(new AdRequest.Builder().build(), number_of_ads);
             } catch (InterruptedException e) {
-                Log.d("Catch", e.getMessage());
+                Log.d(getString(R.string.error), requireNonNull(e.getMessage()));
             }
         }
     }
 
-    private void insertAdsInMenuItems() {
-        adapter.addAllAds(mNativeAds);
+    private void insertAdsInTimeline() {
+        commentAdapter.addAllAds(nativeAdsList);
     }
 
     private void openCommentBox() {
-        mayPass = true;
-        DialogPostComment cdd = new DialogPostComment(this, subjectObj);
+        DialogPostComment cdd = new DialogPostComment(this, subject);
         cdd.show();
     }
 
     private void callTour() {
-        if (Util.getUser().isFirstTime()) {
+        if (user.isFirstTime()) {
             final FancyShowCaseView fancyShowCaseView = new FancyShowCaseView.Builder(this).
-                    customView(R.layout.custom_tour_timeline_comment, view -> {
-                        view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false));
-                    }).focusBorderSize(10)
+                    customView(R.layout.custom_tour_timeline_comment, view -> view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mUserDatabaseRef.child(user.getUserUID()).child("firstTime").setValue(false))).focusBorderSize(10)
                     .focusRectAtPosition((int) firstCommentX + (firstCommentWidth / 2), (int) firstCommentY + (firstCommentHeight / 4), firstCommentWidth, firstCommentHeight)
                     .build();
 
@@ -401,8 +380,8 @@ public class TimelineActivity extends AppCompatActivity {
 
             FancyShowCaseView fancyShowCaseView5 = new FancyShowCaseView.Builder(this).
                     customView(R.layout.custom_tour_timeline_menu_opened, view -> {
-                        if (menu.isShown()) {
-                            menu.performClick();
+                        if (menuIcon.isShown()) {
+                            menuIcon.performClick();
                         }
                     }).focusBorderSize(10)
                     .focusRectAtPosition(750, (int) (menuY + (menuHeight * 3.25)), 700, 850)
@@ -414,7 +393,7 @@ public class TimelineActivity extends AppCompatActivity {
             queue.add(fancyShowCaseView4);
             queue.add(fancyShowCaseView5);
             queue.setCompleteListener(() -> {
-                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false);
+                Util.mUserDatabaseRef.child(user.getUserUID()).child("firstTime").setValue(false);
                 DialogFinalWarn warn = new DialogFinalWarn(activity);
                 warn.show();
             });
@@ -422,12 +401,13 @@ public class TimelineActivity extends AppCompatActivity {
         }
     }
 
-    private BroadcastReceiver menuReceiver = new BroadcastReceiver() {
+    //Called after elements dimensions are calculated
+    private BroadcastReceiver layoutElementsReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (Util.getUser().isFirstTime()) {
+            if (user.isFirstTime()) {
                 callTour();
-                unregisterReceiver(menuReceiver);
+                unregisterReceiver(layoutElementsReceiver);
             }
         }
     };
@@ -441,11 +421,10 @@ public class TimelineActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         if (Util.getServer() != null) {
-            Util.getServer().getTempInfo().setQtdUsers(Util.getServer().getTempInfo().getQtdUsers() - 1);
-            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
+            decreaseServerNumberOfUsers();
         }
         Util.setServer(null);
-        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("tempInfo").child("currentServer").setValue(null);
+        Util.mUserDatabaseRef.child(user.getUserUID()).child(Constants.DATABASE_REF_TEMP_INFO).child("currentServer").setValue(null);
         finish();
         startActivity(new Intent(this, MainActivity.class));
     }
@@ -453,11 +432,37 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        baseReference = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child("timeline").child("commentList");
+        retrieveUser();
+        increaseServerNumberOfUsers();
+        calculateElementsDimensions();
+        verifyServerIsActive();
+    }
 
+    private void retrieveUser() {
+        Util.mUserDatabaseRef.child(Util.fbUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                user = snapshot.getValue(User.class);
+                if (user != null) {
+                    initRecyclerViewComment();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void increaseServerNumberOfUsers() {
         Util.getServer().getTempInfo().setQtdUsers(Util.getServer().getTempInfo().getQtdUsers() + 1);
-        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
+        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).setValue(Util.getServer().getTempInfo());
+    }
 
-        if (Util.getUser().isFirstTime()) {
+    private void calculateElementsDimensions() {
+        if (user.isFirstTime()) {
             leaveCommentLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
@@ -480,14 +485,14 @@ public class TimelineActivity extends AppCompatActivity {
                             spinnerX = location[0];
                             spinnerY = location[1];
 
-                            menu.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                            menuIcon.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                                 @Override
                                 public void onGlobalLayout() {
-                                    menu.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                                    menuHeight = menu.getHeight();
-                                    menuWidth = menu.getWidth();
+                                    menuIcon.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                    menuHeight = menuIcon.getHeight();
+                                    menuWidth = menuIcon.getWidth();
                                     int[] location = new int[2];
-                                    menu.getLocationOnScreen(location);
+                                    menuIcon.getLocationOnScreen(location);
                                     menuX = location[0];
                                     menuY = location[1];
 
@@ -503,7 +508,7 @@ public class TimelineActivity extends AppCompatActivity {
                                             firstCommentY = location[1];
                                             IntentFilter intentFilter = new IntentFilter();
                                             intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-                                            registerReceiver(menuReceiver, intentFilter);
+                                            registerReceiver(layoutElementsReceiver, intentFilter);
                                         }
                                     });
                                 }
@@ -513,13 +518,16 @@ public class TimelineActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void verifyServerIsActive() {
         if (Util.getServer() != null) {
-            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("activated").addValueEventListener(new ValueEventListener() {
+            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TEMP_ACTIVATED).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Boolean active = dataSnapshot.getValue(Boolean.class);
                     if (active != null && !active) {
-                        Toast.makeText(activity, "Servidor Lotado", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, R.string.full_server, Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(activity, MainActivity.class));
                     }
                 }
@@ -537,9 +545,13 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        decreaseServerNumberOfUsers();
+    }
+
+    private void decreaseServerNumberOfUsers() {
         if (Util.getServer() != null) {
             Util.getServer().getTempInfo().setQtdUsers(Util.getServer().getTempInfo().getQtdUsers() - 1);
-            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("tempInfo").setValue(Util.getServer().getTempInfo());
+            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).setValue(Util.getServer().getTempInfo());
         }
     }
 }
