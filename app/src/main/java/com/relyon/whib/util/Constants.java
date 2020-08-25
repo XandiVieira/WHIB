@@ -35,11 +35,25 @@ public class Constants {
     public static final String DATABASE_REF_ANSWERED = "answered";
     public static final String DATABASE_REF_REVIEWED = "reviewed";
     public static final String DATABASE_REF_TEMP_INFO = "tempInfo";
-    public static final String DATABASE_REF_TEMP_ACTIVATED = "activated";
+    public static final String DATABASE_REF_ACTIVATED = "activated";
     public static final String AD_UNIT_ID = "ca-app-pub-1676578761693318/6552659541";
     public static final String ADMOB_APP_ID = "ca-app-pub-1676578761693318~6855911877";
     public static final String TEST_DEVICE_ID = "3DF6979E4CCB56C2A91510C1A9BCC253";
-
-
+    public static final String DATABASE_REF_A_GROUP = "agroup";
+    public static final String DATABASE_REF_RATING = "rating";
+    public static final String SERVER_EMPTY = "serverEmpty";
+    public static final String SHOW_LAST_WARN = "showLastWarn";
+    public static final String CAME_FROM_TIMELINE = "cameFromTimeline";
+    public static final String CURRENT_SERVER = "currentServer";
+    public static final String DATABASE_REF_STICKERS = "stickers";
     public static final String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1kIgbMkPuRow85OPOKyCbt30UrOY10n8s32NQLl+mJ6HnEyn/1jalwbvK9SuamdYq843c5OlqOwzxtF8wxt1TCCSUuvYVSzO5F/JHWO45i31bogZvP8cTsXwuB8/zdCyJFlA68DJee7db50VSuhUno7zm4J8CN0bUtOJJjb3Pma0eu4tvlkY/zpuOr9HbiLbhnEmQBFHFtrLhFIY9hni/1OtXfiqOwXop3ftdqI3PcFdGXTQkjiHPk13cnG0FzkqKOQsZRwAkNnp/T1AnkvntOtJ1R3Iz6mcXUaXdn17AFlATV4nQgCOzNz8k8aiVbKCF4dmKHNbcPREozaXwLFPywIDAQAB";
+    public static final String USER_ID = "userId";
+    public static final String DATABASE_REF_QTD_USERS = "qtdUsers";
+    public static final String DATABASE_REF_USER_SENDER_ID = "userSenderUID";
+    public static final String SERVER_ID = "serverId";
+    public static final String COMMENT_ID = "commentId";
+    public static final String CAME_FROM_PROFILE = "cameFromProfile";
+    public static final String COMMENT_NUMBER = "commentNumber";
+    public static final String GROUP_NUMBER = "groupNumber";
+    public static final String SUBJECT = "subject";
 }

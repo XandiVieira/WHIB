@@ -122,7 +122,7 @@ public class RecyclerViewAlternativeAdapter extends RecyclerView.Adapter<Recycle
             text = rowView.findViewById(R.id.option);
             bg = rowView.findViewById(R.id.layout);
             partials = rowView.findViewById(R.id.partials);
-            progressBar = rowView.findViewById(R.id.progressBar);
+            progressBar = rowView.findViewById(R.id.progress_bar);
             percentage = rowView.findViewById(R.id.progressText);
             check = rowView.findViewById(R.id.check);
         }

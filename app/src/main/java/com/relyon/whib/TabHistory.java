@@ -87,7 +87,7 @@ public class TabHistory extends Fragment {
         } else {
             Collections.sort(fixedCommentList, Comment.dateComparator);
         }
-        adapter.addAll(commentList, true, false, true);
+        adapter.addAllComments(commentList, true, false, true);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class TabHistory extends Fragment {
                 rvComments.setLayoutManager(layoutManager);
                 adapter = new RecyclerViewCommentAdapter(getContext(), profileActivity, true, false);
                 rvComments.setAdapter(adapter);
-                adapter.addAll(commentList, true, false, true);
+                adapter.addAllComments(commentList, true, false, true);
             }
         }
         Util.mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
@@ -153,7 +153,7 @@ public class TabHistory extends Fragment {
                                             rvComments.setLayoutManager(layoutManager);
                                             adapter = new RecyclerViewCommentAdapter(getContext(), profileActivity, true, false);
                                             rvComments.setAdapter(adapter);
-                                            adapter.addAll(commentList, true, false, true);
+                                            adapter.addAllComments(commentList, true, false, true);
                                             empty.setVisibility(View.GONE);
                                         }
                                     } else {
@@ -161,7 +161,7 @@ public class TabHistory extends Fragment {
                                         rvComments.setLayoutManager(layoutManager);
                                         adapter = new RecyclerViewCommentAdapter(getContext(), profileActivity, true, false);
                                         rvComments.setAdapter(adapter);
-                                        adapter.addAll(commentList, true, false, true);
+                                        adapter.addAllComments(commentList, true, false, true);
                                         empty.setVisibility(View.GONE);
                                     }
                                 }

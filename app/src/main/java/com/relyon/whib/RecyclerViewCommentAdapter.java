@@ -40,6 +40,7 @@ import com.relyon.whib.modelo.Report;
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,8 +55,8 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     private static final int COMMENT_ITEM_VIEW_TYPE = 0;
     private static final int NATIVE_EXPRESS_AD_VIEW_TYPE = 1;
     int mPostsPerPage = 10;
-    private boolean isFromTabHistory;
-    private boolean isFromGroup = false;
+    private boolean calledFromTabHistory = false;
+    private boolean calledFromGroup = false;
 
     RecyclerViewCommentAdapter(@NonNull Context context, AppCompatActivity activity) {
         this.context = context;
@@ -63,12 +64,12 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         this.activity = activity;
     }
 
-    RecyclerViewCommentAdapter(@NonNull Context context, AppCompatActivity activity, boolean isFromTabHistory, boolean isFromGroup) {
+    RecyclerViewCommentAdapter(@NonNull Context context, AppCompatActivity activity, boolean calledFromTabHistory, boolean calledFromGroup) {
         this.context = context;
         this.elements = new ArrayList<>();
         this.activity = activity;
-        this.isFromTabHistory = isFromTabHistory;
-        this.isFromGroup = isFromGroup;
+        this.calledFromTabHistory = calledFromTabHistory;
+        this.calledFromGroup = calledFromGroup;
     }
 
     @NonNull
@@ -81,12 +82,165 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                         viewGroup, false);
                 return new UnifiedNativeAdViewHolder(unifiedNativeLayoutView);
             case COMMENT_ITEM_VIEW_TYPE:
-                // Fall through.
             default:
                 View menuItemLayoutView = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_comment, viewGroup, false);
                 return new CommentViewHolder(menuItemLayoutView);
         }
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder1, int position) {
+        int viewType = getItemViewType(position);
+        holder1.setIsRecyclable(false);
+
+        if (viewType == NATIVE_EXPRESS_AD_VIEW_TYPE) {
+            UnifiedNativeAd nativeAd = (UnifiedNativeAd) elements.get(position);
+            populateNativeAdView(nativeAd, ((UnifiedNativeAdViewHolder) holder1).getAdView());
+        } else {
+            CommentViewHolder holder = (CommentViewHolder) holder1;
+            final Comment comment = (Comment) elements.get(position);
+
+            retrieveCommentStickers(comment, holder);
+            handleRating(comment, holder, position);
+            handleText(comment, holder);
+            handleUserData(comment, holder);
+
+            holder.userProfile.setOnClickListener(v -> context.startActivity(new Intent(context, ProfileActivity.class).putExtra(Constants.USER_ID, comment.getAuthorsUID()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
+
+            holder.ratingBar.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
+                if (!comment.getAlreadyRatedList().contains(Util.getUser().getUserUID()) && !comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
+                    openRatingDialog(rating, position);
+                    holder.ratingTV.setText(String.valueOf(rating));
+                    ratingBar.setRating(rating);
+                }
+                Toast.makeText(context, String.valueOf(rating), Toast.LENGTH_SHORT).show();
+            });
+
+            holder.ratingBar.setOnClickListener(v -> {
+                if (holder.ratingBar.isIndicator()) {
+                    Toast.makeText(context, R.string.already_valuated_this_comment, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            holder.entrance.setOnClickListener(v -> goToGroup(comment));
+
+            holder.report.setOnClickListener(v -> tryToReport(comment));
+
+            holder.text.setOnLongClickListener(v -> {
+                showStickersDialog(position);
+                return true;
+            });
+        }
+    }
+
+    private void handleUserData(Comment comment, CommentViewHolder holder) {
+        Util.mUserDatabaseRef.child(comment.getAuthorsUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if (user != null) {
+                    holder.userName.setText(user.getUserName());
+                    if (user.getPreferences().isShowPhoto()) {
+                        Glide.with(context)
+                                .load(comment.getUserPhotoURL())
+                                .apply(RequestOptions.circleCropTransform())
+                                .into(holder.photo);
+                    }
+                    if (calledFromGroup) {
+                        holder.report.setVisibility(View.INVISIBLE);
+                    }
+                    handleGroupIndication(comment, holder, user);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void handleGroupIndication(Comment comment, CommentViewHolder holder, User user) {
+        if (comment.isAGroup() && !calledFromGroup) {
+            if (comment.getGroup().isReady()) {
+                holder.entrance.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_exit_active));
+            }
+            holder.entrance.setVisibility(View.VISIBLE);
+            holder.ratingTV.setTextSize(14);
+        } else {
+            holder.entrance.setVisibility(View.GONE);
+        }
+        if (user.isExtra()) {
+            LayerDrawable stars = (LayerDrawable) holder.ratingBar.getProgressDrawable();
+            stars.getDrawable(2).setColorFilter(Color.parseColor("#AFC2D5"), PorterDuff.Mode.SRC_ATOP);
+            stars.getDrawable(1).setColorFilter(Color.parseColor("#2B4162"), PorterDuff.Mode.SRC_ATOP);
+            stars.getDrawable(0).setColorFilter(Color.parseColor("#2B4162"), PorterDuff.Mode.SRC_ATOP);
+            holder.bg.setBackgroundResource(R.drawable.rounded_accent_double);
+            holder.bg.setBackgroundResource(R.drawable.rounded_accent_double);
+            holder.commentLayout.setBackgroundResource(R.drawable.rounded_accent_double);
+        } else if (comment.isAGroup()) {
+            holder.commentLayout.setBackgroundResource(R.drawable.rounded_primary_double);
+            holder.bg.setBackgroundResource(R.drawable.rounded_primary_double);
+        }
+    }
+
+    private void handleText(Comment comment, CommentViewHolder holder) {
+        holder.text.setText(comment.getText());
+        holder.text.setTrimExpandedText(context.getString(R.string.see_less));
+        holder.text.setTrimCollapsedText(context.getString(R.string.see_more));
+        holder.text.setTrimLines(4);
+        holder.text.setColorClickableText(Color.BLUE);
+        Typeface face = ResourcesCompat.getFont(context, R.font.baloo);
+        holder.text.setTypeface(face);
+    }
+
+    private void handleRating(Comment comment, CommentViewHolder holder, int position) {
+        holder.ratingBar.setNumStars(5);
+        holder.ratingBar.setStepSize(0.01f);
+        if (((Comment) elements.get(position)).getAlreadyRatedList().contains(Util.getUser().getUserUID()) || ((Comment) elements.get(position)).getAuthorsUID().equals(Util.getUser().getUserUID())) {
+            holder.ratingBar.setRating(comment.getRating());
+            holder.ratingTV.setText(String.format("%.2f", comment.getRating()));
+        } else {
+            holder.ratingBar.setRating(0);
+            holder.ratingTV.setText(String.format("%.2f", (float) 0));
+        }
+        if (comment.getAlreadyRatedList().contains(Util.getUser().getUserUID()) || comment.getAuthorsUID().equals(Util.getUser().getUserUID()) && !Util.getUser().isAdmin()) {
+            holder.ratingBar.setIsIndicator(true);
+        } else {
+            holder.ratingBar.setIsIndicator(false);
+        }
+    }
+
+    private void retrieveCommentStickers(Comment comment, CommentViewHolder holder) {
+        GridLayoutManager layoutManager = new GridLayoutManager(context, 5);
+        Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_STICKERS).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Product> stickers = new ArrayList<>();
+                for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                    stickers.add(snap.getValue(Product.class));
+                }
+                if (stickers.size() > 0) {
+                    RecyclerViewStickerAdapter adapter = new RecyclerViewStickerAdapter(stickers, context, comment);
+                    DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(context,
+                            layoutManager.getOrientation());
+                    holder.stickers.addItemDecoration(dividerItemDecoration);
+                    holder.stickers.setLayoutManager(layoutManager);
+                    holder.stickers.setAdapter(adapter);
+                    holder.stickers.setVisibility(View.VISIBLE);
+                    holder.stickersLayout.setVisibility(View.VISIBLE);
+                } else {
+                    holder.stickers.setVisibility(View.GONE);
+                    holder.stickersLayout.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void openRatingDialog(float rating, int position) {
@@ -96,7 +250,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 if (user != null) {
-                    Util.mSubjectDatabaseRef.child(comment.getSubject()).child("servers").child(comment.getServerUID()).child("tempInfo").child("qtdUsers").addListenerForSingleValueEvent(new ValueEventListener() {
+                    Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).child(Constants.DATABASE_REF_QTD_USERS).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             Integer qtdUsers = snapshot.getValue(Integer.class);
@@ -122,148 +276,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         });
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder1, int position) {
-        int viewType = getItemViewType(position);
-        holder1.setIsRecyclable(false);
-
-        if (viewType == NATIVE_EXPRESS_AD_VIEW_TYPE) {
-            UnifiedNativeAd nativeAd = (UnifiedNativeAd) elements.get(position);
-            populateNativeAdView(nativeAd, ((UnifiedNativeAdViewHolder) holder1).getAdView());
-        } else {
-            CommentViewHolder holder = (CommentViewHolder) holder1;
-            final Comment comment = (Comment) elements.get(position);
-
-            GridLayoutManager layoutManager = new GridLayoutManager(context, 5);
-            Util.mSubjectDatabaseRef.child(comment.getSubject()).child("servers").child(comment.getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("stickers").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    List<Product> stickers = new ArrayList<>();
-                    for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                        stickers.add(snap.getValue(Product.class));
-                    }
-                    if (stickers.size() > 0) {
-                        RecyclerViewStickerAdapter adapter = new RecyclerViewStickerAdapter(stickers, context, comment);
-                        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(context,
-                                layoutManager.getOrientation());
-                        holder.stickers.addItemDecoration(dividerItemDecoration);
-                        holder.stickers.setLayoutManager(layoutManager);
-                        holder.stickers.setAdapter(adapter);
-                        holder.stickersLayout.setVisibility(View.VISIBLE);
-                        holder.stickers.setVisibility(View.VISIBLE);
-                    } else {
-                        holder.stickersLayout.setVisibility(View.GONE);
-                        holder.stickers.setVisibility(View.GONE);
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-
-            holder.ratingBar.setNumStars(5);
-            holder.ratingBar.setStepSize(0.01f);
-            if (((Comment) elements.get(position)).getAlreadyRatedList().contains(Util.getUser().getUserUID()) || ((Comment) elements.get(position)).getAuthorsUID().equals(Util.getUser().getUserUID())) {
-                holder.ratingBar.setRating(comment.getRating());
-                holder.ratingTV.setText(String.format("%.2f", comment.getRating()));
-            } else {
-                holder.ratingBar.setRating(0);
-                holder.ratingTV.setText(String.format("%.2f", (float) 0));
-            }
-            holder.text.setText(comment.getText());
-            holder.text.setTrimExpandedText(" Ver menos");
-            holder.text.setTrimCollapsedText(" Ver mais");
-            holder.text.setTrimLines(4);
-            holder.text.setColorClickableText(Color.BLUE);
-
-            if (comment.isAGroup() && !isFromGroup) {
-                if (comment.getGroup().isReady()) {
-                    holder.entrance.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_exit_active));
-                }
-                holder.entrance.setVisibility(View.VISIBLE);
-                holder.ratingTV.setTextSize(14);
-            } else {
-                holder.entrance.setVisibility(View.GONE);
-            }
-
-            holder.userProfile.setOnClickListener(v -> context.startActivity(new Intent(context, ProfileActivity.class).putExtra("userId", comment.getAuthorsUID()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
-
-            Typeface face = ResourcesCompat.getFont(context, R.font.baloo);
-            holder.text.setTypeface(face);
-
-            if (comment.getAlreadyRatedList().contains(Util.getUser().getUserUID()) || comment.getAuthorsUID().equals(Util.getUser().getUserUID()) && !Util.getUser().isAdmin()) {
-                holder.ratingBar.setIsIndicator(true);
-            } else {
-                holder.ratingBar.setIsIndicator(false);
-            }
-            Util.mUserDatabaseRef.child(comment.getAuthorsUID()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    User user = dataSnapshot.getValue(User.class);
-                    if (user != null) {
-                        holder.userName.setText(user.getUserName());
-                        if (user.getPreferences().isShowPhoto()) {
-                            Glide.with(context)
-                                    .load(comment.getUserPhotoURL())
-                                    .apply(RequestOptions.circleCropTransform())
-                                    .into(holder.photo);
-                        }
-                        if (user.isExtra()) {
-                            LayerDrawable stars = (LayerDrawable) holder.ratingBar.getProgressDrawable();
-                            stars.getDrawable(2).setColorFilter(Color.parseColor("#AFC2D5"), PorterDuff.Mode.SRC_ATOP);
-                            stars.getDrawable(1).setColorFilter(Color.parseColor("#2B4162"), PorterDuff.Mode.SRC_ATOP);
-                            stars.getDrawable(0).setColorFilter(Color.parseColor("#2B4162"), PorterDuff.Mode.SRC_ATOP);
-                            holder.bg.setBackgroundResource(R.drawable.rounded_accent_double);
-                            holder.bg.setBackgroundResource(R.drawable.rounded_accent_double);
-                            holder.commentLayout.setBackgroundResource(R.drawable.rounded_accent_double);
-                        } else if (comment.isAGroup()) {
-                            holder.commentLayout.setBackgroundResource(R.drawable.rounded_primary_double);
-                            holder.bg.setBackgroundResource(R.drawable.rounded_primary_double);
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-
-            holder.ratingBar.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
-                if (elements.get(position) instanceof Comment) {
-                    if (!((Comment) elements.get(position)).getAlreadyRatedList().contains(Util.getUser().getUserUID()) && !((Comment) elements.get(position)).getAuthorsUID().equals(Util.getUser().getUserUID())) {
-                        openRatingDialog(rating, position);
-                        holder.ratingTV.setText(String.valueOf(rating));
-                        ratingBar.setRating(rating);
-                        Toast.makeText(context, String.valueOf(rating), Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(context, String.valueOf(rating), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-
-            holder.ratingBar.setOnClickListener(v -> {
-                if (holder.ratingBar.isIndicator()) {
-                    Toast.makeText(context, "Você já avaliou este comentário!", Toast.LENGTH_SHORT).show();
-                }
-            });
-            holder.entrance.setOnClickListener(v -> goToGroup(comment));
-            if (isFromGroup) {
-                holder.report.setVisibility(View.INVISIBLE);
-            }
-            holder.report.setOnClickListener(v -> tryToReport(comment));
-            holder.text.setOnLongClickListener(v -> {
-                if (elements.get(position) instanceof Comment) {
-                    stickersDialog(position);
-                }
-                return true;
-            });
-        }
-    }
-
-    private void stickersDialog(int position) {
+    private void showStickersDialog(int position) {
         Comment comment = (Comment) elements.get(position);
         if (comment != null && !comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
             List<Product> products = new ArrayList<>();
@@ -274,15 +287,15 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                     }
                 }
             }
-            DialogStickers cdd = new DialogStickers(activity, products, null, (Comment) elements.get(position), this, position);
+            DialogStickers cdd = new DialogStickers(activity, products, null, comment, this, position);
             cdd.show();
         } else {
-            Toast.makeText(context, "Você não pode enviar figurinhas para seu próprio comentário.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.can_not_send_stickers_to_yourself, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void tryToReport(Comment comment) {
-        Query query = Util.mDatabaseRef.child("report").orderByChild("userSenderUID").equalTo(Util.getUser().getUserUID());
+        Query query = Util.mDatabaseRef.child(Constants.DATABASE_REF_REPORT).orderByChild(Constants.DATABASE_REF_USER_SENDER_ID).equalTo(Util.getUser().getUserUID());
         ValueEventListener listener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -342,8 +355,8 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                             }
                         });
                     }
-                    if (isFromTabHistory) {
-                        Util.mSubjectDatabaseRef.child(comment.getSubject()).child("servers").child(comment.getServerUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    if (calledFromTabHistory) {
+                        Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 Server server = snapshot.getValue(Server.class);
@@ -355,7 +368,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                                     }
                                     Util.setComment(comment);
                                     Util.setGroup(comment.getGroup());
-                                    context.startActivity(new Intent(context, GroupActivity.class).putExtra("serverId", comment.getServerUID()).putExtra("commentId", comment.getCommentUID()).putExtra("cameFromProfile", true).putExtra("commentNumber", comment.getGroup().getServerNumber()).putExtra("groupNumber", comment.getGroup().getNumber()).putExtra("subject", comment.getSubject()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                    context.startActivity(new Intent(context, GroupActivity.class).putExtra(Constants.SERVER_ID, comment.getServerUID()).putExtra(Constants.COMMENT_ID, comment.getCommentUID()).putExtra(Constants.CAME_FROM_PROFILE, true).putExtra(Constants.COMMENT_NUMBER, comment.getGroup().getServerNumber()).putExtra(Constants.GROUP_NUMBER, comment.getGroup().getNumber()).putExtra(Constants.SUBJECT, comment.getSubject()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                                     activity.finish();
                                 }
                             }
@@ -371,7 +384,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                         }
                         Util.setComment(comment);
                         Util.setGroup(comment.getGroup());
-                        context.startActivity(new Intent(context, GroupActivity.class).putExtra("serverId", Util.getServer().getServerUID()).putExtra("commentId", comment.getCommentUID()).putExtra("commentNumber", comment.getGroup().getServerNumber()).putExtra("groupNumber", comment.getGroup().getNumber()).putExtra("subject", comment.getSubject()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        context.startActivity(new Intent(context, GroupActivity.class).putExtra(Constants.SERVER_ID, Util.getServer().getServerUID()).putExtra(Constants.COMMENT_ID, comment.getCommentUID()).putExtra(Constants.COMMENT_NUMBER, comment.getGroup().getServerNumber()).putExtra(Constants.GROUP_NUMBER, comment.getGroup().getNumber()).putExtra(Constants.SUBJECT, comment.getSubject()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                         activity.finish();
                     }
                 } else {
@@ -379,7 +392,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                     warnGroupFull.show();
                 }
             } else {
-                Toast.makeText(context, "O dono ainda não ativou o grupo, Aguarde!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.owner_has_not_activated_group_yet, Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -391,43 +404,6 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             return NATIVE_EXPRESS_AD_VIEW_TYPE;
         }
         return COMMENT_ITEM_VIEW_TYPE;
-    }
-
-    @Override
-    public int getItemCount() {
-        return elements.size();
-    }
-
-    private static class CommentViewHolder extends RecyclerView.ViewHolder {
-
-        private ReadMoreTextView text;
-        private TextView ratingTV;
-        private ImageView photo;
-        private MaterialRatingBar ratingBar;
-        private LinearLayout commentLayout;
-        private LinearLayout bg;
-        private TextView userName;
-        private ImageView entrance;
-        private LinearLayout userProfile;
-        private ImageView report;
-        private RecyclerView stickers;
-        private LinearLayout stickersLayout;
-
-        CommentViewHolder(View rowView) {
-            super(rowView);
-            text = rowView.findViewById(R.id.text);
-            ratingTV = rowView.findViewById(R.id.ratingTV);
-            photo = rowView.findViewById(R.id.photo);
-            ratingBar = rowView.findViewById(R.id.ratingBar);
-            bg = rowView.findViewById(R.id.background);
-            commentLayout = rowView.findViewById(R.id.commentLayout);
-            userName = rowView.findViewById(R.id.userName);
-            entrance = rowView.findViewById(R.id.entrance);
-            userProfile = rowView.findViewById(R.id.userProfile);
-            report = rowView.findViewById(R.id.report);
-            stickers = rowView.findViewById(R.id.stickers);
-            stickersLayout = rowView.findViewById(R.id.stickersLayout);
-        }
     }
 
     private void populateNativeAdView(UnifiedNativeAd nativeAd,
@@ -481,8 +457,8 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         adView.setNativeAd(nativeAd);
     }
 
-    void addAll(List<Comment> newComments, boolean reset) {
-        if (reset) {
+    void addAllComments(List<Comment> newComments, boolean resetTimeline) {
+        if (resetTimeline) {
             elements.clear();
             elements.addAll(newComments);
             notifyDataSetChanged();
@@ -545,5 +521,42 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
     public void refreshToShowSticker(int position) {
         notifyItemChanged(position);
+    }
+
+    @Override
+    public int getItemCount() {
+        return elements.size();
+    }
+
+    private static class CommentViewHolder extends RecyclerView.ViewHolder {
+
+        private ReadMoreTextView text;
+        private TextView ratingTV;
+        private ImageView photo;
+        private MaterialRatingBar ratingBar;
+        private LinearLayout commentLayout;
+        private LinearLayout bg;
+        private TextView userName;
+        private ImageView entrance;
+        private LinearLayout userProfile;
+        private ImageView report;
+        private RecyclerView stickers;
+        private LinearLayout stickersLayout;
+
+        CommentViewHolder(View rowView) {
+            super(rowView);
+            text = rowView.findViewById(R.id.text);
+            ratingTV = rowView.findViewById(R.id.ratingTV);
+            photo = rowView.findViewById(R.id.photo);
+            ratingBar = rowView.findViewById(R.id.ratingBar);
+            bg = rowView.findViewById(R.id.background);
+            commentLayout = rowView.findViewById(R.id.commentLayout);
+            userName = rowView.findViewById(R.id.userName);
+            entrance = rowView.findViewById(R.id.entrance);
+            userProfile = rowView.findViewById(R.id.userProfile);
+            report = rowView.findViewById(R.id.report);
+            stickers = rowView.findViewById(R.id.stickers);
+            stickersLayout = rowView.findViewById(R.id.stickersLayout);
+        }
     }
 }

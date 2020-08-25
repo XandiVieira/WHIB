@@ -74,7 +74,7 @@ public class TimelineActivity extends AppCompatActivity {
     private int spinnerFilterOption = 0;
     private FancyShowCaseQueue queue = new FancyShowCaseQueue();
     private Query query;
-    private DatabaseReference baseReference;
+    private DatabaseReference commentListReference;
 
     int menuWidth;
     int menuHeight;
@@ -104,12 +104,12 @@ public class TimelineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
-        baseReference.addChildEventListener(new ChildEventListener() {
+        commentListReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 List<Comment> comments = new ArrayList<>();
                 comments.add(dataSnapshot.getValue(Comment.class));
-                commentAdapter.addAll(comments, false);
+                commentAdapter.addAllComments(comments, false);
                 emptyList.setVisibility(View.GONE);
             }
 
@@ -160,11 +160,11 @@ public class TimelineActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (spinnerWasCalledYet) {
                     if (position == 0) {
-                        query = baseReference.orderByKey().limitToLast(commentAdapter.mPostsPerPage);
+                        query = commentListReference.orderByKey().limitToLast(commentAdapter.mPostsPerPage);
                     } else if (position == 1) {
-                        query = baseReference.orderByChild("rating").endAt(commentAdapter.getLastRate()).limitToLast(commentAdapter.mPostsPerPage + 2);
+                        query = commentListReference.orderByChild(Constants.DATABASE_REF_RATING).endAt(commentAdapter.getLastRate()).limitToLast(commentAdapter.mPostsPerPage + 2);
                     } else if (position == 2) {
-                        query = baseReference.orderByChild("agroup").equalTo(true).limitToLast(commentAdapter.mPostsPerPage + 2);
+                        query = commentListReference.orderByChild(Constants.DATABASE_REF_A_GROUP).equalTo(true).limitToLast(commentAdapter.mPostsPerPage + 2);
                     }
                     spinnerFilterOption = position;
                     reset = true;
@@ -198,26 +198,26 @@ public class TimelineActivity extends AppCompatActivity {
 
             popup.setOnMenuItemClickListener(item -> {
                 if (user.isFirstTime()) {
-                    Util.mUserDatabaseRef.child(user.getUserUID()).child("firstTime").setValue(false);
+                    Util.mUserDatabaseRef.child(user.getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false);
                 }
                 if (item.getTitle().equals(getString(R.string.settings))) {
-                    Intent intent = new Intent(this, SettingsActivity.class).putExtra("showLastWarn", user.isFirstTime());
+                    Intent intent = new Intent(this, SettingsActivity.class).putExtra(Constants.SHOW_LAST_WARN, user.isFirstTime());
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.store))) {
-                    Intent intent = new Intent(this, StoreActivity.class).putExtra("showLastWarn", user.isFirstTime());
+                    Intent intent = new Intent(this, StoreActivity.class).putExtra(Constants.SHOW_LAST_WARN, user.isFirstTime());
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.profile))) {
-                    Intent intent = new Intent(this, ProfileActivity.class).putExtra("showLastWarn", user.isFirstTime());
+                    Intent intent = new Intent(this, ProfileActivity.class).putExtra(Constants.SHOW_LAST_WARN, user.isFirstTime());
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.tips))) {
-                    Intent intent = new Intent(this, TipsActivity.class).putExtra("cameFromTimeline", true).putExtra("showLastWarn", user.isFirstTime());
+                    Intent intent = new Intent(this, TipsActivity.class).putExtra(Constants.CAME_FROM_TIMELINE, true).putExtra(Constants.SHOW_LAST_WARN, user.isFirstTime());
                     startActivity(intent);
                     return true;
                 } else if (item.getTitle().equals(getString(R.string.about))) {
-                    Intent intent = new Intent(this, AboutActivity.class).putExtra("showLastWarn", user.isFirstTime());
+                    Intent intent = new Intent(this, AboutActivity.class).putExtra(Constants.SHOW_LAST_WARN, user.isFirstTime());
                     startActivity(intent);
                     return true;
                 }
@@ -258,7 +258,7 @@ public class TimelineActivity extends AppCompatActivity {
         rvComments.addItemDecoration(dividerItemDecoration);
         dividerItemDecoration.setDrawable(requireNonNull(ContextCompat.getDrawable(this, R.drawable.divider)));
         rvComments.setAdapter(commentAdapter);
-        query = baseReference.orderByKey().limitToLast(commentAdapter.mPostsPerPage);
+        query = commentListReference.orderByKey().limitToLast(commentAdapter.mPostsPerPage);
 
         initializeAds();
     }
@@ -266,11 +266,11 @@ public class TimelineActivity extends AppCompatActivity {
     private void getComments() {
         mIsLoading = true;
         if (spinnerFilterOption == 2) {
-            query = baseReference.orderByChild("agroup").equalTo(true).limitToLast(commentAdapter.mPostsPerPage + 2);
+            query = commentListReference.orderByChild(Constants.DATABASE_REF_A_GROUP).equalTo(true).limitToLast(commentAdapter.mPostsPerPage + 2);
         } else if (spinnerFilterOption == 1) {
-            query = baseReference.orderByChild("rating").endAt(commentAdapter.getLastRate()).limitToLast(commentAdapter.mPostsPerPage + 2);
+            query = commentListReference.orderByChild(Constants.DATABASE_REF_RATING).endAt(commentAdapter.getLastRate()).limitToLast(commentAdapter.mPostsPerPage + 2);
         } else {
-            query = baseReference.orderByKey().endAt(commentAdapter.getLastItemId()).limitToLast(commentAdapter.mPostsPerPage + 2);
+            query = commentListReference.orderByKey().endAt(commentAdapter.getLastItemId()).limitToLast(commentAdapter.mPostsPerPage + 2);
         }
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -287,9 +287,9 @@ public class TimelineActivity extends AppCompatActivity {
                         }
                     }
                 }
-                commentAdapter.addAll(comments, reset);
+                commentAdapter.addAllComments(comments, reset);
                 if (comments.size() == 0 && user.isFirstTime()) {
-                    startActivity(new Intent(activity, MainActivity.class).putExtra("serverEmpty", true));
+                    startActivity(new Intent(activity, MainActivity.class).putExtra(Constants.SERVER_EMPTY, true));
                 }
                 reset = false;
                 if (comments.size() > 0) {
@@ -352,7 +352,7 @@ public class TimelineActivity extends AppCompatActivity {
     private void callTour() {
         if (user.isFirstTime()) {
             final FancyShowCaseView fancyShowCaseView = new FancyShowCaseView.Builder(this).
-                    customView(R.layout.custom_tour_timeline_comment, view -> view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mUserDatabaseRef.child(user.getUserUID()).child("firstTime").setValue(false))).focusBorderSize(10)
+                    customView(R.layout.custom_tour_timeline_comment, view -> view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mUserDatabaseRef.child(user.getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false))).focusBorderSize(10)
                     .focusRectAtPosition((int) firstCommentX + (firstCommentWidth / 2), (int) firstCommentY + (firstCommentHeight / 4), firstCommentWidth, firstCommentHeight)
                     .build();
 
@@ -393,7 +393,7 @@ public class TimelineActivity extends AppCompatActivity {
             queue.add(fancyShowCaseView4);
             queue.add(fancyShowCaseView5);
             queue.setCompleteListener(() -> {
-                Util.mUserDatabaseRef.child(user.getUserUID()).child("firstTime").setValue(false);
+                Util.mUserDatabaseRef.child(user.getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false);
                 DialogFinalWarn warn = new DialogFinalWarn(activity);
                 warn.show();
             });
@@ -424,7 +424,7 @@ public class TimelineActivity extends AppCompatActivity {
             decreaseServerNumberOfUsers();
         }
         Util.setServer(null);
-        Util.mUserDatabaseRef.child(user.getUserUID()).child(Constants.DATABASE_REF_TEMP_INFO).child("currentServer").setValue(null);
+        Util.mUserDatabaseRef.child(user.getUserUID()).child(Constants.DATABASE_REF_TEMP_INFO).child(Constants.CURRENT_SERVER).setValue(null);
         finish();
         startActivity(new Intent(this, MainActivity.class));
     }
@@ -432,7 +432,7 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        baseReference = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child("timeline").child("commentList");
+        commentListReference = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST);
         retrieveUser();
         increaseServerNumberOfUsers();
         calculateElementsDimensions();
@@ -522,7 +522,7 @@ public class TimelineActivity extends AppCompatActivity {
 
     private void verifyServerIsActive() {
         if (Util.getServer() != null) {
-            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TEMP_ACTIVATED).addValueEventListener(new ValueEventListener() {
+            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_ACTIVATED).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Boolean active = dataSnapshot.getValue(Boolean.class);

@@ -69,6 +69,7 @@
 - Filtrar comentários por avaliação e rolar até o fim começa a repetir o ultimo comentário
 - Descolar teclado do input na tela de grupo
 - Ao abrir timeline o scroll leva pro comentário do meio e não do topo
+- Refatoração de todo o código
 
 LOJA
 - Superpoderes (Direito de tornar meu comentário em grupo automaticamente)

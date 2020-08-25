@@ -40,6 +40,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Random;
 
 public class LoginActivity extends AppCompatActivity implements Runnable {
@@ -50,32 +51,23 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
     private ProgressBar progressBar;
     private ImageView logo;
+    private TextView appVersion;
     private ArrayList<Techniques> techniques = new ArrayList<>();
     private Random random = new Random();
     private Activity activity;
 
-    /**
-     * The number of pages (wizard steps) to show in this demo.
-     */
+    // The number of pages to show in this pager.
     private static final int NUM_PAGES = 4;
-
-    /**
-     * The pager widget, which handles animation and allows swiping horizontally to access previous
-     * and next wizard steps.
-     */
     private ViewPager mPager;
 
     @Override
     public void run() {
-        //Esse métedo será executado a cada período, ponha aqui a sua lógica
         if (mPager.getCurrentItem() == 3) {
             mPager.setCurrentItem(0);
         } else {
             mPager.setCurrentItem(mPager.getCurrentItem() + 1);
         }
-
-        Handler handler = new Handler(); //contador de tempo
-        handler.postDelayed(this, 4000); //o exemplo 2000 = 2 segundos
+        new Handler().postDelayed(this, 4000);
     }
 
     @Override
@@ -85,7 +77,7 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
 
         activity = this;
 
-        progressBar = findViewById(R.id.progressBar);
+        progressBar = findViewById(R.id.progress_bar);
 
         callbackManager = CallbackManager.Factory.create();
 
@@ -95,23 +87,17 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
 
         TextView terms = findViewById(R.id.terms);
 
-        TextView privacyPolicy = findViewById(R.id.privacyPolicy);
+        TextView privacyPolicy = findViewById(R.id.privacy_policy);
 
         terms.setOnClickListener(v -> startActivity(new Intent(this, TermsActivity.class)));
 
         privacyPolicy.setOnClickListener(v -> startActivity(new Intent(this, PrivacyPolicyActivity.class)));
 
-        TextView version1 = findViewById(R.id.version);
+        appVersion = findViewById(R.id.version);
 
         loginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
 
-        try {
-            PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
-            String version = pInfo.versionName;
-            version1.setText("Version " + version);
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.e("Error", e.getMessage());
-        }
+        getAppVersion();
 
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -137,19 +123,23 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
             }
         };
 
-        // Instantiate a ViewPager and a PagerAdapter.
         mPager = findViewById(R.id.pager);
-        /*
-      The pager adapter, which provides the pages to the view pager widget.
-     */
         PagerAdapter mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
 
-        Handler handler = new Handler(); //contador de tempo
-        handler.postDelayed(this, 4000); //o exemplo 2000 = 2 segundos
-
+        new Handler().postDelayed(this, 4000);
         techniques.addAll(Arrays.asList(Techniques.values()));
         callAnimation(random.nextInt(techniques.size()));
+    }
+
+    private void getAppVersion() {
+        try {
+            PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
+            String version = pInfo.versionName;
+            appVersion.setText(getString(R.string.version, version));
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e(getString(R.string.error), Objects.requireNonNull(e.getMessage()));
+        }
     }
 
     private void callAnimation(final int i) {
@@ -220,19 +210,12 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
     @Override
     public void onBackPressed() {
         if (mPager.getCurrentItem() == 0) {
-            // If the user is currently looking at the first step, allow the system to handle the
-            // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed();
         } else {
-            // Otherwise, select the previous step.
             mPager.setCurrentItem(mPager.getCurrentItem() - 1);
         }
     }
 
-    /**
-     * A simple pager adapter that represents 4 ScreenSlidePageFragment objects, in
-     * sequence.
-     */
     private static class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
