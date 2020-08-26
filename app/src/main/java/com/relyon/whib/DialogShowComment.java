@@ -41,7 +41,7 @@ public class DialogShowComment extends Dialog {
         rvComment.setLayoutManager(layoutManager);
         RecyclerViewCommentAdapter adapter = new RecyclerViewCommentAdapter(context, a, false, true);
         rvComment.setAdapter(adapter);
-        adapter.addAllComments(comment, true, false, true);
+        adapter.addAllComments(comment, true);
 
         bg.setOnClickListener(v -> dismiss());
     }

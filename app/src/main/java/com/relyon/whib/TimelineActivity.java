@@ -69,12 +69,11 @@ public class TimelineActivity extends AppCompatActivity {
     private List<UnifiedNativeAd> nativeAdsList = new ArrayList<>();
     private RecyclerViewCommentAdapter commentAdapter;
     private boolean mIsLoading = false;
-    private boolean reset = false;
-    private boolean spinnerWasCalledYet = false;
-    private int spinnerFilterOption = 0;
+    private boolean resetTimeline = false;
     private FancyShowCaseQueue queue = new FancyShowCaseQueue();
     private Query query;
     private DatabaseReference commentListReference;
+    private boolean canLoadNewComments = false;
 
     int menuWidth;
     int menuHeight;
@@ -104,35 +103,12 @@ public class TimelineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
-        commentListReference.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                List<Comment> comments = new ArrayList<>();
-                comments.add(dataSnapshot.getValue(Comment.class));
-                commentAdapter.addAllComments(comments, false);
-                emptyList.setVisibility(View.GONE);
-            }
+        activity = this;
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                commentAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        commentListReference = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST);
+        initRecyclerViewComment();
+        retrieveUser();
+        verifyServerIsActive();
 
         final ImageView back = findViewById(R.id.back);
         TextView subject = findViewById(R.id.subject);
@@ -142,8 +118,6 @@ public class TimelineActivity extends AppCompatActivity {
         rvComments = findViewById(R.id.rv_comments);
         emptyList = findViewById(R.id.emptyList);
         spinner = findViewById(R.id.filters);
-
-        activity = this;
 
         this.subject = Util.getServer().getSubject();
         if (this.subject != null) {
@@ -158,23 +132,49 @@ public class TimelineActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (spinnerWasCalledYet) {
-                    if (position == 0) {
-                        query = commentListReference.orderByKey().limitToLast(commentAdapter.mPostsPerPage);
-                    } else if (position == 1) {
-                        query = commentListReference.orderByChild(Constants.DATABASE_REF_RATING).endAt(commentAdapter.getLastRate()).limitToLast(commentAdapter.mPostsPerPage + 2);
-                    } else if (position == 2) {
-                        query = commentListReference.orderByChild(Constants.DATABASE_REF_A_GROUP).equalTo(true).limitToLast(commentAdapter.mPostsPerPage + 2);
-                    }
-                    spinnerFilterOption = position;
-                    reset = true;
-                    getComments();
-                }
-                spinnerWasCalledYet = true;
+                resetTimeline = true;
+                setQuery(position);
+                retrieveCommentList();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        query.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                if (canLoadNewComments) {
+                    Comment comment = snapshot.getValue(Comment.class);
+                    if (comment != null) {
+                        comment.setCommentUID(snapshot.getKey());
+                        commentAdapter.addComment(comment);
+                    }
+                    if (emptyList.getVisibility() == View.VISIBLE) {
+                        emptyList.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
@@ -185,7 +185,8 @@ public class TimelineActivity extends AppCompatActivity {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (!recyclerView.canScrollVertically(1)) {
                     if (!mIsLoading) {
-                        getComments();
+                        setQuery(spinner.getSelectedItemPosition());
+                        retrieveCommentList();
                     }
                 }
             }
@@ -233,6 +234,20 @@ public class TimelineActivity extends AppCompatActivity {
         leaveCommentLayout.setOnClickListener(v -> openCommentBox());
     }
 
+    private void setQuery(int position) {
+        if (position == 0) {
+            if (commentAdapter.getLastItemId() != null) {
+                query = commentListReference.orderByKey().endAt(commentAdapter.getLastItemId()).limitToLast(commentAdapter.mPostsPerPage);
+            } else {
+                query = commentListReference.orderByKey().limitToLast(commentAdapter.mPostsPerPage);
+            }
+        } else if (position == 1) {
+            query = commentListReference.orderByChild(Constants.DATABASE_REF_RATING)/*.endAt(commentAdapter.getLastRate())*/.limitToLast(commentAdapter.mPostsPerPage + 2);
+        } else if (position == 2) {
+            query = commentListReference.orderByChild(Constants.DATABASE_REF_A_GROUP).equalTo(true).limitToLast(commentAdapter.mPostsPerPage + 2);
+        }
+    }
+
     private void initializeAds() {
         if (!user.isFirstTime() && !user.isExtra()) {
             List<String> testDeviceIds = Collections.singletonList(Constants.TEST_DEVICE_ID);
@@ -249,56 +264,50 @@ public class TimelineActivity extends AppCompatActivity {
 
     private void initRecyclerViewComment() {
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
-        layoutManager.setStackFromEnd(false);
+        layoutManager.setStackFromEnd(true);
         rvComments = findViewById(R.id.rv_comments);
         rvComments.setLayoutManager(layoutManager);
         commentAdapter = new RecyclerViewCommentAdapter(this, activity);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvComments.getContext(),
-                layoutManager.getOrientation());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvComments.getContext(), layoutManager.getOrientation());
         rvComments.addItemDecoration(dividerItemDecoration);
         dividerItemDecoration.setDrawable(requireNonNull(ContextCompat.getDrawable(this, R.drawable.divider)));
         rvComments.setAdapter(commentAdapter);
+        commentAdapter.notifyDataSetChanged();
         query = commentListReference.orderByKey().limitToLast(commentAdapter.mPostsPerPage);
-
-        initializeAds();
     }
 
-    private void getComments() {
+    private void retrieveCommentList() {
         mIsLoading = true;
-        if (spinnerFilterOption == 2) {
-            query = commentListReference.orderByChild(Constants.DATABASE_REF_A_GROUP).equalTo(true).limitToLast(commentAdapter.mPostsPerPage + 2);
-        } else if (spinnerFilterOption == 1) {
-            query = commentListReference.orderByChild(Constants.DATABASE_REF_RATING).endAt(commentAdapter.getLastRate()).limitToLast(commentAdapter.mPostsPerPage + 2);
-        } else {
-            query = commentListReference.orderByKey().endAt(commentAdapter.getLastItemId()).limitToLast(commentAdapter.mPostsPerPage + 2);
-        }
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Comment> comments = new ArrayList<>();
-                if (dataSnapshot.exists()) {
+                if (dataSnapshot.hasChildren()) {
                     for (DataSnapshot snap : dataSnapshot.getChildren()) {
                         if (dataSnapshot.getChildrenCount() > 0) {
                             Comment comment = snap.getValue(Comment.class);
-                            if (!commentAdapter.commentExists(snap.getKey()) || reset) {
+                            if (comment != null && !commentAdapter.commentExists(snap.getKey())) {
+                                comment.setCommentUID(snap.getKey());
                                 comments.add(comment);
                             }
                         }
                     }
+                    mIsLoading = false;
+                } else {
+                    if (user.isFirstTime()) {
+                        startActivity(new Intent(activity, MainActivity.class).putExtra(Constants.SERVER_EMPTY, true));
+                    }
+                    mIsLoading = false;
                 }
-                commentAdapter.addAllComments(comments, reset);
-                if (comments.size() == 0 && user.isFirstTime()) {
-                    startActivity(new Intent(activity, MainActivity.class).putExtra(Constants.SERVER_EMPTY, true));
-                }
-                reset = false;
-                if (comments.size() > 0) {
-                    emptyList.setVisibility(View.GONE);
-                    spinner.setVisibility(View.VISIBLE);
-                }
+
+                commentAdapter.addAllComments(comments, resetTimeline);
+
+                resetTimeline = false;
                 mIsLoading = false;
                 number_of_ads = comments.size() / 3;
                 new Thread(() -> loadNativeAds()).start();
+                canLoadNewComments = true;
             }
 
             @Override
@@ -432,11 +441,7 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        commentListReference = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST);
-        retrieveUser();
         increaseServerNumberOfUsers();
-        calculateElementsDimensions();
-        verifyServerIsActive();
     }
 
     private void retrieveUser() {
@@ -445,7 +450,8 @@ public class TimelineActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 user = snapshot.getValue(User.class);
                 if (user != null) {
-                    initRecyclerViewComment();
+                    initializeAds();
+                    calculateElementsDimensions();
                 }
             }
 

@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     private void updateToken() {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid != null) {
-            mUserDatabaseRef.child(Util.getUser().getUserUID()).child("token").setValue(firebaseInstanceId);
+            mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.TOKEN).setValue(firebaseInstanceId);
         }
     }
 
@@ -130,10 +130,6 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     }
 
     private void setSubjects() {
-        setServers();
-    }
-
-    private void setServers() {
         mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

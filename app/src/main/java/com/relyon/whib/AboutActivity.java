@@ -33,6 +33,8 @@ public class AboutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
+        retrieveUser();
+
         activity = this;
         contactUs = findViewById(R.id.contact_us);
 
@@ -67,22 +69,7 @@ public class AboutActivity extends AppCompatActivity {
         back.setOnClickListener(v -> onBackPressed());
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-        Intent intent;
-        if (Util.getServer() != null) {
-            intent = new Intent(this, TimelineActivity.class);
-        } else {
-            intent = new Intent(this, ProfileActivity.class);
-        }
-        startActivity(intent);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private void retrieveUser() {
         Util.mUserDatabaseRef.child(Util.fbUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -104,5 +91,18 @@ public class AboutActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        Intent intent;
+        if (Util.getServer() != null) {
+            intent = new Intent(this, TimelineActivity.class);
+        } else {
+            intent = new Intent(this, ProfileActivity.class);
+        }
+        startActivity(intent);
     }
 }

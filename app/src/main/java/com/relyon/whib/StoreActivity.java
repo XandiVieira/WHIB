@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.SelectSubscription;
 
 import java.util.ArrayList;
@@ -47,7 +48,9 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
         billingProcessor = new BillingProcessor(this, getString(R.string.google_license_key), this);
         billingProcessor.initialize();
 
-        if (getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false) && Util.getUser().isFirstTime()) {
+        retrieveProducts();
+
+        if (getIntent().hasExtra(Constants.SHOW_LAST_WARN) && getIntent().getBooleanExtra(Constants.SHOW_LAST_WARN, false) && Util.getUser().isFirstTime()) {
             DialogFinalWarn warn = new DialogFinalWarn(this);
             warn.show();
         }
@@ -56,6 +59,39 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
         progressBar = findViewById(R.id.progress_bar);
         ImageView back = findViewById(R.id.back);
         back.setOnClickListener(v -> onBackPressed());
+    }
+
+    private void retrieveProducts() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_PRODUCT).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                productList.clear();
+                for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                    Product product = snap.getValue(Product.class);
+                    if (product != null) {
+                        productList.add(product);
+                    }
+                }
+                handleListLayout();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void handleListLayout() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
+        RecyclerViewProductAdapter adapter = new RecyclerViewProductAdapter(productList, activity, StoreActivity.this);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(productsRV.getContext(),
+                layoutManager.getOrientation());
+        productsRV.addItemDecoration(dividerItemDecoration);
+        productsRV.setLayoutManager(layoutManager);
+        productsRV.setAdapter(adapter);
+        progressBar.setVisibility(View.GONE);
+        productsRV.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -69,38 +105,6 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
             intent = new Intent(this, MainActivity.class);
         }
         startActivity(intent);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        Util.mDatabaseRef.child("product").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                productList.clear();
-                for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                    Product product = snap.getValue(Product.class);
-                    if (product != null) {
-                        productList.add(product);
-                    }
-                }
-                LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
-                RecyclerViewProductAdapter adapter = new RecyclerViewProductAdapter(productList, activity, StoreActivity.this);
-                DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(productsRV.getContext(),
-                        layoutManager.getOrientation());
-                productsRV.addItemDecoration(dividerItemDecoration);
-                productsRV.setLayoutManager(layoutManager);
-                productsRV.setAdapter(adapter);
-                progressBar.setVisibility(View.GONE);
-                productsRV.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
 
     @Override

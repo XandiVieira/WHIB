@@ -457,14 +457,19 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         adView.setNativeAd(nativeAd);
     }
 
+    void addComment(Comment newComment) {
+        elements.add(newComment);
+        notifyDataSetChanged();
+    }
+
     void addAllComments(List<Comment> newComments, boolean resetTimeline) {
         if (resetTimeline) {
             elements.clear();
             elements.addAll(newComments);
             notifyDataSetChanged();
         } else {
-            elements.addAll(newComments);
-            notifyItemRangeInserted(0, newComments.size());
+            elements.addAll(0, newComments);
+            notifyItemRangeInserted(0, (elements.size() - 1) - (newComments.size()));
         }
     }
 

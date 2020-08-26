@@ -13,15 +13,15 @@ import com.relyon.whib.modelo.Advantage;
 
 import java.util.ArrayList;
 
-public class AdvantageAdapter extends ArrayAdapter {
+public class AdvantageAdapter extends ArrayAdapter<Advantage> {
 
     private final Context context;
-    private final ArrayList<Advantage> elementos;
+    private final ArrayList<Advantage> advantages;
 
-    AdvantageAdapter(@NonNull Context context, ArrayList<Advantage> elementos) {
-        super(context, R.layout.item_resource, elementos);
+    AdvantageAdapter(@NonNull Context context, ArrayList<Advantage> advantages) {
+        super(context, R.layout.item_resource, advantages);
         this.context = context;
-        this.elementos = elementos;
+        this.advantages = advantages;
     }
 
     @NonNull
@@ -33,7 +33,7 @@ public class AdvantageAdapter extends ArrayAdapter {
 
         TextView text = rowView.findViewById(R.id.text);
 
-        text.setText(elementos.get(position).getDescription());
+        text.setText(advantages.get(position).getDescription());
 
         return rowView;
     }

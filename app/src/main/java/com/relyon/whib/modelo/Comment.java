@@ -25,9 +25,8 @@ public class Comment extends Sending {
     public Comment() {
     }
 
-    public Comment(String commentUID, String serverUID, String text, float rating, String userPhotoURL, Long time, int numberOfRatings, float sumOfRatings,
+    public Comment(String serverUID, String text, float rating, String userPhotoURL, Long time, int numberOfRatings, float sumOfRatings,
                    Sending sending, boolean isAGroup, Group group) {
-        this.commentUID = commentUID;
         this.serverUID = serverUID;
         this.text = text;
         this.rating = rating;

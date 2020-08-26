@@ -16,10 +16,10 @@ import android.widget.Toast;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Sending;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.UUID;
 
 import me.toptas.fancyshowcase.FancyShowCaseView;
 
@@ -97,9 +97,8 @@ public class DialogPostComment extends Dialog implements
         long date = new Date().getTime();
         Sending sending = new Sending("text", date, Util.getUser().getUserName(), Util.getUser().getUserUID(), subject);
         if (validateComment()) {
-            String commentUid = UUID.randomUUID().toString();
-            Comment comment = new Comment(commentUid, Util.getServer().getServerUID(), commentBox.getText().toString(), (float) 0.0, Util.getUser().getPhotoPath(), date, 0, (float) 0.0, sending, false, null);
-            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").push().setValue(comment);
+            Comment comment = new Comment(Util.getServer().getServerUID(), commentBox.getText().toString(), (float) 0.0, Util.getUser().getPhotoPath(), date, 0, (float) 0.0, sending, false, null);
+            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).push().setValue(comment);
             if (Util.getUser().getCommentList() == null) {
                 Util.getUser().setCommentList(new ArrayList<>());
             }

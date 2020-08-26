@@ -28,6 +28,7 @@ import com.google.firebase.storage.StorageReference;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.SelectSubscription;
 
 import java.util.Collections;
@@ -54,7 +55,7 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
                 new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
 
         MobileAds.setRequestConfiguration(configuration);
-        MobileAds.initialize(context, context.getString(R.string.admob_app_id));
+        MobileAds.initialize(context, Constants.ADMOB_APP_ID);
         // Use an activity context to get the rewarded video instance.
         mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(context);
         mRewardedVideoAd.setRewardedVideoAdListener(this);

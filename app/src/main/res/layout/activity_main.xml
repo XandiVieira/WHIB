@@ -29,6 +29,7 @@
                 android:layout_height="0dp"
                 android:layout_gravity="end"
                 android:layout_weight="1"
+                android:clickable="false"
                 android:contentDescription="@string/profile"
                 android:src="@drawable/profile_icon"
                 android:text="@string/profile" />
@@ -64,8 +65,8 @@
                 android:layout_height="0dp"
                 android:layout_gravity="end"
                 android:layout_weight="1"
+                android:clickable="false"
                 android:contentDescription="@string/exit_icon"
-                android:onClick="logout"
                 android:src="@drawable/exit_icon"
                 android:text="@string/logout" />
 
@@ -74,7 +75,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/text_spacing"
                 android:gravity="center"
-                android:onClick="logout"
                 android:text="@string/sair"
                 android:textSize="@dimen/small_text" />
         </LinearLayout>

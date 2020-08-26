@@ -56,4 +56,5 @@ public class Constants {
     public static final String COMMENT_NUMBER = "commentNumber";
     public static final String GROUP_NUMBER = "groupNumber";
     public static final String SUBJECT = "subject";
+    public static final String TOKEN = "token";
 }

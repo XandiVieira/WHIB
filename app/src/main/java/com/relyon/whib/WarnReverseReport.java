@@ -6,12 +6,12 @@ import android.view.Window;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class WarnJoke extends Dialog {
+public class WarnReverseReport extends Dialog {
 
     private AppCompatActivity a;
     public Dialog d;
 
-    public WarnJoke(AppCompatActivity a) {
+    public WarnReverseReport(AppCompatActivity a) {
         super(a);
         this.a = a;
     }
