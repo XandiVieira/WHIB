@@ -92,7 +92,6 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder1, int position) {
         int viewType = getItemViewType(position);
-        holder1.setIsRecyclable(false);
 
         if (viewType == NATIVE_EXPRESS_AD_VIEW_TYPE) {
             UnifiedNativeAd nativeAd = (UnifiedNativeAd) elements.get(position);
@@ -108,14 +107,17 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
             holder.userProfile.setOnClickListener(v -> context.startActivity(new Intent(context, ProfileActivity.class).putExtra(Constants.USER_ID, comment.getAuthorsUID()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
 
-            holder.ratingBar.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
-                if (!comment.getAlreadyRatedList().contains(Util.getUser().getUserUID()) && !comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
-                    openRatingDialog(rating, position);
-                    holder.ratingTV.setText(String.valueOf(rating));
-                    ratingBar.setRating(rating);
+            RatingBar.OnRatingBarChangeListener ratingBarChangeListener = (ratingBar, rating, fromTouch) -> {
+                if (fromTouch) {
+                    if (!comment.getAlreadyRatedList().contains(Util.getUser().getUserUID()) && !comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
+                        openRatingDialog(rating, position);
+                        holder.ratingTV.setText(String.valueOf(rating));
+                        ratingBar.setRating(rating);
+                    }
+                    Toast.makeText(context, String.valueOf(rating), Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(context, String.valueOf(rating), Toast.LENGTH_SHORT).show();
-            });
+            };
+            holder.ratingBar.setOnRatingBarChangeListener(ratingBarChangeListener);
 
             holder.ratingBar.setOnClickListener(v -> {
                 if (holder.ratingBar.isIndicator()) {
@@ -469,7 +471,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             notifyDataSetChanged();
         } else {
             elements.addAll(0, newComments);
-            notifyItemRangeInserted(0, (elements.size() - 1) - (newComments.size()));
+            notifyItemRangeInserted(0, newComments.size());
         }
     }
 

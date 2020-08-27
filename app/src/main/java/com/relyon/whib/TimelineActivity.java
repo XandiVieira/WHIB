@@ -242,7 +242,11 @@ public class TimelineActivity extends AppCompatActivity {
                 query = commentListReference.orderByKey().limitToLast(commentAdapter.mPostsPerPage);
             }
         } else if (position == 1) {
-            query = commentListReference.orderByChild(Constants.DATABASE_REF_RATING)/*.endAt(commentAdapter.getLastRate())*/.limitToLast(commentAdapter.mPostsPerPage + 2);
+            if (resetTimeline) {
+                query = commentListReference.orderByChild(Constants.DATABASE_REF_RATING).limitToLast(commentAdapter.mPostsPerPage + 2);
+            } else {
+                query = commentListReference.orderByChild(Constants.DATABASE_REF_RATING).endAt(commentAdapter.getLastRate()).limitToLast(commentAdapter.mPostsPerPage + 2);
+            }
         } else if (position == 2) {
             query = commentListReference.orderByChild(Constants.DATABASE_REF_A_GROUP).equalTo(true).limitToLast(commentAdapter.mPostsPerPage + 2);
         }

@@ -54,8 +54,6 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center_horizontal"
             android:orientation="vertical">
 
             <com.borjabravo.readmoretextview.ReadMoreTextView
@@ -82,7 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:gravity="bottom"
+                android:layout_weight="1"
                 android:orientation="horizontal">
 
                 <me.zhanghai.android.materialratingbar.MaterialRatingBar
@@ -115,7 +113,9 @@
                 android:id="@+id/stickersLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <View
                     android:layout_width="match_parent"
@@ -135,5 +135,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="9"
-        android:src="@drawable/exit_icon" />
+        android:src="@drawable/exit_icon"
+        android:visibility="gone" />
 </LinearLayout>
