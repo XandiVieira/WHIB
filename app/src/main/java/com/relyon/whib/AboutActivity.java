@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.util.Objects;
 
@@ -75,7 +76,7 @@ public class AboutActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 user = snapshot.getValue(User.class);
                 if (user != null) {
-                    if (getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false) && Util.getUser().isFirstTime()) {
+                    if (getIntent().hasExtra(Constants.SHOW_LAST_WARN) && getIntent().getBooleanExtra(Constants.SHOW_LAST_WARN, false) && Util.getUser().isFirstTime()) {
                         DialogFinalWarn warn = new DialogFinalWarn(activity);
                         warn.show();
                     }

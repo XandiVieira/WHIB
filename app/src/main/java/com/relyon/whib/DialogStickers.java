@@ -19,6 +19,7 @@ import com.relyon.whib.modelo.Argument;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +70,7 @@ public class DialogStickers extends Dialog {
         sticker.addItemDecoration(dividerItemDecoration);
         sticker.setLayoutManager(layoutManager);
         if (comment != null) {
-            Util.mSubjectDatabaseRef.child(comment.getSubject()).child("servers").child(comment.getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).addValueEventListener(new ValueEventListener() {
+            Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     Comment comment = snapshot.getValue(Comment.class);

@@ -22,6 +22,7 @@ import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.Timeline;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -124,7 +125,7 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
         } else if (server.getTempInfo().getQtdUsers() >= 100) {
             Toast.makeText(context, "Servidor Lotado!", Toast.LENGTH_SHORT).show();
         }
-        Util.mSubjectDatabaseRef.child(server.getSubject()).child("servers").child(server.getServerUID()).child("tempInfo").setValue(server.getTempInfo());
+        Util.mSubjectDatabaseRef.child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(server.getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).setValue(server.getTempInfo());
     }
 
     private void goToServer(Server server, ViewHolder holder, int position) {
@@ -157,7 +158,7 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
                 ServerTempInfo serverTempInfo2 = new ServerTempInfo(0, true, findFirstMissing(number));
                 Timeline tl = new Timeline(null, subject2, null);
                 Server server = new Server(UUID.randomUUID().toString(), serverTempInfo2, subject2, tl);
-                Util.mSubjectDatabaseRef.child(server.getSubject()).child("servers").child(server.getServerUID()).setValue(server);
+                Util.mSubjectDatabaseRef.child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(server.getServerUID()).setValue(server);
                 Util.setNumberOfServers(Util.getNumberOfServers() + 1);
             }
 

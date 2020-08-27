@@ -12,6 +12,7 @@ import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
 import com.google.android.material.tabs.TabLayout;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.SelectSubscription;
 
 public class SettingsActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler, SelectSubscription {
@@ -40,7 +41,7 @@ public class SettingsActivity extends AppCompatActivity implements BillingProces
 
         ImageView back = findViewById(R.id.back);
 
-        if (getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false)) {
+        if (getIntent().hasExtra(Constants.SHOW_LAST_WARN) && getIntent().getBooleanExtra(Constants.SHOW_LAST_WARN, false)) {
             DialogFinalWarn warn = new DialogFinalWarn(this);
             warn.show();
         }
@@ -82,7 +83,7 @@ public class SettingsActivity extends AppCompatActivity implements BillingProces
 
     @Override
     public void onProductPurchased(String productId, TransactionDetails details) {
-        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);
+        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_EXTRA).setValue(true);
         Util.getUser().setExtra(true);
         DialogCongratsSubscription warn = new DialogCongratsSubscription(this);
         warn.show();

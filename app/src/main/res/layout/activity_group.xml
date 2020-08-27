@@ -142,8 +142,7 @@
                         android:fontFamily="@font/baloo"
                         android:hint="@string/wait_your_time"
                         android:inputType="text"
-                        android:paddingStart="@dimen/padding_horizontal"
-                        android:paddingLeft="@dimen/padding_horizontal" />
+                        android:padding="@dimen/padding_horizontal" />
 
                     <LinearLayout
                         android:id="@+id/sendView"

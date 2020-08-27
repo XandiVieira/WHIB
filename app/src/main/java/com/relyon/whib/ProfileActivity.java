@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,13 +50,13 @@ public class ProfileActivity extends AppCompatActivity {
         nick = findViewById(R.id.nick);
         menu = findViewById(R.id.menu);
 
-        if (getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false) && Util.getUser().isFirstTime()) {
+        if (getIntent().hasExtra(Constants.SHOW_LAST_WARN) && getIntent().getBooleanExtra(Constants.SHOW_LAST_WARN, false) && Util.getUser().isFirstTime()) {
             DialogFinalWarn warn = new DialogFinalWarn(this);
             warn.show();
         }
 
-        if (getIntent().hasExtra("userId") && !getIntent().getStringExtra("userId").equals(Util.getUser().getUserUID())) {
-            Util.mUserDatabaseRef.child(getIntent().getStringExtra("userId")).addListenerForSingleValueEvent(new ValueEventListener() {
+        if (getIntent().hasExtra(Constants.USER_ID) && !getIntent().getStringExtra(Constants.USER_ID).equals(Util.getUser().getUserUID())) {
+            Util.mUserDatabaseRef.child(getIntent().getStringExtra(Constants.USER_ID)).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     user = dataSnapshot.getValue(User.class);
@@ -82,7 +83,7 @@ public class ProfileActivity extends AppCompatActivity {
             } else if (user.getNickName() == null && !nick.getText().toString().replace("@", "").equals("")) {
                 String nickname = nick.getText().toString().replace("@", "");
                 user.setNickName(nickname);
-                Util.getmDatabaseRef().child("nickname").addValueEventListener(new ValueEventListener() {
+                Util.getmDatabaseRef().child(Constants.DATABASE_REF_NICKNAME).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         List<String> nicknames = new ArrayList<>();
@@ -92,9 +93,9 @@ public class ProfileActivity extends AppCompatActivity {
                         if (nicknames.contains(nickname)) {
                             Toast.makeText(activity, "Este nome de usuário já está sendo utilizado.", Toast.LENGTH_SHORT).show();
                         } else {
-                            Util.getmDatabaseRef().child("nickname").removeEventListener(this);
+                            Util.getmDatabaseRef().child(Constants.DATABASE_REF_NICKNAME).removeEventListener(this);
                             Util.getmUserDatabaseRef().child(user.getUserUID()).setValue(user);
-                            Util.getmDatabaseRef().child("nickname").push().setValue(user.getNickName());
+                            Util.getmDatabaseRef().child(Constants.DATABASE_REF_NICKNAME).push().setValue(user.getNickName());
                             onBackPressed();
                         }
                     }
@@ -119,7 +120,7 @@ public class ProfileActivity extends AppCompatActivity {
             //registering popup with OnMenuItemClickListener
             popup.setOnMenuItemClickListener(item -> {
                 if (Util.getUser().isFirstTime()) {
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("firstTime").setValue(false);
+                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false);
                 }
                 if (item.getTitle().equals(getString(R.string.settings))) {
                     Intent intent = new Intent(this, SettingsActivity.class);

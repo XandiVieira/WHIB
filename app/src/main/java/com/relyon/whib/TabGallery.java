@@ -17,6 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class TabGallery extends Fragment {
             user = profileActivity.getUser();
         }
 
-        Util.mDatabaseRef.child("product").addValueEventListener(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_PRODUCT).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 stickersList.clear();

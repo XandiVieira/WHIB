@@ -28,6 +28,7 @@ import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.Survey;
 import com.relyon.whib.modelo.Timeline;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -145,7 +146,7 @@ public class NextSubjectVotingActivity extends AppCompatActivity {
                             Subject newSubject = new Subject(finalSubject, map, new Date().getTime(), true);
                             Util.mSubjectDatabaseRef.child(lessPopularSubject).removeValue();
                             Util.mSubjectDatabaseRef.child(finalSubject).setValue(newSubject);
-                            Util.mDatabaseRef.child("survey").removeValue();
+                            Util.mDatabaseRef.child(Constants.DATABASE_REF_SURVEY).removeValue();
                             finish();
                             startActivity(new Intent(activity, NextSubjectVotingActivity.class));
                         }
@@ -163,15 +164,15 @@ public class NextSubjectVotingActivity extends AppCompatActivity {
         });
 
         create.setOnClickListener(v -> {
-            Util.mDatabaseRef.child("survey").removeValue();
-            Util.mDatabaseRef.child("survey").setValue(newSurvey);
+            Util.mDatabaseRef.child(Constants.DATABASE_REF_SURVEY).removeValue();
+            Util.mDatabaseRef.child(Constants.DATABASE_REF_SURVEY).setValue(newSurvey);
             finish();
             startActivity(new Intent(this, NextSubjectVotingActivity.class));
         });
 
         back.setOnClickListener(v -> onBackPressed());
 
-        Util.mDatabaseRef.child("survey").addListenerForSingleValueEvent(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SURVEY).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 survey = dataSnapshot.getValue(Survey.class);

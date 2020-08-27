@@ -16,12 +16,18 @@ public class Constants {
     public static final String DEFINITION = "definition";
     public static final String LACRADA = "lacrada";
     public static final String DATABASE_REF_ADVANTAGE = "advantage";
+    public static final String DATABASE_REF_VALUATION = "valuation";
     public static final String DATABASE_REF_NICKNAME = "nickname";
     public static final String DATABASE_REF_NOTIFICATION = "notification";
+    public static final String DATABASE_REF_SHOW_PHOTO = "showPhoto";
+    public static final String DATABASE_REF_SOUND = "sound";
+    public static final String DATABASE_REF_VIBRATION = "vibration";
     public static final String DATABASE_REF_PRODUCT = "product";
     public static final String DATABASE_REF_PRODUCTS = "products";
     public static final String DATABASE_REF_REPORT = "report";
+    public static final String DATABASE_REF_COMMENT_GROUP = "commentGroup";
     public static final String DATABASE_REF_SUBJECT = "subject";
+    public static final String DATABASE_REF_PREFERENCES = "preferences";
     public static final String DATABASE_REF_SURVEY = "survey";
     public static final String DATABASE_REF_USER = "user";
     public static final String DATABASE_REF_GROUP = "group";
@@ -50,6 +56,7 @@ public class Constants {
     public static final String USER_ID = "userId";
     public static final String DATABASE_REF_QTD_USERS = "qtdUsers";
     public static final String DATABASE_REF_USER_SENDER_ID = "userSenderUID";
+    public static final String DATABASE_REF_USER_RECEIVER_ID = "userReceiverUID";
     public static final String SERVER_ID = "serverId";
     public static final String COMMENT_ID = "commentId";
     public static final String CAME_FROM_PROFILE = "cameFromProfile";
@@ -57,4 +64,6 @@ public class Constants {
     public static final String GROUP_NUMBER = "groupNumber";
     public static final String SUBJECT = "subject";
     public static final String TOKEN = "token";
+    public static final String DATABASE_REF_READY = "ready";
+    public static final String DATABASE_REF_QUANTITY = "quantity";
 }

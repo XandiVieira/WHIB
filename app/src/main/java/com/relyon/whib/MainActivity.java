@@ -341,11 +341,11 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
 
         if (subscriptionTransactionDetails != null && subscriptionTransactionDetails.purchaseInfo.purchaseData.purchaseState == PurchaseState.PurchasedSuccessfully) {
             Util.getUser().setExtra(true);
-            mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(true);
+            mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_EXTRA).setValue(true);
             return true;
         } else {
             Util.getUser().setExtra(false);
-            mUserDatabaseRef.child(Util.getUser().getUserUID()).child("extra").setValue(false);
+            mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_EXTRA).setValue(false);
             return false;
         }
     }

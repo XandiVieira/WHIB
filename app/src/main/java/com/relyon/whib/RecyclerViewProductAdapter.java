@@ -157,7 +157,7 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
                     Util.getUser().setProducts(user.getProducts());
                 }
                 if (myProduct != null) {
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").child(myProduct.getProductUID()).setValue(myProduct);
+                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PRODUCTS).child(myProduct.getProductUID()).setValue(myProduct);
                 }
             }
 

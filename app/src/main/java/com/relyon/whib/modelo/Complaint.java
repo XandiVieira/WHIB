@@ -5,16 +5,16 @@ import java.util.Comparator;
 public class Complaint {
 
     private String complaintId;
-    private String senderUID;
+    private String userSenderUID;
     private String question;
     private Long dateQuestion;
     private String answer;
     private Long dateAnswer;
     private boolean answered;
 
-    public Complaint(String complaintId, String senderUID, String question, Long dateQuestion) {
+    public Complaint(String complaintId, String userSenderUID, String question, Long dateQuestion) {
         this.complaintId = complaintId;
-        this.senderUID = senderUID;
+        this.userSenderUID = userSenderUID;
         this.question = question;
         this.dateQuestion = dateQuestion;
         this.answered = false;
@@ -31,12 +31,12 @@ public class Complaint {
         this.complaintId = complaintId;
     }
 
-    public String getSenderUID() {
-        return senderUID;
+    public String getUserSenderUID() {
+        return userSenderUID;
     }
 
-    public void setSenderUID(String senderUID) {
-        this.senderUID = senderUID;
+    public void setUserSenderUID(String userSenderUID) {
+        this.userSenderUID = userSenderUID;
     }
 
     public String getQuestion() {

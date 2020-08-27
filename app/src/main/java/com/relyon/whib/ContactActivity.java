@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Complaint;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,7 +49,7 @@ public class ContactActivity extends AppCompatActivity {
         empty = findViewById(R.id.empty);
         RecyclerView myComplaints = findViewById(R.id.myComplaints);
 
-        Util.mDatabaseRef.child("complaint").orderByChild("senderUID").equalTo(Util.getUser().getUserUID()).addValueEventListener(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_COMPLAINT).orderByChild(Constants.DATABASE_REF_USER_SENDER_ID).equalTo(Util.getUser().getUserUID()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 complaintList.clear();
@@ -90,7 +91,7 @@ public class ContactActivity extends AppCompatActivity {
                 Toast.makeText(this, "Detalhe melhor o seu problema.", Toast.LENGTH_SHORT).show();
             } else {
                 Complaint complaint = new Complaint(UUID.randomUUID().toString(), Util.getUser().getUserUID(), complaintTxt.getText().toString(), new Date().getTime());
-                Util.mDatabaseRef.child("complaint").child(complaint.getComplaintId()).setValue(complaint);
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_COMPLAINT).child(complaint.getComplaintId()).setValue(complaint);
                 Toast.makeText(this, "Requisição enviada com sucesso!", Toast.LENGTH_SHORT).show();
                 complaintTxt.setText("");
             }

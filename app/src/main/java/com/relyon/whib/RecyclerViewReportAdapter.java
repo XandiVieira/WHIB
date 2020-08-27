@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.relyon.whib.modelo.Report;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.util.List;
 
@@ -51,12 +52,12 @@ public class RecyclerViewReportAdapter extends RecyclerView.Adapter<RecyclerView
                 report.setReviewed(true);
                 holder.fair.setOnClickListener(v -> {
                     report.setFair(true);
-                    Util.mDatabaseRef.child("report").child(report.getId()).setValue(report);
+                    Util.mDatabaseRef.child(Constants.DATABASE_REF_REPORT).child(report.getId()).setValue(report);
                     notifyDataSetChanged();
                 });
                 holder.unfair.setOnClickListener(v -> {
                     report.setFair(false);
-                    Util.mDatabaseRef.child("report").child(report.getId()).setValue(report);
+                    Util.mDatabaseRef.child(Constants.DATABASE_REF_REPORT).child(report.getId()).setValue(report);
                     notifyDataSetChanged();
                 });
             } else {

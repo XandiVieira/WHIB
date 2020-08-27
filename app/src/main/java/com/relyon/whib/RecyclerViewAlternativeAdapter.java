@@ -19,6 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Alternative;
 import com.relyon.whib.modelo.Survey;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +61,7 @@ public class RecyclerViewAlternativeAdapter extends RecyclerView.Adapter<Recycle
         holder.text.setText(alternative.getText());
         if (!survey.getAlreadyVoted().contains(Util.getUser().getUserUID())) {
             holder.partials.setVisibility(View.GONE);
-            holder.bg.setOnClickListener(v -> Util.getmDatabaseRef().child("survey").addListenerForSingleValueEvent(new ValueEventListener() {
+            holder.bg.setOnClickListener(v -> Util.getmDatabaseRef().child(Constants.DATABASE_REF_SURVEY).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (notYet) {
@@ -74,7 +75,7 @@ public class RecyclerViewAlternativeAdapter extends RecyclerView.Adapter<Recycle
                             survey.getAlreadyVoted().add(Util.getUser().getUserUID());
                             survey.getAlternatives().get(position).setNumVotes(survey.getAlternatives().get(position).getNumVotes() + 1);
                             survey.getAlternatives().get(position).getVotedForMe().add(Util.getUser().getUserUID());
-                            Util.getmDatabaseRef().child("survey").setValue(survey);
+                            Util.getmDatabaseRef().child(Constants.DATABASE_REF_SURVEY).setValue(survey);
                             updateUI(holder);
                         }
                     }

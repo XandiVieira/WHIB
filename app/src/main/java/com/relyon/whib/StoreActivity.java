@@ -160,7 +160,7 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
                         user.getProducts().put(myProduct.getProductUID(), myProduct);
                     }
                     Util.getUser().setProducts(user.getProducts());
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("products").child(myProduct.getProductUID()).setValue(myProduct);
+                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PRODUCTS).child(myProduct.getProductUID()).setValue(myProduct);
                     Toast.makeText(activity, "As figurinhas foram adicionadas à sua galeria com sucesso", Toast.LENGTH_LONG).show();
                 }
             }

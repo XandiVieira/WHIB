@@ -24,6 +24,7 @@ import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -133,7 +134,7 @@ public class TabHistory extends Fragment {
                 for (int i = 0; i < serverList.size(); i++) {
                     Server server = serverList.get(i);
                     int finalI = i;
-                    Util.mSubjectDatabaseRef.child(server.getSubject()).child("servers").child(server.getServerUID()).child("timeline").child("commentList").addValueEventListener(new ValueEventListener() {
+                    Util.mSubjectDatabaseRef.child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(server.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             for (DataSnapshot snapshot1 : snapshot.getChildren()) {

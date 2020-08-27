@@ -28,6 +28,7 @@ import com.relyon.whib.modelo.Argument;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Sending;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 import com.vanniktech.emoji.EmojiButton;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiManager;
@@ -42,13 +43,21 @@ public class GroupActivity extends AppCompatActivity {
 
     private RecyclerView rvArgument;
     private EmojiEditText inputMessage;
-    private ArrayList<Argument> argumentList = new ArrayList<>();
+    private ArrayList<Argument> arguments = new ArrayList<>();
     private EmojiPopup emojiPopup;
     private boolean isForSticker = true;
     private boolean cameFromProfile = false;
     private TextView empty;
     private Comment comment;
-    private RecyclerViewArgumentAdapter adapter;
+    private RecyclerViewArgumentAdapter argumentAdapter;
+    private ImageView back;
+    private TextView numberOfRoom;
+    private TextView subject;
+    private LinearLayout sendLayout;
+    private EmojiButton emojiButton;
+    private ImageView sendIcon;
+    private ImageView showComment;
+    private Activity activity;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -57,87 +66,26 @@ public class GroupActivity extends AppCompatActivity {
         EmojiManager.install(new GoogleEmojiProvider());
         setContentView(R.layout.activity_group);
 
-        adapter = null;
-        Activity activity = this;
-
-        if (getIntent().hasExtra("cameFromProfile")) {
-            if (getIntent().getBooleanExtra("cameFromProfile", false)) {
-                cameFromProfile = true;
-            }
-        }
-
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        ImageView back = findViewById(R.id.back);
-        TextView serverRoom = findViewById(R.id.serverRoom);
-        TextView subject = findViewById(R.id.subject);
-        rvArgument = findViewById(R.id.rvArgument);
-        inputMessage = findViewById(R.id.inputMessage);
-        empty = findViewById(R.id.empty);
-        LinearLayout sendView = findViewById(R.id.sendView);
-        EmojiButton emojiButton = findViewById(R.id.sendEmoji);
-        ImageView sendIcon = findViewById(R.id.sendIcon);
-        ImageView showComment = findViewById(R.id.showComment);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
-        layoutManager.setStackFromEnd(false);
-        rvArgument.setLayoutManager(layoutManager);
-        argumentList = new ArrayList<>();
-        adapter = new RecyclerViewArgumentAdapter(activity, argumentList);
+        argumentAdapter = null;
+        activity = this;
 
-        if (argumentList.isEmpty() && !Util.getGroup().isReady() && Util.getUser().getUserUID().equals(Util.getComment().getAuthorsUID())) {
+        verifyUserCameFromProfile();
+        setLayoutAttributes();
+        setArgumentAdapter();
+
+        if (arguments.isEmpty() && !Util.getGroup().isReady() && Util.getUser().getUserUID().equals(Util.getComment().getAuthorsUID())) {
             empty.setVisibility(View.VISIBLE);
         }
 
-        if (getIntent().hasExtra("serverId") && getIntent().hasExtra("commentId")) {
-            String serverId = getIntent().getStringExtra("serverId");
-            String commentId = getIntent().getStringExtra("commentId");
+        if (getIntent().hasExtra(Constants.SERVER_ID) && getIntent().hasExtra(Constants.COMMENT_ID)) {
+            String serverId = getIntent().getStringExtra(Constants.SERVER_ID);
+            String commentId = getIntent().getStringExtra(Constants.COMMENT_ID);
 
             if (serverId != null && commentId != null) {
-                Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(serverId).child("timeline")
-                        .child("commentList").child(commentId).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(serverId).child("timeline")
-                                .child("commentList").child(commentId).removeEventListener(this);
-                        comment = dataSnapshot.getValue(Comment.class);
-                        showComment.setVisibility(View.VISIBLE);
-                        sendView.setVisibility(View.VISIBLE);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-                Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(serverId).child("timeline")
-                        .child("commentList").child(commentId).child("group").child("argumentList").addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                        argumentList.add(snapshot.getValue(Argument.class));
-                        rvArgument.setAdapter(adapter);
-                        rvArgument.scrollToPosition(argumentList.size() - 1);
-                    }
-
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    }
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
+                retrieveOwnerComment(serverId, commentId);
+                retrieveArguments(serverId, commentId);
             }
         }
 
@@ -154,14 +102,8 @@ public class GroupActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 0) {
-                    sendIcon.setImageDrawable(getResources().getDrawable(R.mipmap.send_icon));
-                    isForSticker = false;
-                } else {
-                    sendIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_sticker));
-                    isForSticker = true;
-                }
+            public void onTextChanged(CharSequence text, int start, int before, int count) {
+                changeSendButton(text);
             }
 
             @Override
@@ -186,12 +128,12 @@ public class GroupActivity extends AppCompatActivity {
             onBackPressed();
         });
 
-        serverRoom.setText("Servidor " + Util.getServer().getTempInfo().getNumber() + " - Sala " + Util.getGroup().getNumber());
+        numberOfRoom.setText("Servidor " + Util.getServer().getTempInfo().getNumber() + " - Sala " + Util.getGroup().getNumber());
         subject.setText(Util.getServer().getSubject());
 
-        sendView.setOnClickListener(v -> {
+        sendLayout.setOnClickListener(v -> {
             if (isForSticker) {
-                DialogStickers cdd = new DialogStickers(this, Util.getUser().getProducts() != null ? new ArrayList<>(Util.getUser().getProducts().values()) : new ArrayList<>(), argumentList, null, null, null);
+                DialogStickers cdd = new DialogStickers(this, Util.getUser().getProducts() != null ? new ArrayList<>(Util.getUser().getProducts().values()) : new ArrayList<>(), arguments, null, null, null);
                 cdd.show();
             } else {
                 if (inputMessage.getText() != null && !inputMessage.getText().toString().isEmpty()) {
@@ -205,7 +147,7 @@ public class GroupActivity extends AppCompatActivity {
         });
         showComment.setOnClickListener(v -> showComment());
 
-        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("tempInfo").child("activated").addListenerForSingleValueEvent(new ValueEventListener() {
+        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).child(Constants.DATABASE_REF_ACTIVATED).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 boolean activated = dataSnapshot.getValue(Boolean.class);
@@ -219,6 +161,95 @@ public class GroupActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void changeSendButton(CharSequence text) {
+        if (text.length() > 0) {
+            sendIcon.setImageDrawable(getResources().getDrawable(R.mipmap.send_icon));
+            isForSticker = false;
+        } else {
+            sendIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_sticker));
+            isForSticker = true;
+        }
+    }
+
+    private void retrieveArguments(String serverId, String commentId) {
+        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(serverId).child(Constants.DATABASE_REF_TIMELINE)
+                .child(Constants.DATABASE_REF_COMMENT_LIST).child(commentId).child(Constants.DATABASE_REF_GROUP).child(Constants.DATABASE_REF_ARGUMENT_LIST).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                arguments.add(snapshot.getValue(Argument.class));
+                rvArgument.setAdapter(argumentAdapter);
+                rvArgument.scrollToPosition(arguments.size() - 1);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void retrieveOwnerComment(String serverId, String commentId) {
+        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(serverId).child(Constants.DATABASE_REF_TIMELINE)
+                .child(Constants.DATABASE_REF_COMMENT_LIST).child(commentId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(serverId).child(Constants.DATABASE_REF_TIMELINE)
+                        .child(Constants.DATABASE_REF_COMMENT_LIST).child(commentId).removeEventListener(this);
+                comment = dataSnapshot.getValue(Comment.class);
+                showComment.setVisibility(View.VISIBLE);
+                sendLayout.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void setArgumentAdapter() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
+        layoutManager.setStackFromEnd(false);
+        rvArgument.setLayoutManager(layoutManager);
+        arguments = new ArrayList<>();
+        argumentAdapter = new RecyclerViewArgumentAdapter(activity, arguments);
+    }
+
+    private void setLayoutAttributes() {
+        back = findViewById(R.id.back);
+        numberOfRoom = findViewById(R.id.serverRoom);
+        subject = findViewById(R.id.subject);
+        rvArgument = findViewById(R.id.rvArgument);
+        inputMessage = findViewById(R.id.inputMessage);
+        empty = findViewById(R.id.empty);
+        sendLayout = findViewById(R.id.sendView);
+        emojiButton = findViewById(R.id.sendEmoji);
+        sendIcon = findViewById(R.id.sendIcon);
+        showComment = findViewById(R.id.showComment);
+    }
+
+    private void verifyUserCameFromProfile() {
+        if (getIntent().hasExtra(Constants.CAME_FROM_PROFILE)) {
+            if (getIntent().getBooleanExtra(Constants.CAME_FROM_PROFILE, false)) {
+                cameFromProfile = true;
+            }
+        }
     }
 
     private void showComment() {
@@ -251,36 +282,16 @@ public class GroupActivity extends AppCompatActivity {
 
         Sending sending = new Sending(type, current_date.getTime(), Util.getUser().getUserName(), Util.getUser().getUserUID(), Util.getSubject());
         Argument argument = new Argument(inputMessage.getText().toString(), audioPath, Util.getGroup().getGroupUID(), current_date.getTime(), sending);
-        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline")
-                .child("commentList").child(Util.getGroup().getCommentUID())
-                .child("group").child("argumentList").push().setValue(argument);
+        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE)
+                .child(Constants.DATABASE_REF_COMMENT_LIST).child(Util.getGroup().getCommentUID())
+                .child(Constants.DATABASE_REF_GROUP).child(Constants.DATABASE_REF_ARGUMENT_LIST).push().setValue(argument);
 
-        if (argumentList.isEmpty() && !Util.getGroup().isReady() && Util.getUser().getUserUID().equals(Util.getComment().getAuthorsUID())) {
-            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline")
-                    .child("commentList").child(Util.getGroup().getCommentUID())
-                    .child("group").child("ready").setValue(true);
+        if (arguments.isEmpty() && !Util.getGroup().isReady() && Util.getUser().getUserUID().equals(Util.getComment().getAuthorsUID())) {
+            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE)
+                    .child(Constants.DATABASE_REF_COMMENT_LIST).child(Util.getGroup().getCommentUID())
+                    .child(Constants.DATABASE_REF_GROUP).child(Constants.DATABASE_REF_READY).setValue(true);
             empty.setVisibility(View.GONE);
         }
-    }
-
-    private void leaveGroup() {
-        for (int i = 0; i < Util.getComment().getGroup().getUserListUID().size(); i++) {
-            if (Util.getComment().getGroup().getUserListUID().get(i).equals(Util.getUser().getUserUID())) {
-                Util.getComment().getGroup().getUserListUID().remove(i);
-            }
-        }
-        if (Util.getComment().getGroup().getUserListUID().isEmpty()) {
-            Util.setComment(null);
-            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("tempInfo").child("currentGroup").setValue(null);
-            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline")
-                    .child("commentList").child(Util.getGroup().getCommentUID()).setValue(null);
-        } else {
-            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("tempInfo").child("currentGroup").setValue(null);
-            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline")
-                    .child("commentList").child(Util.getGroup().getCommentUID())
-                    .child("group").child("userListUID").setValue(Util.getComment().getGroup().getUserListUID());
-        }
-        onBackPressed();
     }
 
     @Override

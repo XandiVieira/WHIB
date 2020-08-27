@@ -20,6 +20,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.util.Date;
 import java.util.UUID;
@@ -131,7 +132,7 @@ public class AdmCreateStoreItem extends AppCompatActivity {
                     .addOnSuccessListener(taskSnapshot -> {
                         progressDialog.dismiss();
                         Toast.makeText(AdmCreateStoreItem.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                        Util.mDatabaseRef.child("product").child(product.getProductUID()).setValue(product);
+                        Util.mDatabaseRef.child(Constants.DATABASE_REF_PRODUCT).child(product.getProductUID()).setValue(product);
                         title.setText("");
                         description.setText("");
                         price.setText("");

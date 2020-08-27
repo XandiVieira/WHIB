@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.relyon.whib.modelo.Complaint;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -54,7 +55,7 @@ public class RecyclerViewComplaintAdapter extends RecyclerView.Adapter<RecyclerV
                     complaint.setAnswered(true);
                     complaint.setDateAnswer(new Date().getTime());
                     complaint.setAnswer(holder.editText.getText().toString());
-                    Util.mDatabaseRef.child("complaint").child(complaint.getComplaintId()).setValue(complaint);
+                    Util.mDatabaseRef.child(Constants.DATABASE_REF_COMPLAINT).child(complaint.getComplaintId()).setValue(complaint);
                 } else {
                     Toast.makeText(context, "Resposta muito curta", Toast.LENGTH_SHORT).show();
                 }

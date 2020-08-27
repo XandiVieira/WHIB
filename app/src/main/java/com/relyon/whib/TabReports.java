@@ -20,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Report;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +75,7 @@ public class TabReports extends Fragment {
         final int[] countReceivedReports = {0};
         final int[] countSentReports = {0};
 
-        Query query = Util.mDatabaseRef.child("report").orderByChild("userReceiverUID").equalTo(user.getUserUID());
+        Query query = Util.mDatabaseRef.child(Constants.DATABASE_REF_REPORT).orderByChild(Constants.DATABASE_REF_USER_RECEIVER_ID).equalTo(user.getUserUID());
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -97,7 +98,7 @@ public class TabReports extends Fragment {
                 reports.setLayoutManager(new LinearLayoutManager(getContext()));
                 reports.setAdapter(recyclerViewReportAdapter);
 
-                Query query = Util.mDatabaseRef.child("report").orderByChild("userSenderUID").equalTo(user.getUserUID());
+                Query query = Util.mDatabaseRef.child(Constants.DATABASE_REF_REPORT).orderByChild(Constants.DATABASE_REF_USER_SENDER_ID).equalTo(user.getUserUID());
                 query.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

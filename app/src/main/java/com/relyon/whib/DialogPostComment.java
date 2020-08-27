@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Sending;
 import com.relyon.whib.modelo.Util;
@@ -98,13 +99,19 @@ public class DialogPostComment extends Dialog implements
         Sending sending = new Sending("text", date, Util.getUser().getUserName(), Util.getUser().getUserUID(), subject);
         if (validateComment()) {
             Comment comment = new Comment(Util.getServer().getServerUID(), commentBox.getText().toString(), (float) 0.0, Util.getUser().getPhotoPath(), date, 0, (float) 0.0, sending, false, null);
-            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).push().setValue(comment);
+
+            DatabaseReference commentListRef = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST);
+            String commentUID = commentListRef.push().getKey();
+            comment.setCommentUID(commentUID);
+            if (commentUID != null) {
+                commentListRef.child(commentUID).setValue(comment);
+            }
+
             if (Util.getUser().getCommentList() == null) {
                 Util.getUser().setCommentList(new ArrayList<>());
             }
             Util.getUser().getCommentList().add(comment);
             Toast.makeText(getContext(), "Comentário postado!", Toast.LENGTH_SHORT).show();
-            // Clear input box
             commentBox.setText("");
             callTour();
         }

@@ -24,11 +24,11 @@ public class FCMService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
         Map<String, String> data = remoteMessage.getData();
-        if (data.get("serverId") == null || data.get("commentId") == null) {
+        if (data.get(Constants.SERVER_ID) == null || data.get(Constants.COMMENT_ID) == null) {
             return;
         }
 
-        final Intent intent = new Intent(this, MainActivity.class).putExtra("serverId", data.get("serverId")).putExtra("commentId", data.get("commentId"));
+        final Intent intent = new Intent(this, MainActivity.class).putExtra(Constants.SERVER_ID, data.get(Constants.SERVER_ID)).putExtra(Constants.COMMENT_ID, data.get(Constants.COMMENT_ID));
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         String notificationChannelId = "my_channel_id_01";

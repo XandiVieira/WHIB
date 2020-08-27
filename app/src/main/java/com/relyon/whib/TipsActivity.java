@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 public class TipsActivity extends AppCompatActivity {
 
@@ -26,7 +27,7 @@ public class TipsActivity extends AppCompatActivity {
 
         store.setOnClickListener(v -> startActivity(new Intent(this, StoreActivity.class)));
 
-        if (Util.getUser().isFirstTime() || getIntent().hasExtra("showLastWarn") && getIntent().getBooleanExtra("showLastWarn", false) && Util.getUser().isFirstTime()) {
+        if (Util.getUser().isFirstTime() || getIntent().hasExtra(Constants.SHOW_LAST_WARN) && getIntent().getBooleanExtra(Constants.SHOW_LAST_WARN, false) && Util.getUser().isFirstTime()) {
             DialogFinalWarn warn = new DialogFinalWarn(this);
             warn.show();
         }

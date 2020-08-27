@@ -19,6 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,11 +80,11 @@ public class AdmServerAdapter extends BaseAdapter {
 
         subjectTitle.setOnClickListener(v -> callDialog(view, position));
 
-        Util.mSubjectDatabaseRef.child(server.getSubject()).child("servers").addValueEventListener(new ValueEventListener() {
+        Util.mSubjectDatabaseRef.child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 servers = 0;
-                Util.mSubjectDatabaseRef.child(server.getSubject()).child("servers").removeEventListener(this);
+                Util.mSubjectDatabaseRef.child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).removeEventListener(this);
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     Server server1 = snap.getValue(Server.class);
                     if (server1 != null && server1.getTimeline() != null && server1.getTimeline().getCommentList() != null && server1.getTimeline().getCommentList().size() > 0) {
@@ -115,7 +116,7 @@ public class AdmServerAdapter extends BaseAdapter {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Server server1 = snapshot.getValue(Server.class);
                         if (server1 != null && server1.getSubject().equals(server.getSubject())) {
-                            Util.mSubjectDatabaseRef.child(server1.getSubject()).child(server1.getServerUID()).child("tempInfo").child("activated").setValue(server.getTempInfo().isActivated());
+                            Util.mSubjectDatabaseRef.child(server1.getSubject()).child(server1.getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).child(Constants.DATABASE_REF_ACTIVATED).setValue(server.getTempInfo().isActivated());
                         }
                     }
                 }

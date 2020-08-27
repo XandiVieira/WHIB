@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
 
 public class TabPreferences extends Fragment {
 
@@ -58,19 +59,19 @@ public class TabPreferences extends Fragment {
         checkVibration.setChecked(Util.getUser().getPreferences().isVibration());
 
         checkNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("notification").setValue(checkNotifications.isChecked());
+            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_NOTIFICATION).setValue(checkNotifications.isChecked());
         });
 
         checkShowPhoto.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("showPhoto").setValue(checkShowPhoto.isChecked());
+            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_SHOW_PHOTO).setValue(checkShowPhoto.isChecked());
         });
 
         checkSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("sound").setValue(checkSound.isChecked());
+            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_SOUND).setValue(checkSound.isChecked());
         });
 
         checkVibration.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child("preferences").child("vibration").setValue(checkVibration.isChecked());
+            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_VIBRATION).setValue(checkVibration.isChecked());
         });
 
         logout.setOnClickListener(v -> logout());
