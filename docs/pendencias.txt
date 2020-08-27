@@ -71,8 +71,8 @@
 	- Descolar teclado do input na tela de grupo
 	- Ao abrir timeline o scroll leva pro comentário do meio e não do topo
 - Refatoração de todo o código
-- Filtrar por grupo (Vai buscar todos de uma vez só, sem paginação)
-- Ads pararam de funcionar
+	- Filtrar por grupo (Vai buscar todos de uma vez só, sem paginação)
+- Ajustar ads para comentários buscados onScrolling
 
 LOJA
 - Superpoderes (Direito de tornar meu comentário em grupo automaticamente)

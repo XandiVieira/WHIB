@@ -44,7 +44,7 @@ public class Constants {
     public static final String DATABASE_REF_ACTIVATED = "activated";
     public static final String AD_UNIT_ID = "ca-app-pub-1676578761693318/6552659541";
     public static final String ADMOB_APP_ID = "ca-app-pub-1676578761693318~6855911877";
-    public static final String TEST_DEVICE_ID = "3DF6979E4CCB56C2A91510C1A9BCC253";
+    public static final String TEST_DEVICE_ID = "47E616ECC65A51B01FE86E1A8D1BBFD5";
     public static final String DATABASE_REF_A_GROUP = "agroup";
     public static final String DATABASE_REF_RATING = "rating";
     public static final String SERVER_EMPTY = "serverEmpty";

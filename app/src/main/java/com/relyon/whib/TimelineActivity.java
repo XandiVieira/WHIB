@@ -315,6 +315,7 @@ public class TimelineActivity extends AppCompatActivity {
                 }
 
                 commentAdapter.addAllComments(comments, resetTimeline);
+                loadNativeAds();
                 mIsLoading = false;
                 resetTimeline = false;
                 number_of_ads = comments.size() / 3;
@@ -333,7 +334,6 @@ public class TimelineActivity extends AppCompatActivity {
         if (!user.isFirstTime() && !user.isExtra()) {
             nativeAdsList.clear();
             AdLoader.Builder builder = new AdLoader.Builder(this, Constants.AD_UNIT_ID);
-            // The AdLoader used to load ads.
             AdLoader adLoader = builder.forUnifiedNativeAd(
                     unifiedNativeAd -> nativeAdsList.add(unifiedNativeAd)).withAdListener(
                     new AdListener() {
@@ -351,7 +351,6 @@ public class TimelineActivity extends AppCompatActivity {
                         }
                     }).build();
 
-            // Load the Native Express ad.
             try {
                 Thread.sleep(3000);
                 adLoader.loadAds(new AdRequest.Builder().build(), number_of_ads);
