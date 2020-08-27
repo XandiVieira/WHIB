@@ -184,6 +184,9 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         } else if (comment.isAGroup()) {
             holder.commentLayout.setBackgroundResource(R.drawable.rounded_primary_double);
             holder.bg.setBackgroundResource(R.drawable.rounded_primary_double);
+        } else {
+            holder.commentLayout.setBackgroundResource(R.drawable.rounded_white);
+            holder.bg.setBackgroundResource(R.drawable.rounded_white);
         }
     }
 
@@ -466,7 +469,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
     void addAllComments(List<Comment> newComments, boolean resetTimeline) {
         if (resetTimeline) {
-            elements.clear();
+            resetTimeline();
             elements.addAll(newComments);
             notifyDataSetChanged();
         } else {
@@ -533,6 +536,10 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     @Override
     public int getItemCount() {
         return elements.size();
+    }
+
+    public void resetTimeline() {
+        elements.clear();
     }
 
     private static class CommentViewHolder extends RecyclerView.ViewHolder {

@@ -71,7 +71,7 @@ public class TimelineActivity extends AppCompatActivity {
     private boolean mIsLoading = false;
     private boolean resetTimeline = false;
     private FancyShowCaseQueue queue = new FancyShowCaseQueue();
-    private Query query;
+    private Query commentQuery;
     private DatabaseReference commentListReference;
     private boolean canLoadNewComments = false;
 
@@ -131,9 +131,9 @@ public class TimelineActivity extends AppCompatActivity {
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int spinnerSelection, long id) {
                 resetTimeline = true;
-                setQuery(position);
+                setCommentQuery(spinnerSelection);
                 retrieveCommentList();
             }
 
@@ -143,7 +143,7 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
 
-        query.addChildEventListener(new ChildEventListener() {
+        commentQuery.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 if (canLoadNewComments) {
@@ -185,7 +185,7 @@ public class TimelineActivity extends AppCompatActivity {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (!recyclerView.canScrollVertically(1)) {
                     if (!mIsLoading) {
-                        setQuery(spinner.getSelectedItemPosition());
+                        setCommentQuery(spinner.getSelectedItemPosition());
                         retrieveCommentList();
                     }
                 }
@@ -234,21 +234,32 @@ public class TimelineActivity extends AppCompatActivity {
         leaveCommentLayout.setOnClickListener(v -> openCommentBox());
     }
 
-    private void setQuery(int position) {
-        if (position == 0) {
+    private void setCommentQuery(int spinnerSelection) {
+        resetTimeline();
+        if (spinnerSelection == 0) {
             if (commentAdapter.getLastItemId() != null) {
-                query = commentListReference.orderByKey().endAt(commentAdapter.getLastItemId()).limitToLast(commentAdapter.mPostsPerPage);
+                commentQuery = commentListReference.orderByKey().endAt(commentAdapter.getLastItemId()).limitToLast(commentAdapter.mPostsPerPage);
             } else {
-                query = commentListReference.orderByKey().limitToLast(commentAdapter.mPostsPerPage);
+                commentQuery = commentListReference.orderByKey().limitToLast(commentAdapter.mPostsPerPage);
             }
-        } else if (position == 1) {
+        } else if (spinnerSelection == 1) {
             if (resetTimeline) {
-                query = commentListReference.orderByChild(Constants.DATABASE_REF_RATING).limitToLast(commentAdapter.mPostsPerPage + 2);
+                commentQuery = commentListReference.orderByChild(Constants.DATABASE_REF_RATING).startAt(commentAdapter.getLastRate()).limitToLast(commentAdapter.mPostsPerPage + 2);
             } else {
-                query = commentListReference.orderByChild(Constants.DATABASE_REF_RATING).endAt(commentAdapter.getLastRate()).limitToLast(commentAdapter.mPostsPerPage + 2);
+                if (commentAdapter.getLastRate() == 0) {
+                    commentQuery = commentListReference.orderByKey().endAt(commentAdapter.getLastItemId()).limitToLast(commentAdapter.mPostsPerPage);
+                } else {
+                    commentQuery = commentListReference.orderByChild(Constants.DATABASE_REF_RATING).endAt(commentAdapter.getLastRate()).limitToLast(commentAdapter.mPostsPerPage + 2);
+                }
             }
-        } else if (position == 2) {
-            query = commentListReference.orderByChild(Constants.DATABASE_REF_A_GROUP).equalTo(true).limitToLast(commentAdapter.mPostsPerPage + 2);
+        } else if (spinnerSelection == 2) {
+            commentQuery = commentListReference.orderByChild(Constants.DATABASE_REF_A_GROUP).equalTo(true).limitToLast(commentAdapter.mPostsPerPage + 2);
+        }
+    }
+
+    private void resetTimeline() {
+        if (resetTimeline) {
+            commentAdapter.resetTimeline();
         }
     }
 
@@ -277,13 +288,13 @@ public class TimelineActivity extends AppCompatActivity {
         dividerItemDecoration.setDrawable(requireNonNull(ContextCompat.getDrawable(this, R.drawable.divider)));
         rvComments.setAdapter(commentAdapter);
         commentAdapter.notifyDataSetChanged();
-        query = commentListReference.orderByKey().limitToLast(commentAdapter.mPostsPerPage);
+        commentQuery = commentListReference.orderByKey().limitToLast(commentAdapter.mPostsPerPage);
     }
 
     private void retrieveCommentList() {
         mIsLoading = true;
 
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        commentQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Comment> comments = new ArrayList<>();
@@ -297,18 +308,15 @@ public class TimelineActivity extends AppCompatActivity {
                             }
                         }
                     }
-                    mIsLoading = false;
                 } else {
                     if (user.isFirstTime()) {
                         startActivity(new Intent(activity, MainActivity.class).putExtra(Constants.SERVER_EMPTY, true));
                     }
-                    mIsLoading = false;
                 }
 
                 commentAdapter.addAllComments(comments, resetTimeline);
-
-                resetTimeline = false;
                 mIsLoading = false;
+                resetTimeline = false;
                 number_of_ads = comments.size() / 3;
                 new Thread(() -> loadNativeAds()).start();
                 canLoadNewComments = true;

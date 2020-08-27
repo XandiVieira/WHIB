@@ -66,11 +66,12 @@
 	- Verificar contagem de usuários nos servidores
 	- Testar uma timeline com muitos comentários
 - Ao enviar sticker dar scroll até o comentário de novo (está atualizando e rolando pra outro comentário)
-- Filtrar comentários por avaliação e rolar até o fim começa a repetir o ultimo comentário
-- Filtrar por avaliação não funciona
+	- Filtrar comentários por avaliação e rolar até o fim começa a repetir o ultimo comentário
+	- Filtrar por avaliação não funciona
 - Descolar teclado do input na tela de grupo
-- Ao abrir timeline o scroll leva pro comentário do meio e não do topo
+	- Ao abrir timeline o scroll leva pro comentário do meio e não do topo
 - Refatoração de todo o código
+- Filtrar por grupo (se tiver mais de 10 grupos não vai funcionar)
 
 LOJA
 - Superpoderes (Direito de tornar meu comentário em grupo automaticamente)

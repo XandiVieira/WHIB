@@ -110,7 +110,8 @@ public class DialogRateComment extends Dialog implements
             if (!comment.isAGroup()) {
                 comment.setAGroup(true);
                 if (comment.getGroup() == null) {
-                    createNewGroup(i + 1);
+                    int serverNumber = i + 1;
+                    createNewGroup(serverNumber);
                 }
             }
         }
@@ -134,13 +135,13 @@ public class DialogRateComment extends Dialog implements
         });
     }
 
-    private void createNewGroup(int i) {
+    private void createNewGroup(int serverNumber) {
         List<String> userUIDList = new ArrayList<>();
         userUIDList.add(Util.getUser().getUserUID());
         List<User> users = new ArrayList<>();
         users.add(Util.getUser());
         GroupTempInfo groupTempInfo = new GroupTempInfo(users, false);
-        Group group = new Group(UUID.randomUUID().toString(), comment.getSubject(), i, Util.getServer().getTempInfo().getNumber(),
+        Group group = new Group(UUID.randomUUID().toString(), comment.getSubject(), serverNumber, Util.getServer().getTempInfo().getNumber(),
                 groupTempInfo, "text", new ArrayList<>(), userUIDList, false, comment.getCommentUID());
         comment.setGroup(group);
         Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child("servers").child(Util.getServer().getServerUID()).child("timeline").child("commentList").child(comment.getCommentUID()).child("commentGroup").setValue(group);
