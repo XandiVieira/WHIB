@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/lightGrey"
     android:orientation="vertical"
-    tools:context="com.relyon.whib.SettingsActivity">
+    tools:context="com.relyon.whib.activity.SettingsActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

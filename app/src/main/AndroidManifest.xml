@@ -15,31 +15,31 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".NextSubjectVotingActivity" />
-        <activity android:name=".ContactActivity" />
-        <activity android:name=".PrivacyPolicyActivity" />
-        <activity android:name=".TermsActivity" />
-        <activity android:name=".FaqActivity" />
-        <activity android:name=".AboutUsActivity" />
-        <activity android:name=".AboutActivity" />
+        <activity android:name=".activity.NextSubjectVotingActivity" />
+        <activity android:name=".activity.ContactActivity" />
+        <activity android:name=".activity.PrivacyPolicyActivity" />
+        <activity android:name=".activity.TermsActivity" />
+        <activity android:name=".activity.FaqActivity" />
+        <activity android:name=".activity.AboutUsActivity" />
+        <activity android:name=".activity.AboutActivity" />
         <activity
-            android:name=".ProfileActivity"
+            android:name=".activity.ProfileActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity">
+        <activity android:name=".activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TimelineActivity">
+        <activity android:name=".activity.TimelineActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -47,7 +47,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".GroupActivity"
+            android:name=".activity.GroupActivity"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -56,7 +56,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name=".activity.SettingsActivity"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -65,7 +65,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".StoreActivity"
+            android:name=".activity.StoreActivity"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -74,7 +74,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AdmChoosingProfileActivity"
+            android:name=".activity.adm.AdmChoosingProfileActivity"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -83,7 +83,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AdmControlActivity"
+            android:name=".activity.adm.AdmControlActivity"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -115,14 +115,14 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".AdmReportsActivity" />
+        <activity android:name=".activity.adm.AdmReportsActivity" />
         <activity
-            android:name=".AdmComplaintsActivity"
+            android:name=".activity.adm.AdmComplaintsActivity"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name=".AdmCreateStoreItem"
+            android:name=".activity.adm.AdmCreateStoreItem"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity android:name=".TipsActivity" />
+        <activity android:name=".activity.TipsActivity" />
     </application>
 
 </manifest>

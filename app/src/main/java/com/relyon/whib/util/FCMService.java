@@ -13,7 +13,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.relyon.whib.MainActivity;
+import com.relyon.whib.activity.MainActivity;
 import com.relyon.whib.R;
 
 import java.util.Map;

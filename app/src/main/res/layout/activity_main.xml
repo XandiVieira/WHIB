@@ -7,7 +7,7 @@
     android:background="@color/lightGrey"
     android:orientation="vertical"
     android:padding="@dimen/surround_paddings"
-    tools:context="com.relyon.whib.MainActivity">
+    tools:context="com.relyon.whib.activity.MainActivity">
 
     <LinearLayout
         android:id="@+id/header"

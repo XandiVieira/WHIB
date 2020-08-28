@@ -192,6 +192,8 @@
     <string name="already_valuated_this_comment">Você já avaliou este comentário!</string>
     <string name="can_not_send_stickers_to_yourself">Você não pode enviar figurinhas para seu próprio comentário.</string>
     <string name="owner_has_not_activated_group_yet">O dono ainda não ativou o grupo, Aguarde!</string>
+    <string name="request_sent">Requisição enviada com sucesso!</string>
+    <string name="add_more_detail">Detalhe melhor o seu problema.</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

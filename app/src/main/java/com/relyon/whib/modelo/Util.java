@@ -162,18 +162,15 @@ public class Util {
         Util.mSubjectDatabaseRef = mSubjectDatabaseRef;
     }
 
-    public static String getCurrentDate(String pattern) {
+    public static String formatDate(Long date, String pattern) {
 
         //yyyy/MM/dd - HH:mm:ss
         SimpleDateFormat date_format = new SimpleDateFormat(pattern);
 
-        Date data = new Date();
-
         Calendar cal = Calendar.getInstance();
-        cal.setTime(data);
-        Date current_date = cal.getTime();
+        cal.setTime(new Date(date));
 
-        return date_format.format(current_date);
+        return date_format.format(date);
     }
 
     public static int retrieveNumberOfServer(){

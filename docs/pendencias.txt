@@ -73,6 +73,7 @@
 - Refatoração de todo o código
 	- Filtrar por grupo (Vai buscar todos de uma vez só, sem paginação)
 - Ajustar ads para comentários buscados onScrolling
+- Cada novo argumento está chamando setAdapter no groupActivity
 
 LOJA
 - Superpoderes (Direito de tornar meu comentário em grupo automaticamente)

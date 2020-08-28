@@ -6,7 +6,7 @@
     android:background="@color/lightGrey"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".ContactActivity">
+    tools:context=".activity.ContactActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
