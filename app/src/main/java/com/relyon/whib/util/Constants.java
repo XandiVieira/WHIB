@@ -66,4 +66,5 @@ public class Constants {
     public static final String TOKEN = "token";
     public static final String DATABASE_REF_READY = "ready";
     public static final String DATABASE_REF_QUANTITY = "quantity";
+    public static final int COMMENTS_BY_ADD = 4;
 }

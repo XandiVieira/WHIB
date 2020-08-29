@@ -38,7 +38,7 @@ public class TabWhibExtra extends Fragment {
 
         subscribe.setOnClickListener(v -> {
             FragmentTransaction fm = ((getActivity()).getSupportFragmentManager().beginTransaction());
-            DialogChooseSubscription dialog = DialogChooseSubscription.newInstance(getContext());
+            DialogChooseSubscription dialog = DialogChooseSubscription.newInstance();
             dialog.show(fm, "");
         });
 

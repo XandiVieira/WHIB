@@ -14,14 +14,11 @@ import com.relyon.whib.R;
 import com.relyon.whib.adapter.RecyclerViewCommentAdapter;
 import com.relyon.whib.modelo.Comment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class DialogShowComment extends Dialog {
 
     private AppCompatActivity activity;
     private Context context;
-    private List<Comment> comment = new ArrayList<>();
+    private Comment comment;
 
     private RecyclerView rvComment;
     private LinearLayout background;
@@ -30,7 +27,7 @@ public class DialogShowComment extends Dialog {
         super(activity);
         this.activity = activity;
         this.context = context;
-        this.comment.add(comment);
+        this.comment = comment;
     }
 
     @Override
@@ -57,6 +54,6 @@ public class DialogShowComment extends Dialog {
         rvComment.setLayoutManager(layoutManager);
         RecyclerViewCommentAdapter adapter = new RecyclerViewCommentAdapter(context, activity, false, true);
         rvComment.setAdapter(adapter);
-        adapter.addComment((Comment) comment);
+        adapter.addComment(comment);
     }
 }

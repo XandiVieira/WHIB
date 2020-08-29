@@ -156,7 +156,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                                 .apply(RequestOptions.circleCropTransform())
                                 .into(holder.photo);
                     }
-                    if (calledFromGroup) {
+                    if (calledFromGroup || user.getUserUID().equals(comment.getAuthorsUID())) {
                         holder.report.setVisibility(View.INVISIBLE);
                     }
                     handleGroupIndication(comment, holder, user);
@@ -173,7 +173,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     private void handleGroupIndication(Comment comment, CommentViewHolder holder, User user) {
         if (comment.isAGroup() && !calledFromGroup) {
             if (comment.getGroup().isReady()) {
-                holder.entrance.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_exit_active));
+                holder.entrance.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_exit_active, null));
             }
             holder.entrance.setVisibility(View.VISIBLE);
             holder.ratingTV.setTextSize(14);
@@ -418,15 +418,11 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         return COMMENT_ITEM_VIEW_TYPE;
     }
 
-    private void populateNativeAdView(UnifiedNativeAd nativeAd,
-                                      UnifiedNativeAdView adView) {
-        // Some assets are guaranteed to be in every UnifiedNativeAd.
+    private void populateNativeAdView(UnifiedNativeAd nativeAd, UnifiedNativeAdView adView) {
         ((TextView) adView.getHeadlineView()).setText(nativeAd.getHeadline());
         ((TextView) adView.getBodyView()).setText(nativeAd.getBody());
         ((Button) adView.getCallToActionView()).setText(nativeAd.getCallToAction());
 
-        // These assets aren't guaranteed to be in every UnifiedNativeAd, so it's important to
-        // check before trying to display them.
         NativeAd.Image icon = nativeAd.getIcon();
 
         if (icon == null) {
@@ -465,7 +461,6 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             adView.getAdvertiserView().setVisibility(View.VISIBLE);
         }
 
-        // Assign native ad object to the native view.
         adView.setNativeAd(nativeAd);
     }
 
@@ -486,21 +481,24 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     public void addAllAds(List<UnifiedNativeAd> newAds) {
-        int adsCount = 0;
-        int count = 0;
+        int commentsBetweenAds = 0;
+        int adsAdded = 0;
+
         for (int i = 0; i < elements.size(); i++) {
             if (elements.get(i) instanceof Comment) {
-                count++;
+                commentsBetweenAds++;
             }
-            if (count == 3 && adsCount <= newAds.size()) {
-                if (elements.size() >= (i + 1)) {
-                    elements.add(i + 1, newAds.get(adsCount));
-                    adsCount++;
-                    count = 0;
+            if (commentsBetweenAds == Constants.COMMENTS_BY_ADD) {
+                if (adsAdded < newAds.size()) {
+                    if (elements.size() >= (i + 1)) {
+                        elements.add((i + 1), newAds.get(adsAdded));
+                        adsAdded++;
+                        notifyItemInserted(i + 1);
+                        commentsBetweenAds = 0;
+                    }
                 }
             }
         }
-        notifyDataSetChanged();
     }
 
     public String getLastItemId() {

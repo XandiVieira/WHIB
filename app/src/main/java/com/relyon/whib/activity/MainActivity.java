@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                 startActivity(new Intent(this, NextSubjectVotingActivity.class));
             } else {
                 FragmentTransaction fm = this.getSupportFragmentManager().beginTransaction();
-                DialogChooseSubscription dialogChooseSubscription = DialogChooseSubscription.newInstance(this);
+                DialogChooseSubscription dialogChooseSubscription = DialogChooseSubscription.newInstance();
                 dialogChooseSubscription.show(fm, "");
             }
         });

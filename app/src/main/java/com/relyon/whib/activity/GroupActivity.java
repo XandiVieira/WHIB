@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -145,7 +146,6 @@ public class GroupActivity extends AppCompatActivity {
                         emojiPopup.dismiss();
                     }
                     sendMessage();
-                    hideKeyboard(this);
                 }
             }
         });
@@ -154,8 +154,8 @@ public class GroupActivity extends AppCompatActivity {
         Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).child(Constants.DATABASE_REF_ACTIVATED).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                boolean activated = dataSnapshot.getValue(Boolean.class);
-                if (!activated) {
+                Boolean activated = dataSnapshot.getValue(Boolean.class);
+                if (activated != null && !activated) {
                     onBackPressed();
                 }
             }
@@ -194,6 +194,7 @@ public class GroupActivity extends AppCompatActivity {
         rvArgument.setLayoutManager(layoutManager);
         arguments = new ArrayList<>();
         argumentAdapter = new RecyclerViewArgumentAdapter(activity, arguments);
+        rvArgument.setAdapter(argumentAdapter);
     }
 
     private void retrieveOwnerComment(String serverId, String commentId) {
@@ -221,7 +222,7 @@ public class GroupActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 arguments.add(snapshot.getValue(Argument.class));
-                rvArgument.setAdapter(argumentAdapter);
+                argumentAdapter.notifyItemInserted(arguments.size() - 1);
                 rvArgument.scrollToPosition(arguments.size() - 1);
                 if (empty.getVisibility() == View.VISIBLE) {
                     empty.setVisibility(View.GONE);
@@ -251,10 +252,10 @@ public class GroupActivity extends AppCompatActivity {
 
     private void changeSendButton(CharSequence text) {
         if (text.length() > 0) {
-            sendIcon.setImageDrawable(getResources().getDrawable(R.mipmap.send_icon));
+            sendIcon.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.mipmap.send_icon, null));
             isForSticker = false;
         } else {
-            sendIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_sticker));
+            sendIcon.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_sticker, null));
             isForSticker = true;
         }
     }

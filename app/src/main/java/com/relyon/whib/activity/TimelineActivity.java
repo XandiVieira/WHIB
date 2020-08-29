@@ -40,10 +40,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.relyon.whib.dialog.DialogFinalWarn;
-import com.relyon.whib.dialog.DialogPostComment;
 import com.relyon.whib.R;
 import com.relyon.whib.adapter.RecyclerViewCommentAdapter;
+import com.relyon.whib.dialog.DialogFinalWarn;
+import com.relyon.whib.dialog.DialogPostComment;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Util;
@@ -60,18 +60,10 @@ import static java.util.Objects.requireNonNull;
 
 public class TimelineActivity extends AppCompatActivity {
 
-    private User user;
-    private ImageView menuIcon;
-    private LinearLayout leaveCommentLayout;
-    private TextView emptyList;
-    private String subject;
-    private RecyclerView rvComments;
-    private LinearLayoutManager layoutManager;
     private AppCompatActivity activity;
-    private Spinner spinner;
+    private User user;
     private int number_of_ads = 0;
     private List<UnifiedNativeAd> nativeAdsList = new ArrayList<>();
-    private RecyclerViewCommentAdapter commentAdapter;
     private boolean mIsLoading = false;
     private boolean resetTimeline = false;
     private FancyShowCaseQueue queue = new FancyShowCaseQueue();
@@ -79,25 +71,37 @@ public class TimelineActivity extends AppCompatActivity {
     private DatabaseReference commentListReference;
     private boolean canLoadNewComments = false;
 
-    int menuWidth;
-    int menuHeight;
-    float menuX;
-    float menuY;
+    private RecyclerViewCommentAdapter commentAdapter;
+    private ImageView menuIcon;
+    private LinearLayout leaveCommentLayout;
+    private TextView emptyList;
+    private String subject;
+    private RecyclerView rvComments;
+    private LinearLayoutManager layoutManager;
+    private Spinner spinnerFilter;
+    private ImageView back;
+    private TextView tvSubject;
+    private ImageButton commentBt;
 
-    int commentWidth;
-    int commentHeight;
-    float commentX;
-    float commentY;
+    private int menuWidth;
+    private int menuHeight;
+    private float menuX;
+    private float menuY;
 
-    int spinnerWidth;
-    int spinnerHeight;
-    float spinnerX;
-    float spinnerY;
+    private int commentWidth;
+    private int commentHeight;
+    private float commentX;
+    private float commentY;
 
-    int firstCommentWidth;
-    int firstCommentHeight;
-    float firstCommentX;
-    float firstCommentY;
+    private int spinnerWidth;
+    private int spinnerHeight;
+    private float spinnerX;
+    private float spinnerY;
+
+    private int firstCommentWidth;
+    private int firstCommentHeight;
+    private float firstCommentX;
+    private float firstCommentY;
 
     public TimelineActivity() {
     }
@@ -110,30 +114,23 @@ public class TimelineActivity extends AppCompatActivity {
         activity = this;
 
         commentListReference = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST);
+
+        setLayoutAttributes();
         initRecyclerViewComment();
         retrieveUser();
         verifyServerIsActive();
 
-        final ImageView back = findViewById(R.id.back);
-        TextView subject = findViewById(R.id.subject);
-        final ImageButton commentBt = findViewById(R.id.commentIcon);
-        leaveCommentLayout = findViewById(R.id.leaveCommentLayout);
-        menuIcon = findViewById(R.id.menu);
-        rvComments = findViewById(R.id.rv_comments);
-        emptyList = findViewById(R.id.emptyList);
-        spinner = findViewById(R.id.filters);
-
         this.subject = Util.getServer().getSubject();
         if (this.subject != null) {
-            subject.setText(Util.getServer().getSubject());
+            tvSubject.setText(Util.getServer().getSubject());
         }
 
         ArrayAdapter<CharSequence> filterAdapter = ArrayAdapter.createFromResource(this,
                 R.array.comment_filters, android.R.layout.simple_spinner_item);
         filterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(filterAdapter);
+        spinnerFilter.setAdapter(filterAdapter);
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinnerFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int spinnerSelection, long id) {
                 resetTimeline = true;
@@ -189,7 +186,7 @@ public class TimelineActivity extends AppCompatActivity {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (!recyclerView.canScrollVertically(1)) {
                     if (!mIsLoading) {
-                        setCommentQuery(spinner.getSelectedItemPosition());
+                        setCommentQuery(spinnerFilter.getSelectedItemPosition());
                         retrieveCommentList();
                     }
                 }
@@ -238,6 +235,18 @@ public class TimelineActivity extends AppCompatActivity {
         leaveCommentLayout.setOnClickListener(v -> openCommentBox());
     }
 
+    private void setLayoutAttributes() {
+        rvComments = findViewById(R.id.rv_comments);
+        back = findViewById(R.id.back);
+        tvSubject = findViewById(R.id.subject);
+        commentBt = findViewById(R.id.commentIcon);
+        leaveCommentLayout = findViewById(R.id.leaveCommentLayout);
+        menuIcon = findViewById(R.id.menu);
+        rvComments = findViewById(R.id.rv_comments);
+        emptyList = findViewById(R.id.emptyList);
+        spinnerFilter = findViewById(R.id.filters);
+    }
+
     private void setCommentQuery(int spinnerSelection) {
         resetTimeline();
         if (spinnerSelection == 0) {
@@ -275,16 +284,12 @@ public class TimelineActivity extends AppCompatActivity {
             MobileAds.setRequestConfiguration(configuration);
             MobileAds.initialize(this,
                     Constants.ADMOB_APP_ID);
-            if (!user.isFirstTime() && !user.isExtra()) {
-                new Thread(this::loadNativeAds).start();
-            }
         }
     }
 
     private void initRecyclerViewComment() {
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
         layoutManager.setStackFromEnd(true);
-        rvComments = findViewById(R.id.rv_comments);
         rvComments.setLayoutManager(layoutManager);
         commentAdapter = new RecyclerViewCommentAdapter(this, activity);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvComments.getContext(), layoutManager.getOrientation());
@@ -319,10 +324,9 @@ public class TimelineActivity extends AppCompatActivity {
                 }
 
                 commentAdapter.addAllComments(comments, resetTimeline);
-                loadNativeAds();
                 mIsLoading = false;
                 resetTimeline = false;
-                number_of_ads = comments.size() / 3;
+                number_of_ads = comments.size() / Constants.COMMENTS_BY_ADD;
                 new Thread(() -> loadNativeAds()).start();
                 canLoadNewComments = true;
             }
@@ -389,8 +393,8 @@ public class TimelineActivity extends AppCompatActivity {
 
             final FancyShowCaseView fancyShowCaseView3 = new FancyShowCaseView.Builder(this).
                     customView(R.layout.custom_tour_timeline_filter, view -> {
-                        if (spinner.isShown()) {
-                            spinner.performClick();
+                        if (spinnerFilter.isShown()) {
+                            spinnerFilter.performClick();
                         }
                     }).focusBorderSize(10)
                     .focusRectAtPosition((int) spinnerX + (spinnerWidth / 2), (int) spinnerY - (spinnerHeight / 2), spinnerWidth, spinnerHeight)
@@ -495,14 +499,14 @@ public class TimelineActivity extends AppCompatActivity {
                     commentX = location[0];
                     commentY = location[1];
 
-                    spinner.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    spinnerFilter.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
                         public void onGlobalLayout() {
-                            spinner.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                            spinnerHeight = spinner.getHeight();
-                            spinnerWidth = spinner.getWidth();
+                            spinnerFilter.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            spinnerHeight = spinnerFilter.getHeight();
+                            spinnerWidth = spinnerFilter.getWidth();
                             int[] location = new int[2];
-                            spinner.getLocationOnScreen(location);
+                            spinnerFilter.getLocationOnScreen(location);
                             spinnerX = location[0];
                             spinnerY = location[1];
 

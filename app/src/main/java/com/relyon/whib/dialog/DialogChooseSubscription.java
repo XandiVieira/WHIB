@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -24,11 +25,11 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.relyon.whib.R;
 import com.relyon.whib.fragment.FragmentAdvantage1;
 import com.relyon.whib.fragment.FragmentAdvantage2;
 import com.relyon.whib.fragment.FragmentAdvantage3;
 import com.relyon.whib.fragment.FragmentAdvantage4;
-import com.relyon.whib.R;
 import com.relyon.whib.util.SelectSubscription;
 
 import static com.relyon.whib.util.Constants.SKU_WHIB_MONTHLY;
@@ -39,29 +40,24 @@ public class DialogChooseSubscription extends DialogFragment {
 
     public Dialog d;
     private static final int NUM_PAGES = 4;
-    private ViewPager mPager;
-    private LinearLayout border1;
-    private LinearLayout border2;
-    private LinearLayout border3;
+    private int backgroundColor;
+    private Thread changeLayoutThread;
+    private SelectSubscription selectSubscriptionListener;
+    private String selectedSubscriptionPeriod = SKU_WHIB_SIXMONTH;
+
+    private ViewPager pager;
+    private LinearLayout borderColor1;
+    private LinearLayout borderColor2;
+    private LinearLayout borderColor3;
     private LinearLayout background;
     private Button confirm;
-    private int color;
-    private Thread runLayout;
-    private SelectSubscription listener;
+    private TextView noThanks;
 
-    // Tracks the currently owned subscription, and the options in the Manage dialog
-    String mFirstChoiceSku = SKU_WHIB_MONTHLY;
-    String mSecondChoiceSku = SKU_WHIB_SIXMONTH;
-    String mThirdChoiceSku = SKU_WHIB_YEARLY;
-
-    // Used to select between subscribing on a monthly, three month, six month or yearly basis
-    String mSelectedSubscriptionPeriod = mSecondChoiceSku;
-
-    public DialogChooseSubscription(Context context) {
+    public DialogChooseSubscription() {
     }
 
-    public static DialogChooseSubscription newInstance(Context context) {
-        DialogChooseSubscription frag = new DialogChooseSubscription(context);
+    public static DialogChooseSubscription newInstance() {
+        DialogChooseSubscription frag = new DialogChooseSubscription();
         Bundle args = new Bundle();
         frag.setArguments(args);
         return frag;
@@ -71,7 +67,6 @@ public class DialogChooseSubscription extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        // request a window without the title
         if (dialog.getWindow() != null) {
             dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         }
@@ -81,7 +76,6 @@ public class DialogChooseSubscription extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup parent, Bundle bundle) {
         View inflate = inflater.inflate(R.layout.dialog_choose_subscribe, parent);
-        // Set to adjust screen height automatically, when soft keyboard appears on screen
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
             getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -90,29 +84,20 @@ public class DialogChooseSubscription extends DialogFragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TextView noThanks = view.findViewById(R.id.noThanks);
-        confirm = view.findViewById(R.id.confirm);
-        border1 = view.findViewById(R.id.border1);
-        border2 = view.findViewById(R.id.border2);
-        border3 = view.findViewById(R.id.border3);
-        background = view.findViewById(R.id.background);
+
+        setLayoutAttributes(view);
 
         noThanks.setOnClickListener(v -> dismiss());
 
-        // Instantiate a ViewPager and a PagerAdapter.
-        mPager = view.findViewById(R.id.pager);
-        /*
-      The pager adapter, which provides the pages to the view pager widget.
-     */
-        PagerAdapter mPagerAdapter = new ScreenSlidePagerAdapter(getChildFragmentManager());
-        mPager.setAdapter(mPagerAdapter);
+        PagerAdapter pagerAdapter = new ScreenSlidePagerAdapter(getChildFragmentManager());
+        pager.setAdapter(pagerAdapter);
 
-        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                handleColors();
+                changeLayoutColors();
             }
 
             @Override
@@ -126,103 +111,112 @@ public class DialogChooseSubscription extends DialogFragment {
         });
 
         confirm.setOnClickListener(v -> {
-            runLayout.interrupt();
+            changeLayoutThread.interrupt();
 
-            if (TextUtils.isEmpty(mSelectedSubscriptionPeriod)) {
-                // The user has not changed from the default selection
-                mSelectedSubscriptionPeriod = mFirstChoiceSku;
+            if (TextUtils.isEmpty(selectedSubscriptionPeriod)) {
+                selectedSubscriptionPeriod = SKU_WHIB_MONTHLY;
             }
 
-            listener.onChoose(mSelectedSubscriptionPeriod);
+            selectSubscriptionListener.onChoose(selectedSubscriptionPeriod);
             this.dismiss();
-            // Reset the dialog options
-            mSelectedSubscriptionPeriod = "";
-            mFirstChoiceSku = "";
-            mSecondChoiceSku = "";
+            selectedSubscriptionPeriod = "";
         });
 
-        border1.setOnClickListener(v -> {
-            mSelectedSubscriptionPeriod = mFirstChoiceSku;
-            changeColor(border1);
-            border2.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
-            border3.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
+        borderColor1.setOnClickListener(v -> {
+            selectedSubscriptionPeriod = SKU_WHIB_MONTHLY;
+            changeColor(borderColor1);
+            borderColor2.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.corner_white, null));
+            borderColor3.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.corner_white, null));
         });
 
-        border2.setOnClickListener(v -> {
-            mSelectedSubscriptionPeriod = mSecondChoiceSku;
-            border1.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
-            changeColor(border2);
-            border3.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
+        borderColor2.setOnClickListener(v -> {
+            selectedSubscriptionPeriod = SKU_WHIB_SIXMONTH;
+            borderColor1.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.corner_white, null));
+            changeColor(borderColor2);
+            borderColor3.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.corner_white, null));
         });
 
-        border3.setOnClickListener(v -> {
-            mSelectedSubscriptionPeriod = mThirdChoiceSku;
-            border1.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
-            border2.setBackground(getContext().getResources().getDrawable(R.drawable.corner_white));
-            changeColor(border3);
+        borderColor3.setOnClickListener(v -> {
+            selectedSubscriptionPeriod = SKU_WHIB_YEARLY;
+            borderColor1.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.corner_white, null));
+            borderColor2.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.corner_white, null));
+            changeColor(borderColor3);
         });
 
-        runLayout = new Thread(new Runnable() {
+        changeLayoutThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                //Esse métedo será executado a cada período, ponha aqui a sua lógica
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(new Runnable() {
                         public void run() {
-                            Handler handler = new Handler(); //contador de tempo
-                            handler.postDelayed(this, 4000); //o exemplo 2000 = 2 segundos
-                            if (mPager.getCurrentItem() == 3) {
-                                mPager.setCurrentItem(0);
+                            Handler handler = new Handler();
+                            handler.postDelayed(this, 4000);
+                            if (pager.getCurrentItem() == 3) {
+                                pager.setCurrentItem(0);
                             } else {
-                                mPager.setCurrentItem(mPager.getCurrentItem() + 1);
+                                pager.setCurrentItem(pager.getCurrentItem() + 1);
                             }
                             if (getContext() != null) {
-                                handleColors();
+                                changeLayoutColors();
                             }
                         }
                     });
                 }
             }
         });
-        runLayout.start();
+        changeLayoutThread.start();
     }
 
-    public void handleColors() {
-        if (mPager.getCurrentItem() == 0) {
-            background.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_green));
-            confirm.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_green_horizontal));
-            color = R.drawable.rounded_dark_green;
-        } else if (mPager.getCurrentItem() == 1) {
-            background.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_orange));
-            confirm.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_orange_horizontal));
-            color = R.drawable.rounded_accent;
-        } else if (mPager.getCurrentItem() == 2) {
-            background.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_blue));
-            confirm.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_blue_horizontal));
-            color = R.drawable.rounded_dark_blue;
-        } else if (mPager.getCurrentItem() == 3) {
-            background.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_purple));
-            confirm.setBackground(getContext().getResources().getDrawable(R.drawable.background_gradient_purple_horizontal));
-            color = R.drawable.rounded_dark_purple;
+    private void setLayoutAttributes(View view) {
+        noThanks = view.findViewById(R.id.noThanks);
+        confirm = view.findViewById(R.id.confirm);
+        borderColor1 = view.findViewById(R.id.border1);
+        borderColor2 = view.findViewById(R.id.border2);
+        borderColor3 = view.findViewById(R.id.border3);
+        background = view.findViewById(R.id.background);
+        pager = view.findViewById(R.id.pager);
+    }
+
+    public void changeLayoutColors() {
+        if (pager.getCurrentItem() == 0) {
+            background.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.background_gradient_green, null));
+            confirm.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.background_gradient_green_horizontal, null));
+            backgroundColor = R.drawable.rounded_dark_green;
+        } else if (pager.getCurrentItem() == 1) {
+            background.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.background_gradient_orange, null));
+            confirm.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.background_gradient_orange_horizontal, null));
+            backgroundColor = R.drawable.rounded_accent;
+        } else if (pager.getCurrentItem() == 2) {
+            background.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.background_gradient_blue, null));
+            confirm.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.background_gradient_blue_horizontal, null));
+            backgroundColor = R.drawable.rounded_dark_blue;
+        } else if (pager.getCurrentItem() == 3) {
+            background.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.background_gradient_purple, null));
+            confirm.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.background_gradient_purple_horizontal, null));
+            backgroundColor = R.drawable.rounded_dark_purple;
         }
-        if (mSelectedSubscriptionPeriod.equals(mFirstChoiceSku)) {
-            border1.setBackground(getContext().getResources().getDrawable(color));
-        } else if (mSelectedSubscriptionPeriod.equals(mSecondChoiceSku)) {
-            border2.setBackground(getContext().getResources().getDrawable(color));
-        } else if (mSelectedSubscriptionPeriod.equals(mThirdChoiceSku)) {
-            border3.setBackground(getContext().getResources().getDrawable(color));
+        switch (selectedSubscriptionPeriod) {
+            case SKU_WHIB_MONTHLY:
+                borderColor1.setBackground(ResourcesCompat.getDrawable(getResources(), backgroundColor, null));
+                break;
+            case SKU_WHIB_SIXMONTH:
+                borderColor2.setBackground(ResourcesCompat.getDrawable(getResources(), backgroundColor, null));
+                break;
+            case SKU_WHIB_YEARLY:
+                borderColor3.setBackground(ResourcesCompat.getDrawable(getResources(), backgroundColor, null));
+                break;
         }
     }
 
     private void changeColor(LinearLayout option) {
-        if (mPager.getCurrentItem() == 0) {
-            option.setBackground(getContext().getResources().getDrawable(R.drawable.rounded_dark_green));
-        } else if (mPager.getCurrentItem() == 1) {
-            option.setBackground(getContext().getResources().getDrawable(R.drawable.rounded_accent));
-        } else if (mPager.getCurrentItem() == 2) {
-            option.setBackground(getContext().getResources().getDrawable(R.drawable.rounded_dark_blue));
-        } else if (mPager.getCurrentItem() == 3) {
-            option.setBackground(getContext().getResources().getDrawable(R.drawable.rounded_dark_purple));
+        if (pager.getCurrentItem() == 0) {
+            option.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.rounded_dark_green, null));
+        } else if (pager.getCurrentItem() == 1) {
+            option.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.rounded_accent, null));
+        } else if (pager.getCurrentItem() == 2) {
+            option.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.rounded_dark_blue, null));
+        } else if (pager.getCurrentItem() == 3) {
+            option.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.rounded_dark_purple, null));
         }
     }
 
@@ -257,14 +251,11 @@ public class DialogChooseSubscription extends DialogFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        // Verify that the host activity implements the callback interface
         try {
-            // Instantiate the EditNameDialogListener so we can send events to the host
-            listener = (SelectSubscription) context;
+            selectSubscriptionListener = (SelectSubscription) context;
         } catch (ClassCastException e) {
-            // The activity doesn't implement the interface, throw exception
             throw new ClassCastException(context.toString()
                     + " must implement SelectSubscriptionDialogListener");
         }

@@ -11,7 +11,6 @@
 	- Remover setas ao lado do servidor quando houver apenas um servidor no assunto.
 	- "Ver mais" na timeline para não carregar todos comentários de uma vez
 	- "Ver mais" para cada comentário que seja muito grande
-- Encontrar proporção para virar um grupo (15% da quantidade dos usuários no servidor)
 	- Processo completo das denúncias (não está contando no perfil do usuário)
 	- Não permitir denunciar o mesmo comentário mais de uma vez
 	- Permitir consultar perfil de outros usuários (ao clicar na foto em um comentário)
@@ -27,7 +26,6 @@
 	- Fix (Abrir tela de usuario a partir do comentário)
 	- Dono do grupo deve entrar e fazer o primeiro comentário para ativar o grupo
 	- Abas na tela de perfil (Avaliações, reports, galeria de selos)
-- Corrigir erros e warnings de log
 	- Verificar lentidão ao trocar de activity
 	- Ajustar layout (show stickers of a comment)
 	- Ao clicar no sticker do comentário está crashando
@@ -71,9 +69,11 @@
 	- Descolar teclado do input na tela de grupo
 	- Ao abrir timeline o scroll leva pro comentário do meio e não do topo
 - Refatoração de todo o código
+- Corrigir erros e warnings de log
+- Encontrar proporção para virar um grupo (15% da quantidade dos usuários no servidor)... Trocar numero de user por numero de comments?
 	- Filtrar por grupo (Vai buscar todos de uma vez só, sem paginação)
-- Ajustar ads para comentários buscados onScrolling
-- Cada novo argumento está chamando setAdapter no groupActivity
+	- Ajustar ads para comentários buscados onScrolling
+	- Cada novo argumento está chamando setAdapter no groupActivity
 
 LOJA
 - Superpoderes (Direito de tornar meu comentário em grupo automaticamente)
