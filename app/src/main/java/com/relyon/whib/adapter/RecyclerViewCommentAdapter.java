@@ -267,8 +267,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                     Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).child(Constants.DATABASE_REF_QTD_USERS).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            Integer qtdUsers = snapshot.getValue(Integer.class);
-                            DialogRateComment cdd = new DialogRateComment(activity, rating, comment, elements, user.isExtra(), qtdUsers);
+                            DialogRateComment cdd = new DialogRateComment(activity, rating, comment, elements, user.isExtra());
                             if (cdd.getWindow() != null) {
                                 cdd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                 cdd.show();

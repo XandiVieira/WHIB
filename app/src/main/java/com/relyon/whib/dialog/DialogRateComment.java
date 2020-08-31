@@ -19,10 +19,11 @@ import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Group;
 import com.relyon.whib.modelo.GroupTempInfo;
 import com.relyon.whib.modelo.Notification;
+import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.User;
-import com.relyon.whib.util.Util;
 import com.relyon.whib.modelo.Valuation;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,20 +42,14 @@ public class DialogRateComment extends Dialog implements
     public Comment comment;
     private List<Object> commentList;
     private Boolean commentOwnerIsExtra;
-    private Integer qtdUsers;
 
-    public DialogRateComment(Activity a, float rating, Comment comment, ArrayList<Object> elements, Boolean commentOwnerIsExtra, Integer qtdUsers) {
+    public DialogRateComment(Activity a, float rating, Comment comment, ArrayList<Object> elements, Boolean commentOwnerIsExtra) {
         super(a);
         this.a = a;
         this.rating = rating;
         this.comment = comment;
         this.commentList = elements;
         this.commentOwnerIsExtra = commentOwnerIsExtra;
-        if (qtdUsers == null || qtdUsers <= 15) {
-            this.qtdUsers = 15;
-        } else {
-            this.qtdUsers = qtdUsers;
-        }
     }
 
     @Override
@@ -108,15 +103,7 @@ public class DialogRateComment extends Dialog implements
                 }
             }
         }
-        if (commentOwnerIsExtra || (comment.getNumberOfRatings() >= ((qtdUsers / 100) * 15) && comment.getRating() >= 3.25)) {
-            if (!comment.isAGroup()) {
-                comment.setAGroup(true);
-                if (comment.getGroup() == null) {
-                    int serverNumber = i + 1;
-                    createNewGroup(serverNumber);
-                }
-            }
-        }
+        isWorthyToBeAGroup(i + 1);
         Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).setValue(comment);
         Util.mUserDatabaseRef.child(comment.getAuthorsUID()).child(Constants.DATABASE_REF_VALUATION).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -135,6 +122,41 @@ public class DialogRateComment extends Dialog implements
 
             }
         });
+    }
+
+    private void isWorthyToBeAGroup(int serverNumber) {
+        if (commentOwnerIsExtra) {
+            if (!comment.isAGroup()) {
+                comment.setAGroup(true);
+                if (comment.getGroup() == null) {
+                    createNewGroup(serverNumber);
+                }
+            }
+        } else {
+            Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    long numberOfComments = snapshot.getChildrenCount();
+                    int numberOfStickers = 0;
+                    for (Product product : comment.getStickers().values()) {
+                        numberOfStickers += product.getQuantity();
+                    }
+
+                    //Used to calculate necessary average to become group based on number of comments -> from 3 to 4.05
+                    int commentsOnAverageScale = (int) (numberOfComments / 6.25);
+                    int requiredAverage = (int) (3 + (commentsOnAverageScale * 0.07));
+
+                    if (comment.getNumberOfRatings() > ((numberOfComments / 2) - numberOfStickers) && comment.getRating() >= requiredAverage && comment.getGroup() == null) {
+                        createNewGroup(serverNumber);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
     }
 
     private void createNewGroup(int serverNumber) {

@@ -70,10 +70,10 @@
 	- Ao abrir timeline o scroll leva pro comentário do meio e não do topo
 - Refatoração de todo o código
 - Corrigir erros e warnings de log
-- Encontrar proporção para virar um grupo (15% da quantidade dos usuários no servidor)... Trocar numero de user por numero de comments?
+	- Encontrar proporção para virar um grupo (baseado no número de comentários e quantidade de avaliações do comentário)
 	- Ícone de denúncia sumiu
 	- Remover foto do perfil tbm
-- Avaliação (número) quebrando linha
+	- Avaliação (número) quebrando linha
 	- Contagem de importância dos servers para adm errada
 	- Não é possível criar servers com #
 - Create new storeItem não funciona (upload de imagem crashando "permission denial")
