@@ -28,7 +28,7 @@ import com.google.firebase.storage.StorageReference;
 import com.relyon.whib.R;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.User;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.SelectSubscription;
 

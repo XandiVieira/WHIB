@@ -22,21 +22,22 @@ import com.relyon.whib.activity.ProfileActivity;
 import com.relyon.whib.adapter.RecyclerViewReportAdapter;
 import com.relyon.whib.modelo.Report;
 import com.relyon.whib.modelo.User;
-import com.relyon.whib.modelo.Util;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TabReports extends Fragment {
 
-    private TextView sentReports;
-    private TextView receivedReports;
-    private RecyclerView reports;
-    private List<Report> reportList = new ArrayList<>();
-    private TextView empty;
     private User user;
     private ProfileActivity profileActivity;
+    private List<Report> reportList;
+
+    private TextView sentReports;
+    private TextView receivedReports;
+    private TextView empty;
+    private RecyclerView reports;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,6 +83,7 @@ public class TabReports extends Fragment {
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                reportList = new ArrayList<>();
                 countReceivedReports[0] = 0;
                 for (DataSnapshot snap : dataSnapshot.getChildren()) {
                     Report report = snap.getValue(Report.class);
@@ -97,9 +99,7 @@ public class TabReports extends Fragment {
                     empty.setVisibility(View.VISIBLE);
                 }
                 receivedReports.setText(String.valueOf(countReceivedReports[0]));
-                RecyclerViewReportAdapter recyclerViewReportAdapter = new RecyclerViewReportAdapter(reportList);
-                reports.setLayoutManager(new LinearLayoutManager(getContext()));
-                reports.setAdapter(recyclerViewReportAdapter);
+                setReportAdapter();
 
                 Query query = Util.mDatabaseRef.child(Constants.DATABASE_REF_REPORT).orderByChild(Constants.DATABASE_REF_USER_SENDER_ID).equalTo(user.getUserUID());
                 query.addValueEventListener(new ValueEventListener() {
@@ -127,5 +127,11 @@ public class TabReports extends Fragment {
 
             }
         });
+    }
+
+    private void setReportAdapter() {
+        RecyclerViewReportAdapter recyclerViewReportAdapter = new RecyclerViewReportAdapter(reportList);
+        reports.setLayoutManager(new LinearLayoutManager(getContext()));
+        reports.setAdapter(recyclerViewReportAdapter);
     }
 }

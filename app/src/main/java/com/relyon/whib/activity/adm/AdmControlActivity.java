@@ -5,21 +5,23 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.R;
+import com.relyon.whib.adapter.RecyclerViewAdmServerAdapter;
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.ServerTempInfo;
 import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.Timeline;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,25 +32,26 @@ import java.util.UUID;
 
 public class AdmControlActivity extends AppCompatActivity {
 
-    private ListView admServerList;
+    private AppCompatActivity activity;
     private ArrayList<Server> serverListFiltered;
     private List<String> subjectsAdded;
-    private AppCompatActivity activity;
+
+    private RecyclerView rvAdmServers;
+    private Button reports;
+    private Button complaints;
+    private Button storeItem;
+    private Button createServer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_adm_control);
 
-        serverListFiltered = new ArrayList<>();
-        subjectsAdded = new ArrayList<>();
-        admServerList = findViewById(R.id.admServerList);
-        Button reports = findViewById(R.id.reports);
-        Button complaints = findViewById(R.id.complaints);
-        Button storeItem = findViewById(R.id.storeItem);
-        storeItem.setOnClickListener(v -> startActivity(new Intent(this, AdmCreateStoreItem.class)));
         activity = this;
+
+        setLayoutAttributes();
+
+        storeItem.setOnClickListener(v -> startActivity(new Intent(this, AdmCreateStoreItem.class)));
 
         Util.mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -66,8 +69,7 @@ public class AdmControlActivity extends AppCompatActivity {
                         }
                     }
                 }
-                AdmServerAdapter adapter = new AdmServerAdapter(serverListFiltered, activity);
-                admServerList.setAdapter(adapter);
+                setServerAdapter();
             }
 
             @Override
@@ -75,11 +77,25 @@ public class AdmControlActivity extends AppCompatActivity {
 
             }
         });
-        Button createServer = findViewById(R.id.createServerButton);
 
         createServer.setOnClickListener(v -> callDialog());
         reports.setOnClickListener(v -> startActivity(new Intent(this, AdmReportsActivity.class)));
         complaints.setOnClickListener(v -> startActivity(new Intent(this, AdmComplaintsActivity.class)));
+    }
+
+    private void setLayoutAttributes() {
+        rvAdmServers = findViewById(R.id.adm_server_list);
+        reports = findViewById(R.id.reports);
+        complaints = findViewById(R.id.complaints);
+        storeItem = findViewById(R.id.storeItem);
+        createServer = findViewById(R.id.createServerButton);
+    }
+
+    private void setServerAdapter() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
+        rvAdmServers.setLayoutManager(layoutManager);
+        RecyclerViewAdmServerAdapter admServerAdapter = new RecyclerViewAdmServerAdapter(serverListFiltered, activity, getApplicationContext());
+        rvAdmServers.setAdapter(admServerAdapter);
     }
 
     private void callDialog() {

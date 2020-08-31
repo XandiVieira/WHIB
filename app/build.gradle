@@ -6,8 +6,8 @@ android {
         applicationId "com.relyon.whib"
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 45
-        versionName "0.0.8"
+        versionCode 46
+        versionName "0.0.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -26,9 +26,9 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:30.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.android.support.constraint:constraint-layout:2.0.1'
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation 'androidx.emoji:emoji:1.1.0'
     testImplementation 'junit:junit:4.12'
 
@@ -36,16 +36,15 @@ dependencies {
     implementation 'com.google.gms:google-services:4.3.3' //Google play services
     implementation 'com.google.firebase:firebase-ads:19.3.0' //Admob
     implementation 'com.google.firebase:firebase-auth:19.3.2' //Authentication Firebase
-    implementation 'com.google.firebase:firebase-firestore:21.5.0' //Cloudstore
+    implementation 'com.google.firebase:firebase-firestore:21.6.0' //Cloudstore
     implementation 'com.google.firebase:firebase-messaging:20.2.4' //Cloud messaging
-    implementation 'com.google.firebase:firebase-storage:19.1.1' //Cloud storage
+    implementation 'com.google.firebase:firebase-storage:19.2.0' //Cloud storage
     implementation 'com.google.firebase:firebase-analytics:17.5.0' //Analytics
     implementation 'com.google.firebase:firebase-crashlytics:17.2.1' //Crashlytics
-    implementation 'com.google.firebase:firebase-inappmessaging:19.1.0' //inapp messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.0'
-    //inapp messaging display
+    implementation 'com.google.firebase:firebase-inappmessaging:19.1.1' //inapp messaging
+    implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.1'
     implementation 'com.google.firebase:firebase-perf:19.0.8' //performance
-    implementation 'com.google.firebase:firebase-database:19.3.1' //Realtime database
+    implementation 'com.google.firebase:firebase-database:19.4.0' //Realtime database
     implementation 'com.google.firebase:firebase-config:19.2.0' //Remote config
 
     implementation 'com.google.android.gms:play-services-ads:19.3.0'

@@ -46,8 +46,8 @@ import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.Report;
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.User;
-import com.relyon.whib.modelo.Util;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -156,8 +156,10 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                                 .apply(RequestOptions.circleCropTransform())
                                 .into(holder.photo);
                     }
-                    if (calledFromGroup || user.getUserUID().equals(comment.getAuthorsUID())) {
+                    if (calledFromGroup || Util.getUser().getUserUID().equals(comment.getAuthorsUID())) {
                         holder.report.setVisibility(View.INVISIBLE);
+                    } else {
+                        holder.report.setVisibility(View.VISIBLE);
                     }
                     handleGroupIndication(comment, holder, user);
                 }
@@ -172,10 +174,10 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
     private void handleGroupIndication(Comment comment, CommentViewHolder holder, User user) {
         if (comment.isAGroup() && !calledFromGroup) {
+            holder.entrance.setVisibility(View.VISIBLE);
             if (comment.getGroup().isReady()) {
                 holder.entrance.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_exit_active, null));
             }
-            holder.entrance.setVisibility(View.VISIBLE);
             holder.ratingTV.setTextSize(14);
         } else {
             holder.entrance.setVisibility(View.GONE);

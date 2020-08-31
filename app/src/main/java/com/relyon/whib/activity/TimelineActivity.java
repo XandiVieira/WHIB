@@ -46,8 +46,8 @@ import com.relyon.whib.dialog.DialogFinalWarn;
 import com.relyon.whib.dialog.DialogPostComment;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.User;
-import com.relyon.whib.modelo.Util;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,14 +62,14 @@ public class TimelineActivity extends AppCompatActivity {
 
     private AppCompatActivity activity;
     private User user;
-    private int number_of_ads = 0;
-    private List<UnifiedNativeAd> nativeAdsList = new ArrayList<>();
-    private boolean mIsLoading = false;
-    private boolean resetTimeline = false;
+    private List<UnifiedNativeAd> nativeAdsList;
     private FancyShowCaseQueue queue = new FancyShowCaseQueue();
     private Query commentQuery;
     private DatabaseReference commentListReference;
+    private boolean mIsLoading = false;
+    private boolean resetTimeline = false;
     private boolean canLoadNewComments = false;
+    private int number_of_ads = 0;
 
     private RecyclerViewCommentAdapter commentAdapter;
     private ImageView menuIcon;
@@ -339,6 +339,7 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void loadNativeAds() {
+        nativeAdsList = new ArrayList<>();
         if (!user.isFirstTime() && !user.isExtra()) {
             nativeAdsList.clear();
             AdLoader.Builder builder = new AdLoader.Builder(this, Constants.AD_UNIT_ID);

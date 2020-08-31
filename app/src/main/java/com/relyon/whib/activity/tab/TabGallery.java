@@ -19,7 +19,7 @@ import com.relyon.whib.activity.ProfileActivity;
 import com.relyon.whib.adapter.RecyclerViewGalleryAdapter;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.User;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;
@@ -28,8 +28,9 @@ import java.util.List;
 public class TabGallery extends Fragment {
 
     private User user;
-    private List<Product> stickersList = new ArrayList<>();
-    private RecyclerView stickersRV;
+    private List<Product> stickersList;
+
+    private RecyclerView rvStickers;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,7 +38,7 @@ public class TabGallery extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_gallery, container, false);
 
         ProfileActivity profileActivity = (ProfileActivity) getActivity();
-        stickersRV = rootView.findViewById(R.id.stickers);
+        rvStickers = rootView.findViewById(R.id.stickers);
 
         if (profileActivity != null) {
             user = profileActivity.getUser();
@@ -46,17 +47,11 @@ public class TabGallery extends Fragment {
         Util.mDatabaseRef.child(Constants.DATABASE_REF_PRODUCT).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                stickersList.clear();
+                stickersList = new ArrayList<>();
                 for (DataSnapshot snap : dataSnapshot.getChildren()) {
                     stickersList.add(snap.getValue(Product.class));
                 }
-                GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
-                RecyclerViewGalleryAdapter adapter = new RecyclerViewGalleryAdapter(stickersList, user.getProducts(), getContext(), true, false, null, null, null);
-                DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(stickersRV.getContext(),
-                        layoutManager.getOrientation());
-                stickersRV.addItemDecoration(dividerItemDecoration);
-                stickersRV.setLayoutManager(layoutManager);
-                stickersRV.setAdapter(adapter);
+                setProductAdapter();
             }
 
             @Override
@@ -66,5 +61,15 @@ public class TabGallery extends Fragment {
         });
 
         return rootView;
+    }
+
+    private void setProductAdapter() {
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
+        RecyclerViewGalleryAdapter adapter = new RecyclerViewGalleryAdapter(stickersList, user.getProducts(), getContext(), true, false, null, null, null);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvStickers.getContext(),
+                layoutManager.getOrientation());
+        rvStickers.addItemDecoration(dividerItemDecoration);
+        rvStickers.setLayoutManager(layoutManager);
+        rvStickers.setAdapter(adapter);
     }
 }

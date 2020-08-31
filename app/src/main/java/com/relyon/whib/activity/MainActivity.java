@@ -40,7 +40,7 @@ import com.relyon.whib.modelo.Preferences;
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.User;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Util;
 import com.relyon.whib.modelo.Valuation;
 import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.SelectSubscription;

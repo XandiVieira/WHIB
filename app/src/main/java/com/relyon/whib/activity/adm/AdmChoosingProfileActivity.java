@@ -6,35 +6,28 @@ import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.relyon.whib.R;
 import com.relyon.whib.activity.MainActivity;
 import com.relyon.whib.activity.ProfileActivity;
-import com.relyon.whib.R;
 
 public class AdmChoosingProfileActivity extends AppCompatActivity {
 
-    LinearLayout admLayout;
-    LinearLayout extraLayout;
-    LinearLayout standardLayout;
+    private LinearLayout admLayout;
+    private LinearLayout extraLayout;
+    private LinearLayout standardLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_adm_choosing_profile);
 
         setLayoutAttributes();
 
-        admLayout.setOnClickListener(v -> {
-            startActivity(new Intent(this, AdmControlActivity.class));
-        });
+        admLayout.setOnClickListener(v -> startActivity(new Intent(this, AdmControlActivity.class)));
 
-        extraLayout.setOnClickListener(v -> {
-            startActivity(new Intent(this, MainActivity.class));
-        });
+        extraLayout.setOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
 
-        standardLayout.setOnClickListener(v -> {
-            startActivity(new Intent(this, ProfileActivity.class));
-        });
+        standardLayout.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
     }
 
     private void setLayoutAttributes() {

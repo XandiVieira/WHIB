@@ -20,8 +20,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.relyon.whib.R;
 import com.relyon.whib.modelo.Product;
-import com.relyon.whib.modelo.Util;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 import java.util.Date;
 import java.util.UUID;
@@ -32,21 +32,19 @@ public class AdmCreateStoreItem extends AppCompatActivity {
     public static final int PICK_IMAGE_SHADOW = 2;
     public static final int PERMISSION_CODE = 16;
     private Uri imageShadowURI;
+
     private EditText title;
     private EditText description;
     private EditText price;
     private ImageView image;
+    private ImageView shadow;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adm_create_store_item);
 
-        title = findViewById(R.id.title);
-        description = findViewById(R.id.description);
-        price = findViewById(R.id.price);
-        image = findViewById(R.id.image);
-        ImageView shadow = findViewById(R.id.shadow);
+        setLayoutAttributes();
 
         image.setOnClickListener(v -> {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -65,6 +63,14 @@ public class AdmCreateStoreItem extends AppCompatActivity {
         });
     }
 
+    private void setLayoutAttributes() {
+        title = findViewById(R.id.title);
+        description = findViewById(R.id.description);
+        price = findViewById(R.id.price);
+        image = findViewById(R.id.image);
+        shadow = findViewById(R.id.shadow);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -72,31 +78,35 @@ public class AdmCreateStoreItem extends AppCompatActivity {
             imageShadowURI = Uri.parse(data.getData() + ".png");
         }
         if (requestCode == PICK_IMAGE) {
-            if (!title.getText().toString().trim().equals("")) {
-                if (!description.getText().toString().trim().equals("")) {
-                    if (!price.getText().toString().trim().equals("")) {
-                        if (data != null && data.getData() != null && !data.getData().toString().trim().equals("")) {
-                            Glide.with(this).load(data.getData()).into(image);
-                            Product product = new Product(UUID.randomUUID().toString(), title.getText().toString().toLowerCase(), data.getData().toString(), title.getText().toString(), description.getText().toString(), Float.parseFloat(price.getText().toString()), new Date().getTime());
-                            //Firebase
-                            StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-                            if (imageShadowURI != null) {
-                                uploadImage(Uri.parse(data.getData() + ".png"), imageShadowURI, storageReference, product);
-                            } else {
-                                Toast.makeText(this, "Não se esqueça da sombra", Toast.LENGTH_SHORT).show();
-                            }
+            validateStoreItem(data);
+        }
+    }
+
+    private void validateStoreItem(Intent data) {
+        if (!title.getText().toString().trim().equals("")) {
+            if (!description.getText().toString().trim().equals("")) {
+                if (!price.getText().toString().trim().equals("")) {
+                    if (data != null && data.getData() != null && !data.getData().toString().trim().equals("")) {
+                        Glide.with(this).load(data.getData()).into(image);
+                        Product product = new Product(UUID.randomUUID().toString(), title.getText().toString().toLowerCase(), data.getData().toString(), title.getText().toString(), description.getText().toString(), Float.parseFloat(price.getText().toString()), new Date().getTime());
+                        //Firebase
+                        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+                        if (imageShadowURI != null) {
+                            uploadImage(Uri.parse(data.getData() + ".png"), imageShadowURI, storageReference, product);
                         } else {
-                            Toast.makeText(this, "Não esqueça da imagem.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Não se esqueça da sombra", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(this, "Dê um preço ao item.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Não esqueça da imagem.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(this, "Dê uma descrição ao item.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Dê um preço ao item.", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(this, "Dê um nome ao item.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Dê uma descrição ao item.", Toast.LENGTH_SHORT).show();
             }
+        } else {
+            Toast.makeText(this, "Dê um nome ao item.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -134,10 +144,7 @@ public class AdmCreateStoreItem extends AppCompatActivity {
                         progressDialog.dismiss();
                         Toast.makeText(AdmCreateStoreItem.this, "Uploaded", Toast.LENGTH_SHORT).show();
                         Util.mDatabaseRef.child(Constants.DATABASE_REF_PRODUCT).child(product.getProductUID()).setValue(product);
-                        title.setText("");
-                        description.setText("");
-                        price.setText("");
-                        image.setImageDrawable(null);
+                        cleanLayoutElements();
                         Toast.makeText(this, "Produto criado com sucesso", Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e -> {
@@ -150,5 +157,12 @@ public class AdmCreateStoreItem extends AppCompatActivity {
                         progressDialog.setMessage("Uploaded " + (int) progress + "%");
                     });
         }
+    }
+
+    private void cleanLayoutElements() {
+        title.setText("");
+        description.setText("");
+        price.setText("");
+        image.setImageDrawable(null);
     }
 }

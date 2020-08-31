@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.relyon.whib.R;
 import com.relyon.whib.modelo.Report;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
 
 import java.util.List;

@@ -71,6 +71,13 @@
 - Refatoração de todo o código
 - Corrigir erros e warnings de log
 - Encontrar proporção para virar um grupo (15% da quantidade dos usuários no servidor)... Trocar numero de user por numero de comments?
+	- Ícone de denúncia sumiu
+	- Remover foto do perfil tbm
+- Avaliação (número) quebrando linha
+	- Contagem de importância dos servers para adm errada
+	- Não é possível criar servers com #
+- Create new storeItem não funciona (upload de imagem crashando "permission denial")
+	- Imagem (lacrou) está com partes do fundo branco
 	- Filtrar por grupo (Vai buscar todos de uma vez só, sem paginação)
 	- Ajustar ads para comentários buscados onScrolling
 	- Cada novo argumento está chamando setAdapter no groupActivity

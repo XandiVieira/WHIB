@@ -23,7 +23,7 @@ import com.relyon.whib.modelo.ServerTempInfo;
 import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.Timeline;
 import com.relyon.whib.modelo.User;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;

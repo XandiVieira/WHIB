@@ -23,8 +23,8 @@ import com.relyon.whib.R;
 import com.relyon.whib.adapter.SectionPagerProfileAdapter;
 import com.relyon.whib.dialog.DialogFinalWarn;
 import com.relyon.whib.modelo.User;
-import com.relyon.whib.modelo.Util;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,11 +36,11 @@ public class ProfileActivity extends AppCompatActivity {
     private boolean loadReports = false;
 
     private ImageView menu;
-    private EditText nick;
     private ImageView photo;
-    private TextView userName;
     private ImageView back;
     private ImageView settings;
+    private EditText nick;
+    private TextView userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +108,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        settings.setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
+        settings.setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class).putExtra(Constants.CAME_FROM_PROFILE, true)));
 
         menu.setOnClickListener(v -> {
             PopupMenu popup = new PopupMenu(ProfileActivity.this, menu);
@@ -119,28 +119,20 @@ public class ProfileActivity extends AppCompatActivity {
                 if (Util.getUser().isFirstTime()) {
                     Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false);
                 }
+                Intent intent = new Intent();
                 if (item.getTitle().equals(getString(R.string.settings))) {
-                    Intent intent = new Intent(this, SettingsActivity.class);
-                    startActivity(intent);
-                    return true;
+                    intent = new Intent(this, SettingsActivity.class).putExtra(Constants.CAME_FROM_PROFILE, true);
                 } else if (item.getTitle().equals(getString(R.string.store))) {
-                    Intent intent = new Intent(this, StoreActivity.class);
-                    startActivity(intent);
-                    return true;
+                    intent = new Intent(this, StoreActivity.class).putExtra(Constants.CAME_FROM_PROFILE, true);
                 } else if (item.getTitle().equals(getString(R.string.profile))) {
-                    Intent intent = new Intent(this, ProfileActivity.class);
-                    startActivity(intent);
-                    return true;
+                    intent = new Intent(this, ProfileActivity.class).putExtra(Constants.CAME_FROM_PROFILE, true);
                 } else if (item.getTitle().equals(getString(R.string.tips))) {
-                    Intent intent = new Intent(this, TipsActivity.class).putExtra("cameFromTimeline", false);
-                    startActivity(intent);
-                    return true;
+                    intent = new Intent(this, TipsActivity.class).putExtra(Constants.CAME_FROM_TIMELINE, false).putExtra(Constants.CAME_FROM_PROFILE, true);
                 } else if (item.getTitle().equals(getString(R.string.about))) {
-                    Intent intent = new Intent(this, AboutActivity.class);
-                    startActivity(intent);
-                    return true;
+                    intent = new Intent(this, AboutActivity.class).putExtra(Constants.CAME_FROM_PROFILE, true);
                 }
-                return false;
+                startActivity(intent);
+                return true;
             });
             popup.show();
         });
@@ -156,7 +148,9 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setUserProfile() {
-        Glide.with(this).load(user.getPhotoPath()).apply(RequestOptions.circleCropTransform()).into(photo);
+        if (user.getPreferences().isShowPhoto()) {
+            Glide.with(this).load(user.getPhotoPath()).apply(RequestOptions.circleCropTransform()).into(photo);
+        }
 
         userName.setText(user.getUserName());
 
@@ -201,9 +195,5 @@ public class ProfileActivity extends AppCompatActivity {
 
     public boolean isLoadReports() {
         return loadReports;
-    }
-
-    public void setLoadReports(boolean loadReports) {
-        this.loadReports = loadReports;
     }
 }

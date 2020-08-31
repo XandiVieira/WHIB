@@ -17,7 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.relyon.whib.R;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Sending;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;

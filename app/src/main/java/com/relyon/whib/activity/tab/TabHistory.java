@@ -26,8 +26,8 @@ import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.User;
-import com.relyon.whib.modelo.Util;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,12 +37,14 @@ public class TabHistory extends Fragment {
 
     private ProfileActivity profileActivity;
     private User user;
-    private RecyclerView rvComments;
-    private RecyclerViewCommentAdapter adapter;
-    private ProgressBar progressBar;
+    private RecyclerViewCommentAdapter commentAdapter;
     private List<Comment> fixedCommentList;
     private List<Comment> commentList;
+
+    private RecyclerView rvComments;
+    private ProgressBar progressBar;
     private TextView empty;
+    private Spinner spinner;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,10 +52,8 @@ public class TabHistory extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_history, container, false);
 
         profileActivity = (ProfileActivity) getActivity();
-        rvComments = rootView.findViewById(R.id.rvComments);
-        progressBar = rootView.findViewById(R.id.progress_bar);
-        empty = rootView.findViewById(R.id.empty);
-        Spinner spinner = rootView.findViewById(R.id.filters);
+
+        setLayoutAttributes(rootView);
 
         ArrayAdapter<CharSequence> filterAdapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.comment_filters, android.R.layout.simple_spinner_item);
@@ -83,6 +83,13 @@ public class TabHistory extends Fragment {
         return rootView;
     }
 
+    private void setLayoutAttributes(View rootView) {
+        rvComments = rootView.findViewById(R.id.rvComments);
+        progressBar = rootView.findViewById(R.id.progress_bar);
+        empty = rootView.findViewById(R.id.empty);
+        spinner = rootView.findViewById(R.id.filters);
+    }
+
     private void sortComments(int position) {
         if (position == 0) {
             Collections.sort(commentList, Comment.dateComparator);
@@ -91,7 +98,7 @@ public class TabHistory extends Fragment {
         } else {
             Collections.sort(fixedCommentList, Comment.dateComparator);
         }
-        adapter.addAllComments(commentList, true);
+        commentAdapter.addAllComments(commentList, true);
     }
 
     @Override
@@ -112,9 +119,9 @@ public class TabHistory extends Fragment {
             if (commentList != null && commentList.size() > 0) {
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
                 rvComments.setLayoutManager(layoutManager);
-                adapter = new RecyclerViewCommentAdapter(getContext(), profileActivity, true, false);
-                rvComments.setAdapter(adapter);
-                adapter.addAllComments(commentList, true);
+                commentAdapter = new RecyclerViewCommentAdapter(getContext(), profileActivity, true, false);
+                rvComments.setAdapter(commentAdapter);
+                commentAdapter.addAllComments(commentList, true);
             }
         }
         Util.mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
@@ -155,17 +162,17 @@ public class TabHistory extends Fragment {
                                         if (commentList.size() > Util.getUser().getCommentList().size()) {
                                             LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
                                             rvComments.setLayoutManager(layoutManager);
-                                            adapter = new RecyclerViewCommentAdapter(getContext(), profileActivity, true, false);
-                                            rvComments.setAdapter(adapter);
-                                            adapter.addAllComments(commentList, true);
+                                            commentAdapter = new RecyclerViewCommentAdapter(getContext(), profileActivity, true, false);
+                                            rvComments.setAdapter(commentAdapter);
+                                            commentAdapter.addAllComments(commentList, true);
                                             empty.setVisibility(View.GONE);
                                         }
                                     } else {
                                         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
                                         rvComments.setLayoutManager(layoutManager);
-                                        adapter = new RecyclerViewCommentAdapter(getContext(), profileActivity, true, false);
-                                        rvComments.setAdapter(adapter);
-                                        adapter.addAllComments(commentList, true);
+                                        commentAdapter = new RecyclerViewCommentAdapter(getContext(), profileActivity, true, false);
+                                        rvComments.setAdapter(commentAdapter);
+                                        commentAdapter.addAllComments(commentList, true);
                                         empty.setVisibility(View.GONE);
                                     }
                                 }

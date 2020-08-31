@@ -29,7 +29,7 @@ import com.relyon.whib.modelo.ServerTempInfo;
 import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.Survey;
 import com.relyon.whib.modelo.Timeline;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;
@@ -147,12 +147,12 @@ public class NextSubjectVotingActivity extends AppCompatActivity {
                             }
                         }
                     }
-                    Integer[] number = new Integer[helperList.size()];
-                    helperList.toArray(number);
-                    Arrays.sort(number);
+                    Integer[] serverNumbersAlreadyTaken = new Integer[helperList.size()];
+                    helperList.toArray(serverNumbersAlreadyTaken);
+                    Arrays.sort(serverNumbersAlreadyTaken);
                     if (finalSubject != null) {
                         Timeline tl = new Timeline(null, finalSubject, null);
-                        ServerTempInfo serverTempInfo = new ServerTempInfo(0, true, (number.length > 0 && number[0] != null && number[number.length - 1] != null) ? findFirstMissing(number) : 0);
+                        ServerTempInfo serverTempInfo = new ServerTempInfo(0, true, (serverNumbersAlreadyTaken.length > 0 && serverNumbersAlreadyTaken[0] != null && serverNumbersAlreadyTaken[serverNumbersAlreadyTaken.length - 1] != null) ? findFirstMissingServerNumber(serverNumbersAlreadyTaken) : 0);
                         Server server = new Server(UUID.randomUUID().toString(), serverTempInfo, finalSubject, tl);
                         HashMap<String, Server> map = new HashMap<>();
                         map.put(server.getServerUID(), server);
@@ -213,21 +213,21 @@ public class NextSubjectVotingActivity extends AppCompatActivity {
         date = findViewById(R.id.date);
     }
 
-    public int findFirstMissing(Integer[] numbers) {
-        for (int i = 0; i < numbers.length; i++) {
-            int target = numbers[i];
-            while (target < numbers.length && target != numbers[target]) {
-                int new_target = numbers[target];
-                numbers[target] = target;
+    public int findFirstMissingServerNumber(Integer[] serverNumbersAlreadyTaken) {
+        for (int i = 0; i < serverNumbersAlreadyTaken.length; i++) {
+            int target = serverNumbersAlreadyTaken[i];
+            while (target < serverNumbersAlreadyTaken.length && target != serverNumbersAlreadyTaken[target]) {
+                int new_target = serverNumbersAlreadyTaken[target];
+                serverNumbersAlreadyTaken[target] = target;
                 target = new_target;
             }
         }
 
-        for (int i = 0; i < numbers.length; i++) {
-            if (numbers[i] != i) {
+        for (int i = 0; i < serverNumbersAlreadyTaken.length; i++) {
+            if (serverNumbersAlreadyTaken[i] != i) {
                 return i;
             }
         }
-        return numbers.length;
+        return serverNumbersAlreadyTaken.length;
     }
 }

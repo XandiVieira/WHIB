@@ -20,8 +20,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.R;
 import com.relyon.whib.dialog.DialogFinalWarn;
 import com.relyon.whib.modelo.User;
-import com.relyon.whib.modelo.Util;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 import java.util.Objects;
 
@@ -53,15 +53,10 @@ public class AboutActivity extends AppCompatActivity {
         setAppVersion();
 
         aboutUs.setOnClickListener(v -> startActivity(new Intent(this, AboutUsActivity.class)));
-
         tips.setOnClickListener(v -> startActivity(new Intent(this, TipsActivity.class)));
-
         faq.setOnClickListener(v -> startActivity(new Intent(this, FaqActivity.class)));
-
         terms.setOnClickListener(v -> startActivity(new Intent(this, TermsActivity.class)));
-
         privacyPolicy.setOnClickListener(v -> startActivity(new Intent(this, PrivacyPolicyActivity.class)));
-
         contactUs.setOnClickListener(v -> startActivity(new Intent(this, ContactActivity.class)));
 
         back.setOnClickListener(v -> onBackPressed());
@@ -114,10 +109,12 @@ public class AboutActivity extends AppCompatActivity {
         super.onBackPressed();
         finish();
         Intent intent;
-        if (Util.getServer() != null) {
+        if (getIntent().hasExtra(Constants.CAME_FROM_PROFILE) && getIntent().getBooleanExtra(Constants.CAME_FROM_PROFILE, false)) {
+            intent = new Intent(this, ProfileActivity.class);
+        } else if (Util.getServer() != null) {
             intent = new Intent(this, TimelineActivity.class);
         } else {
-            intent = new Intent(this, ProfileActivity.class);
+            intent = new Intent(this, MainActivity.class);
         }
         startActivity(intent);
     }

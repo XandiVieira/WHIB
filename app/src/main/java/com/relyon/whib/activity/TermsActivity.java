@@ -8,11 +8,10 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.relyon.whib.R;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 public class TermsActivity extends AppCompatActivity {
-
-    public static final String KEY_PAGE_LOCATION = "file:///android_asset/terms.html";
 
     private ImageView back;
     private WebView webView;
@@ -28,7 +27,7 @@ public class TermsActivity extends AppCompatActivity {
 
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setUseWideViewPort(true);
-        webView.loadUrl(KEY_PAGE_LOCATION);
+        webView.loadUrl(Constants.TERMS_AND_CONDITIONS);
     }
 
     private void setLayoutAttributes() {

@@ -23,7 +23,7 @@ public class TabFriends extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_friends, container, false);
 
-        profileActivity = (ProfileActivity) getActivity();
+        setLayoutAttributes();
 
         if (profileActivity != null) {
             user = profileActivity.getUser();
@@ -35,5 +35,9 @@ public class TabFriends extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    private void setLayoutAttributes() {
+        profileActivity = (ProfileActivity) getActivity();
     }
 }

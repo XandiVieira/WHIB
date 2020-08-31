@@ -1,7 +1,12 @@
-package com.relyon.whib.modelo;
+package com.relyon.whib.util;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.relyon.whib.modelo.Comment;
+import com.relyon.whib.modelo.Group;
+import com.relyon.whib.modelo.Popularity;
+import com.relyon.whib.modelo.Server;
+import com.relyon.whib.modelo.User;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -25,10 +30,6 @@ public class Util {
     public static Group group;
     public static boolean delete;
     public static List<String> subjectList;
-    public static final String DATE_FORMAT = "yyyy-MM-dd";
-
-    public static String searchString = "";
-
 
     public Util() {
     }

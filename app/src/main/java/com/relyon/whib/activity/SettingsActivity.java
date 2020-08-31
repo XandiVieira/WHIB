@@ -15,13 +15,15 @@ import com.relyon.whib.R;
 import com.relyon.whib.adapter.SectionPagerAdapter;
 import com.relyon.whib.dialog.DialogCongratsSubscription;
 import com.relyon.whib.dialog.DialogFinalWarn;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.SelectSubscription;
 
 public class SettingsActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler, SelectSubscription {
 
     private BillingProcessor billingProcessor;
+
+    private ImageView back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,22 +44,18 @@ public class SettingsActivity extends AppCompatActivity implements BillingProces
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
-        ImageView back = findViewById(R.id.back);
+        setLayoutAttributes();
 
         if (getIntent().hasExtra(Constants.SHOW_LAST_WARN) && getIntent().getBooleanExtra(Constants.SHOW_LAST_WARN, false)) {
             DialogFinalWarn warn = new DialogFinalWarn(this);
             warn.show();
         }
 
-        back.setOnClickListener(v -> {
-            Intent intent;
-            if (Util.getServer() != null) {
-                intent = new Intent(this, TimelineActivity.class);
-            } else {
-                intent = new Intent(this, MainActivity.class);
-            }
-            startActivity(intent);
-        });
+        back.setOnClickListener(v -> onBackPressed());
+    }
+
+    private void setLayoutAttributes() {
+        back = findViewById(R.id.back);
     }
 
     private void purchase(String sku) {
@@ -104,5 +102,19 @@ public class SettingsActivity extends AppCompatActivity implements BillingProces
     @Override
     public void onBillingInitialized() {
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent;
+        if (getIntent().hasExtra(Constants.CAME_FROM_PROFILE) && getIntent().getBooleanExtra(Constants.CAME_FROM_PROFILE, false)) {
+            intent = new Intent(this, ProfileActivity.class);
+        } else if (Util.getServer() != null) {
+            intent = new Intent(this, TimelineActivity.class);
+        } else {
+            intent = new Intent(this, MainActivity.class);
+        }
+        startActivity(intent);
     }
 }

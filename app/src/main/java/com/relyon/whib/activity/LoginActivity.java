@@ -81,11 +81,9 @@ public class LoginActivity extends AppCompatActivity implements Runnable {
         getAppVersion();
 
         terms.setOnClickListener(v -> startActivity(new Intent(this, TermsActivity.class)));
-
         privacyPolicy.setOnClickListener(v -> startActivity(new Intent(this, PrivacyPolicyActivity.class)));
 
         loginButton.setReadPermissions(Arrays.asList("email", "public_profile"));
-
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {

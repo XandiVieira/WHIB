@@ -10,9 +10,9 @@ import android.widget.ImageView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.relyon.whib.dialog.DialogFinalWarn;
 import com.relyon.whib.R;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.dialog.DialogFinalWarn;
+import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
 
 public class TipsActivity extends AppCompatActivity {
@@ -29,7 +29,6 @@ public class TipsActivity extends AppCompatActivity {
         setLayoutAttributes();
 
         back.setOnClickListener(v -> onBackPressed());
-
         store.setOnClickListener(v -> startActivity(new Intent(this, StoreActivity.class)));
 
         if (Util.getUser().isFirstTime() || getIntent().hasExtra(Constants.SHOW_LAST_WARN) && getIntent().getBooleanExtra(Constants.SHOW_LAST_WARN, false) && Util.getUser().isFirstTime()) {
@@ -58,14 +57,12 @@ public class TipsActivity extends AppCompatActivity {
         super.onBackPressed();
         finish();
         Intent intent;
-        if (Util.getServer() != null) {
-            if (getIntent().hasExtra("cameFromTimeline")) {
-                intent = new Intent(this, TimelineActivity.class);
-            } else {
-                intent = new Intent(this, AboutActivity.class);
-            }
-        } else {
+        if (getIntent().hasExtra(Constants.CAME_FROM_PROFILE) && getIntent().getBooleanExtra(Constants.CAME_FROM_PROFILE, false)) {
             intent = new Intent(this, ProfileActivity.class);
+        } else if (Util.getServer() != null) {
+            intent = new Intent(this, TimelineActivity.class);
+        } else {
+            intent = new Intent(this, MainActivity.class);
         }
         startActivity(intent);
     }

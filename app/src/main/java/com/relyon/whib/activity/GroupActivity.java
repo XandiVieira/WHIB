@@ -32,7 +32,7 @@ import com.relyon.whib.dialog.DialogStickers;
 import com.relyon.whib.modelo.Argument;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Sending;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
 import com.vanniktech.emoji.EmojiButton;
 import com.vanniktech.emoji.EmojiEditText;
@@ -281,7 +281,6 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void createNewArgument(String type, String audioPath) {
-
         Date data = new Date();
 
         Calendar cal = Calendar.getInstance();

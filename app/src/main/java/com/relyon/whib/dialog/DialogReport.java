@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.relyon.whib.R;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Report;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Util;
 
 import java.util.UUID;
 

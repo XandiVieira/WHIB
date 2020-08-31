@@ -22,12 +22,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.relyon.whib.R;
 import com.relyon.whib.activity.LoginActivity;
 import com.relyon.whib.dialog.DialogConfirmDeleteAcc;
-import com.relyon.whib.modelo.Util;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 public class TabPreferences extends Fragment {
 
     private CheckBox checkSound, checkVibration, checkShowPhoto, checkNotifications;
+    private TextView version;
+    private Button deleteAccount;
+    private Button logout;
 
     @Override
     public void onAttach(@NonNull final Activity activity) {
@@ -35,59 +38,57 @@ public class TabPreferences extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_preferences, container, false);
 
-        checkSound = rootView.findViewById(R.id.checkSound);
-        checkVibration = rootView.findViewById(R.id.checkVibration);
-        checkShowPhoto = rootView.findViewById(R.id.checkShowPhoto);
-        checkNotifications = rootView.findViewById(R.id.checkNotifications);
-        TextView version1 = rootView.findViewById(R.id.version);
+        setLayoutAttributes(rootView);
 
-        try {
-            PackageInfo pInfo = container.getContext().getPackageManager().getPackageInfo(container.getContext().getPackageName(), 0);
-            String version = pInfo.versionName;
-            version1.setText("Version " + version);
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.e("Error", e.getMessage());
-        }
-
-        Button delete_acc = rootView.findViewById(R.id.delete_acc);
-        Button logout = rootView.findViewById(R.id.logout);
+        setAppVersion(container);
 
         checkNotifications.setChecked(Util.getUser().getPreferences().isNotification());
         checkShowPhoto.setChecked(Util.getUser().getPreferences().isShowPhoto());
         checkSound.setChecked(Util.getUser().getPreferences().isSound());
         checkVibration.setChecked(Util.getUser().getPreferences().isVibration());
 
-        checkNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_NOTIFICATION).setValue(checkNotifications.isChecked());
-        });
+        checkNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_NOTIFICATION).setValue(checkNotifications.isChecked()));
 
-        checkShowPhoto.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_SHOW_PHOTO).setValue(checkShowPhoto.isChecked());
-        });
+        checkShowPhoto.setOnCheckedChangeListener((buttonView, isChecked) -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_SHOW_PHOTO).setValue(checkShowPhoto.isChecked()));
 
-        checkSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_SOUND).setValue(checkSound.isChecked());
-        });
+        checkSound.setOnCheckedChangeListener((buttonView, isChecked) -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_SOUND).setValue(checkSound.isChecked()));
 
-        checkVibration.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_VIBRATION).setValue(checkVibration.isChecked());
-        });
+        checkVibration.setOnCheckedChangeListener((buttonView, isChecked) -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_VIBRATION).setValue(checkVibration.isChecked()));
 
         logout.setOnClickListener(v -> logout());
 
-        delete_acc.setOnClickListener(v -> {
+        deleteAccount.setOnClickListener(v -> {
             DialogConfirmDeleteAcc cdd = new DialogConfirmDeleteAcc(getActivity());
             cdd.show();
             if (Util.getDelete()) {
-                deleteAcc();
+                deleteAccount();
             }
         });
 
         return rootView;
+    }
+
+    private void setAppVersion(ViewGroup container) {
+        PackageInfo pInfo = null;
+        try {
+            pInfo = container.getContext().getPackageManager().getPackageInfo(container.getContext().getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.d(getString(R.string.error), e.getMessage());
+        }
+        version.setText("Version " + pInfo.versionName);
+    }
+
+    private void setLayoutAttributes(View rootView) {
+        checkSound = rootView.findViewById(R.id.checkSound);
+        checkVibration = rootView.findViewById(R.id.checkVibration);
+        checkShowPhoto = rootView.findViewById(R.id.checkShowPhoto);
+        checkNotifications = rootView.findViewById(R.id.checkNotifications);
+        version = rootView.findViewById(R.id.version);
+        deleteAccount = rootView.findViewById(R.id.delete_acc);
+        logout = rootView.findViewById(R.id.logout);
     }
 
     @Override
@@ -96,21 +97,19 @@ public class TabPreferences extends Fragment {
 
     }
 
-    //Go to login activity
     private void goLoginScreen() {
         Intent intent = new Intent(getContext(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
-    //logout the user from application
     private void logout() {
         FirebaseAuth.getInstance().signOut();
         LoginManager.getInstance().logOut();
         goLoginScreen();
     }
 
-    private void deleteAcc() {
+    private void deleteAccount() {
         logout();
         Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).setValue(null);
     }

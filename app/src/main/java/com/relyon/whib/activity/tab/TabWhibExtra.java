@@ -19,22 +19,23 @@ import com.relyon.whib.R;
 import com.relyon.whib.adapter.AdvantageAdapter;
 import com.relyon.whib.dialog.DialogChooseSubscription;
 import com.relyon.whib.modelo.Advantage;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 
 public class TabWhibExtra extends Fragment {
 
-    private ListView resourceLV;
     private ArrayList<Advantage> advantages;
+
+    private ListView resourceLV;
+    private Button subscribe;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_whib_extra, container, false);
 
-        resourceLV = rootView.findViewById(R.id.lv_resources);
-        Button subscribe = rootView.findViewById(R.id.signWhibExtraBT);
+        setLayoutAttributes(rootView);
 
         subscribe.setOnClickListener(v -> {
             FragmentTransaction fm = ((getActivity()).getSupportFragmentManager().beginTransaction());
@@ -49,8 +50,7 @@ public class TabWhibExtra extends Fragment {
                 for (DataSnapshot snap : dataSnapshot.getChildren()) {
                     advantages.add(snap.getValue(Advantage.class));
                 }
-                AdvantageAdapter adapter = new AdvantageAdapter(getContext(), advantages);
-                resourceLV.setAdapter(adapter);
+                setAdvantageAdapter();
             }
 
             @Override
@@ -60,6 +60,16 @@ public class TabWhibExtra extends Fragment {
         });
 
         return rootView;
+    }
+
+    private void setAdvantageAdapter() {
+        AdvantageAdapter adapter = new AdvantageAdapter(getContext(), advantages);
+        resourceLV.setAdapter(adapter);
+    }
+
+    private void setLayoutAttributes(View rootView) {
+        resourceLV = rootView.findViewById(R.id.lv_resources);
+        subscribe = rootView.findViewById(R.id.signWhibExtraBT);
     }
 
     @Override

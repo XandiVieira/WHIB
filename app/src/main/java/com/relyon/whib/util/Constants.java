@@ -67,4 +67,6 @@ public class Constants {
     public static final String DATABASE_REF_READY = "ready";
     public static final String DATABASE_REF_QUANTITY = "quantity";
     public static final int COMMENTS_BY_ADD = 4;
+    public static final String PRIVACY_POLICY = "file:///android_asset/privacyPolicy.html";
+    public static final String TERMS_AND_CONDITIONS = "file:///android_asset/terms.html";
 }

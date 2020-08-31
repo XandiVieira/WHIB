@@ -4,22 +4,20 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
-import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
 
 import com.relyon.whib.R;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Util;
 
 public class DialogConfirmDeleteAcc extends Dialog implements View.OnClickListener {
 
-    private FragmentActivity c;
-    public Dialog d;
-    public TextView confirmDeletionMessage;
+    private FragmentActivity fragmentActivity;
+    public Dialog dialog;
 
     public DialogConfirmDeleteAcc(FragmentActivity a) {
         super(a);
-        this.c = a;
+        this.fragmentActivity = a;
     }
 
     @Override
@@ -36,7 +34,7 @@ public class DialogConfirmDeleteAcc extends Dialog implements View.OnClickListen
                 Util.setDelete(true);
                 break;
             case R.id.cancelBt:
-                c.closeContextMenu();
+                fragmentActivity.closeContextMenu();
                 break;
             default:
                 break;

@@ -21,7 +21,7 @@ import com.relyon.whib.R;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.User;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Util;
 
 import java.util.List;
 

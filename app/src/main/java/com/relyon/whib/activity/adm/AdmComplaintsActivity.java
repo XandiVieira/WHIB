@@ -16,19 +16,20 @@ import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.R;
 import com.relyon.whib.adapter.RecyclerViewComplaintAdapter;
 import com.relyon.whib.modelo.Complaint;
-import com.relyon.whib.modelo.Util;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class AdmComplaintsActivity extends AppCompatActivity {
 
-    private RecyclerView rvComplaints;
+    private Activity activity;
     private ArrayList<Complaint> complaintList;
     private RecyclerViewComplaintAdapter complaintAdapter;
+
+    private RecyclerView rvComplaints;
     private TextView empty;
-    private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +38,12 @@ public class AdmComplaintsActivity extends AppCompatActivity {
 
         activity = this;
 
-        complaintList = new ArrayList<>();
-        rvComplaints = findViewById(R.id.reports);
-        empty = findViewById(R.id.empty);
+        setLayoutAttributes();
 
         Util.mDatabaseRef.child(Constants.DATABASE_REF_COMPLAINT).orderByChild(Constants.DATABASE_REF_ANSWERED).equalTo(false).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                complaintList = new ArrayList<>();
                 for (DataSnapshot snap : dataSnapshot.getChildren()) {
                     Complaint complaint = snap.getValue(Complaint.class);
                     if (complaint != null) {
@@ -55,11 +55,7 @@ public class AdmComplaintsActivity extends AppCompatActivity {
                 } else {
                     empty.setVisibility(View.VISIBLE);
                 }
-                LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
-                rvComplaints.setLayoutManager(layoutManager);
-                Collections.sort(complaintList, Complaint.dateComparator);
-                complaintAdapter = new RecyclerViewComplaintAdapter(activity, complaintList);
-                rvComplaints.setAdapter(complaintAdapter);
+                setComplaintAdapter();
             }
 
             @Override
@@ -67,5 +63,18 @@ public class AdmComplaintsActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void setLayoutAttributes() {
+        rvComplaints = findViewById(R.id.reports);
+        empty = findViewById(R.id.empty);
+    }
+
+    private void setComplaintAdapter() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
+        rvComplaints.setLayoutManager(layoutManager);
+        Collections.sort(complaintList, Complaint.dateComparator);
+        complaintAdapter = new RecyclerViewComplaintAdapter(activity, complaintList);
+        rvComplaints.setAdapter(complaintAdapter);
     }
 }

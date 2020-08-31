@@ -16,19 +16,20 @@ import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.R;
 import com.relyon.whib.adapter.RecyclerViewReportAdapter;
 import com.relyon.whib.modelo.Report;
-import com.relyon.whib.modelo.Util;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AdmReportsActivity extends AppCompatActivity {
 
-    private RecyclerView rvReports;
+    private Activity activity;
     private List<Report> reportList;
     private RecyclerViewReportAdapter reportAdapter;
+
+    private RecyclerView rvReports;
     private TextView empty;
-    private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +38,7 @@ public class AdmReportsActivity extends AppCompatActivity {
 
         activity = this;
 
-        rvReports = findViewById(R.id.reports);
-        empty = findViewById(R.id.empty);
+        setLayoutAttributes();
 
         Util.mDatabaseRef.child(Constants.DATABASE_REF_REPORT).orderByChild(Constants.DATABASE_REF_REVIEWED).equalTo(false).addValueEventListener(new ValueEventListener() {
             @Override
@@ -52,9 +52,7 @@ public class AdmReportsActivity extends AppCompatActivity {
                         empty.setVisibility(View.GONE);
                     }
                 }
-                reportAdapter = new RecyclerViewReportAdapter(reportList);
-                rvReports.setLayoutManager(new LinearLayoutManager(activity));
-                rvReports.setAdapter(reportAdapter);
+                setReportAdapter();
             }
 
             @Override
@@ -62,5 +60,16 @@ public class AdmReportsActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void setLayoutAttributes() {
+        rvReports = findViewById(R.id.reports);
+        empty = findViewById(R.id.empty);
+    }
+
+    private void setReportAdapter() {
+        reportAdapter = new RecyclerViewReportAdapter(reportList);
+        rvReports.setLayoutManager(new LinearLayoutManager(activity));
+        rvReports.setAdapter(reportAdapter);
     }
 }

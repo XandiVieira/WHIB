@@ -17,7 +17,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.relyon.whib.R;
 import com.relyon.whib.modelo.Argument;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 

@@ -21,7 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.R;
 import com.relyon.whib.adapter.RecyclerViewComplaintAdapter;
 import com.relyon.whib.modelo.Complaint;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
 
 import java.util.ArrayList;
@@ -54,12 +54,8 @@ public class ContactActivity extends AppCompatActivity {
 
         retrieveComplaints();
 
-        complaintTxt = findViewById(R.id.complaint);
-
         back.setOnClickListener(v -> onBackPressed());
-
         faqButton.setOnClickListener(v -> startActivity(new Intent(this, FaqActivity.class)));
-
         sendButton.setOnClickListener(v -> validateComplaint());
     }
 
@@ -69,6 +65,7 @@ public class ContactActivity extends AppCompatActivity {
         sendButton = findViewById(R.id.send_complaint);
         empty = findViewById(R.id.empty);
         myComplaints = findViewById(R.id.myComplaints);
+        complaintTxt = findViewById(R.id.complaint);
     }
 
     private void retrieveComplaints() {

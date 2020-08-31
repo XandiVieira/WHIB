@@ -69,9 +69,9 @@ public class RecyclerViewServerGroupAdapter extends RecyclerView.Adapter<Recycle
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView subject;
-        RecyclerView recyclerViewInner;
-        ImageView nextServer;
+        private TextView subject;
+        private RecyclerView recyclerViewInner;
+        private ImageView nextServer;
 
         ViewHolder(View rowView) {
             super(rowView);

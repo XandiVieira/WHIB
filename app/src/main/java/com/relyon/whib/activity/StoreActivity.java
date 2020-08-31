@@ -20,26 +20,29 @@ import com.anjlab.android.iab.v3.TransactionDetails;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.relyon.whib.dialog.DialogFinalWarn;
 import com.relyon.whib.R;
 import com.relyon.whib.adapter.RecyclerViewProductAdapter;
+import com.relyon.whib.dialog.DialogFinalWarn;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.User;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.SelectSubscription;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class StoreActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler, SelectSubscription {
 
-    private RecyclerView productsRV;
-    private List<Product> productList = new ArrayList<>();
-    private BillingProcessor billingProcessor;
     private Activity activity;
+    private List<Product> productList;
+    private BillingProcessor billingProcessor;
+
+    private RecyclerView productsRV;
     private ProgressBar progressBar;
+    private ImageView back;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,6 +54,8 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
         billingProcessor = new BillingProcessor(this, getString(R.string.google_license_key), this);
         billingProcessor.initialize();
 
+        setLayoutAttributes();
+
         retrieveProducts();
 
         if (getIntent().hasExtra(Constants.SHOW_LAST_WARN) && getIntent().getBooleanExtra(Constants.SHOW_LAST_WARN, false) && Util.getUser().isFirstTime()) {
@@ -58,24 +63,27 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
             warn.show();
         }
 
+        back.setOnClickListener(v -> onBackPressed());
+    }
+
+    private void setLayoutAttributes() {
         productsRV = findViewById(R.id.products);
         progressBar = findViewById(R.id.progress_bar);
-        ImageView back = findViewById(R.id.back);
-        back.setOnClickListener(v -> onBackPressed());
+        back = findViewById(R.id.back);
     }
 
     private void retrieveProducts() {
         Util.mDatabaseRef.child(Constants.DATABASE_REF_PRODUCT).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                productList.clear();
+                productList = new ArrayList<>();
                 for (DataSnapshot snap : dataSnapshot.getChildren()) {
                     Product product = snap.getValue(Product.class);
                     if (product != null) {
                         productList.add(product);
                     }
                 }
-                handleListLayout();
+                setProductAdapter();
             }
 
             @Override
@@ -85,7 +93,7 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
         });
     }
 
-    private void handleListLayout() {
+    private void setProductAdapter() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
         RecyclerViewProductAdapter adapter = new RecyclerViewProductAdapter(productList, activity, StoreActivity.this);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(productsRV.getContext(),
@@ -102,7 +110,9 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
         super.onBackPressed();
         finish();
         Intent intent;
-        if (Util.getServer() != null) {
+        if (getIntent().hasExtra(Constants.CAME_FROM_PROFILE) && getIntent().getBooleanExtra(Constants.CAME_FROM_PROFILE, false)) {
+            intent = new Intent(this, ProfileActivity.class);
+        } else if (Util.getServer() != null) {
             intent = new Intent(this, TimelineActivity.class);
         } else {
             intent = new Intent(this, MainActivity.class);
@@ -158,7 +168,7 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
                     }
                     myProduct.setQuantity(myProduct.getQuantity() + (quantity * 5));
                     if (user.getProducts().get(myProduct.getProductUID()) != null) {
-                        user.getProducts().get(myProduct.getProductUID()).setQuantity(myProduct.getQuantity());
+                        Objects.requireNonNull(user.getProducts().get(myProduct.getProductUID())).setQuantity(myProduct.getQuantity());
                     } else {
                         user.getProducts().put(myProduct.getProductUID(), myProduct);
                     }

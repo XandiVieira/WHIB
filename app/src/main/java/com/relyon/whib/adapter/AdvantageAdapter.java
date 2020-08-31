@@ -19,6 +19,8 @@ public class AdvantageAdapter extends ArrayAdapter<Advantage> {
     private final Context context;
     private final ArrayList<Advantage> advantages;
 
+    private TextView text;
+
     public AdvantageAdapter(@NonNull Context context, ArrayList<Advantage> advantages) {
         super(context, R.layout.item_resource, advantages);
         this.context = context;
@@ -31,9 +33,14 @@ public class AdvantageAdapter extends ArrayAdapter<Advantage> {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.item_resource, parent, false);
 
-        TextView text = rowView.findViewById(R.id.text);
+        setLayoutAttributes(rowView);
+
         text.setText(advantages.get(position).getDescription());
 
         return rowView;
+    }
+
+    private void setLayoutAttributes(View rowView) {
+        text = rowView.findViewById(R.id.text);
     }
 }

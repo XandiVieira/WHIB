@@ -20,7 +20,7 @@ import com.relyon.whib.modelo.Group;
 import com.relyon.whib.modelo.GroupTempInfo;
 import com.relyon.whib.modelo.Notification;
 import com.relyon.whib.modelo.User;
-import com.relyon.whib.modelo.Util;
+import com.relyon.whib.util.Util;
 import com.relyon.whib.modelo.Valuation;
 import com.relyon.whib.util.Constants;
 

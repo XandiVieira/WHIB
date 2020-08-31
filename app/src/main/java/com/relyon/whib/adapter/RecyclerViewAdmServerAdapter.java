@@ -1,17 +1,19 @@
-package com.relyon.whib.activity.adm;
+package com.relyon.whib.adapter;
 
+import android.content.Context;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,8 +21,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.R;
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.Subject;
-import com.relyon.whib.modelo.Util;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,73 +30,63 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class AdmServerAdapter extends BaseAdapter {
+public class RecyclerViewAdmServerAdapter extends RecyclerView.Adapter<RecyclerViewAdmServerAdapter.ViewHolder> {
 
+    private final AppCompatActivity activity;
     private final ArrayList<Server> admServerList;
-    private final AppCompatActivity act;
     private int comments = 0;
     private int servers = 0;
+    private Context context;
 
-    AdmServerAdapter(ArrayList<Server> admServerList, AppCompatActivity act) {
+    public RecyclerViewAdmServerAdapter(ArrayList<Server> admServerList, AppCompatActivity activity, Context context) {
         this.admServerList = admServerList;
-        this.act = act;
+        this.activity = activity;
+        this.context = context;
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_adm_server, parent, false);
+        return new ViewHolder(rowView);
     }
 
     @Override
-    public int getCount() {
-        return admServerList.size();
-    }
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
 
-    @Override
-    public Object getItem(int position) {
-        return admServerList.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return 0;
-    }
-
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        final View view = act.getLayoutInflater().inflate(R.layout.item_adm_server, parent, false);
         final Server server = admServerList.get(position);
-        servers = 0;
-        comments = 0;
-        TextView subjectTitle = view.findViewById(R.id.subjectTitle);
-        final Switch disableSwitch = view.findViewById(R.id.disableServer);
-        ImageButton deleteButton = view.findViewById(R.id.delete);
-        TextView popularity = view.findViewById(R.id.popularity);
-        subjectTitle.setText(server.getSubject());
 
-        deleteButton.setOnClickListener(v -> {
+        holder.subjectTitle.setText(server.getSubject());
+
+        holder.deleteButton.setOnClickListener(v -> {
             Util.mSubjectDatabaseRef.child(server.getSubject()).removeValue();
         });
 
-        disableSwitch.setChecked(server.getTempInfo().isActivated());
+        holder.disableSwitch.setChecked(server.getTempInfo().isActivated());
 
-        if (disableSwitch.isChecked()) {
-            disableSwitch.setText("Ativo");
+        if (holder.disableSwitch.isChecked()) {
+            holder.disableSwitch.setText("Ativo");
         } else {
-            disableSwitch.setText("Desativo");
+            holder.disableSwitch.setText("Desativo");
         }
 
-        subjectTitle.setOnClickListener(v -> callDialog(view, position));
+        holder.subjectTitle.setOnClickListener(v -> callDialog(position));
 
         Util.mSubjectDatabaseRef.child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                servers = 0;
                 Util.mSubjectDatabaseRef.child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).removeEventListener(this);
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     Server server1 = snap.getValue(Server.class);
                     if (server1 != null && server1.getTimeline() != null && server1.getTimeline().getCommentList() != null && server1.getTimeline().getCommentList().size() > 0) {
-                        comments = comments + (server1.getTimeline().getCommentList().values().size());
+                        comments += server1.getTimeline().getCommentList().values().size();
                     }
                     servers++;
                 }
-                int pop = servers * comments;
-                popularity.setText(pop + " ");
+                int popularity = servers * comments;
+                holder.tvPopularity.setText(popularity + " ");
+                servers = 0;
+                comments = 0;
             }
 
             @Override
@@ -103,13 +95,13 @@ public class AdmServerAdapter extends BaseAdapter {
             }
         });
 
-        disableSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        holder.disableSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                disableSwitch.setText("Ativo");
+                holder.disableSwitch.setText("Ativo");
             } else {
-                disableSwitch.setText("Desativo");
+                holder.disableSwitch.setText("Desativo");
             }
-            server.getTempInfo().setActivated(disableSwitch.isChecked());
+            server.getTempInfo().setActivated(holder.disableSwitch.isChecked());
             Util.mSubjectDatabaseRef.child(server.getSubject()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -128,16 +120,14 @@ public class AdmServerAdapter extends BaseAdapter {
                 }
             });
         });
-
-        return view;
     }
 
-    private void callDialog(View view, final int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+    private void callDialog(final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Title");
 
         // Set up the input
-        final EditText input = new EditText(view.getContext());
+        final EditText input = new EditText(context);
         input.setText(admServerList.get(position).getSubject());
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -156,12 +146,12 @@ public class AdmServerAdapter extends BaseAdapter {
                         }
                     }
                 }
-                Integer[] number = new Integer[helperList.size()];
-                helperList.toArray(number);
-                Arrays.sort(number);
+                Integer[] takenServerNumbers = new Integer[helperList.size()];
+                helperList.toArray(takenServerNumbers);
+                Arrays.sort(takenServerNumbers);
                 HashMap<String, Server> map = new HashMap<>();
                 Subject newSubject = new Subject(input.getText().toString(), map, new Date().getTime(), true);
-                map.put(input.getText().toString(), new Server(UUID.randomUUID().toString(), newSubject.getTitle(),(number.length > 0 && number[0] != null && number[number.length - 1] != null) ? findFirstMissing(number) : 0));
+                map.put(input.getText().toString(), new Server(UUID.randomUUID().toString(), newSubject.getTitle(), (takenServerNumbers.length > 0 && takenServerNumbers[0] != null && takenServerNumbers[takenServerNumbers.length - 1] != null) ? findFirstAvailableServerNumber(takenServerNumbers) : 0));
                 newSubject.setServers(map);
                 Util.mSubjectDatabaseRef.push().setValue(newSubject);
             }
@@ -175,21 +165,42 @@ public class AdmServerAdapter extends BaseAdapter {
         builder.show();
     }
 
-    public int findFirstMissing(Integer[] numbers) {
-        for (int i = 0; i < numbers.length; i++) {
-            int target = numbers[i];
-            while (target < numbers.length && target != numbers[target]) {
-                int new_target = numbers[target];
-                numbers[target] = target;
+    public int findFirstAvailableServerNumber(Integer[] takenServerNumbers) {
+        for (int i = 0; i < takenServerNumbers.length; i++) {
+            int target = takenServerNumbers[i];
+            while (target < takenServerNumbers.length && target != takenServerNumbers[target]) {
+                int new_target = takenServerNumbers[target];
+                takenServerNumbers[target] = target;
                 target = new_target;
             }
         }
 
-        for (int i = 0; i < numbers.length; i++) {
-            if (numbers[i] != i) {
+        for (int i = 0; i < takenServerNumbers.length; i++) {
+            if (takenServerNumbers[i] != i) {
                 return i;
             }
         }
-        return numbers.length;
+        return takenServerNumbers.length;
+    }
+
+    @Override
+    public int getItemCount() {
+        return admServerList.size();
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+
+        private TextView subjectTitle;
+        private TextView tvPopularity;
+        private SwitchCompat disableSwitch;
+        private ImageButton deleteButton;
+
+        ViewHolder(View rowView) {
+            super(rowView);
+            this.subjectTitle = rowView.findViewById(R.id.subject_title);
+            this.tvPopularity = rowView.findViewById(R.id.popularity);
+            this.disableSwitch = rowView.findViewById(R.id.disable_server);
+            this.deleteButton = rowView.findViewById(R.id.delete);
+        }
     }
 }

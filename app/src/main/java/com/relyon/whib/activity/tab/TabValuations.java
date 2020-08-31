@@ -18,12 +18,13 @@ import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 public class TabValuations extends Fragment {
 
+    private User user;
+
     private MaterialRatingBar ratingBar;
     private TextView rating;
     private TextView goodValuation;
     private TextView mediumValuation;
     private TextView badValuation;
-    private User user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,11 +33,7 @@ public class TabValuations extends Fragment {
 
         ProfileActivity profileActivity = (ProfileActivity) getActivity();
 
-        ratingBar = rootView.findViewById(R.id.my_stars);
-        rating = rootView.findViewById(R.id.my_rating);
-        goodValuation = rootView.findViewById(R.id.good_valuation);
-        mediumValuation = rootView.findViewById(R.id.medium_valuation);
-        badValuation = rootView.findViewById(R.id.bad_valuation);
+        setLayoutAttributes(rootView);
 
         if (profileActivity != null) {
             user = profileActivity.getUser();
@@ -44,6 +41,14 @@ public class TabValuations extends Fragment {
         }
 
         return rootView;
+    }
+
+    private void setLayoutAttributes(View rootView) {
+        ratingBar = rootView.findViewById(R.id.my_stars);
+        rating = rootView.findViewById(R.id.my_rating);
+        goodValuation = rootView.findViewById(R.id.good_valuation);
+        mediumValuation = rootView.findViewById(R.id.medium_valuation);
+        badValuation = rootView.findViewById(R.id.bad_valuation);
     }
 
     @Override
