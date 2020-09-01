@@ -126,26 +126,23 @@ public class DialogRateComment extends Dialog implements
 
     private void isWorthyToBeAGroup(int serverNumber) {
         if (commentOwnerIsExtra) {
-            if (!comment.isAGroup()) {
-                comment.setAGroup(true);
-                if (comment.getGroup() == null) {
-                    createNewGroup(serverNumber);
-                }
+            if (comment.getGroup() == null) {
+                createNewGroup(serverNumber);
             }
         } else {
             Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).removeEventListener(this);
                     long numberOfComments = snapshot.getChildrenCount();
                     int numberOfStickers = 0;
-                    for (Product product : comment.getStickers().values()) {
-                        numberOfStickers += product.getQuantity();
+                    if (comment.getStickers() != null) {
+                        for (Product product : comment.getStickers().values()) {
+                            numberOfStickers += product.getQuantity();
+                        }
                     }
 
-                    //Used to calculate necessary average to become group based on number of comments -> from 3 to 4.05
-                    int commentsOnAverageScale = (int) (numberOfComments / 6.25);
-                    int requiredAverage = (int) (3 + (commentsOnAverageScale * 0.07));
-
+                    int requiredAverage = requiredAverageToBecomeGroup(numberOfComments);
                     if (comment.getNumberOfRatings() > ((numberOfComments / 2) - numberOfStickers) && comment.getRating() >= requiredAverage && comment.getGroup() == null) {
                         createNewGroup(serverNumber);
                     }
@@ -159,6 +156,12 @@ public class DialogRateComment extends Dialog implements
         }
     }
 
+    private int requiredAverageToBecomeGroup(long numberOfComments) {
+        //Used to calculate necessary average to become group based on number of comments -> from 3 to 4.05
+        int commentsOnAverageScale = (int) (numberOfComments / 6.25);
+        return (int) (3 + (commentsOnAverageScale * 0.07));
+    }
+
     private void createNewGroup(int serverNumber) {
         List<String> userUIDList = new ArrayList<>();
         userUIDList.add(Util.getUser().getUserUID());
@@ -168,8 +171,9 @@ public class DialogRateComment extends Dialog implements
         Group group = new Group(UUID.randomUUID().toString(), comment.getSubject(), serverNumber, Util.getServer().getTempInfo().getNumber(),
                 groupTempInfo, "text", new ArrayList<>(), userUIDList, false, comment.getCommentUID());
         comment.setGroup(group);
-        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_COMMENT_GROUP).setValue(group);
-        sendNotification();
+        Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_A_GROUP).setValue(true);
+        Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_GROUP).setValue(group);
+        //sendNotification();
     }
 
     private void sendNotification() {

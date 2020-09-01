@@ -25,7 +25,6 @@ public class Constants {
     public static final String DATABASE_REF_PRODUCT = "product";
     public static final String DATABASE_REF_PRODUCTS = "products";
     public static final String DATABASE_REF_REPORT = "report";
-    public static final String DATABASE_REF_COMMENT_GROUP = "commentGroup";
     public static final String DATABASE_REF_SUBJECT = "subject";
     public static final String DATABASE_REF_PREFERENCES = "preferences";
     public static final String DATABASE_REF_SURVEY = "survey";

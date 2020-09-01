@@ -64,11 +64,13 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     public int mPostsPerPage = 10;
     private boolean calledFromTabHistory = false;
     private boolean calledFromGroup = false;
+    private RecyclerViewCommentAdapter adapter;
 
     public RecyclerViewCommentAdapter(@NonNull Context context, AppCompatActivity activity) {
         this.context = context;
         this.elements = new ArrayList<>();
         this.activity = activity;
+        adapter = this;
     }
 
     public RecyclerViewCommentAdapter(@NonNull Context context, AppCompatActivity activity, boolean calledFromTabHistory, boolean calledFromGroup) {
@@ -77,6 +79,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         this.activity = activity;
         this.calledFromTabHistory = calledFromTabHistory;
         this.calledFromGroup = calledFromGroup;
+        adapter = this;
     }
 
     @NonNull

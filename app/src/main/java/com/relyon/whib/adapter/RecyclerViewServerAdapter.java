@@ -103,9 +103,7 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
         holder.full2.setOnClickListener(v -> beforeGroup(position, holder));
         holder.full3.setOnClickListener(v -> beforeGroup(position, holder));
         holder.full4.setOnClickListener(v -> beforeGroup(position, holder));
-
         holder.serverNumber.setOnClickListener(v -> beforeGroup(position, holder));
-
         holder.itemView.setOnClickListener(v -> beforeGroup(position, holder));
     }
 
