@@ -3,6 +3,8 @@ package com.relyon.whib.dialog;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Window;
 import android.widget.TextView;
@@ -15,7 +17,7 @@ import com.relyon.whib.util.Constants;
 
 public class DialogCongratsSubscription extends Dialog {
 
-    private CardView dialog;
+    private CardView cardView;
     private TextView advantages;
 
     public DialogCongratsSubscription(Activity a) {
@@ -27,15 +29,22 @@ public class DialogCongratsSubscription extends Dialog {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_congrats_subscription);
+        setTransparentBackground();
 
         setLayoutAttributes();
 
-        dialog.setOnClickListener(v -> dismiss());
+        cardView.setOnClickListener(v -> dismiss());
         advantages.setOnClickListener(v -> getContext().startActivity(new Intent(getContext(), SettingsActivity.class).putExtra(Constants.SHOW_ADVANTAGES, true)));
     }
 
+    private void setTransparentBackground() {
+        if (getWindow() != null) {
+            getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+    }
+
     private void setLayoutAttributes() {
-        dialog = findViewById(R.id.dialog);
+        cardView = findViewById(R.id.dialog);
         advantages = findViewById(R.id.advantages);
     }
 }

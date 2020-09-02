@@ -2,8 +2,11 @@ package com.relyon.whib.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,12 +38,20 @@ public class DialogShowComment extends Dialog {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_show_comment);
+        setTransparentBackground();
 
         setLayoutAttributes();
 
         setAdapterToShowComment();
 
         background.setOnClickListener(v -> dismiss());
+    }
+
+    private void setTransparentBackground() {
+        if (getWindow() != null) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
     }
 
     private void setLayoutAttributes() {

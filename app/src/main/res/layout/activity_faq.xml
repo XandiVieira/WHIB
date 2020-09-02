@@ -28,6 +28,6 @@
             android:gravity="center"
             android:text="@string/faq"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="26sp" />
+            android:textSize="@dimen/title" />
     </LinearLayout>
 </LinearLayout>

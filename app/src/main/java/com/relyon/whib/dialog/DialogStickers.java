@@ -2,9 +2,12 @@ package com.relyon.whib.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,8 +24,8 @@ import com.relyon.whib.adapter.RecyclerViewGalleryAdapter;
 import com.relyon.whib.modelo.Argument;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Product;
-import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,9 @@ public class DialogStickers extends Dialog {
     private Comment comment;
     private RecyclerViewCommentAdapter recyclerViewCommentAdapter;
     private Integer position;
+
+    private RecyclerView sticker;
+    private TextView empty;
 
     public DialogStickers(Activity a, List<Product> productList, List<Argument> argumentList, Comment comment, RecyclerViewCommentAdapter recyclerViewCommentAdapter, Integer position) {
         super(a);
@@ -57,9 +63,9 @@ public class DialogStickers extends Dialog {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_stickers);
+        setTransparentBackground();
 
-        RecyclerView sticker = findViewById(R.id.myStickers);
-        TextView empty = findViewById(R.id.empty);
+        setLayoutAttributes();
 
         if (productList == null || productList.isEmpty()) {
             empty.setVisibility(View.VISIBLE);
@@ -92,5 +98,17 @@ public class DialogStickers extends Dialog {
             adapter[0] = new RecyclerViewGalleryAdapter(Util.getUser().getProducts(), productList, getContext(), false, true, false, argumentList, dialog, null, recyclerViewCommentAdapter, position);
             sticker.setAdapter(adapter[0]);
         }
+    }
+
+    private void setTransparentBackground() {
+        if (dialog != null && dialog.getWindow() != null) {
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+    }
+
+    private void setLayoutAttributes() {
+        sticker = findViewById(R.id.myStickers);
+        empty = findViewById(R.id.empty);
     }
 }

@@ -116,7 +116,7 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
         if (numberOfComments > 95 && numberOfComments < 100) {
             isThereAvailableServers(numberOfComments);
         } else if (numberOfComments >= 100) {
-            Toast.makeText(context, "Servidor Lotado!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getString(R.string.full_server), Toast.LENGTH_SHORT).show();
         }
         Util.mSubjectDatabaseRef.child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(server.getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).setValue(server.getTempInfo());
         goToServer(server, holder, position);
@@ -139,7 +139,7 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
             goTimelineScreen(holder.serverNumber.getText().toString(),
                     holder.serverStatus.getText().toString(), position);
         } else {
-            Toast.makeText(context, "Servidor indisponível!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.unavailable_server, Toast.LENGTH_SHORT).show();
         }
     }
 

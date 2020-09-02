@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -22,15 +23,17 @@ import java.util.UUID;
 
 public class DialogReport extends Dialog {
 
-    private EditText inputReport;
-    private TextView reason1, reason2, reason3, reason4;
+    public AppCompatActivity activity;
     private String reason;
     private Comment comment;
-    public AppCompatActivity a;
 
-    public DialogReport(AppCompatActivity a, Comment comment) {
-        super(a);
-        this.a = a;
+    private EditText inputReport;
+    private TextView reason1, reason2, reason3, reason4;
+    private Button report;
+
+    public DialogReport(AppCompatActivity activity, Comment comment) {
+        super(activity);
+        this.activity = activity;
         this.comment = comment;
     }
 
@@ -39,24 +42,21 @@ public class DialogReport extends Dialog {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_report_user);
-        Button report = findViewById(R.id.report_button);
-        reason1 = findViewById(R.id.reason1);
-        reason2 = findViewById(R.id.reason2);
-        reason3 = findViewById(R.id.reason3);
-        reason4 = findViewById(R.id.reason4);
-        inputReport = findViewById(R.id.input_report);
+        setTransparentBackground();
+
+        setLayoutAttributes();
 
         report.setOnClickListener(v -> {
             if (reason != null) {
                 if (reason.equals(reason1.getText().toString())) {
                     dismiss();
-                    ViewDialog alert = new ViewDialog();
-                    alert.showDialog(a);
+                    DialogReverseReport alert = new DialogReverseReport();
+                    alert.showDialog(activity);
                 } else {
                     sendReport(inputReport.getText().toString(), reason);
                 }
             } else {
-                Toast.makeText(getContext(), a.getString(R.string.select_a_reason), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), activity.getString(R.string.select_a_reason), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -93,8 +93,30 @@ public class DialogReport extends Dialog {
         });
     }
 
-    public static class ViewDialog {
+    private void setTransparentBackground() {
+        if (getWindow() != null) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+    }
 
+    private void setLayoutAttributes() {
+        report = findViewById(R.id.report_button);
+        reason1 = findViewById(R.id.reason1);
+        reason2 = findViewById(R.id.reason2);
+        reason3 = findViewById(R.id.reason3);
+        reason4 = findViewById(R.id.reason4);
+        inputReport = findViewById(R.id.input_report);
+    }
+
+    private void sendReport(String explanation, String reason) {
+        final Report report = new Report(Util.getUser().getUserUID(), comment.getAuthorsUID(), reason, explanation, comment.getText(), comment.getCommentUID());
+        Util.getmReportDatabaseRef().child(UUID.randomUUID().toString()).setValue(report);
+        dismiss();
+        Toast.makeText(getContext(), getContext().getString(R.string.report_sent), Toast.LENGTH_SHORT).show();
+    }
+
+    public static class DialogReverseReport {
         void showDialog(Activity activity) {
             final Dialog dialog = new Dialog(activity);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -105,12 +127,5 @@ public class DialogReport extends Dialog {
             }
             dialog.show();
         }
-    }
-
-    private void sendReport(String explanation, String reason) {
-        final Report report = new Report(Util.getUser().getUserUID(), comment.getAuthorsUID(), reason, explanation, comment.getText(), comment.getCommentUID());
-        Util.getmReportDatabaseRef().child(UUID.randomUUID().toString()).setValue(report);
-        dismiss();
-        Toast.makeText(getContext(), getContext().getString(R.string.report_sent), Toast.LENGTH_SHORT).show();
     }
 }

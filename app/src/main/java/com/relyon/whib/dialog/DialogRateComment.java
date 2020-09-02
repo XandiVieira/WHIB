@@ -2,9 +2,12 @@ package com.relyon.whib.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,17 +38,18 @@ import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 public class DialogRateComment extends Dialog implements
         View.OnClickListener {
 
-    private Activity a;
-    public Dialog d;
-    private TextView ratingTV;
+    private Activity activity;
+    public Dialog dialog;
     private float rating;
-    public Comment comment;
     private List<Object> commentList;
     private Boolean commentOwnerIsExtra;
 
-    public DialogRateComment(Activity a, float rating, Comment comment, ArrayList<Object> elements, Boolean commentOwnerIsExtra) {
-        super(a);
-        this.a = a;
+    private TextView ratingTV;
+    public Comment comment;
+
+    public DialogRateComment(Activity activity, float rating, Comment comment, ArrayList<Object> elements, Boolean commentOwnerIsExtra) {
+        super(activity);
+        this.activity = activity;
         this.rating = rating;
         this.comment = comment;
         this.commentList = elements;
@@ -57,6 +61,8 @@ public class DialogRateComment extends Dialog implements
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_rate_comment);
+        setTransparentBackground();
+
         Button rate = findViewById(R.id.rate_Button);
         Button cancel = findViewById(R.id.cancel_button);
         MaterialRatingBar ratingBar = findViewById(R.id.ratingBar);
@@ -73,6 +79,13 @@ public class DialogRateComment extends Dialog implements
         });
     }
 
+    private void setTransparentBackground() {
+        if (dialog != null && dialog.getWindow() != null) {
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -80,7 +93,7 @@ public class DialogRateComment extends Dialog implements
                 confirmRate();
                 break;
             case R.id.cancel_button:
-                a.closeContextMenu();
+                activity.closeContextMenu();
                 break;
             default:
                 break;

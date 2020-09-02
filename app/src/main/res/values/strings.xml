@@ -200,6 +200,7 @@
     <string name="stickers_were_added_to_your_gallery">As figurinhas foram adicionadas à sua galeria com sucesso</string>
     <string name="username_was_already_taken">Este nome de usuário já está sendo utilizado.</string>
     <string name="deadline_has_not_arrived">Data de término ainda não chegou</string>
+    <string name="unavailable_server">Servidor indisponível!</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

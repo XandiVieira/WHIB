@@ -34,7 +34,7 @@
             android:lineSpacingExtra="-10dp"
             android:text="@string/profile"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="25sp" />
+            android:textSize="@dimen/title" />
 
         <ImageView
             android:id="@+id/menu"

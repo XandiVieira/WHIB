@@ -5,9 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:elevation="@dimen/elevation1"
-    app:cardBackgroundColor="@android:color/transparent"
-    app:cardCornerRadius="25dp">
+    android:orientation="vertical"
+    app:cardBackgroundColor="@android:color/transparent">
 
     <LinearLayout
         android:layout_width="match_parent"

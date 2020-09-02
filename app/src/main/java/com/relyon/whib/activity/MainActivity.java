@@ -83,8 +83,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
 
         FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
 
-        billingProcessor = new BillingProcessor(this, getResources().getString(R.string.google_license_key), this);
-        billingProcessor.initialize();
+        setupBillingProcessor();
 
         setLayoutAttributes();
 
@@ -119,6 +118,11 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                 dialogChooseSubscription.show(fm, "");
             }
         });
+    }
+
+    private void setupBillingProcessor() {
+        billingProcessor = new BillingProcessor(this, getResources().getString(R.string.google_license_key), this);
+        billingProcessor.initialize();
     }
 
     private void setLayoutAttributes() {
@@ -224,7 +228,6 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         if (firebaseUser.getPhotoUrl() != null) {
             userPhotoPath = firebaseUser.getPhotoUrl().toString();
         }
-
         user = new User(firebaseUser.getUid(), firebaseInstanceId, firebaseUser.getDisplayName(), userPhotoPath, setUserValuation(), null, false, true,
                 false, null, 0, null, null,
                 false, false, 0, 0, setUserPreferences(), null, false);
@@ -267,7 +270,6 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     private Preferences setUserPreferences() {
         return new Preferences(true, true, true, true);
     }
-
     private Valuation setUserValuation() {
         return new Valuation(0, 0, 0, 0, 0, 0);
     }

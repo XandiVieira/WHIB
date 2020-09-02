@@ -83,6 +83,7 @@
 	- Cada novo argumento está chamando setAdapter no groupActivity
 	- CommentDialog abrindo de novo após enviar comentário
 	- isExtra flag mudando sem parar após pagar assinatura
+- Mudar uma das vantagens da Dialog de subscription (entrar em servidores lotados)
 
 
 LOJA

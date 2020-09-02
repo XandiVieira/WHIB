@@ -76,11 +76,15 @@ public class DialogChooseSubscription extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup parent, Bundle bundle) {
         View inflate = inflater.inflate(R.layout.dialog_choose_subscribe, parent);
+        setTransparentBackground();
+        return inflate;
+    }
+
+    private void setTransparentBackground() {
         if (getDialog() != null && getDialog().getWindow() != null) {
             getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
             getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
-        return inflate;
     }
 
     @Override
@@ -91,8 +95,7 @@ public class DialogChooseSubscription extends DialogFragment {
 
         noThanks.setOnClickListener(v -> dismiss());
 
-        PagerAdapter pagerAdapter = new ScreenSlidePagerAdapter(getChildFragmentManager());
-        pager.setAdapter(pagerAdapter);
+        setupPageAdapter();
 
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -165,6 +168,11 @@ public class DialogChooseSubscription extends DialogFragment {
             }
         });
         changeLayoutThread.start();
+    }
+
+    private void setupPageAdapter() {
+        PagerAdapter pagerAdapter = new ScreenSlidePagerAdapter(getChildFragmentManager());
+        pager.setAdapter(pagerAdapter);
     }
 
     private void setLayoutAttributes(View view) {

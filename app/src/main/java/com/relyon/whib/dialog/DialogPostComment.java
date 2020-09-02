@@ -2,11 +2,14 @@ package com.relyon.whib.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -29,13 +32,15 @@ public class DialogPostComment extends Dialog implements
         View.OnClickListener {
 
     private Activity activity;
-    public Dialog d;
+    public Dialog dialog;
+    private int characterCounter;
+    private String subject;
+    private static int MAX_COMMENT_SIZE = 600;
+
     private Button comment;
     private EditText commentBox;
     private TextView counter;
-    private int charactCounter;
-    private String subject;
-    private static int MAX_COMMENT_SIZE = 600;
+    private ImageView closeIcon;
 
     public DialogPostComment(Activity a, String subjectObj) {
         super(a);
@@ -48,14 +53,13 @@ public class DialogPostComment extends Dialog implements
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_post_comment);
-        comment = findViewById(R.id.commentButton);
-        commentBox = findViewById(R.id.commentBox);
-        ImageView closeIcon = findViewById(R.id.closeIcon);
-        counter = findViewById(R.id.counter);
+        setTransparentBackground();
+
+        setLayoutAttributes();
+
         closeIcon.setOnClickListener(this);
         comment.setOnClickListener(this);
 
-        // Enable Send button when there's text to send
         commentBox.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -65,8 +69,8 @@ public class DialogPostComment extends Dialog implements
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.toString().trim().length() > 0) {
                     comment.setEnabled(true);
-                    charactCounter = MAX_COMMENT_SIZE - charSequence.length();
-                    counter.setText(String.valueOf(charactCounter));
+                    characterCounter = MAX_COMMENT_SIZE - charSequence.length();
+                    counter.setText(String.valueOf(characterCounter));
                 } else {
                     comment.setEnabled(false);
                 }
@@ -76,6 +80,20 @@ public class DialogPostComment extends Dialog implements
             public void afterTextChanged(Editable editable) {
             }
         });
+    }
+
+    private void setLayoutAttributes() {
+        comment = findViewById(R.id.commentButton);
+        commentBox = findViewById(R.id.commentBox);
+        closeIcon = findViewById(R.id.closeIcon);
+        counter = findViewById(R.id.counter);
+    }
+
+    private void setTransparentBackground() {
+        if (dialog != null && dialog.getWindow() != null) {
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
     }
 
     @Override

@@ -1,8 +1,11 @@
 package com.relyon.whib.dialog;
 
 import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Window;
+import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,12 +13,12 @@ import com.relyon.whib.R;
 
 public class DialogDisableNotification extends Dialog {
 
-    private AppCompatActivity a;
-    public Dialog d;
+    private AppCompatActivity activity;
+    public Dialog dialog;
 
-    public DialogDisableNotification(AppCompatActivity a) {
-        super(a);
-        this.a = a;
+    public DialogDisableNotification(AppCompatActivity activity) {
+        super(activity);
+        this.activity = activity;
     }
 
     @Override
@@ -23,5 +26,13 @@ public class DialogDisableNotification extends Dialog {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_disable_notification);
+        setTransparentBackground();
+    }
+
+    private void setTransparentBackground() {
+        if (dialog != null && dialog.getWindow() != null) {
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
     }
 }

@@ -28,7 +28,7 @@
             android:gravity="center"
             android:text="@string/privacy_policy"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="23sp" />
+            android:textSize="@dimen/title" />
     </LinearLayout>
 
     <WebView
