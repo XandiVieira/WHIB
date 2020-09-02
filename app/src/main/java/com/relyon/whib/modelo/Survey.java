@@ -17,10 +17,10 @@ public class Survey {
 
     public Survey(List<Alternative> alternatives) {
         this.alternatives = alternatives;
-        this.endDate = oneWeek();
+        this.endDate = add3DaysFromCreationDate();
     }
 
-    private long oneWeek() {
+    private long add3DaysFromCreationDate() {
         Date dt = new Date();
         Calendar c = Calendar.getInstance();
         c.setTime(dt);

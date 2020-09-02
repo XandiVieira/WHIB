@@ -71,16 +71,10 @@ public class NextSubjectVotingActivity extends AppCompatActivity {
         verifyUserIsAdmin();
 
         add.setOnClickListener(v -> addNewAlternative());
-
-        end.setOnClickListener(v -> {
-            endSurvey();
-        });
+        end.setOnClickListener(v -> endSurvey());
 
         create.setOnClickListener(v -> {
-            Util.mDatabaseRef.child(Constants.DATABASE_REF_SURVEY).removeValue();
-            Util.mDatabaseRef.child(Constants.DATABASE_REF_SURVEY).setValue(newSurvey);
-            finish();
-            startActivity(new Intent(this, NextSubjectVotingActivity.class));
+            createSurvey();
         });
 
         back.setOnClickListener(v -> onBackPressed());
@@ -105,6 +99,13 @@ public class NextSubjectVotingActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void createSurvey() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SURVEY).removeValue();
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SURVEY).setValue(newSurvey);
+        finish();
+        startActivity(new Intent(this, NextSubjectVotingActivity.class));
     }
 
     private void endSurvey() {
@@ -151,17 +152,7 @@ public class NextSubjectVotingActivity extends AppCompatActivity {
                     helperList.toArray(serverNumbersAlreadyTaken);
                     Arrays.sort(serverNumbersAlreadyTaken);
                     if (finalSubject != null) {
-                        Timeline tl = new Timeline(null, finalSubject, null);
-                        ServerTempInfo serverTempInfo = new ServerTempInfo(0, true, (serverNumbersAlreadyTaken.length > 0 && serverNumbersAlreadyTaken[0] != null && serverNumbersAlreadyTaken[serverNumbersAlreadyTaken.length - 1] != null) ? findFirstMissingServerNumber(serverNumbersAlreadyTaken) : 0);
-                        Server server = new Server(UUID.randomUUID().toString(), serverTempInfo, finalSubject, tl);
-                        HashMap<String, Server> map = new HashMap<>();
-                        map.put(server.getServerUID(), server);
-                        Subject newSubject = new Subject(finalSubject, map, new Date().getTime(), true);
-                        Util.mSubjectDatabaseRef.child(lessPopularSubject).removeValue();
-                        Util.mSubjectDatabaseRef.child(finalSubject).setValue(newSubject);
-                        Util.mDatabaseRef.child(Constants.DATABASE_REF_SURVEY).removeValue();
-                        finish();
-                        startActivity(new Intent(activity, NextSubjectVotingActivity.class));
+                        replaceLessPopularServerByNewOne(finalSubject, serverNumbersAlreadyTaken, lessPopularSubject);
                     }
                 }
 
@@ -172,8 +163,22 @@ public class NextSubjectVotingActivity extends AppCompatActivity {
             });
 
         } else {
-            Toast.makeText(this, "Data de término ainda não chegou", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.deadline_has_not_arrived, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void replaceLessPopularServerByNewOne(String finalSubject, Integer[] serverNumbersAlreadyTaken, String lessPopularSubject) {
+        Timeline timeline = new Timeline(null, finalSubject, null);
+        ServerTempInfo serverTempInfo = new ServerTempInfo(0, true, (serverNumbersAlreadyTaken.length > 0 && serverNumbersAlreadyTaken[0] != null && serverNumbersAlreadyTaken[serverNumbersAlreadyTaken.length - 1] != null) ? findFirstMissingServerNumber(serverNumbersAlreadyTaken) : 0);
+        Server server = new Server(UUID.randomUUID().toString(), serverTempInfo, finalSubject, timeline);
+        HashMap<String, Server> map = new HashMap<>();
+        map.put(server.getServerUID(), server);
+        Subject newSubject = new Subject(finalSubject, map, new Date().getTime(), true);
+        Util.mSubjectDatabaseRef.child(lessPopularSubject).removeValue();
+        Util.mSubjectDatabaseRef.child(finalSubject).setValue(newSubject);
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SURVEY).removeValue();
+        finish();
+        startActivity(new Intent(activity, NextSubjectVotingActivity.class));
     }
 
     private void addNewAlternative() {

@@ -32,8 +32,8 @@ import com.relyon.whib.dialog.DialogStickers;
 import com.relyon.whib.modelo.Argument;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Sending;
-import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 import com.vanniktech.emoji.EmojiButton;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiManager;
@@ -47,7 +47,7 @@ import java.util.Date;
 public class GroupActivity extends AppCompatActivity {
 
     private Activity activity;
-    private ArrayList<Argument> arguments = new ArrayList<>();
+    private ArrayList<Argument> arguments;
     private Comment comment;
     private RecyclerViewArgumentAdapter argumentAdapter;
     private boolean isForSticker = true;

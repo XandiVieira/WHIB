@@ -104,9 +104,6 @@ public class TimelineActivity extends AppCompatActivity {
     private float firstCommentX;
     private float firstCommentY;
 
-    public TimelineActivity() {
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,10 +123,7 @@ public class TimelineActivity extends AppCompatActivity {
             tvSubject.setText(Util.getServer().getSubject());
         }
 
-        ArrayAdapter<CharSequence> filterAdapter = ArrayAdapter.createFromResource(this,
-                R.array.comment_filters, android.R.layout.simple_spinner_item);
-        filterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerFilter.setAdapter(filterAdapter);
+        setupSpinnerFilter();
 
         spinnerFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -196,8 +190,7 @@ public class TimelineActivity extends AppCompatActivity {
 
         menuIcon.setOnClickListener(v -> {
             PopupMenu popup = new PopupMenu(TimelineActivity.this, menuIcon);
-            popup.getMenuInflater()
-                    .inflate(R.menu.menu_timeline, popup.getMenu());
+            popup.getMenuInflater().inflate(R.menu.menu_timeline, popup.getMenu());
 
             popup.setOnMenuItemClickListener(item -> {
                 if (user.isFirstTime()) {
@@ -230,7 +223,6 @@ public class TimelineActivity extends AppCompatActivity {
         });
 
         back.setOnClickListener(v -> onBackPressed());
-
         commentBt.setOnClickListener(v -> openCommentBox(activity));
         leaveCommentLayout.setOnClickListener(v -> openCommentBox(activity));
     }
@@ -245,6 +237,13 @@ public class TimelineActivity extends AppCompatActivity {
         rvComments = findViewById(R.id.rv_comments);
         emptyList = findViewById(R.id.emptyList);
         spinnerFilter = findViewById(R.id.filters);
+    }
+
+    private void setupSpinnerFilter() {
+        ArrayAdapter<CharSequence> filterAdapter = ArrayAdapter.createFromResource(this,
+                R.array.comment_filters, android.R.layout.simple_spinner_item);
+        filterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFilter.setAdapter(filterAdapter);
     }
 
     private void setCommentQuery(int spinnerSelection) {
@@ -446,12 +445,12 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     //Called after elements dimensions are calculated
-    private BroadcastReceiver layoutElementsReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver layoutElementsDimensionsReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (user.isFirstTime()) {
                 callTour();
-                unregisterReceiver(layoutElementsReceiver);
+                unregisterReceiver(layoutElementsDimensionsReceiver);
             }
         }
     };
@@ -473,12 +472,6 @@ public class TimelineActivity extends AppCompatActivity {
         startActivity(new Intent(this, MainActivity.class));
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        increaseServerNumberOfUsers();
-    }
-
     private void retrieveUser() {
         Util.mUserDatabaseRef.child(Util.fbUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -495,11 +488,6 @@ public class TimelineActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    private void increaseServerNumberOfUsers() {
-        Util.getServer().getTempInfo().setQtdUsers(Util.getServer().getTempInfo().getQtdUsers() + 1);
-        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).setValue(Util.getServer().getTempInfo());
     }
 
     private void calculateElementsDimensions() {
@@ -549,7 +537,7 @@ public class TimelineActivity extends AppCompatActivity {
                                             firstCommentY = location[1];
                                             IntentFilter intentFilter = new IntentFilter();
                                             intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-                                            registerReceiver(layoutElementsReceiver, intentFilter);
+                                            registerReceiver(layoutElementsDimensionsReceiver, intentFilter);
                                         }
                                     });
                                 }
@@ -581,12 +569,6 @@ public class TimelineActivity extends AppCompatActivity {
         } else {
             startActivity(new Intent(this, MainActivity.class));
         }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        decreaseServerNumberOfUsers();
     }
 
     private void decreaseServerNumberOfUsers() {

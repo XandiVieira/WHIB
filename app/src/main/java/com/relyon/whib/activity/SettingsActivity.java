@@ -50,13 +50,10 @@ public class SettingsActivity extends AppCompatActivity {
         checkSound.setChecked(Util.getUser().getPreferences().isSound());
         checkVibration.setChecked(Util.getUser().getPreferences().isVibration());
 
-        checkNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_NOTIFICATION).setValue(checkNotifications.isChecked()));
-
-        checkShowPhoto.setOnCheckedChangeListener((buttonView, isChecked) -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_SHOW_PHOTO).setValue(checkShowPhoto.isChecked()));
-
-        checkSound.setOnCheckedChangeListener((buttonView, isChecked) -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_SOUND).setValue(checkSound.isChecked()));
-
-        checkVibration.setOnCheckedChangeListener((buttonView, isChecked) -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_VIBRATION).setValue(checkVibration.isChecked()));
+        checkNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> setUserPreferenceProperty(Constants.DATABASE_REF_NOTIFICATION, checkNotifications.isChecked()));
+        checkShowPhoto.setOnCheckedChangeListener((buttonView, isChecked) -> setUserPreferenceProperty(Constants.DATABASE_REF_SHOW_PHOTO, checkShowPhoto.isChecked()));
+        checkSound.setOnCheckedChangeListener((buttonView, isChecked) -> setUserPreferenceProperty(Constants.DATABASE_REF_SOUND, checkSound.isChecked()));
+        checkVibration.setOnCheckedChangeListener((buttonView, isChecked) -> setUserPreferenceProperty(Constants.DATABASE_REF_VIBRATION, checkVibration.isChecked()));
 
         logout.setOnClickListener(v -> logout());
 
@@ -77,20 +74,6 @@ public class SettingsActivity extends AppCompatActivity {
         logout = findViewById(R.id.logout);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent intent;
-        if (getIntent().hasExtra(Constants.CAME_FROM_PROFILE) && getIntent().getBooleanExtra(Constants.CAME_FROM_PROFILE, false)) {
-            intent = new Intent(this, ProfileActivity.class);
-        } else if (Util.getServer() != null) {
-            intent = new Intent(this, TimelineActivity.class);
-        } else {
-            intent = new Intent(this, MainActivity.class);
-        }
-        startActivity(intent);
-    }
-
     private void setAppVersion() {
         PackageInfo pInfo;
         try {
@@ -100,6 +83,10 @@ public class SettingsActivity extends AppCompatActivity {
         } catch (PackageManager.NameNotFoundException e) {
             Log.d(getString(R.string.error), Objects.requireNonNull(e.getMessage()));
         }
+    }
+
+    private void setUserPreferenceProperty(String propertyReference, boolean value) {
+        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(propertyReference).setValue(value);
     }
 
     private void logout() {
@@ -112,5 +99,19 @@ public class SettingsActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         getApplicationContext().startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent;
+        if (getIntent().hasExtra(Constants.CAME_FROM_PROFILE) && getIntent().getBooleanExtra(Constants.CAME_FROM_PROFILE, false)) {
+            intent = new Intent(this, ProfileActivity.class);
+        } else if (Util.getServer() != null) {
+            intent = new Intent(this, TimelineActivity.class);
+        } else {
+            intent = new Intent(this, MainActivity.class);
+        }
+        startActivity(intent);
     }
 }

@@ -196,6 +196,10 @@
     <string name="add_more_detail">Detalhe melhor o seu problema.</string>
     <string name="server_full_choose_another">Este servidor está lotado, escolha outro para deixar seu comentário.</string>
     <string name="stickers">FIGURINHAS</string>
+    <string name="there_was_an_error">Ops! Houve um erro, por favor tente novamente.</string>
+    <string name="stickers_were_added_to_your_gallery">As figurinhas foram adicionadas à sua galeria com sucesso</string>
+    <string name="username_was_already_taken">Este nome de usuário já está sendo utilizado.</string>
+    <string name="deadline_has_not_arrived">Data de término ainda não chegou</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

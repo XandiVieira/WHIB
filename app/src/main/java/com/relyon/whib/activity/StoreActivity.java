@@ -39,7 +39,6 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
 
     private ViewPager mViewPager;
     private TabLayout tabLayout;
-
     private ImageView back;
 
     @Override
@@ -129,7 +128,7 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
 
     @Override
     public void onBillingError(int errorCode, Throwable error) {
-        Toast.makeText(this, "Ops! Houve um erro, por favor tente novamente.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.there_was_an_error, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -167,7 +166,7 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
                     }
                     Util.getUser().setProducts(user.getProducts());
                     Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PRODUCTS).child(myProduct.getProductUID()).setValue(myProduct);
-                    Toast.makeText(activity, "As figurinhas foram adicionadas à sua galeria com sucesso", Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, R.string.stickers_were_added_to_your_gallery, Toast.LENGTH_LONG).show();
                 }
             }
 

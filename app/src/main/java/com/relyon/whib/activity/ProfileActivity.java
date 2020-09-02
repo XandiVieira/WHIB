@@ -41,6 +41,8 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageView settings;
     private EditText nick;
     private TextView userName;
+    private ViewPager mViewPager;
+    private TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +93,7 @@ public class ProfileActivity extends AppCompatActivity {
                             nicknames.add(snap.getValue(String.class));
                         }
                         if (nicknames.contains(nickname)) {
-                            Toast.makeText(activity, "Este nome de usuário já está sendo utilizado.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, R.string.username_was_already_taken, Toast.LENGTH_SHORT).show();
                         } else {
                             Util.getmDatabaseRef().child(Constants.DATABASE_REF_NICKNAME).removeEventListener(this);
                             Util.getmUserDatabaseRef().child(user.getUserUID()).setValue(user);
@@ -145,6 +147,8 @@ public class ProfileActivity extends AppCompatActivity {
         userName = findViewById(R.id.user_name);
         nick = findViewById(R.id.nick);
         menu = findViewById(R.id.menu);
+        mViewPager = findViewById(R.id.container);
+        tabLayout = findViewById(R.id.tabs);
     }
 
     private void setUserProfile() {
@@ -159,15 +163,13 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             nick.setEnabled(true);
         }
+        setupPagerProfileAdapter();
+    }
 
+    private void setupPagerProfileAdapter() {
         SectionPagerProfileAdapter mSectionsPagerAdapter = new SectionPagerProfileAdapter(getSupportFragmentManager(), this);
-
-        ViewPager mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
     }
