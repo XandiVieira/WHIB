@@ -38,7 +38,7 @@ import static com.relyon.whib.util.Constants.SKU_WHIB_YEARLY;
 
 public class DialogChooseSubscription extends DialogFragment {
 
-    public Dialog d;
+    public Dialog dialog;
     private static final int NUM_PAGES = 4;
     private int backgroundColor;
     private Thread changeLayoutThread;

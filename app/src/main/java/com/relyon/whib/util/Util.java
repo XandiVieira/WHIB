@@ -4,14 +4,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Group;
-import com.relyon.whib.modelo.Popularity;
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.User;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 public class Util {
 
@@ -28,8 +26,6 @@ public class Util {
     public static Server server;
     public static Comment comment;
     public static Group group;
-    public static boolean delete;
-    public static List<String> subjectList;
 
     public Util() {
     }
@@ -40,10 +36,6 @@ public class Util {
 
     public static void setUser(User user) {
         Util.user = user;
-    }
-
-    public static FirebaseUser getFbUser() {
-        return fbUser;
     }
 
     public static void setFbUser(FirebaseUser fbUser) {
@@ -90,10 +82,6 @@ public class Util {
         Util.server = server;
     }
 
-    public static DatabaseReference getmGroupDatabaseRef() {
-        return mGroupDatabaseRef;
-    }
-
     public static void setmGroupDatabaseRef(DatabaseReference mGroupDatabaseRef) {
         Util.mGroupDatabaseRef = mGroupDatabaseRef;
     }
@@ -114,10 +102,6 @@ public class Util {
         Util.group = group;
     }
 
-    public static DatabaseReference getmAdvantagesDatabaseRef() {
-        return mAdvantagesDatabaseRef;
-    }
-
     public static void setmAdvantagesDatabaseRef(DatabaseReference mAdvantagesDatabaseRef) {
         Util.mAdvantagesDatabaseRef = mAdvantagesDatabaseRef;
     }
@@ -128,31 +112,6 @@ public class Util {
 
     public static void setmReportDatabaseRef(DatabaseReference mReportDatabaseRef) {
         Util.mReportDatabaseRef = mReportDatabaseRef;
-    }
-
-    public static void setDelete(boolean delete) {
-        Util.delete = delete;
-    }
-
-    public static boolean getDelete() {
-        return delete;
-    }
-
-    public static boolean isDelete() {
-        return delete;
-    }
-
-    public static List<String> getSubjectList() {
-        return subjectList;
-    }
-
-    public static void setSubjectList(List<String> subjectList) {
-        Util.subjectList = subjectList;
-    }
-
-    public static Popularity setNewPopularity() {
-
-        return new Popularity(0, 0, 1);
     }
 
     public static DatabaseReference getmSubjectDatabaseRef() {
@@ -172,9 +131,5 @@ public class Util {
         cal.setTime(new Date(date));
 
         return date_format.format(date);
-    }
-
-    public static int retrieveNumberOfServer(){
-        return 0;
     }
 }

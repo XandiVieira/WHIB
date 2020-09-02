@@ -57,7 +57,6 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
 
         MobileAds.setRequestConfiguration(configuration);
         MobileAds.initialize(context, Constants.ADMOB_APP_ID);
-        // Use an activity context to get the rewarded video instance.
         mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(context);
         mRewardedVideoAd.setRewardedVideoAdListener(this);
         loadRewardedVideoAd();
@@ -68,7 +67,7 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_store, parent, false);
+        View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product, parent, false);
         return new ViewHolder(rowView);
     }
 

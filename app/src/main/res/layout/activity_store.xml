@@ -32,48 +32,10 @@
             android:textSize="26sp" />
     </LinearLayout>
 
-    <LinearLayout
+    <include
+        layout="@layout/activity_tabs_store"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/lighterGrey"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/baloo"
-            android:gravity="center"
-            android:text="Pacotes de figurinhas"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="@dimen/big_text" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Cada pacote contém 5 figurinhas"
-            android:textColor="@color/black"
-            android:textSize="@dimen/very_small_text" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/baloo"
-            android:gravity="center"
-            android:text="Escolha suas preferidas"
-            android:textSize="@dimen/normal_text" />
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/products"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <ProgressBar
-        android:id="@id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_height="match_parent"
+        android:layout_margin="2dp"
         android:visibility="visible" />
 </LinearLayout>

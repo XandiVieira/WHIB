@@ -81,6 +81,9 @@
 	- Filtrar por grupo (Vai buscar todos de uma vez só, sem paginação)
 	- Ajustar ads para comentários buscados onScrolling
 	- Cada novo argumento está chamando setAdapter no groupActivity
+	- CommentDialog abrindo de novo após enviar comentário
+	- isExtra flag mudando sem parar após pagar assinatura
+
 
 LOJA
 - Superpoderes (Direito de tornar meu comentário em grupo automaticamente)

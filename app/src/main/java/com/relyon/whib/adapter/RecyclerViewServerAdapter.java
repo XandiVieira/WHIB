@@ -23,8 +23,8 @@ import com.relyon.whib.modelo.ServerTempInfo;
 import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.Timeline;
 import com.relyon.whib.modelo.User;
-import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,15 +49,19 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-
-        if (elements.get(position).getTempInfo().getQtdUsers() > 25) {
+        Server server = elements.get(position);
+        int numberOfComments = 0;
+        if (server.getTimeline() != null && server.getTimeline().getCommentList() != null) {
+            numberOfComments = server.getTimeline().getCommentList().size();
+        }
+        if (numberOfComments > 25) {
             holder.full2.setVisibility(View.VISIBLE);
         } else {
             holder.full2.setVisibility(View.GONE);
         }
         holder.serverStatus.setTextColor(Color.rgb(0, 188, 0));
 
-        if (elements.get(position).getTempInfo().getQtdUsers() > 50) {
+        if (numberOfComments > 50) {
             holder.full3.setVisibility(View.VISIBLE);
             holder.full1.setBackgroundResource(R.drawable.rounded_yellow);
             holder.full2.setBackgroundResource(R.drawable.rounded_yellow);
@@ -68,7 +72,7 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
             holder.full3.setVisibility(View.GONE);
         }
 
-        if (elements.get(position).getTempInfo().getQtdUsers() > 75) {
+        if (numberOfComments > 75) {
             holder.full4.setVisibility(View.VISIBLE);
             holder.full1.setBackgroundResource(R.drawable.rounded_accent);
             holder.full2.setBackgroundResource(R.drawable.rounded_accent);
@@ -79,7 +83,7 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
             holder.full4.setVisibility(View.GONE);
         }
 
-        if (elements.get(position).getTempInfo().getQtdUsers() == 100) {
+        if (numberOfComments == 100) {
             holder.full4.setVisibility(View.VISIBLE);
             holder.full1.setBackgroundResource(R.drawable.rounded_red);
             holder.full2.setBackgroundResource(R.drawable.rounded_red);
@@ -93,39 +97,41 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
 
         holder.serverNumber.setText("Servidor #" + (elements.get(position).getTempInfo().getNumber() + 1));
 
-        if (elements.get(position).getTempInfo().getQtdUsers() < 100) {
+        if (numberOfComments < 100) {
             holder.serverStatus.setText("Disponível");
         } else {
             holder.serverStatus.setText("Lotado");
         }
 
-        holder.full1.setOnClickListener(v -> beforeGroup(position, holder));
-        holder.full2.setOnClickListener(v -> beforeGroup(position, holder));
-        holder.full3.setOnClickListener(v -> beforeGroup(position, holder));
-        holder.full4.setOnClickListener(v -> beforeGroup(position, holder));
-        holder.serverNumber.setOnClickListener(v -> beforeGroup(position, holder));
-        holder.itemView.setOnClickListener(v -> beforeGroup(position, holder));
+        int finalNumberOfComments = numberOfComments;
+        holder.full1.setOnClickListener(v -> callServer(position, holder, finalNumberOfComments, server));
+        holder.full2.setOnClickListener(v -> callServer(position, holder, finalNumberOfComments, server));
+        holder.full3.setOnClickListener(v -> callServer(position, holder, finalNumberOfComments, server));
+        holder.full4.setOnClickListener(v -> callServer(position, holder, finalNumberOfComments, server));
+        holder.serverNumber.setOnClickListener(v -> callServer(position, holder, finalNumberOfComments, server));
+        holder.itemView.setOnClickListener(v -> callServer(position, holder, finalNumberOfComments, server));
     }
 
-    private void beforeGroup(int position, ViewHolder holder) {
-        Server server = elements.get(position);
-        if (server.getTempInfo().getQtdUsers() < 95) {
-            goToServer(server, holder, position);
-        } else if (server.getTempInfo().getQtdUsers() >= 95 && server.getTempInfo().getQtdUsers() < 100) {
-            boolean allFull = true;
-            for (int i = 0; i < elements.size(); i++) {
-                if (elements.get(i).getTempInfo().getQtdUsers() < 95) {
-                    allFull = false;
-                }
-            }
-            if (allFull) {
-                createNewServer();
-            }
-            goToServer(server, holder, position);
-        } else if (server.getTempInfo().getQtdUsers() >= 100) {
+    private void callServer(int position, ViewHolder holder, int numberOfComments, Server server) {
+        if (numberOfComments > 95 && numberOfComments < 100) {
+            isThereAvailableServers(numberOfComments);
+        } else if (numberOfComments >= 100) {
             Toast.makeText(context, "Servidor Lotado!", Toast.LENGTH_SHORT).show();
         }
         Util.mSubjectDatabaseRef.child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(server.getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).setValue(server.getTempInfo());
+        goToServer(server, holder, position);
+    }
+
+    private void isThereAvailableServers(int numberOfComments) {
+        boolean allServersAreFull = true;
+        for (int i = 0; i < elements.size(); i++) {
+            if (numberOfComments < 95) {
+                allServersAreFull = false;
+            }
+        }
+        if (allServersAreFull) {
+            createNewServer();
+        }
     }
 
     private void goToServer(Server server, ViewHolder holder, int position) {

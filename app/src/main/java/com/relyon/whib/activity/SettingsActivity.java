@@ -1,48 +1,39 @@
 package com.relyon.whib.activity;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
 
-import com.anjlab.android.iab.v3.BillingProcessor;
-import com.anjlab.android.iab.v3.TransactionDetails;
-import com.google.android.material.tabs.TabLayout;
+import com.facebook.login.LoginManager;
+import com.google.firebase.auth.FirebaseAuth;
 import com.relyon.whib.R;
-import com.relyon.whib.adapter.SectionPagerAdapter;
-import com.relyon.whib.dialog.DialogCongratsSubscription;
+import com.relyon.whib.dialog.DialogConfirmDeleteAccount;
 import com.relyon.whib.dialog.DialogFinalWarn;
-import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
-import com.relyon.whib.util.SelectSubscription;
+import com.relyon.whib.util.Util;
 
-public class SettingsActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler, SelectSubscription {
+import java.util.Objects;
 
-    private BillingProcessor billingProcessor;
+public class SettingsActivity extends AppCompatActivity {
 
     private ImageView back;
+    private CheckBox checkSound, checkVibration, checkShowPhoto, checkNotifications;
+    private TextView version;
+    private Button deleteAccount;
+    private Button logout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-
-        billingProcessor = new BillingProcessor(this, getResources().getString(R.string.google_license_key), this);
-        billingProcessor.initialize();
-
-        SectionPagerAdapter mSectionsPagerAdapter = new SectionPagerAdapter(getSupportFragmentManager());
-
-        ViewPager mViewPager = findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        TabLayout tabLayout = findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
         setLayoutAttributes();
 
@@ -52,56 +43,38 @@ public class SettingsActivity extends AppCompatActivity implements BillingProces
         }
 
         back.setOnClickListener(v -> onBackPressed());
+        setAppVersion();
+
+        checkNotifications.setChecked(Util.getUser().getPreferences().isNotification());
+        checkShowPhoto.setChecked(Util.getUser().getPreferences().isShowPhoto());
+        checkSound.setChecked(Util.getUser().getPreferences().isSound());
+        checkVibration.setChecked(Util.getUser().getPreferences().isVibration());
+
+        checkNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_NOTIFICATION).setValue(checkNotifications.isChecked()));
+
+        checkShowPhoto.setOnCheckedChangeListener((buttonView, isChecked) -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_SHOW_PHOTO).setValue(checkShowPhoto.isChecked()));
+
+        checkSound.setOnCheckedChangeListener((buttonView, isChecked) -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_SOUND).setValue(checkSound.isChecked()));
+
+        checkVibration.setOnCheckedChangeListener((buttonView, isChecked) -> Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(Constants.DATABASE_REF_VIBRATION).setValue(checkVibration.isChecked()));
+
+        logout.setOnClickListener(v -> logout());
+
+        deleteAccount.setOnClickListener(v -> {
+            DialogConfirmDeleteAccount cdd = new DialogConfirmDeleteAccount(this);
+            cdd.show();
+        });
     }
 
     private void setLayoutAttributes() {
         back = findViewById(R.id.back);
-    }
-
-    private void purchase(String sku) {
-        billingProcessor.subscribe(this, sku);
-    }
-
-    @Override
-    public void onChoose(String sku) {
-        purchase(sku);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (billingProcessor.handleActivityResult(requestCode, resultCode, data)) {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        if (billingProcessor != null) {
-            billingProcessor.release();
-        }
-        super.onDestroy();
-    }
-
-    @Override
-    public void onProductPurchased(@NonNull String productId, TransactionDetails details) {
-        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_EXTRA).setValue(true);
-        Util.getUser().setExtra(true);
-        new DialogCongratsSubscription(this).show();
-    }
-
-    @Override
-    public void onPurchaseHistoryRestored() {
-
-    }
-
-    @Override
-    public void onBillingError(int errorCode, Throwable error) {
-
-    }
-
-    @Override
-    public void onBillingInitialized() {
-
+        checkSound = findViewById(R.id.checkSound);
+        checkVibration = findViewById(R.id.checkVibration);
+        checkShowPhoto = findViewById(R.id.checkShowPhoto);
+        checkNotifications = findViewById(R.id.checkNotifications);
+        version = findViewById(R.id.version);
+        deleteAccount = findViewById(R.id.delete_acc);
+        logout = findViewById(R.id.logout);
     }
 
     @Override
@@ -116,5 +89,28 @@ public class SettingsActivity extends AppCompatActivity implements BillingProces
             intent = new Intent(this, MainActivity.class);
         }
         startActivity(intent);
+    }
+
+    private void setAppVersion() {
+        PackageInfo pInfo;
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            String versionTxt = pInfo.versionName;
+            version.setText(getString(R.string.version, versionTxt));
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.d(getString(R.string.error), Objects.requireNonNull(e.getMessage()));
+        }
+    }
+
+    private void logout() {
+        FirebaseAuth.getInstance().signOut();
+        LoginManager.getInstance().logOut();
+        goLoginScreen();
+    }
+
+    private void goLoginScreen() {
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        getApplicationContext().startActivity(intent);
     }
 }

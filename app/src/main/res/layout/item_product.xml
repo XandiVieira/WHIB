@@ -65,7 +65,8 @@
         android:background="@drawable/rounded_accent"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="5dp">
+        android:paddingHorizontal="2dp"
+        android:paddingVertical="5dp">
 
         <ImageView
             android:id="@+id/icon"
@@ -79,7 +80,6 @@
             android:elevation="10dp"
             android:fontFamily="@font/baloo"
             android:lineSpacingExtra="-7dp"
-
             android:text="R$ 0.99"
             android:textColor="@color/white"
             android:textSize="@dimen/small_text" />

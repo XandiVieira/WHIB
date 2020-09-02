@@ -1,5 +1,6 @@
 package com.relyon.whib.activity;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -230,9 +231,8 @@ public class TimelineActivity extends AppCompatActivity {
 
         back.setOnClickListener(v -> onBackPressed());
 
-        commentBt.setOnClickListener(v -> openCommentBox());
-
-        leaveCommentLayout.setOnClickListener(v -> openCommentBox());
+        commentBt.setOnClickListener(v -> openCommentBox(activity));
+        leaveCommentLayout.setOnClickListener(v -> openCommentBox(activity));
     }
 
     private void setLayoutAttributes() {
@@ -373,9 +373,24 @@ public class TimelineActivity extends AppCompatActivity {
         commentAdapter.addAllAds(nativeAdsList);
     }
 
-    private void openCommentBox() {
-        DialogPostComment cdd = new DialogPostComment(this, subject);
-        cdd.show();
+    private void openCommentBox(Activity activity) {
+        commentListReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                commentListReference.removeEventListener(this);
+                if (snapshot.getChildrenCount() < 100) {
+                    DialogPostComment cdd = new DialogPostComment(activity, subject);
+                    cdd.show();
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.server_full_choose_another, Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void callTour() {

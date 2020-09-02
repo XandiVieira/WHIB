@@ -3,31 +3,29 @@ package com.relyon.whib.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.R;
-import com.relyon.whib.adapter.RecyclerViewProductAdapter;
+import com.relyon.whib.adapter.SectionPagerStoreAdapter;
+import com.relyon.whib.dialog.DialogCongratsSubscription;
 import com.relyon.whib.dialog.DialogFinalWarn;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.User;
-import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.SelectSubscription;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,11 +35,11 @@ import java.util.Objects;
 public class StoreActivity extends AppCompatActivity implements BillingProcessor.IBillingHandler, SelectSubscription {
 
     private Activity activity;
-    private List<Product> productList;
     private BillingProcessor billingProcessor;
 
-    private RecyclerView productsRV;
-    private ProgressBar progressBar;
+    private ViewPager mViewPager;
+    private TabLayout tabLayout;
+
     private ImageView back;
 
     @Override
@@ -51,12 +49,11 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
 
         activity = this;
 
-        billingProcessor = new BillingProcessor(this, getString(R.string.google_license_key), this);
-        billingProcessor.initialize();
-
         setLayoutAttributes();
 
-        retrieveProducts();
+        initBillingProcessor();
+
+        setupPagerAdapter();
 
         if (getIntent().hasExtra(Constants.SHOW_LAST_WARN) && getIntent().getBooleanExtra(Constants.SHOW_LAST_WARN, false) && Util.getUser().isFirstTime()) {
             DialogFinalWarn warn = new DialogFinalWarn(this);
@@ -67,66 +64,62 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
     }
 
     private void setLayoutAttributes() {
-        productsRV = findViewById(R.id.products);
-        progressBar = findViewById(R.id.progress_bar);
+        mViewPager = findViewById(R.id.container);
+        tabLayout = findViewById(R.id.tabs);
         back = findViewById(R.id.back);
     }
 
-    private void retrieveProducts() {
-        Util.mDatabaseRef.child(Constants.DATABASE_REF_PRODUCT).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                productList = new ArrayList<>();
-                for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                    Product product = snap.getValue(Product.class);
-                    if (product != null) {
-                        productList.add(product);
-                    }
-                }
-                setProductAdapter();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+    private void initBillingProcessor() {
+        billingProcessor = new BillingProcessor(this, getResources().getString(R.string.google_license_key), this);
+        billingProcessor.initialize();
     }
 
-    private void setProductAdapter() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
-        RecyclerViewProductAdapter adapter = new RecyclerViewProductAdapter(productList, activity, StoreActivity.this);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(productsRV.getContext(),
-                layoutManager.getOrientation());
-        productsRV.addItemDecoration(dividerItemDecoration);
-        productsRV.setLayoutManager(layoutManager);
-        productsRV.setAdapter(adapter);
-        progressBar.setVisibility(View.GONE);
-        productsRV.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-        Intent intent;
-        if (getIntent().hasExtra(Constants.CAME_FROM_PROFILE) && getIntent().getBooleanExtra(Constants.CAME_FROM_PROFILE, false)) {
-            intent = new Intent(this, ProfileActivity.class);
-        } else if (Util.getServer() != null) {
-            intent = new Intent(this, TimelineActivity.class);
-        } else {
-            intent = new Intent(this, MainActivity.class);
+    private void setupPagerAdapter() {
+        SectionPagerStoreAdapter sectionsPagerAdapter = new SectionPagerStoreAdapter(getSupportFragmentManager(), getApplicationContext());
+        mViewPager.setAdapter(sectionsPagerAdapter);
+        tabLayout.setupWithViewPager(mViewPager);
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+        if (getIntent().hasExtra(Constants.SHOW_ADVANTAGES) && getIntent().getBooleanExtra(Constants.SHOW_ADVANTAGES, false)) {
+            TabLayout.Tab tabWhibExtra = tabLayout.getTabAt(1);
+            if (tabWhibExtra != null) {
+                tabWhibExtra.select();
+            }
         }
-        startActivity(intent);
     }
 
     @Override
     public void onProductPurchased(@NonNull String productId, TransactionDetails details) {
-        for (Product product : productList) {
-            if (product.getItemSKU().equals(productId)) {
-                rewardItem(product, Util.getUser().isExtra() ? 2 : 1);
-            }
+        if (isSubscription(productId)) {
+            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_EXTRA).setValue(true);
+            Util.getUser().setExtra(true);
+            new DialogCongratsSubscription(this).show();
+        } else {
+            Util.mDatabaseRef.child(Constants.DATABASE_REF_PRODUCT).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot snap : snapshot.getChildren()) {
+                        Product product = snap.getValue(Product.class);
+                        if (product != null && product.getItemSKU().equals(productId)) {
+                            rewardItem(product, Util.getUser().isExtra() ? 2 : 1);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
         }
+    }
+
+    private boolean isSubscription(String productId) {
+        List<String> subscriptionOptions = new ArrayList<>();
+        subscriptionOptions.add(Constants.SKU_WHIB_YEARLY);
+        subscriptionOptions.add(Constants.SKU_WHIB_SIXMONTH);
+        subscriptionOptions.add(Constants.SKU_WHIB_MONTHLY);
+        return subscriptionOptions.contains(productId);
     }
 
     @Override
@@ -194,11 +187,30 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
     }
 
     private void purchase(String sku) {
-        billingProcessor.purchase(this, sku);
+        if (isSubscription(sku)) {
+            billingProcessor.subscribe(this, sku);
+        } else {
+            billingProcessor.purchase(this, sku);
+        }
     }
 
     @Override
     public void onChoose(String sku) {
         purchase(sku);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        Intent intent;
+        if (getIntent().hasExtra(Constants.CAME_FROM_PROFILE) && getIntent().getBooleanExtra(Constants.CAME_FROM_PROFILE, false)) {
+            intent = new Intent(this, ProfileActivity.class);
+        } else if (Util.getServer() != null) {
+            intent = new Intent(this, TimelineActivity.class);
+        } else {
+            intent = new Intent(this, MainActivity.class);
+        }
+        startActivity(intent);
     }
 }

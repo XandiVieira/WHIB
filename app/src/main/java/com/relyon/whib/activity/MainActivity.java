@@ -40,10 +40,10 @@ import com.relyon.whib.modelo.Preferences;
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.User;
-import com.relyon.whib.util.Util;
 import com.relyon.whib.modelo.Valuation;
 import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.SelectSubscription;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -199,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         mUserDatabaseRef.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mUserDatabaseRef.removeEventListener(this);
                 user = dataSnapshot.getValue(User.class);
                 if (user == null || user.getUserUID() == null) {
                     createUser();

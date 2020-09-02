@@ -1,21 +1,25 @@
 package com.relyon.whib.dialog;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 
 import androidx.fragment.app.FragmentActivity;
 
+import com.facebook.login.LoginManager;
+import com.google.firebase.auth.FirebaseAuth;
 import com.relyon.whib.R;
+import com.relyon.whib.activity.LoginActivity;
 import com.relyon.whib.util.Util;
 
-public class DialogConfirmDeleteAcc extends Dialog implements View.OnClickListener {
+public class DialogConfirmDeleteAccount extends Dialog implements View.OnClickListener {
 
     private FragmentActivity fragmentActivity;
     public Dialog dialog;
 
-    public DialogConfirmDeleteAcc(FragmentActivity a) {
+    public DialogConfirmDeleteAccount(FragmentActivity a) {
         super(a);
         this.fragmentActivity = a;
     }
@@ -31,7 +35,7 @@ public class DialogConfirmDeleteAcc extends Dialog implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.deleteBt:
-                Util.setDelete(true);
+                deleteAccount();
                 break;
             case R.id.cancelBt:
                 fragmentActivity.closeContextMenu();
@@ -40,5 +44,22 @@ public class DialogConfirmDeleteAcc extends Dialog implements View.OnClickListen
                 break;
         }
         dismiss();
+    }
+
+    private void goLoginScreen() {
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        getContext().startActivity(intent);
+    }
+
+    private void logout() {
+        FirebaseAuth.getInstance().signOut();
+        LoginManager.getInstance().logOut();
+        goLoginScreen();
+    }
+
+    private void deleteAccount() {
+        logout();
+        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).setValue(null);
     }
 }
