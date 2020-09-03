@@ -30,7 +30,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginHorizontal="1dp"
             android:background="@color/white"
-            android:src="@drawable/ic_full" />
+            android:src="@drawable/ic_purple_sticker" />
 
         <ImageView
             android:id="@+id/image2"
@@ -41,14 +41,22 @@
             android:background="@color/white"
             android:src="@drawable/ic_indicate_right" />
 
-        <ImageView
-            android:id="@+id/image3"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginHorizontal="1dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:background="@color/white"
-            android:src="@drawable/ic_empty" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@color/white"
+                android:gravity="center"
+                android:text="x2"
+                android:textColor="@color/purple"
+                android:textSize="60sp" />
+        </LinearLayout>
     </LinearLayout>
 
     <TextView
@@ -59,7 +67,7 @@
         android:gravity="center"
         android:lineSpacingExtra="-15dp"
         android:shadowColor="@color/colorAccent"
-        android:text="@string/get_in_full_servers"
+        android:text="@string/get_double_stickers"
         android:textAllCaps="false"
         android:textColor="@color/darkGrey"
         android:textColorHighlight="@color/colorAccent"
@@ -76,7 +84,7 @@
         android:gravity="center"
         android:lineSpacingExtra="-10dp"
         android:shadowColor="@color/colorAccent"
-        android:text="@string/get_in_full_servers_explanation"
+        android:text="@string/get_double_stickers_explanation"
         android:textAllCaps="false"
         android:textColor="@color/darkGrey"
         android:textColorHighlight="@color/colorAccent"

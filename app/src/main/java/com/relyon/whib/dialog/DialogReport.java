@@ -1,6 +1,5 @@
 package com.relyon.whib.dialog;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -50,8 +49,7 @@ public class DialogReport extends Dialog {
             if (reason != null) {
                 if (reason.equals(reason1.getText().toString())) {
                     dismiss();
-                    DialogReverseReport alert = new DialogReverseReport();
-                    alert.showDialog(activity);
+                    showDialogReverseReport();
                 } else {
                     sendReport(inputReport.getText().toString(), reason);
                 }
@@ -116,16 +114,8 @@ public class DialogReport extends Dialog {
         Toast.makeText(getContext(), getContext().getString(R.string.report_sent), Toast.LENGTH_SHORT).show();
     }
 
-    public static class DialogReverseReport {
-        void showDialog(Activity activity) {
-            final Dialog dialog = new Dialog(activity);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setCancelable(true);
-            dialog.setContentView(R.layout.dialog_reverse_report);
-            if (dialog.getWindow() != null) {
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            }
-            dialog.show();
-        }
+    private void showDialogReverseReport() {
+        DialogWarnReverseReport dialogWarnReverseReport = new DialogWarnReverseReport(activity);
+        dialogWarnReverseReport.show();
     }
 }

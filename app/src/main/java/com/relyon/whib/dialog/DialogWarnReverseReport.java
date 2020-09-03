@@ -13,12 +13,8 @@ import com.relyon.whib.R;
 
 public class DialogWarnReverseReport extends Dialog {
 
-    private AppCompatActivity activity;
-    public Dialog dialog;
-
     public DialogWarnReverseReport(AppCompatActivity activity) {
         super(activity);
-        this.activity = activity;
     }
 
     @Override
@@ -30,9 +26,9 @@ public class DialogWarnReverseReport extends Dialog {
     }
 
     private void setTransparentBackground() {
-        if (dialog != null && dialog.getWindow() != null) {
-            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if (getWindow() != null) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
     }
 }

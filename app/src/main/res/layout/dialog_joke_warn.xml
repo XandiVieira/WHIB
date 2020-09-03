@@ -24,6 +24,7 @@
             android:layout_marginTop="5dp"
             android:fontFamily="@font/baloo"
             android:gravity="center"
+            android:lineSpacingExtra="-5dp"
             android:text="@string/joke_text"
             android:textColor="@color/black"
             android:textSize="@dimen/subtitle" />

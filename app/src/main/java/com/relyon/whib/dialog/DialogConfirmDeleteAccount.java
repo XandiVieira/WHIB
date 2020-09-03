@@ -5,9 +5,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -17,14 +18,13 @@ import com.relyon.whib.R;
 import com.relyon.whib.activity.LoginActivity;
 import com.relyon.whib.util.Util;
 
-public class DialogConfirmDeleteAccount extends Dialog implements View.OnClickListener {
+public class DialogConfirmDeleteAccount extends Dialog {
 
-    private FragmentActivity fragmentActivity;
-    public Dialog dialog;
+    private TextView cancel;
+    private TextView delete;
 
     public DialogConfirmDeleteAccount(FragmentActivity a) {
         super(a);
-        this.fragmentActivity = a;
     }
 
     @Override
@@ -33,28 +33,23 @@ public class DialogConfirmDeleteAccount extends Dialog implements View.OnClickLi
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_delete_account);
         setTransparentBackground();
+
+        setLayoutAttributes();
+
+        cancel.setOnClickListener(view -> dismiss());
+        delete.setOnClickListener(view -> deleteAccount());
+    }
+
+    private void setLayoutAttributes() {
+        cancel = findViewById(R.id.cancel);
+        delete = findViewById(R.id.delete);
     }
 
     private void setTransparentBackground() {
-        if (dialog != null && dialog.getWindow() != null) {
-            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if (getWindow() != null && getWindow() != null) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.deleteBt:
-                deleteAccount();
-                break;
-            case R.id.cancelBt:
-                fragmentActivity.closeContextMenu();
-                break;
-            default:
-                break;
-        }
-        dismiss();
     }
 
     private void goLoginScreen() {
@@ -72,5 +67,6 @@ public class DialogConfirmDeleteAccount extends Dialog implements View.OnClickLi
     private void deleteAccount() {
         logout();
         Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).setValue(null);
+        Toast.makeText(getContext(), R.string.account_successfully_deleted, Toast.LENGTH_LONG).show();
     }
 }

@@ -201,6 +201,9 @@
     <string name="username_was_already_taken">Este nome de usuário já está sendo utilizado.</string>
     <string name="deadline_has_not_arrived">Data de término ainda não chegou</string>
     <string name="unavailable_server">Servidor indisponível!</string>
+    <string name="get_double_stickers">Receba figurinhas em dobro</string>
+    <string name="get_double_stickers_explanation">Ao comprar ou ganhar um pocote você receberá o dobro de figurinhas</string>
+    <string name="account_successfully_deleted">Sua conta foi excluída com sucesso</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

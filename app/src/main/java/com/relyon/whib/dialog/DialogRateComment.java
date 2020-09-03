@@ -39,7 +39,6 @@ public class DialogRateComment extends Dialog implements
         View.OnClickListener {
 
     private Activity activity;
-    public Dialog dialog;
     private float rating;
     private List<Object> commentList;
     private Boolean commentOwnerIsExtra;
@@ -80,9 +79,9 @@ public class DialogRateComment extends Dialog implements
     }
 
     private void setTransparentBackground() {
-        if (dialog != null && dialog.getWindow() != null) {
-            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if (getWindow() != null) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
     }
 

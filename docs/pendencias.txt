@@ -68,14 +68,14 @@
 	- Filtrar por avaliação não funciona
 	- Descolar teclado do input na tela de grupo
 	- Ao abrir timeline o scroll leva pro comentário do meio e não do topo
-- Refatoração de todo o código
-- Corrigir erros e warnings de log
 	- Encontrar proporção para virar um grupo (baseado no número de comentários e quantidade de avaliações do comentário)
 	- Ícone de denúncia sumiu
 	- Remover foto do perfil tbm
 	- Avaliação (número) quebrando linha
 	- Contagem de importância dos servers para adm errada
 	- Não é possível criar servers com #
+- Refatoração de todo o código
+- Corrigir erros e warnings de log
 - Create new storeItem não funciona (upload de imagem crashando "permission denial")
 	- Imagem (lacrou) está com partes do fundo branco
 	- Filtrar por grupo (Vai buscar todos de uma vez só, sem paginação)
@@ -83,7 +83,7 @@
 	- Cada novo argumento está chamando setAdapter no groupActivity
 	- CommentDialog abrindo de novo após enviar comentário
 	- isExtra flag mudando sem parar após pagar assinatura
-- Mudar uma das vantagens da Dialog de subscription (entrar em servidores lotados)
+	- Mudar uma das vantagens da Dialog de subscription (entrar em servidores lotados)
 
 
 LOJA

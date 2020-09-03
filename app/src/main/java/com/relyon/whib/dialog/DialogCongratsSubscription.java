@@ -13,6 +13,7 @@ import androidx.cardview.widget.CardView;
 
 import com.relyon.whib.R;
 import com.relyon.whib.activity.SettingsActivity;
+import com.relyon.whib.activity.StoreActivity;
 import com.relyon.whib.util.Constants;
 
 public class DialogCongratsSubscription extends Dialog {
@@ -34,7 +35,7 @@ public class DialogCongratsSubscription extends Dialog {
         setLayoutAttributes();
 
         cardView.setOnClickListener(v -> dismiss());
-        advantages.setOnClickListener(v -> getContext().startActivity(new Intent(getContext(), SettingsActivity.class).putExtra(Constants.SHOW_ADVANTAGES, true)));
+        advantages.setOnClickListener(v -> getContext().startActivity(new Intent(getContext(), StoreActivity.class).putExtra(Constants.SHOW_ADVANTAGES, true)));
     }
 
     private void setTransparentBackground() {

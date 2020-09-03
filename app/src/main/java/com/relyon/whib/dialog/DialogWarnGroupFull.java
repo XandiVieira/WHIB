@@ -12,12 +12,8 @@ import com.relyon.whib.R;
 
 public class DialogWarnGroupFull extends Dialog {
 
-    private AppCompatActivity activity;
-    public Dialog dialog;
-
     public DialogWarnGroupFull(AppCompatActivity activity) {
         super(activity);
-        this.activity = activity;
     }
 
     @Override
@@ -29,8 +25,8 @@ public class DialogWarnGroupFull extends Dialog {
     }
 
     private void setTransparentBackground() {
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if (getWindow() != null) {
+            getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
     }
 }

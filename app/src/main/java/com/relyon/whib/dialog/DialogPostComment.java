@@ -20,8 +20,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.relyon.whib.R;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Sending;
-import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,7 +32,6 @@ public class DialogPostComment extends Dialog implements
         View.OnClickListener {
 
     private Activity activity;
-    public Dialog dialog;
     private int characterCounter;
     private String subject;
     private static int MAX_COMMENT_SIZE = 600;
@@ -90,9 +89,9 @@ public class DialogPostComment extends Dialog implements
     }
 
     private void setTransparentBackground() {
-        if (dialog != null && dialog.getWindow() != null) {
-            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if (getWindow() != null) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+            getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
     }
 
