@@ -9,16 +9,16 @@ public class Subject {
     private String title;
     private HashMap<String, Server> servers;
     private Long date;
-    private boolean on; //true - on / false - off
+    private boolean on;
+
+    public Subject() {
+    }
 
     public Subject(String title, HashMap<String, Server> servers, Long date, boolean on) {
         this.title = title;
         this.servers = servers;
         this.date = date;
         this.on = on;
-    }
-
-    public Subject() {
     }
 
     public Subject(String title) {

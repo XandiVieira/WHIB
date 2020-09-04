@@ -40,10 +40,7 @@
             android:id="@+id/menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginStart="@dimen/right_margin"
-            android:layout_marginLeft="@dimen/right_margin"
-            android:layout_marginTop="@dimen/right_margin"
+            android:layout_gravity="center"
             android:layout_weight="0.5"
             android:padding="10dp"
             android:src="@drawable/menu_icon" />
@@ -65,19 +62,15 @@
             android:padding="5dp">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="4">
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="3dp">
 
                 <ImageView
                     android:id="@+id/photo"
                     android:layout_width="@dimen/photo"
                     android:layout_height="@dimen/photo"
                     android:layout_gravity="start"
-                    android:layout_marginStart="@dimen/surround_margins"
-                    android:layout_marginLeft="@dimen/surround_margins"
-                    android:layout_marginEnd="@dimen/negative"
-                    android:layout_marginRight="@dimen/negative"
                     android:background="@drawable/all_circle_white_bg" />
             </LinearLayout>
 
@@ -85,9 +78,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginStart="30dp"
-                android:layout_marginLeft="30dp"
-                android:layout_weight="3"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="2"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -104,15 +97,17 @@
 
                 <EditText
                     android:id="@+id/nick"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:clickable="false"
                     android:enabled="false"
                     android:hint="@string/arroba"
+                    android:minWidth="100dp"
                     android:textSize="18sp" />
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/settings_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"

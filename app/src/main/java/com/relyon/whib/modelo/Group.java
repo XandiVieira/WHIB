@@ -17,6 +17,9 @@ public class Group {
     private String commentUID;
     private HashMap<String, Argument> argumentList;
 
+    public Group() {
+    }
+
     public Group(String groupUID, String subjectTitle, int number, int serverNumber, GroupTempInfo tempInfo,
                  String mode, List<Question> questionList, List<String> userListUID, boolean ready, String commentUID) {
         this.groupUID = groupUID;
@@ -29,9 +32,6 @@ public class Group {
         this.userListUID = userListUID;
         this.ready = ready;
         this.commentUID = commentUID;
-    }
-
-    public Group() {
     }
 
     public String getGroupUID() {

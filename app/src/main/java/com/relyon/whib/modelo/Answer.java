@@ -2,6 +2,9 @@ package com.relyon.whib.modelo;
 
 public class Answer extends Argument {
 
+    public Answer() {
+    }
+
     public Answer(String type, Long date, String authorsName, String authorsUID, String subject, String text, String audioPath, String groupUID, Long time, Sending sending) {
         super(type, date, authorsName, authorsUID, subject, text, audioPath, groupUID, time, sending);
     }

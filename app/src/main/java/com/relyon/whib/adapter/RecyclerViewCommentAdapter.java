@@ -64,13 +64,11 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     public int mPostsPerPage = 10;
     private boolean calledFromTabHistory = false;
     private boolean calledFromGroup = false;
-    private RecyclerViewCommentAdapter adapter;
 
     public RecyclerViewCommentAdapter(@NonNull Context context, AppCompatActivity activity) {
         this.context = context;
         this.elements = new ArrayList<>();
         this.activity = activity;
-        adapter = this;
     }
 
     public RecyclerViewCommentAdapter(@NonNull Context context, AppCompatActivity activity, boolean calledFromTabHistory, boolean calledFromGroup) {
@@ -79,7 +77,6 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
         this.activity = activity;
         this.calledFromTabHistory = calledFromTabHistory;
         this.calledFromGroup = calledFromGroup;
-        adapter = this;
     }
 
     @NonNull
@@ -115,34 +112,35 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             handleText(comment, holder);
             handleUserData(comment, holder);
 
-            holder.userProfile.setOnClickListener(v -> context.startActivity(new Intent(context, ProfileActivity.class).putExtra(Constants.USER_ID, comment.getAuthorsUID()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
+            if (!calledFromTabHistory) {
+                holder.userProfile.setOnClickListener(v -> context.startActivity(new Intent(context, ProfileActivity.class).putExtra(Constants.USER_ID, comment.getAuthorsUID()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
 
-            RatingBar.OnRatingBarChangeListener ratingBarChangeListener = (ratingBar, rating, fromTouch) -> {
-                if (fromTouch) {
-                    if (!comment.getAlreadyRatedList().contains(Util.getUser().getUserUID()) && !comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
-                        openRatingDialog(rating, position);
-                        holder.ratingTV.setText(String.valueOf(rating));
-                        ratingBar.setRating(rating);
+                RatingBar.OnRatingBarChangeListener ratingBarChangeListener = (ratingBar, rating, fromTouch) -> {
+                    if (fromTouch) {
+                        if (!comment.getAlreadyRatedList().contains(Util.getUser().getUserUID()) && !comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
+                            openRatingDialog(rating, position);
+                            holder.ratingTV.setText(String.valueOf(rating));
+                            ratingBar.setRating(rating);
+                        }
+                        Toast.makeText(context, String.valueOf(rating), Toast.LENGTH_SHORT).show();
                     }
-                    Toast.makeText(context, String.valueOf(rating), Toast.LENGTH_SHORT).show();
-                }
-            };
-            holder.ratingBar.setOnRatingBarChangeListener(ratingBarChangeListener);
-
-            holder.ratingBar.setOnClickListener(v -> {
-                if (holder.ratingBar.isIndicator()) {
-                    Toast.makeText(context, R.string.already_valuated_this_comment, Toast.LENGTH_SHORT).show();
-                }
-            });
+                };
+                holder.ratingBar.setOnRatingBarChangeListener(ratingBarChangeListener);
+                holder.ratingBar.setOnClickListener(v -> {
+                    if (holder.ratingBar.isIndicator()) {
+                        Toast.makeText(context, R.string.already_valuated_this_comment, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                holder.text.setOnLongClickListener(v -> {
+                    showStickersDialog(position);
+                    return true;
+                });
+            } else {
+                holder.ratingBar.setIsIndicator(true);
+            }
 
             holder.entrance.setOnClickListener(v -> goToGroup(comment));
-
             holder.report.setOnClickListener(v -> tryToReport(comment));
-
-            holder.text.setOnLongClickListener(v -> {
-                showStickersDialog(position);
-                return true;
-            });
         }
     }
 

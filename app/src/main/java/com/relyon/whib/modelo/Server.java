@@ -3,9 +3,12 @@ package com.relyon.whib.modelo;
 public class Server {
 
     private String serverUID;
-    private ServerTempInfo tempInfo; //server temporary data
+    private ServerTempInfo tempInfo;
     private String subject;
     private Timeline timeline;
+
+    public Server() {
+    }
 
     public Server(String serverUID, ServerTempInfo tempInfo, String subject, Timeline timeline) {
         this.serverUID = serverUID;
@@ -19,9 +22,6 @@ public class Server {
         this.tempInfo = new ServerTempInfo(0, true, numServer);
         this.subject = subject;
         this.timeline = new Timeline(this.subject);
-    }
-
-    public Server() {
     }
 
     public ServerTempInfo getTempInfo() {

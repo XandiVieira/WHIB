@@ -8,16 +8,15 @@ public class Sending {
     private String authorsUID;
     private String subject;
 
-    public Sending(String type, Long date, String authorsName, String authorsUID,
-                   String subject) {
+    public Sending() {
+    }
+
+    public Sending(String type, Long date, String authorsName, String authorsUID, String subject) {
         this.type = type;
         this.date = date;
         this.authorsName = authorsName;
         this.authorsUID = authorsUID;
         this.subject = subject;
-    }
-
-    public Sending() {
     }
 
     public String getType() {

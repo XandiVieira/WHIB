@@ -4,16 +4,16 @@ public class ServerTempInfo {
 
     private int qtdUsers;
     private int number;
-    private boolean activated; //true - available / false - full
+    private boolean activated;
+
+    public ServerTempInfo() {
+    }
 
     public ServerTempInfo(int qtdUsers, boolean activated, int number) {
         this.qtdUsers = qtdUsers;
         this.number = number;
 
         this.activated = number <= 99;
-    }
-
-    public ServerTempInfo() {
     }
 
     public int getQtdUsers() {

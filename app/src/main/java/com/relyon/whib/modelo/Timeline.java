@@ -9,6 +9,9 @@ public class Timeline {
     private String subject;
     private List<Group> groupList;
 
+    public Timeline() {
+    }
+
     public Timeline(HashMap<String, Comment> commentList, String subject, List<Group> groupList) {
         this.commentList = commentList;
         this.subject = subject;
@@ -17,9 +20,6 @@ public class Timeline {
 
     public Timeline(String subject) {
         this.subject = subject;
-    }
-
-    public Timeline() {
     }
 
     public HashMap<String, Comment> getCommentList() {

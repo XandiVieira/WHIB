@@ -7,14 +7,14 @@ public class UserTempInfo {
     private boolean isOn;
     private boolean isParticipant;
 
+    public UserTempInfo() {
+    }
+
     public UserTempInfo(Server currentServer, Group currentGroup, boolean isOn, boolean isParticipant) {
         this.currentServer = currentServer;
         this.currentGroup = currentGroup;
         this.isOn = isOn;
         this.isParticipant = isParticipant;
-    }
-
-    public UserTempInfo() {
     }
 
     public Server getCurrentServer() {

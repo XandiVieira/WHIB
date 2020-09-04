@@ -12,6 +12,9 @@ public class Valuation {
     private int numberOfRatings;
     private float sumOfRatings;
 
+    public Valuation() {
+    }
+
     public Valuation(double goodPercentage, double badPercentage, double regularPercentage, int goodQtd, int badQtd, int regularQtd) {
         this.goodPercentage = goodPercentage;
         this.badPercentage = badPercentage;
@@ -22,9 +25,6 @@ public class Valuation {
         this.totalOfValuations = this.goodQtd + this.badQtd + this.regularQtd;
         this.numberOfRatings = 0;
         this.sumOfRatings = 0;
-    }
-
-    public Valuation() {
     }
 
     public int getTotalOfValuations() {

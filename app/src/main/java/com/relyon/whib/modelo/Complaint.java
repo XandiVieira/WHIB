@@ -12,15 +12,15 @@ public class Complaint {
     private Long dateAnswer;
     private boolean answered;
 
+    public Complaint() {
+    }
+
     public Complaint(String complaintId, String userSenderUID, String question, Long dateQuestion) {
         this.complaintId = complaintId;
         this.userSenderUID = userSenderUID;
         this.question = question;
         this.dateQuestion = dateQuestion;
         this.answered = false;
-    }
-
-    public Complaint() {
     }
 
     public String getComplaintId() {

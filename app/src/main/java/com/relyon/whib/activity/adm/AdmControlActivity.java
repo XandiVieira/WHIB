@@ -116,25 +116,25 @@ public class AdmControlActivity extends AppCompatActivity {
         Util.mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<Integer> helperList = new ArrayList<>();
+                List<Integer> takenNumbers = new ArrayList<>();
                 Util.mSubjectDatabaseRef.removeEventListener(this);
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Subject subject1 = snapshot.getValue(Subject.class);
                     if (subject1 != null && subject1.getServers() != null) {
                         for (Server server : subject1.getServers().values()) {
-                            helperList.add(server.getTempInfo().getNumber());
+                            takenNumbers.add(server.getTempInfo().getNumber());
                         }
                     }
                 }
-                Integer[] number = new Integer[helperList.size()];
-                helperList.toArray(number);
-                Arrays.sort(number);
+                Integer[] sortedTakenNumbers = new Integer[takenNumbers.size()];
+                takenNumbers.toArray(sortedTakenNumbers);
+                Arrays.sort(sortedTakenNumbers);
                 Timeline tl = new Timeline(null, newSubject, null);
-                ServerTempInfo serverTempInfo = new ServerTempInfo(0, true, (number.length > 0 && number[0] != null && number[number.length - 1] != null) ? findFirstMissing(number) : 0);
+                ServerTempInfo serverTempInfo = new ServerTempInfo(0, true, (sortedTakenNumbers.length > 0 && sortedTakenNumbers[0] != null && sortedTakenNumbers[sortedTakenNumbers.length - 1] != null) ? findFirstMissing(sortedTakenNumbers) : 0);
                 Server server = new Server(UUID.randomUUID().toString(), serverTempInfo, newSubject, tl);
-                HashMap<String, Server> map = new HashMap<>();
-                map.put(server.getServerUID(), server);
-                final Subject subject = new Subject(newSubject, map,
+                HashMap<String, Server> serversMap = new HashMap<>();
+                serversMap.put(server.getServerUID(), server);
+                final Subject subject = new Subject(newSubject, serversMap,
                         new Date().getTime(), true);
                 Util.mSubjectDatabaseRef.child(server.getSubject()).setValue(subject);
             }

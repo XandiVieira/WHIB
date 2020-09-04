@@ -7,12 +7,12 @@ public class GroupTempInfo {
     private List<User> usersLine;
     private boolean full;
 
+    public GroupTempInfo() {
+    }
+
     public GroupTempInfo(List<User> usersLine, boolean full) {
         this.usersLine = usersLine;
         this.full = full;
-    }
-
-    public GroupTempInfo() {
     }
 
     public List<User> getUsersLine() {

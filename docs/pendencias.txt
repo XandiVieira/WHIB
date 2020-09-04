@@ -88,9 +88,11 @@
 
 LOJA
 - Superpoderes (Direito de tornar meu comentário em grupo automaticamente)
+- Reset do rate do perfil
 	- Itens de avaliação (itens que o usuário pode utilizar para avaliar comentários e mensagens ex.: likes, excelentes, bom argumento, me fez refletir, etc...
 
 FUTURO
+- Servidor Internacional
 - FAQ
 - Login com google
 - Títulos ao receber x selos de um tipo (ex.: Maria - A lacradora, João - O Amado, Joana - A Odiada)... possibilidade de ocultar o título

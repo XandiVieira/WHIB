@@ -26,7 +26,7 @@
         android:orientation="horizontal">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewInner"
+            android:id="@+id/server_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -34,7 +34,7 @@
             android:scrollbars="none" />
 
         <ImageView
-            android:id="@+id/nextServer"
+            android:id="@+id/next_server"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="end"

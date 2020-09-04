@@ -2,6 +2,7 @@ package com.relyon.whib.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,7 +35,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.relyon.whib.R;
 import com.relyon.whib.activity.adm.AdmChoosingProfileActivity;
-import com.relyon.whib.adapter.RecyclerViewServerGroupAdapter;
+import com.relyon.whib.adapter.RecyclerViewSubjectAdapter;
 import com.relyon.whib.dialog.DialogChooseSubscription;
 import com.relyon.whib.dialog.DialogCongratsSubscription;
 import com.relyon.whib.modelo.Preferences;
@@ -46,8 +48,12 @@ import com.relyon.whib.util.SelectSubscription;
 import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import me.toptas.fancyshowcase.FancyShowCaseQueue;
 import me.toptas.fancyshowcase.FancyShowCaseView;
@@ -66,13 +72,12 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     private DatabaseReference mSubjectDatabaseRef;
     private BillingProcessor billingProcessor;
     private String firebaseInstanceId;
-    private HashMap<String, Server> serversMap;
 
     private LinearLayout progressBar;
     private LinearLayout profileIcon;
     private LinearLayout logoutLayout;
     private Button chooseSubjectButton;
-    private RecyclerView recyclerViewServerSection;
+    private RecyclerView recyclerViewSubject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     }
 
     private void setLayoutAttributes() {
-        recyclerViewServerSection = findViewById(R.id.recycler_view_section);
+        recyclerViewSubject = findViewById(R.id.recycler_view_section);
         progressBar = findViewById(R.id.progress_bar);
         chooseSubjectButton = findViewById(R.id.choose_subject_button);
         profileIcon = findViewById(R.id.profile_layout);
@@ -144,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mSubjectDatabaseRef.removeEventListener(this);
                 List<Subject> subjects = new ArrayList<>();
                 for (DataSnapshot snap : dataSnapshot.getChildren()) {
                     Subject subject = snap.getValue(Subject.class);
@@ -151,7 +157,11 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                         subjects.add(subject);
                     }
                 }
-                setSubjects(subjects);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    setSubjects(sortSubjectsByPopularity(subjects));
+                } else {
+                    setSubjects(subjects);
+                }
             }
 
             @Override
@@ -161,25 +171,45 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private ArrayList<Subject> sortSubjectsByPopularity(List<Subject> subjects) {
+        HashMap<Subject, Integer> popularityOfServers = calculateServersPopularity(subjects);
+        return new ArrayList<>(popularityOfServers.keySet());
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private HashMap<Subject, Integer> calculateServersPopularity(List<Subject> subjects) {
+        HashMap<Subject, Integer> popularityOfServers = new HashMap<>();
+        for (Subject subject : subjects) {
+            int numOfComments = 0;
+            for (Server server : subject.getServers().values()) {
+                if (server != null && server.getTimeline() != null && server.getTimeline().getCommentList() != null)
+                    numOfComments += server.getTimeline().getCommentList().size();
+            }
+            popularityOfServers.put(subject, numOfComments);
+        }
+        return popularityOfServers.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+    }
+
     private void setSubjects(List<Subject> subjects) {
-        serversMap = new HashMap<>();
+        HashMap<String, Server> serversMap = new HashMap<>();
         for (Subject subject : subjects) {
             for (Server server : subject.getServers().values()) {
                 serversMap.put(server.getServerUID(), server);
             }
         }
         Util.setNumberOfServers(serversMap.values().size());
-        initRecyclerViewGroup();
+        initSubjectRecyclerView(subjects);
         progressBar.setVisibility(View.GONE);
         chooseSubjectButton.setVisibility(View.VISIBLE);
     }
 
-    private void initRecyclerViewGroup() {
+    private void initSubjectRecyclerView(List<Subject> subjects) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerViewServerSection = findViewById(R.id.recycler_view_section);
-        recyclerViewServerSection.setLayoutManager(layoutManager);
-        RecyclerViewServerGroupAdapter adapter = new RecyclerViewServerGroupAdapter(serversMap);
-        recyclerViewServerSection.setAdapter(adapter);
+        recyclerViewSubject = findViewById(R.id.recycler_view_section);
+        recyclerViewSubject.setLayoutManager(layoutManager);
+        RecyclerViewSubjectAdapter adapter = new RecyclerViewSubjectAdapter(subjects);
+        recyclerViewSubject.setAdapter(adapter);
     }
 
     private void startFirebaseInstances() {
@@ -256,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                     FancyShowCaseView fancyShowCaseView = new FancyShowCaseView.Builder(this).customView(R.layout.custom_tour_servers, view -> view.findViewById(R.id.skip_tutorial).setOnClickListener(v -> {
                         Util.getUser().setFirstTime(false);
                         mUserDatabaseRef.child(Util.getUser().getUserUID()).child(DATABASE_REF_FIRST_TIME).setValue(false);
-                    })).focusOn(recyclerViewServerSection)
+                    })).focusOn(recyclerViewSubject)
                             .focusBorderSize(10)
                             .focusCircleAtPosition(550, 800, 500)
                             .build();
@@ -270,6 +300,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     private Preferences setUserPreferences() {
         return new Preferences(true, true, true, true);
     }
+
     private Valuation setUserValuation() {
         return new Valuation(0, 0, 0, 0, 0, 0);
     }

@@ -4,11 +4,11 @@ public class Advantage {
 
     private String description;
 
-    public Advantage(String description) {
-        this.description = description;
+    public Advantage() {
     }
 
-    public Advantage() {
+    public Advantage(String description) {
+        this.description = description;
     }
 
     public String getDescription() {

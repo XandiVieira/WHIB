@@ -37,7 +37,7 @@ public class TabValuations extends Fragment {
 
         if (profileActivity != null) {
             user = profileActivity.getUser();
-            loadData();
+            setUserRating();
         }
 
         return rootView;
@@ -56,7 +56,7 @@ public class TabValuations extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-    private void loadData() {
+    private void setUserRating() {
         ratingBar.setStepSize(0.01f);
         if (user.getValuation().getSumOfRatings() != 0 && user.getValuation().getNumberOfRatings() != 0) {
             ratingBar.setRating(user.getValuation().getSumOfRatings() / user.getValuation().getNumberOfRatings());

@@ -7,14 +7,14 @@ public class Preferences {
     private boolean vibration;
     private boolean showPhoto;
 
+    public Preferences() {
+    }
+
     public Preferences(boolean sound, boolean notification, boolean vibration, boolean showPhoto) {
         this.sound = sound;
         this.notification = notification;
         this.vibration = vibration;
         this.showPhoto = showPhoto;
-    }
-
-    public Preferences() {
     }
 
     public boolean isSound() {

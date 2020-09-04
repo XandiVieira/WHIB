@@ -14,6 +14,9 @@ public class Report {
     private boolean reviewed;
     private String commentUID;
 
+    public Report() {
+    }
+
     public Report(String userSenderUID, String userReceiverUID, String reason, String explanation, String text, String commentUID) {
         this.userSenderUID = userSenderUID;
         this.userReceiverUID = userReceiverUID;
@@ -23,9 +26,6 @@ public class Report {
         this.fair = false;
         this.reviewed = false;
         this.commentUID = commentUID;
-    }
-
-    public Report() {
     }
 
     public String getId() {

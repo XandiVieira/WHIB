@@ -3,8 +3,10 @@ package com.relyon.whib.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +40,7 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageView menu;
     private ImageView photo;
     private ImageView back;
-    private ImageView settings;
+    private LinearLayout settingsLayout;
     private EditText nick;
     private TextView userName;
     private ViewPager mViewPager;
@@ -63,6 +65,9 @@ public class ProfileActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     user = dataSnapshot.getValue(User.class);
                     if (user != null) {
+                        if (!user.getUserUID().equals(Util.getUser().getUserUID())) {
+                            settingsLayout.setVisibility(View.INVISIBLE);
+                        }
                         loadReports = false;
                         setUserProfile();
                     }
@@ -79,38 +84,9 @@ public class ProfileActivity extends AppCompatActivity {
             setUserProfile();
         }
 
-        back.setOnClickListener(v -> {
-            if (nick.getText().toString().trim().equals("")) {
-                onBackPressed();
-            } else if (user.getNickName() == null && !nick.getText().toString().replace("@", "").equals("")) {
-                String nickname = nick.getText().toString().replace("@", "");
-                user.setNickName(nickname);
-                Util.getmDatabaseRef().child(Constants.DATABASE_REF_NICKNAME).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        List<String> nicknames = new ArrayList<>();
-                        for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                            nicknames.add(snap.getValue(String.class));
-                        }
-                        if (nicknames.contains(nickname)) {
-                            Toast.makeText(activity, R.string.username_was_already_taken, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Util.getmDatabaseRef().child(Constants.DATABASE_REF_NICKNAME).removeEventListener(this);
-                            Util.getmUserDatabaseRef().child(user.getUserUID()).setValue(user);
-                            Util.getmDatabaseRef().child(Constants.DATABASE_REF_NICKNAME).push().setValue(user.getNickName());
-                            onBackPressed();
-                        }
-                    }
+        back.setOnClickListener(v -> onBackPressed());
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
-        });
-
-        settings.setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class).putExtra(Constants.CAME_FROM_PROFILE, true)));
+        settingsLayout.setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class).putExtra(Constants.CAME_FROM_PROFILE, true)));
 
         menu.setOnClickListener(v -> {
             PopupMenu popup = new PopupMenu(ProfileActivity.this, menu);
@@ -143,7 +119,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void setLayoutAttributes() {
         back = findViewById(R.id.back);
         photo = findViewById(R.id.photo);
-        settings = findViewById(R.id.settings);
+        settingsLayout = findViewById(R.id.settings_layout);
         userName = findViewById(R.id.user_name);
         nick = findViewById(R.id.nick);
         menu = findViewById(R.id.menu);
@@ -157,6 +133,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         userName.setText(user.getUserName());
+        nick.setText(user.getNickName() != null && !user.getNickName().trim().isEmpty() ? "@" + user.getNickName() : "");
 
         if ((user.getNickName() != null && !user.getNickName().isEmpty()) || !user.getUserUID().equals(Util.getUser().getUserUID())) {
             nick.setEnabled(false);
@@ -177,14 +154,41 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finish();
-        Intent intent;
-        if (Util.getServer() != null) {
-            intent = new Intent(this, TimelineActivity.class);
-        } else {
-            intent = new Intent(this, MainActivity.class);
+        if (nick.getText().toString().trim().equals("")) {
+            finish();
+            Intent intent;
+            if (Util.getServer() != null) {
+                intent = new Intent(this, TimelineActivity.class);
+            } else {
+                intent = new Intent(this, MainActivity.class);
+            }
+            startActivity(intent);
+        } else if (user.getNickName() == null && !nick.getText().toString().replace("@", "").equals("")) {
+            String nickname = nick.getText().toString().replace("@", "");
+            user.setNickName(nickname);
+            Util.getmDatabaseRef().child(Constants.DATABASE_REF_NICKNAME).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    List<String> nicknames = new ArrayList<>();
+                    for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                        nicknames.add(snap.getValue(String.class));
+                    }
+                    if (nicknames.contains(nickname)) {
+                        Toast.makeText(activity, R.string.username_was_already_taken, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Util.getmDatabaseRef().child(Constants.DATABASE_REF_NICKNAME).removeEventListener(this);
+                        Util.getmUserDatabaseRef().child(user.getUserUID()).setValue(user);
+                        Util.getmDatabaseRef().child(Constants.DATABASE_REF_NICKNAME).push().setValue(user.getNickName());
+                        onBackPressed();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
         }
-        startActivity(intent);
     }
 
     public User getUser() {
