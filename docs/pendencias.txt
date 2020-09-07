@@ -74,6 +74,8 @@
 	- Avaliação (número) quebrando linha
 	- Contagem de importância dos servers para adm errada
 	- Não é possível criar servers com #
+- Tutorial deslocado e com tamanhos diferentes
+	- Pular tutorial não fecha o tutorial
 - Refatoração de todo o código
 - Corrigir erros e warnings de log
 - Create new storeItem não funciona (upload de imagem crashando "permission denial")

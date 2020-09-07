@@ -71,6 +71,7 @@ public class TimelineActivity extends AppCompatActivity {
     private boolean resetTimeline = false;
     private boolean canLoadNewComments = false;
     private int number_of_ads = 0;
+    private PopupMenu popupMenu;
 
     private RecyclerViewCommentAdapter commentAdapter;
     private ImageView menuIcon;
@@ -114,6 +115,7 @@ public class TimelineActivity extends AppCompatActivity {
         commentListReference = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST);
 
         setLayoutAttributes();
+        initPopUpMenu();
         initRecyclerViewComment();
         retrieveUser();
         verifyServerIsActive();
@@ -189,10 +191,7 @@ public class TimelineActivity extends AppCompatActivity {
         });
 
         menuIcon.setOnClickListener(v -> {
-            PopupMenu popup = new PopupMenu(TimelineActivity.this, menuIcon);
-            popup.getMenuInflater().inflate(R.menu.menu_timeline, popup.getMenu());
-
-            popup.setOnMenuItemClickListener(item -> {
+            popupMenu.setOnMenuItemClickListener(item -> {
                 if (user.isFirstTime()) {
                     Util.mUserDatabaseRef.child(user.getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false);
                 }
@@ -219,12 +218,17 @@ public class TimelineActivity extends AppCompatActivity {
                 }
                 return false;
             });
-            popup.show();
+            popupMenu.show();
         });
 
         back.setOnClickListener(v -> onBackPressed());
         commentBt.setOnClickListener(v -> openCommentBox(activity));
         leaveCommentLayout.setOnClickListener(v -> openCommentBox(activity));
+    }
+
+    private void initPopUpMenu() {
+        popupMenu = new PopupMenu(TimelineActivity.this, menuIcon);
+        popupMenu.getMenuInflater().inflate(R.menu.menu_timeline, popupMenu.getMenu());
     }
 
     private void setLayoutAttributes() {
@@ -393,6 +397,7 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void callTour() {
+        initPopUpMenu();
         if (user.isFirstTime()) {
             final FancyShowCaseView fancyShowCaseView = new FancyShowCaseView.Builder(this).
                     customView(R.layout.custom_tour_timeline_comment, view -> view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mUserDatabaseRef.child(user.getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false))).focusBorderSize(10)
@@ -427,7 +432,7 @@ public class TimelineActivity extends AppCompatActivity {
                             menuIcon.performClick();
                         }
                     }).focusBorderSize(10)
-                    .focusRectAtPosition(750, (int) (menuY + (menuHeight * 3.25)), 700, 850)
+                    .focusRectAtPosition((int) menuX - menuWidth, (int) (menuY + (menuHeight * 3.25)), 700, 800)
                     .build();
 
             queue.add(fancyShowCaseView);

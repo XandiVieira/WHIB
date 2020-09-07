@@ -29,11 +29,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             android:layout_marginHorizontal="10dp"
+            android:layout_marginStart="20dp"
             android:layout_marginLeft="20dp"
             android:fontFamily="@font/baloo"
             android:gravity="center_horizontal"
             android:lineSpacingExtra="-5dp"
-            android:text="Vamos te ajudar a entender tudo rapidinho com este tutorial"
+            android:text="@string/we_will_help_you_to_understand_everything"
             android:textColor="@color/white"
             android:textSize="@dimen/small_text" />
 
@@ -48,10 +49,10 @@
         android:layout_weight="1"
         android:fontFamily="@font/baloo"
         android:gravity="bottom"
-        android:lineSpacingExtra="-5dp"
-        android:text="Aqui você encontra os assuntos que estão sendo debatidos no momento. Vamos lá, escolha um assunto."
+        android:lineSpacingExtra="-10dp"
+        android:text="@string/here_you_find_the_most_discussed_topics_at_the_moment"
         android:textAlignment="center"
-        android:textColor="@color/white"
+        android:textColor="@color/colorAccent"
         android:textSize="@dimen/normal_text"
         tools:ignore="RtlCompat" />
 
@@ -84,13 +85,15 @@
             android:layout_weight="1"
             android:gravity="end">
 
-            <Button
+            <TextView
                 android:id="@+id/skip_tutorial"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
                 android:layout_marginHorizontal="10dp"
                 android:background="@drawable/rounded_dark_orange"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="5dp"
                 android:paddingHorizontal="10dp"
                 android:text="@string/skip_tutorial" />
         </LinearLayout>

@@ -184,7 +184,7 @@
     <string name="last_warn">Um último recado para você</string>
     <string name="congrats_subscription">Parabéns! Agora você pode usufruir de todos os benefícios de ser um Extra.</string>
     <string name="all_advantages">Confira todas as vantagens que você pode aproveitar <u>AQUI</u></string>
-    <string name="server_empty_plase_select_another">Este servidor está vazio, por favor escolha outro para começar.</string>
+    <string name="server_empty_please_select_another">Este servidor está vazio, por favor escolha outro para começar.</string>
     <string name="error">"Error: "</string>
     <string name="full_server">Servidor Lotado</string>
     <string name="see_less">\" Ver menos\"</string>
@@ -204,6 +204,8 @@
     <string name="get_double_stickers">Receba figurinhas em dobro</string>
     <string name="get_double_stickers_explanation">Ao comprar ou ganhar um pocote você receberá o dobro de figurinhas</string>
     <string name="account_successfully_deleted">Sua conta foi excluída com sucesso</string>
+    <string name="here_you_find_the_most_discussed_topics_at_the_moment">Aqui você encontra os assuntos que estão sendo debatidos no momento. Vamos lá, escolha um assunto.</string>
+    <string name="we_will_help_you_to_understand_everything">Vamos te ajudar a entender tudo rapidinho com este tutorial</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

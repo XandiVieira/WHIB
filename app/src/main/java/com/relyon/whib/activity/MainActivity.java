@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     private DatabaseReference mSubjectDatabaseRef;
     private BillingProcessor billingProcessor;
     private String firebaseInstanceId;
+    private DisplayMetrics displayMetrics;
 
     private LinearLayout progressBar;
     private LinearLayout profileIcon;
@@ -107,6 +108,8 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
             verifyUserSubscriptionStatus();
         }
 
+        getScreenDimensions();
+
         retrieveSubjects();
 
         mFirebaseRemoteConfig.setConfigSettingsAsync(new FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(3600L).build());
@@ -123,6 +126,11 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                 dialogChooseSubscription.show(fm, "");
             }
         });
+    }
+
+    private void getScreenDimensions() {
+        displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
     }
 
     private void setupBillingProcessor() {
@@ -267,33 +275,25 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     }
 
     private void callWelcomeTour() {
-        if (user != null) {
-            if (user.isFirstTime()) {
-                if (getIntent().hasExtra(Constants.SERVER_EMPTY)) {
-                    Toast tag = Toast.makeText(activity, getString(R.string.server_empty_plase_select_another), Toast.LENGTH_LONG);
-                    new CountDownTimer(3000, 3500) {
-                        public void onTick(long millisUntilFinished) {
-                            tag.show();
-                        }
-
-                        public void onFinish() {
-                            tag.show();
-                        }
-                    }.start();
-                }
-                FancyShowCaseQueue queue = new FancyShowCaseQueue();
-                if (user.isFirstTime()) {
-                    FancyShowCaseView fancyShowCaseView = new FancyShowCaseView.Builder(this).customView(R.layout.custom_tour_servers, view -> view.findViewById(R.id.skip_tutorial).setOnClickListener(v -> {
-                        Util.getUser().setFirstTime(false);
-                        mUserDatabaseRef.child(Util.getUser().getUserUID()).child(DATABASE_REF_FIRST_TIME).setValue(false);
-                    })).focusOn(recyclerViewSubject)
-                            .focusBorderSize(10)
-                            .focusCircleAtPosition(550, 800, 500)
-                            .build();
-                    queue.add(fancyShowCaseView);
-                    queue.show();
-                }
+        if (user != null && user.isFirstTime()) {
+            if (getIntent().hasExtra(Constants.SERVER_EMPTY)) {
+                Toast.makeText(activity, getString(R.string.server_empty_please_select_another), Toast.LENGTH_LONG).show();
             }
+
+            int screenHeight = displayMetrics.heightPixels;
+            int screenWidth = displayMetrics.widthPixels;
+
+            FancyShowCaseQueue queue = new FancyShowCaseQueue();
+            FancyShowCaseView fancyShowCaseView = new FancyShowCaseView.Builder(this).customView(R.layout.custom_tour_servers, view -> view.findViewById(R.id.skip_tutorial).setOnClickListener(v -> {
+                Util.getUser().setFirstTime(false);
+                mUserDatabaseRef.child(Util.getUser().getUserUID()).child(DATABASE_REF_FIRST_TIME).setValue(false);
+                queue.cancel(true);
+            })).focusOn(recyclerViewSubject)
+                    .focusBorderSize(10)
+                    .focusCircleAtPosition(screenWidth / 2, screenHeight / 2, screenWidth / 2)
+                    .build();
+            queue.add(fancyShowCaseView);
+            queue.show();
         }
     }
 

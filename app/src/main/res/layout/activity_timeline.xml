@@ -100,6 +100,7 @@
             android:layout_marginHorizontal="@dimen/surround_margins"
             android:layout_weight="1"
             android:background="@drawable/rounded_white"
+            android:descendantFocusability="blocksDescendants"
             android:divider="@color/colorAccent"
             android:dividerHeight="1.3dp"
             android:padding="@dimen/surround_paddings" />

@@ -34,7 +34,7 @@
             android:fontFamily="@font/baloo"
             android:gravity="center"
             android:lineSpacingExtra="-10dp"
-            android:text="Lembre-se de que o WHIB preza por um ambiente pacífico e com foco em argumentação, portanto temos certeza que seu comportamento estará alinhado com nossos objetivos."
+            android:text="Lembre-se de que o WHIB preza por um ambiente pacífico e com foco em argumentação, portanto esperamos que seu comportamento esteja alinhado com nossos objetivos."
             android:textColor="@color/black"
             android:textSize="@dimen/big_text" />
 

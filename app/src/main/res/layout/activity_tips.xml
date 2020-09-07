@@ -351,7 +351,7 @@
                 android:fontFamily="@font/baloo"
                 android:gravity="start"
                 android:lineSpacingExtra="-10dp"
-                android:text="- Para mandar figurinhas para comentários você deve clicar no texto, suas figurinhas vão aparecer e então você deve escolher a que deseja enviar."
+                android:text="- Para mandar figurinhas para comentários você deve clicar no texto e manter pressionado, suas figurinhas vão aparecer e então você deve escolher a que deseja enviar."
                 android:textColor="@color/colorAccent"
                 android:textSize="@dimen/small_text" />
 
