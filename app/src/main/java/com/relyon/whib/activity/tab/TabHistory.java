@@ -76,6 +76,9 @@ public class TabHistory extends Fragment {
 
         if (profileActivity != null) {
             user = profileActivity.getUser();
+            if (user != null && Util.getUser() != null && !user.getUserUID().equals(Util.getUser().getUserUID())) {
+                empty.setVisibility(View.GONE);
+            }
         }
 
         progressBar.setVisibility(View.VISIBLE);
@@ -109,10 +112,10 @@ public class TabHistory extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        retrieveMyComments();
+        retrieveComments();
     }
 
-    private void retrieveMyComments() {
+    private void retrieveComments() {
         if (Util.getUser().isExtra()) {
             commentList = Util.getUser().getCommentList();
             fixedCommentList = Util.getUser().getCommentList();
