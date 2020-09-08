@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -50,6 +51,8 @@ import com.relyon.whib.modelo.User;
 import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.Util;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -89,6 +92,9 @@ public class TimelineActivity extends AppCompatActivity {
     private int menuHeight;
     private float menuX;
     private float menuY;
+
+    private int expandedMenuWidth;
+    private int expandedMenuHeight;
 
     private int commentWidth;
     private int commentHeight;
@@ -229,6 +235,41 @@ public class TimelineActivity extends AppCompatActivity {
     private void initPopUpMenu() {
         popupMenu = new PopupMenu(TimelineActivity.this, menuIcon);
         popupMenu.getMenuInflater().inflate(R.menu.menu_timeline, popupMenu.getMenu());
+    }
+
+    private void preparePopupMenuDimensionsForWelcomeTour() {
+        initPopUpMenu();
+        popupMenu.show();
+        ListView listView = getPopupMenuListView(popupMenu);
+        androidx.core.view.ViewKt.doOnLayout(listView, view -> {
+            expandedMenuWidth = view.getWidth();
+            expandedMenuHeight = view.getHeight();
+            popupMenu.dismiss();
+            callTour();
+            return null;
+        });
+    }
+
+    private ListView getPopupMenuListView(PopupMenu popupMenu) {
+        Method getMenuListViewMethod = null;
+        try {
+            getMenuListViewMethod = PopupMenu.class.getDeclaredMethod("getMenuListView");
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+
+        ListView listView = null;
+        if (getMenuListViewMethod != null) {
+            getMenuListViewMethod.setAccessible(true);
+            try {
+                listView = (ListView) getMenuListViewMethod.invoke(popupMenu);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+        return listView;
     }
 
     private void setLayoutAttributes() {
@@ -397,7 +438,6 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void callTour() {
-        initPopUpMenu();
         if (user.isFirstTime()) {
             final FancyShowCaseView fancyShowCaseView = new FancyShowCaseView.Builder(this).
                     customView(R.layout.custom_tour_timeline_comment, view -> view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mUserDatabaseRef.child(user.getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false))).focusBorderSize(10)
@@ -432,7 +472,7 @@ public class TimelineActivity extends AppCompatActivity {
                             menuIcon.performClick();
                         }
                     }).focusBorderSize(10)
-                    .focusRectAtPosition((int) menuX - menuWidth, (int) (menuY + (menuHeight * 3.25)), 700, 800)
+                    .focusRectAtPosition(((int) (menuX - menuWidth)), (int) (menuY + (menuHeight / 2)) + (expandedMenuHeight / 2), expandedMenuWidth, expandedMenuHeight)
                     .build();
 
             queue.add(fancyShowCaseView);
@@ -454,7 +494,7 @@ public class TimelineActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (user.isFirstTime()) {
-                callTour();
+                preparePopupMenuDimensionsForWelcomeTour();
                 unregisterReceiver(layoutElementsDimensionsReceiver);
             }
         }
