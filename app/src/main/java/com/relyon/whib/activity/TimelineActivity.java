@@ -241,13 +241,18 @@ public class TimelineActivity extends AppCompatActivity {
         initPopUpMenu();
         popupMenu.show();
         ListView listView = getPopupMenuListView(popupMenu);
-        androidx.core.view.ViewKt.doOnLayout(listView, view -> {
-            expandedMenuWidth = view.getWidth();
-            expandedMenuHeight = view.getHeight();
-            popupMenu.dismiss();
-            callTour();
-            return null;
-        });
+        if (listView != null) {
+            listView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    listView.getViewTreeObserver().removeOnGlobalLayoutListener((ViewTreeObserver.OnGlobalLayoutListener) this);
+                    expandedMenuWidth = listView.getWidth();
+                    expandedMenuHeight = listView.getHeight();
+                    popupMenu.dismiss();
+                    callTour();
+                }
+            });
+        }
     }
 
     private ListView getPopupMenuListView(PopupMenu popupMenu) {
