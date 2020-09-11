@@ -16,6 +16,7 @@ import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.relyon.whib.R;
 import com.relyon.whib.activity.LoginActivity;
+import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.Util;
 
 public class DialogConfirmDeleteAccount extends Dialog {
@@ -66,7 +67,7 @@ public class DialogConfirmDeleteAccount extends Dialog {
 
     private void deleteAccount() {
         logout();
-        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).setValue(null);
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.getUser().getUserUID()).setValue(null);
         Toast.makeText(getContext(), R.string.account_successfully_deleted, Toast.LENGTH_LONG).show();
     }
 }

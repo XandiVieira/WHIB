@@ -127,7 +127,7 @@ public class TabHistory extends Fragment {
                 commentAdapter.addAllComments(commentList, true);
             }
         }
-        Util.mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Server> serverList = new ArrayList<>();
@@ -147,7 +147,7 @@ public class TabHistory extends Fragment {
                 for (int i = 0; i < serverList.size(); i++) {
                     Server server = serverList.get(i);
                     int finalI = i;
-                    Util.mSubjectDatabaseRef.child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(server.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).addValueEventListener(new ValueEventListener() {
+                    Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(server.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             for (DataSnapshot snapshot1 : snapshot.getChildren()) {

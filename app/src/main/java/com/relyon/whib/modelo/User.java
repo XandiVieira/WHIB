@@ -20,18 +20,16 @@ public class User {
     private List<Complaint> pendingDoubts;
     private List<Product> itemsListUID;
     private boolean changedName;
-    private boolean changedPhoto;
-    private double totalInPurchase;
-    private int purchases;
     private Preferences preferences;
     private String nickName;
     private boolean isAdmin;
     private HashMap<String, Product> products;
+    private Punishment punishment;
 
     public User() {
     }
 
-    public User(String userUID, String token, String userName, String photoPath, Valuation valuation, List<User> following, boolean blocked, boolean firstTime, boolean extra, List<String> groupsUIDList, int followers, List<Complaint> pendingDoubts, List<Product> itemsListUID, boolean changedName, boolean changedPhoto, double totalInPurchase, int purchases, Preferences preferences, String nickName, boolean isAdmin) {
+    public User(String userUID, String token, String userName, String photoPath, Valuation valuation, List<User> following, boolean blocked, boolean firstTime, boolean extra, List<String> groupsUIDList, int followers, List<Complaint> pendingDoubts, List<Product> itemsListUID, boolean changedName, Preferences preferences, String nickName, boolean isAdmin, Punishment punishment) {
         this.userUID = userUID;
         this.token = token;
         this.userName = userName;
@@ -46,12 +44,10 @@ public class User {
         this.pendingDoubts = pendingDoubts;
         this.itemsListUID = itemsListUID;
         this.changedName = changedName;
-        this.changedPhoto = changedPhoto;
-        this.totalInPurchase = totalInPurchase;
-        this.purchases = purchases;
         this.preferences = preferences;
         this.nickName = nickName;
         this.isAdmin = isAdmin;
+        this.punishment = punishment;
     }
 
     public String getUserUID() {
@@ -174,30 +170,6 @@ public class User {
         this.changedName = changedName;
     }
 
-    public boolean isChangedPhoto() {
-        return changedPhoto;
-    }
-
-    public void setChangedPhoto(boolean changedPhoto) {
-        this.changedPhoto = changedPhoto;
-    }
-
-    public double getTotalInPurchase() {
-        return totalInPurchase;
-    }
-
-    public void setTotalInPurchase(double totalInPurchase) {
-        this.totalInPurchase = totalInPurchase;
-    }
-
-    public int getPurchases() {
-        return purchases;
-    }
-
-    public void setPurchases(int purchases) {
-        this.purchases = purchases;
-    }
-
     public Preferences getPreferences() {
         return preferences;
     }
@@ -228,5 +200,13 @@ public class User {
 
     public void setProducts(HashMap<String, Product> products) {
         this.products = products;
+    }
+
+    public Punishment getPunishment() {
+        return punishment;
+    }
+
+    public void setPunishment(Punishment punishment) {
+        this.punishment = punishment;
     }
 }

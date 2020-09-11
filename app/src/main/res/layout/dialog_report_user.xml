@@ -5,6 +5,8 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="15dp"
     android:elevation="@dimen/elevation1"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:padding="5dp"
     app:cardCornerRadius="25dp">
 
@@ -112,6 +114,23 @@
 
         <TextView
             android:id="@+id/reason4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:text="@string/out_of_subject"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/small_text" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="5dp"
+            android:background="@color/colorAccent" />
+
+        <TextView
+            android:id="@+id/reason5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"

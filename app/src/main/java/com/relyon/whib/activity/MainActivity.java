@@ -38,7 +38,9 @@ import com.relyon.whib.activity.adm.AdmChoosingProfileActivity;
 import com.relyon.whib.adapter.RecyclerViewSubjectAdapter;
 import com.relyon.whib.dialog.DialogChooseSubscription;
 import com.relyon.whib.dialog.DialogCongratsSubscription;
+import com.relyon.whib.dialog.DialogWarnUserBlocked;
 import com.relyon.whib.modelo.Preferences;
+import com.relyon.whib.modelo.Punishment;
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.User;
@@ -49,6 +51,7 @@ import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -226,15 +229,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         DatabaseReference mDatabaseRef = mFirebaseDatabase.getReference();
         mUserDatabaseRef = mDatabaseRef.child(Constants.DATABASE_REF_USER);
         mSubjectDatabaseRef = mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT);
-        DatabaseReference mGroupDatabaseRef = mDatabaseRef.child(Constants.DATABASE_REF_GROUP);
-        DatabaseReference mAdvantagesDatabaseRef = mDatabaseRef.child(Constants.DATABASE_REF_ADVANTAGE);
-        DatabaseReference mReportsDatabaseRef = mDatabaseRef.child(Constants.DATABASE_REF_REPORT);
         Util.setmDatabaseRef(mDatabaseRef);
-        Util.setmUserDatabaseRef(mUserDatabaseRef);
-        Util.setmSubjectDatabaseRef(mSubjectDatabaseRef);
-        Util.setmGroupDatabaseRef(mGroupDatabaseRef);
-        Util.setmAdvantagesDatabaseRef(mAdvantagesDatabaseRef);
-        Util.setmReportDatabaseRef(mReportsDatabaseRef);
     }
 
     private void getUserDataFromFirebase() {
@@ -245,6 +240,8 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                 user = dataSnapshot.getValue(User.class);
                 if (user == null || user.getUserUID() == null) {
                     createUser();
+                } else {
+                    handleBlocks(user);
                 }
 
                 Util.setUser(user);
@@ -261,6 +258,26 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         });
     }
 
+    private void handleBlocks(User user) {
+        if (user.getPunishment() != null) {
+            if (user.getPunishment().isBlocked()) {
+                if (new Date().getTime() >= user.getPunishment().getEndDate()) {
+                    user.getPunishment().setBlocked(false);
+                    user.getPunishment().setEndDate(0L);
+                    Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(user.getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).setValue(user.getPunishment());
+                } else if (user.getPunishment() != null) {
+                    showBlockDialog(user.getPunishment().getEndDate());
+                }
+            }
+        }
+    }
+
+    private void showBlockDialog(Long endDate) {
+        DialogWarnUserBlocked dialogWarnUserBlocked = new DialogWarnUserBlocked(this, endDate);
+        dialogWarnUserBlocked.show();
+        dialogWarnUserBlocked.setOnDismissListener(dialogInterface -> logout());
+    }
+
     private void createUser() {
         String userPhotoPath = null;
         if (firebaseUser.getPhotoUrl() != null) {
@@ -268,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         }
         user = new User(firebaseUser.getUid(), firebaseInstanceId, firebaseUser.getDisplayName(), userPhotoPath, setUserValuation(), null, false, true,
                 false, null, 0, null, null,
-                false, false, 0, 0, setUserPreferences(), null, false);
+                false, setUserPreferences(), null, false, new Punishment(0, false, 0L));
 
         Util.setUser(user);
         mUserDatabaseRef.child(firebaseUser.getUid()).setValue(user);
@@ -314,6 +331,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     public void logout() {
         FirebaseAuth.getInstance().signOut();
         LoginManager.getInstance().logOut();
+        Util.restartClass();
         goLoginScreen();
     }
 

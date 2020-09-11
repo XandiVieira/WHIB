@@ -21,6 +21,7 @@ import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.ServerTempInfo;
 import com.relyon.whib.modelo.Subject;
 import com.relyon.whib.modelo.Timeline;
+import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class AdmControlActivity extends AppCompatActivity {
 
         storeItem.setOnClickListener(v -> startActivity(new Intent(this, AdmCreateStoreItem.class)));
 
-        Util.mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 subjectsAdded = new ArrayList<>();
@@ -94,7 +95,7 @@ public class AdmControlActivity extends AppCompatActivity {
     private void setServerAdapter() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
         rvAdmServers.setLayoutManager(layoutManager);
-        RecyclerViewAdmServerAdapter admServerAdapter = new RecyclerViewAdmServerAdapter(serverListFiltered, activity, getApplicationContext());
+        RecyclerViewAdmServerAdapter admServerAdapter = new RecyclerViewAdmServerAdapter(serverListFiltered, getApplicationContext());
         rvAdmServers.setAdapter(admServerAdapter);
     }
 
@@ -113,11 +114,11 @@ public class AdmControlActivity extends AppCompatActivity {
     }
 
     private void createServer(String newSubject) {
-        Util.mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Integer> takenNumbers = new ArrayList<>();
-                Util.mSubjectDatabaseRef.removeEventListener(this);
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).removeEventListener(this);
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Subject subject1 = snapshot.getValue(Subject.class);
                     if (subject1 != null && subject1.getServers() != null) {
@@ -136,7 +137,7 @@ public class AdmControlActivity extends AppCompatActivity {
                 serversMap.put(server.getServerUID(), server);
                 final Subject subject = new Subject(newSubject, serversMap,
                         new Date().getTime(), true);
-                Util.mSubjectDatabaseRef.child(server.getSubject()).setValue(subject);
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(server.getSubject()).setValue(subject);
             }
 
             @Override

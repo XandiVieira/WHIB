@@ -145,7 +145,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     private void handleUserData(Comment comment, CommentViewHolder holder) {
-        Util.mUserDatabaseRef.child(comment.getAuthorsUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(comment.getAuthorsUID()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
@@ -229,7 +229,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
     private void retrieveCommentStickers(Comment comment, CommentViewHolder holder) {
         GridLayoutManager layoutManager = new GridLayoutManager(context, 5);
-        Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_STICKERS).addValueEventListener(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_STICKERS).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Product> stickers = new ArrayList<>();
@@ -260,12 +260,12 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
     private void openRatingDialog(float rating, int position) {
         Comment comment = (Comment) elements.get(position);
-        Util.mUserDatabaseRef.child(comment.getAuthorsUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(comment.getAuthorsUID()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 if (user != null) {
-                    Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).child(Constants.DATABASE_REF_QTD_USERS).addListenerForSingleValueEvent(new ValueEventListener() {
+                    Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).child(Constants.DATABASE_REF_QTD_USERS).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             DialogRateComment cdd = new DialogRateComment(activity, rating, comment, elements, user.isExtra());
@@ -357,7 +357,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             if (comment.getGroup().isReady() || Util.getUser().getUserUID().equals(comment.getAuthorsUID())) {
                 if (!comment.getGroup().getTempInfo().isFull() || Util.getUser().getUserUID().equals(comment.getAuthorsUID()) || Util.getUser().isExtra()) {
                     if (Util.getServer() == null) {
-                        Util.mSubjectDatabaseRef.child(comment.getSubject()).child(comment.getServerUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(comment.getSubject()).child(comment.getServerUID()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 Util.setServer(snapshot.getValue(Server.class));
@@ -370,7 +370,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                         });
                     }
                     if (calledFromTabHistory) {
-                        Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 Server server = snapshot.getValue(Server.class);

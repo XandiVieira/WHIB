@@ -2,19 +2,12 @@ package com.relyon.whib.util;
 
 public class Constants {
 
+    //Subscriptions SKU
     public static final String SKU_WHIB_MONTHLY = "whib_extra";
     public static final String SKU_WHIB_SIXMONTH = "whib_extra_6_month";
     public static final String SKU_WHIB_YEARLY = "whib_extra_1_year";
-    public static final String LIKE = "like";
-    public static final String DISLIKE = "dislike";
-    public static final String APROVE = "aprove";
-    public static final String AMEI = "amei";
-    public static final String BURRO = "burro";
-    public static final String LOL = "lol";
-    public static final String CONGRATS = "congrats";
-    public static final String REFLEXAO = "reflexao";
-    public static final String DEFINITION = "definition";
-    public static final String LACRADA = "lacrada";
+
+    //Database References
     public static final String DATABASE_REF_ADVANTAGE = "advantage";
     public static final String DATABASE_REF_VALUATION = "valuation";
     public static final String DATABASE_REF_NICKNAME = "nickname";
@@ -41,21 +34,27 @@ public class Constants {
     public static final String DATABASE_REF_REVIEWED = "reviewed";
     public static final String DATABASE_REF_TEMP_INFO = "tempInfo";
     public static final String DATABASE_REF_ACTIVATED = "activated";
+    public static final String DATABASE_REF_A_GROUP = "agroup";
+    public static final String DATABASE_REF_RATING = "rating";
+    public static final String DATABASE_REF_STICKERS = "stickers";
+    public static final String DATABASE_REF_QTD_USERS = "qtdUsers";
+    public static final String DATABASE_REF_USER_SENDER_ID = "userSenderUID";
+    public static final String DATABASE_REF_USER_RECEIVER_ID = "userReceiverUID";
+    public static final String DATABASE_REF_READY = "ready";
+    public static final String DATABASE_REF_QUANTITY = "quantity";
+    public static final String DATABASE_REF_PUNISHMENT = "punishment";
+
+    //Ads
     public static final String AD_UNIT_ID = "ca-app-pub-1676578761693318/6552659541";
     public static final String ADMOB_APP_ID = "ca-app-pub-1676578761693318~6855911877";
     public static final String TEST_DEVICE_ID = "47E616ECC65A51B01FE86E1A8D1BBFD5";
-    public static final String DATABASE_REF_A_GROUP = "agroup";
-    public static final String DATABASE_REF_RATING = "rating";
+
+    //Intent Params
     public static final String SERVER_EMPTY = "serverEmpty";
     public static final String SHOW_LAST_WARN = "showLastWarn";
     public static final String CAME_FROM_TIMELINE = "cameFromTimeline";
     public static final String CURRENT_SERVER = "currentServer";
-    public static final String DATABASE_REF_STICKERS = "stickers";
-    public static final String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1kIgbMkPuRow85OPOKyCbt30UrOY10n8s32NQLl+mJ6HnEyn/1jalwbvK9SuamdYq843c5OlqOwzxtF8wxt1TCCSUuvYVSzO5F/JHWO45i31bogZvP8cTsXwuB8/zdCyJFlA68DJee7db50VSuhUno7zm4J8CN0bUtOJJjb3Pma0eu4tvlkY/zpuOr9HbiLbhnEmQBFHFtrLhFIY9hni/1OtXfiqOwXop3ftdqI3PcFdGXTQkjiHPk13cnG0FzkqKOQsZRwAkNnp/T1AnkvntOtJ1R3Iz6mcXUaXdn17AFlATV4nQgCOzNz8k8aiVbKCF4dmKHNbcPREozaXwLFPywIDAQAB";
     public static final String USER_ID = "userId";
-    public static final String DATABASE_REF_QTD_USERS = "qtdUsers";
-    public static final String DATABASE_REF_USER_SENDER_ID = "userSenderUID";
-    public static final String DATABASE_REF_USER_RECEIVER_ID = "userReceiverUID";
     public static final String SERVER_ID = "serverId";
     public static final String COMMENT_ID = "commentId";
     public static final String CAME_FROM_PROFILE = "cameFromProfile";
@@ -63,10 +62,14 @@ public class Constants {
     public static final String GROUP_NUMBER = "groupNumber";
     public static final String SUBJECT = "subject";
     public static final String TOKEN = "token";
-    public static final String DATABASE_REF_READY = "ready";
-    public static final String DATABASE_REF_QUANTITY = "quantity";
-    public static final int COMMENTS_BY_ADD = 4;
+    public static final String SHOW_ADVANTAGES = "show_advantages";
+
+    //Legal documents
     public static final String PRIVACY_POLICY = "file:///android_asset/privacyPolicy.html";
     public static final String TERMS_AND_CONDITIONS = "file:///android_asset/terms.html";
-    public static final String SHOW_ADVANTAGES = "show_advantages";
+
+    //Business Rules
+    public static final int COMMENTS_BY_ADD = 4;
+    public static final int REPORTS_TO_BE_BLOCKED = 10;
+    public static int MAX_COMMENT_SIZE = 600;
 }

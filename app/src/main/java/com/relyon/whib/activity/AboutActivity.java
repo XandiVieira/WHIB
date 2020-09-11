@@ -74,7 +74,7 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     private void retrieveUser() {
-        Util.mUserDatabaseRef.child(Util.fbUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.fbUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 user = snapshot.getValue(User.class);

@@ -86,12 +86,13 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void setUserPreferenceProperty(String propertyReference, boolean value) {
-        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(propertyReference).setValue(value);
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(propertyReference).setValue(value);
     }
 
     private void logout() {
         FirebaseAuth.getInstance().signOut();
         LoginManager.getInstance().logOut();
+        Util.restartClass();
         goLoginScreen();
     }
 

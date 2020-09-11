@@ -118,7 +118,7 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
         } else if (numberOfComments >= 100) {
             Toast.makeText(context, context.getString(R.string.full_server), Toast.LENGTH_SHORT).show();
         }
-        Util.mSubjectDatabaseRef.child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(server.getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).setValue(server.getTempInfo());
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(server.getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).setValue(server.getTempInfo());
         goToServer(server, holder, position);
     }
 
@@ -144,10 +144,10 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     private void createNewServer() {
-        Util.mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Util.mSubjectDatabaseRef.removeEventListener(this);
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).removeEventListener(this);
                 ArrayList<Integer> helperList = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Subject subject1 = snapshot.getValue(Subject.class);
@@ -164,7 +164,7 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
                 ServerTempInfo serverTempInfo2 = new ServerTempInfo(0, true, findFirstMissing(number));
                 Timeline tl = new Timeline(null, subject2, null);
                 Server server = new Server(UUID.randomUUID().toString(), serverTempInfo2, subject2, tl);
-                Util.mSubjectDatabaseRef.child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(server.getServerUID()).setValue(server);
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(server.getServerUID()).setValue(server);
                 Util.setNumberOfServers(Util.getNumberOfServers() + 1);
             }
 
@@ -179,7 +179,7 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
         Toast.makeText(context, serverNumber + " - " + status, Toast.LENGTH_SHORT).show();
         Util.setServer(elements.get(position));
         User user = Util.getUser();
-        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).setValue(user);
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.getUser().getUserUID()).setValue(user);
         Intent intent = new Intent(context, TimelineActivity.class);
         intent.putExtra("subject", elements.get(position).getSubject()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);

@@ -16,11 +16,6 @@ public class Util {
     public static User user;
     public static FirebaseUser fbUser;
     public static DatabaseReference mDatabaseRef;
-    public static DatabaseReference mUserDatabaseRef;
-    public static DatabaseReference mSubjectDatabaseRef;
-    public static DatabaseReference mGroupDatabaseRef;
-    public static DatabaseReference mAdvantagesDatabaseRef;
-    public static DatabaseReference mReportDatabaseRef;
     public static int numberOfServers;
     public static String subject;
     public static Server server;
@@ -50,14 +45,6 @@ public class Util {
         Util.mDatabaseRef = mDatabaseRef;
     }
 
-    public static DatabaseReference getmUserDatabaseRef() {
-        return mUserDatabaseRef;
-    }
-
-    public static void setmUserDatabaseRef(DatabaseReference mUserDatabaseRef) {
-        Util.mUserDatabaseRef = mUserDatabaseRef;
-    }
-
     public static int getNumberOfServers() {
         return numberOfServers;
     }
@@ -82,10 +69,6 @@ public class Util {
         Util.server = server;
     }
 
-    public static void setmGroupDatabaseRef(DatabaseReference mGroupDatabaseRef) {
-        Util.mGroupDatabaseRef = mGroupDatabaseRef;
-    }
-
     public static void setComment(Comment comment) {
         Util.comment = comment;
     }
@@ -102,26 +85,6 @@ public class Util {
         Util.group = group;
     }
 
-    public static void setmAdvantagesDatabaseRef(DatabaseReference mAdvantagesDatabaseRef) {
-        Util.mAdvantagesDatabaseRef = mAdvantagesDatabaseRef;
-    }
-
-    public static DatabaseReference getmReportDatabaseRef() {
-        return mReportDatabaseRef;
-    }
-
-    public static void setmReportDatabaseRef(DatabaseReference mReportDatabaseRef) {
-        Util.mReportDatabaseRef = mReportDatabaseRef;
-    }
-
-    public static DatabaseReference getmSubjectDatabaseRef() {
-        return mSubjectDatabaseRef;
-    }
-
-    public static void setmSubjectDatabaseRef(DatabaseReference mSubjectDatabaseRef) {
-        Util.mSubjectDatabaseRef = mSubjectDatabaseRef;
-    }
-
     public static String formatDate(Long date, String pattern) {
 
         //yyyy/MM/dd - HH:mm:ss
@@ -131,5 +94,16 @@ public class Util {
         cal.setTime(new Date(date));
 
         return date_format.format(date);
+    }
+
+    public static void restartClass() {
+        setUser(null);
+        setFbUser(null);
+        setComment(null);
+        setGroup(null);
+        setmDatabaseRef(null);
+        setNumberOfServers(0);
+        setServer(null);
+        setSubject(null);
     }
 }

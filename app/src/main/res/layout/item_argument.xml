@@ -14,7 +14,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginLeft="5dp"
-        android:background="@drawable/square_primary_dark"
         android:elevation="7dp"
         android:orientation="vertical"
         android:paddingHorizontal="7dp"
@@ -26,7 +25,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="username"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="@dimen/very_small_text"
             android:visibility="gone" />
@@ -39,8 +37,8 @@
             android:fontFamily="@font/baloo"
             android:gravity="start"
             android:lineSpacingExtra="@dimen/text_spacing"
-            android:text="bla bla bla  bla blablablabla blabla blabla blabla bla blablabl blabla bla"
             android:textColor="@color/white"
+            android:textIsSelectable="true"
             android:textSize="@dimen/small_text" />
 
         <ImageView
@@ -55,9 +53,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="-3dp"
             android:gravity="end"
-            android:text="now"
             android:textColor="@color/white"
             android:textSize="@dimen/very_small_text" />
-
     </LinearLayout>
 </LinearLayout>

@@ -151,7 +151,7 @@ public class GroupActivity extends AppCompatActivity {
         });
         showComment.setOnClickListener(v -> showComment());
 
-        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).child(Constants.DATABASE_REF_ACTIVATED).addListenerForSingleValueEvent(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).child(Constants.DATABASE_REF_ACTIVATED).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Boolean activated = dataSnapshot.getValue(Boolean.class);
@@ -179,13 +179,13 @@ public class GroupActivity extends AppCompatActivity {
         back = findViewById(R.id.back);
         numberOfRoom = findViewById(R.id.serverRoom);
         subject = findViewById(R.id.subject);
-        rvArgument = findViewById(R.id.rvArgument);
-        inputMessage = findViewById(R.id.inputMessage);
+        rvArgument = findViewById(R.id.rv_argument);
+        inputMessage = findViewById(R.id.input_message);
         empty = findViewById(R.id.empty);
-        sendLayout = findViewById(R.id.sendView);
-        emojiButton = findViewById(R.id.sendEmoji);
-        sendIcon = findViewById(R.id.sendIcon);
-        showComment = findViewById(R.id.showComment);
+        sendLayout = findViewById(R.id.send_view);
+        emojiButton = findViewById(R.id.send_emoji);
+        sendIcon = findViewById(R.id.send_icon);
+        showComment = findViewById(R.id.show_comment);
     }
 
     private void setArgumentAdapter() {
@@ -198,11 +198,11 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void retrieveOwnerComment(String serverId, String commentId) {
-        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(serverId).child(Constants.DATABASE_REF_TIMELINE)
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(serverId).child(Constants.DATABASE_REF_TIMELINE)
                 .child(Constants.DATABASE_REF_COMMENT_LIST).child(commentId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(serverId).child(Constants.DATABASE_REF_TIMELINE)
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(serverId).child(Constants.DATABASE_REF_TIMELINE)
                         .child(Constants.DATABASE_REF_COMMENT_LIST).child(commentId).removeEventListener(this);
                 comment = dataSnapshot.getValue(Comment.class);
                 showComment.setVisibility(View.VISIBLE);
@@ -217,7 +217,7 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void retrieveArguments(String serverId, String commentId) {
-        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(serverId).child(Constants.DATABASE_REF_TIMELINE)
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(serverId).child(Constants.DATABASE_REF_TIMELINE)
                 .child(Constants.DATABASE_REF_COMMENT_LIST).child(commentId).child(Constants.DATABASE_REF_GROUP).child(Constants.DATABASE_REF_ARGUMENT_LIST).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -289,12 +289,12 @@ public class GroupActivity extends AppCompatActivity {
 
         Sending sending = new Sending(type, current_date.getTime(), Util.getUser().getUserName(), Util.getUser().getUserUID(), Util.getSubject());
         Argument argument = new Argument(inputMessage.getText().toString(), audioPath, Util.getGroup().getGroupUID(), current_date.getTime(), sending);
-        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE)
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE)
                 .child(Constants.DATABASE_REF_COMMENT_LIST).child(Util.getGroup().getCommentUID())
                 .child(Constants.DATABASE_REF_GROUP).child(Constants.DATABASE_REF_ARGUMENT_LIST).push().setValue(argument);
 
         if (arguments.isEmpty() && !Util.getGroup().isReady() && Util.getUser().getUserUID().equals(Util.getComment().getAuthorsUID())) {
-            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE)
+            Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE)
                     .child(Constants.DATABASE_REF_COMMENT_LIST).child(Util.getGroup().getCommentUID())
                     .child(Constants.DATABASE_REF_GROUP).child(Constants.DATABASE_REF_READY).setValue(true);
             empty.setVisibility(View.GONE);
@@ -303,11 +303,7 @@ public class GroupActivity extends AppCompatActivity {
 
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        View view = activity.getCurrentFocus();
-        if (view == null) {
-            view = new View(activity);
-        }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        imm.toggleSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), InputMethodManager.SHOW_FORCED, 0);
     }
 
     @Override

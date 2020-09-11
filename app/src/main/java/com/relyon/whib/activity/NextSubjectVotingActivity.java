@@ -119,11 +119,11 @@ public class NextSubjectVotingActivity extends AppCompatActivity {
                 }
             }
             String finalSubject = subject;
-            Util.mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
+            Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     boolean isFirst = true;
-                    Util.mSubjectDatabaseRef.removeEventListener(this);
+                    Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).removeEventListener(this);
                     String lessPopularSubject = "";
                     int popularity = 0;
                     ArrayList<Integer> helperList = new ArrayList<>();
@@ -174,8 +174,8 @@ public class NextSubjectVotingActivity extends AppCompatActivity {
         HashMap<String, Server> map = new HashMap<>();
         map.put(server.getServerUID(), server);
         Subject newSubject = new Subject(finalSubject, map, new Date().getTime(), true);
-        Util.mSubjectDatabaseRef.child(lessPopularSubject).removeValue();
-        Util.mSubjectDatabaseRef.child(finalSubject).setValue(newSubject);
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(lessPopularSubject).removeValue();
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(finalSubject).setValue(newSubject);
         Util.mDatabaseRef.child(Constants.DATABASE_REF_SURVEY).removeValue();
         finish();
         startActivity(new Intent(activity, NextSubjectVotingActivity.class));

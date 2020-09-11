@@ -79,6 +79,11 @@
 	- Refatoração de todo o código
 	- Corrigir erros e warnings de log
 - Create new storeItem não funciona (upload de imagem crashando "permission denial")
+	- Punishment system
+	- Logo da dialog reverseReport está feio
+	- Explicar como usuário é bloqueado nas dicas
+	- Teclado aparecendo automaticamente ao abrir tela de denúncia
+	- Nova opção "Fugiu do tema" nas opções de denúncia
 	- Imagem (lacrou) está com partes do fundo branco
 	- Filtrar por grupo (Vai buscar todos de uma vez só, sem paginação)
 	- Ajustar ads para comentários buscados onScrolling

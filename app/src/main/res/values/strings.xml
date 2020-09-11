@@ -206,6 +206,11 @@
     <string name="account_successfully_deleted">Sua conta foi excluída com sucesso</string>
     <string name="here_you_find_the_most_discussed_topics_at_the_moment">Aqui você encontra os assuntos que estão sendo debatidos no momento. Vamos lá, escolha um assunto.</string>
     <string name="we_will_help_you_to_understand_everything">Vamos te ajudar a entender tudo rapidinho com este tutorial</string>
+    <string name="type_your_message">Digite sua mensagem…</string>
+    <string name="send_the_first_message_to_activate_the_group">Envie a primeira mensagem para ativar o grupo e permitir a entrada dos usuários no grupo</string>
+    <string name="you_are_blocked">Você recebeu muitas denúncias e agora está bloqueado.</string>
+    <string name="you_can_return_after">Reveja seu comportamento e você poderá voltar ao app após a data:</string>
+    <string name="out_of_subject">O comentário não tem a ver com o tema</string>
 
     <string-array name="menu_settings">
         <item>Preferências</item>

@@ -90,7 +90,7 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
     @Override
     public void onProductPurchased(@NonNull String productId, TransactionDetails details) {
         if (isSubscription(productId)) {
-            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_EXTRA).setValue(true);
+            Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_EXTRA).setValue(true);
             Util.getUser().setExtra(true);
             new DialogCongratsSubscription(this).show();
         } else {
@@ -144,10 +144,10 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
     }
 
     private void rewardItem(Product product, int quantity) {
-        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.getUser().getUserUID()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).removeEventListener(this);
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.getUser().getUserUID()).removeEventListener(this);
                 User user = dataSnapshot.getValue(User.class);
                 Product myProduct;
                 if (user != null) {
@@ -165,7 +165,7 @@ public class StoreActivity extends AppCompatActivity implements BillingProcessor
                         user.getProducts().put(myProduct.getProductUID(), myProduct);
                     }
                     Util.getUser().setProducts(user.getProducts());
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PRODUCTS).child(myProduct.getProductUID()).setValue(myProduct);
+                    Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PRODUCTS).child(myProduct.getProductUID()).setValue(myProduct);
                     Toast.makeText(activity, R.string.stickers_were_added_to_your_gallery, Toast.LENGTH_LONG).show();
                 }
             }

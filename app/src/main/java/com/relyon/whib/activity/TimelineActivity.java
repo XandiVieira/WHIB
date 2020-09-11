@@ -118,7 +118,7 @@ public class TimelineActivity extends AppCompatActivity {
 
         activity = this;
 
-        commentListReference = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST);
+        commentListReference = Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST);
 
         setLayoutAttributes();
         initPopUpMenu();
@@ -199,7 +199,7 @@ public class TimelineActivity extends AppCompatActivity {
         menuIcon.setOnClickListener(v -> {
             popupMenu.setOnMenuItemClickListener(item -> {
                 if (user.isFirstTime()) {
-                    Util.mUserDatabaseRef.child(user.getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false);
+                    Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(user.getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false);
                 }
                 if (item.getTitle().equals(getString(R.string.settings))) {
                     Intent intent = new Intent(this, SettingsActivity.class).putExtra(Constants.SHOW_LAST_WARN, user.isFirstTime());
@@ -445,7 +445,7 @@ public class TimelineActivity extends AppCompatActivity {
     private void callTour() {
         if (user.isFirstTime()) {
             final FancyShowCaseView fancyShowCaseView = new FancyShowCaseView.Builder(this).
-                    customView(R.layout.custom_tour_timeline_comment, view -> view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mUserDatabaseRef.child(user.getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false))).focusBorderSize(10)
+                    customView(R.layout.custom_tour_timeline_comment, view -> view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(user.getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false))).focusBorderSize(10)
                     .focusRectAtPosition((int) firstCommentX + (firstCommentWidth / 2), (int) firstCommentY + (firstCommentHeight / 4), firstCommentWidth, firstCommentHeight)
                     .build();
 
@@ -486,7 +486,7 @@ public class TimelineActivity extends AppCompatActivity {
             queue.add(fancyShowCaseView4);
             queue.add(fancyShowCaseView5);
             queue.setCompleteListener(() -> {
-                Util.mUserDatabaseRef.child(user.getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false);
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(user.getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false);
                 DialogFinalWarn warn = new DialogFinalWarn(activity);
                 warn.show();
             });
@@ -517,13 +517,13 @@ public class TimelineActivity extends AppCompatActivity {
             decreaseServerNumberOfUsers();
         }
         Util.setServer(null);
-        Util.mUserDatabaseRef.child(user.getUserUID()).child(Constants.DATABASE_REF_TEMP_INFO).child(Constants.CURRENT_SERVER).setValue(null);
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(user.getUserUID()).child(Constants.DATABASE_REF_TEMP_INFO).child(Constants.CURRENT_SERVER).setValue(null);
         finish();
         startActivity(new Intent(this, MainActivity.class));
     }
 
     private void retrieveUser() {
-        Util.mUserDatabaseRef.child(Util.fbUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.fbUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 user = snapshot.getValue(User.class);
@@ -601,7 +601,7 @@ public class TimelineActivity extends AppCompatActivity {
 
     private void verifyServerIsActive() {
         if (Util.getServer() != null) {
-            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_ACTIVATED).addValueEventListener(new ValueEventListener() {
+            Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_ACTIVATED).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Boolean active = dataSnapshot.getValue(Boolean.class);
@@ -624,7 +624,7 @@ public class TimelineActivity extends AppCompatActivity {
     private void decreaseServerNumberOfUsers() {
         if (Util.getServer() != null) {
             Util.getServer().getTempInfo().setQtdUsers(Util.getServer().getTempInfo().getQtdUsers() - 1);
-            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).setValue(Util.getServer().getTempInfo());
+            Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).setValue(Util.getServer().getTempInfo());
         }
     }
 }

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_marginHorizontal="15dp"
     android:elevation="@dimen/elevation1"
-    app:cardBackgroundColor="@android:color/transparent"
     app:cardCornerRadius="25dp">
 
     <LinearLayout
@@ -13,19 +13,14 @@
         android:background="@drawable/rounded_primary"
         android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/logo70" />
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:fontFamily="@font/baloo"
             android:gravity="center"
-            android:lineSpacingExtra="-5dp"
-            android:text="@string/joke_text"
+            android:lineSpacingExtra="-10dp"
+            android:text="@string/you_are_blocked"
             android:textColor="@color/black"
             android:textSize="@dimen/subtitle" />
 
@@ -34,10 +29,19 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/baloo"
             android:gravity="center"
-            android:text="@string/reported"
+            android:lineSpacingExtra="@dimen/text_spacing"
+            android:text="@string/you_can_return_after"
             android:textColor="@color/red"
             android:textSize="@dimen/subtitle" />
 
+        <TextView
+            android:id="@+id/end_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/baloo"
+            android:gravity="center"
+            android:lineSpacingExtra="@dimen/text_spacing"
+            android:textColor="@color/white"
+            android:textSize="@dimen/subtitle" />
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

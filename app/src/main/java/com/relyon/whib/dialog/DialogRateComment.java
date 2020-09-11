@@ -21,7 +21,6 @@ import com.relyon.whib.R;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Group;
 import com.relyon.whib.modelo.GroupTempInfo;
-import com.relyon.whib.modelo.Notification;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.User;
 import com.relyon.whib.modelo.Valuation;
@@ -29,7 +28,6 @@ import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -116,17 +114,17 @@ public class DialogRateComment extends Dialog implements
             }
         }
         isWorthyToBeAGroup(i + 1);
-        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).setValue(comment);
-        Util.mUserDatabaseRef.child(comment.getAuthorsUID()).child(Constants.DATABASE_REF_VALUATION).addListenerForSingleValueEvent(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).setValue(comment);
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(comment.getAuthorsUID()).child(Constants.DATABASE_REF_VALUATION).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Util.mUserDatabaseRef.child(comment.getAuthorsUID()).child(Constants.DATABASE_REF_VALUATION).removeEventListener(this);
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(comment.getAuthorsUID()).child(Constants.DATABASE_REF_VALUATION).removeEventListener(this);
                 Valuation valuation = dataSnapshot.getValue(Valuation.class);
                 if (valuation != null) {
                     valuation.setNumberOfRatings(valuation.getNumberOfRatings() + 1);
                     valuation.setSumOfRatings(valuation.getSumOfRatings() + comment.getRating());
                 }
-                Util.mUserDatabaseRef.child(comment.getAuthorsUID()).child(Constants.DATABASE_REF_VALUATION).setValue(valuation);
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(comment.getAuthorsUID()).child(Constants.DATABASE_REF_VALUATION).setValue(valuation);
             }
 
             @Override
@@ -142,10 +140,10 @@ public class DialogRateComment extends Dialog implements
                 createNewGroup(serverNumber);
             }
         } else {
-            Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).addValueEventListener(new ValueEventListener() {
+            Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).removeEventListener(this);
+                    Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).removeEventListener(this);
                     long numberOfComments = snapshot.getChildrenCount();
                     int numberOfStickers = 0;
                     if (comment.getStickers() != null) {
@@ -183,27 +181,7 @@ public class DialogRateComment extends Dialog implements
         Group group = new Group(UUID.randomUUID().toString(), comment.getSubject(), serverNumber, Util.getServer().getTempInfo().getNumber(),
                 groupTempInfo, "text", new ArrayList<>(), userUIDList, false, comment.getCommentUID());
         comment.setGroup(group);
-        Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_A_GROUP).setValue(true);
-        Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_GROUP).setValue(group);
-        //sendNotification();
-    }
-
-    private void sendNotification() {
-        Notification notification = new Notification(comment.getAuthorsUID(), "Parabéns, seu comentário foi muito bem avaliado e agora é um grupo", new Date().getTime());
-        Util.mUserDatabaseRef.child(comment.getAuthorsUID()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Util.mUserDatabaseRef.child(comment.getAuthorsUID()).removeEventListener(this);
-                User user = snapshot.getValue(User.class);
-                if (user != null) {
-                    Util.mDatabaseRef.child(Constants.DATABASE_REF_NOTIFICATION).child(user.getToken()).setValue(notification);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_A_GROUP).setValue(true);
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_GROUP).setValue(group);
     }
 }

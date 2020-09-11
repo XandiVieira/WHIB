@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/surround_paddings"
-    android:windowSoftInputMode="adjustNothing|adjustPan"
+    android:windowSoftInputMode="stateAlwaysHidden"
     tools:context=".activity.GroupActivity">
 
     <LinearLayout
@@ -40,7 +40,7 @@
             android:textSize="@dimen/subtitle" />
 
         <ImageView
-            android:id="@+id/showComment"
+            android:id="@+id/show_comment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="8"
@@ -100,13 +100,13 @@
                         android:fontFamily="@font/baloo"
                         android:lineSpacingExtra="-7dp"
                         android:padding="12dp"
-                        android:text="Envie a primeira mensagem para ativar o grupo e permitir a entrada dos usuários no grupo"
+                        android:text="@string/send_the_first_message_to_activate_the_group"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="@dimen/small_text"
                         android:visibility="gone" />
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvArgument"
+                        android:id="@+id/rv_argument"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="@dimen/surround_margins"
@@ -125,27 +125,27 @@
                     android:padding="@dimen/surround_paddings">
 
                     <com.vanniktech.emoji.EmojiButton
-                        android:id="@+id/sendEmoji"
+                        android:id="@+id/send_emoji"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_gravity="center"
                         android:background="@drawable/ic_emoji" />
 
                     <com.vanniktech.emoji.EmojiEditText
-                        android:id="@+id/inputMessage"
+                        android:id="@+id/input_message"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginHorizontal="@dimen/surround_margins"
                         android:layout_weight="7"
-                        android:autofillHints="@string/wait_your_time"
+                        android:autofillHints="@string/type_your_message"
                         android:background="@drawable/rounded_grey"
                         android:fontFamily="@font/baloo"
-                        android:hint="@string/wait_your_time"
+                        android:hint="@string/type_your_message"
                         android:inputType="text"
                         android:padding="@dimen/padding_horizontal" />
 
                     <LinearLayout
-                        android:id="@+id/sendView"
+                        android:id="@+id/send_view"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center"
@@ -159,7 +159,7 @@
                         android:visibility="gone">
 
                         <ImageView
-                            android:id="@+id/sendIcon"
+                            android:id="@+id/send_icon"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"

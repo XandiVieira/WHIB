@@ -17,13 +17,13 @@ public class Report {
     public Report() {
     }
 
-    public Report(String userSenderUID, String userReceiverUID, String reason, String explanation, String text, String commentUID) {
+    public Report(String userSenderUID, String userReceiverUID, String reason, String explanation, String text, boolean fair, String commentUID) {
         this.userSenderUID = userSenderUID;
         this.userReceiverUID = userReceiverUID;
         this.reason = reason;
         this.explanation = explanation;
         this.text = text;
-        this.fair = false;
+        this.fair = fair;
         this.reviewed = false;
         this.commentUID = commentUID;
     }

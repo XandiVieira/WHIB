@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,15 +31,13 @@ import java.util.UUID;
 
 public class RecyclerViewAdmServerAdapter extends RecyclerView.Adapter<RecyclerViewAdmServerAdapter.ViewHolder> {
 
-    private final AppCompatActivity activity;
     private final ArrayList<Server> admServerList;
     private int comments = 0;
     private int servers = 0;
     private Context context;
 
-    public RecyclerViewAdmServerAdapter(ArrayList<Server> admServerList, AppCompatActivity activity, Context context) {
+    public RecyclerViewAdmServerAdapter(ArrayList<Server> admServerList, Context context) {
         this.admServerList = admServerList;
-        this.activity = activity;
         this.context = context;
     }
 
@@ -58,9 +55,7 @@ public class RecyclerViewAdmServerAdapter extends RecyclerView.Adapter<RecyclerV
 
         holder.subjectTitle.setText(server.getSubject());
 
-        holder.deleteButton.setOnClickListener(v -> {
-            Util.mSubjectDatabaseRef.child(server.getSubject()).removeValue();
-        });
+        holder.deleteButton.setOnClickListener(v -> Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(server.getSubject()).removeValue());
 
         holder.disableSwitch.setChecked(server.getTempInfo().isActivated());
 
@@ -72,10 +67,10 @@ public class RecyclerViewAdmServerAdapter extends RecyclerView.Adapter<RecyclerV
 
         holder.subjectTitle.setOnClickListener(v -> callDialog(position));
 
-        Util.mSubjectDatabaseRef.child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).addValueEventListener(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Util.mSubjectDatabaseRef.child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).removeEventListener(this);
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).removeEventListener(this);
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     Server server1 = snap.getValue(Server.class);
                     if (server1 != null && server1.getTimeline() != null && server1.getTimeline().getCommentList() != null && server1.getTimeline().getCommentList().size() > 0) {
@@ -102,14 +97,14 @@ public class RecyclerViewAdmServerAdapter extends RecyclerView.Adapter<RecyclerV
                 holder.disableSwitch.setText("Desativo");
             }
             server.getTempInfo().setActivated(holder.disableSwitch.isChecked());
-            Util.mSubjectDatabaseRef.child(server.getSubject()).addValueEventListener(new ValueEventListener() {
+            Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(server.getSubject()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Util.mSubjectDatabaseRef.child(server.getSubject()).removeEventListener(this);
+                    Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(server.getSubject()).removeEventListener(this);
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Server server1 = snapshot.getValue(Server.class);
                         if (server1 != null && server1.getSubject().equals(server.getSubject())) {
-                            Util.mSubjectDatabaseRef.child(server1.getSubject()).child(server1.getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).child(Constants.DATABASE_REF_ACTIVATED).setValue(server.getTempInfo().isActivated());
+                            Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(server1.getSubject()).child(server1.getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).child(Constants.DATABASE_REF_ACTIVATED).setValue(server.getTempInfo().isActivated());
                         }
                     }
                 }
@@ -134,7 +129,7 @@ public class RecyclerViewAdmServerAdapter extends RecyclerView.Adapter<RecyclerV
         builder.setView(input);
 
         // Set up the buttons
-        builder.setPositiveButton("OK", (dialog, which) -> Util.mSubjectDatabaseRef.addValueEventListener(new ValueEventListener() {
+        builder.setPositiveButton("OK", (dialog, which) -> Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<Integer> helperList = new ArrayList<>();
@@ -153,7 +148,7 @@ public class RecyclerViewAdmServerAdapter extends RecyclerView.Adapter<RecyclerV
                 Subject newSubject = new Subject(input.getText().toString(), map, new Date().getTime(), true);
                 map.put(input.getText().toString(), new Server(UUID.randomUUID().toString(), newSubject.getTitle(), (takenServerNumbers.length > 0 && takenServerNumbers[0] != null && takenServerNumbers[takenServerNumbers.length - 1] != null) ? findFirstAvailableServerNumber(takenServerNumbers) : 0));
                 newSubject.setServers(map);
-                Util.mSubjectDatabaseRef.push().setValue(newSubject);
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).push().setValue(newSubject);
             }
 
             @Override

@@ -86,7 +86,7 @@ public class DialogStickers extends Dialog {
         rvSticker.addItemDecoration(dividerItemDecoration);
         rvSticker.setLayoutManager(layoutManager);
         if (comment != null) {
-            Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).addValueEventListener(new ValueEventListener() {
+            Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     Comment comment = snapshot.getValue(Comment.class);

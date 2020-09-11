@@ -60,7 +60,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         if (getIntent().hasExtra(Constants.USER_ID) && !getIntent().getStringExtra(Constants.USER_ID).equals(Util.getUser().getUserUID())) {
-            Util.mUserDatabaseRef.child(getIntent().getStringExtra(Constants.USER_ID)).addListenerForSingleValueEvent(new ValueEventListener() {
+            Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(getIntent().getStringExtra(Constants.USER_ID)).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     user = dataSnapshot.getValue(User.class);
@@ -95,7 +95,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             popup.setOnMenuItemClickListener(item -> {
                 if (Util.getUser().isFirstTime()) {
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false);
+                    Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false);
                 }
                 Intent intent = new Intent();
                 if (item.getTitle().equals(getString(R.string.settings))) {
@@ -177,7 +177,7 @@ public class ProfileActivity extends AppCompatActivity {
                         Toast.makeText(activity, R.string.username_was_already_taken, Toast.LENGTH_SHORT).show();
                     } else {
                         Util.getmDatabaseRef().child(Constants.DATABASE_REF_NICKNAME).removeEventListener(this);
-                        Util.getmUserDatabaseRef().child(user.getUserUID()).setValue(user);
+                        Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(user.getUserUID()).setValue(user);
                         Util.getmDatabaseRef().child(Constants.DATABASE_REF_NICKNAME).push().setValue(user.getNickName());
                         onBackPressed();
                     }

@@ -21,6 +21,7 @@ import com.relyon.whib.R;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.User;
+import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.Util;
 
 import java.util.List;
@@ -56,7 +57,7 @@ public class RecyclerViewStickerAdapter extends RecyclerView.Adapter<RecyclerVie
             holder.quantity.setText("(" + product.getQuantity() + ")");
 
             if (comment != null) {
-                Util.mUserDatabaseRef.child(comment.getAuthorsUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(comment.getAuthorsUID()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         User user = snapshot.getValue(User.class);

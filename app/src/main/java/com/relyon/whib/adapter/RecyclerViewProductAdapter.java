@@ -138,10 +138,10 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     private void rewardItem(Product product, RewardItem rewardItem) {
-        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.getUser().getUserUID()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).removeEventListener(this);
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.getUser().getUserUID()).removeEventListener(this);
                 User user = dataSnapshot.getValue(User.class);
                 Product myProduct = null;
                 if (user != null) {
@@ -157,7 +157,7 @@ public class RecyclerViewProductAdapter extends RecyclerView.Adapter<RecyclerVie
                     Util.getUser().setProducts(user.getProducts());
                 }
                 if (myProduct != null) {
-                    Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PRODUCTS).child(myProduct.getProductUID()).setValue(myProduct);
+                    Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PRODUCTS).child(myProduct.getProductUID()).setValue(myProduct);
                 }
             }
 

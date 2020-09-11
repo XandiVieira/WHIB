@@ -34,7 +34,6 @@ public class DialogPostComment extends Dialog implements
     private Activity activity;
     private int characterCounter;
     private String subject;
-    private static int MAX_COMMENT_SIZE = 600;
 
     private Button comment;
     private EditText commentBox;
@@ -68,7 +67,7 @@ public class DialogPostComment extends Dialog implements
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.toString().trim().length() > 0) {
                     comment.setEnabled(true);
-                    characterCounter = MAX_COMMENT_SIZE - charSequence.length();
+                    characterCounter = Constants.MAX_COMMENT_SIZE - charSequence.length();
                     counter.setText(String.valueOf(characterCounter));
                 } else {
                     comment.setEnabled(false);
@@ -118,7 +117,7 @@ public class DialogPostComment extends Dialog implements
         if (validateComment()) {
             Comment comment = new Comment(Util.getServer().getServerUID(), commentBox.getText().toString(), (float) 0.0, Util.getUser().getPhotoPath(), date, 0, (float) 0.0, sending, false, null);
 
-            DatabaseReference commentListRef = Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST);
+            DatabaseReference commentListRef = Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST);
             String commentUID = commentListRef.push().getKey();
             comment.setCommentUID(commentUID);
             if (commentUID != null) {
@@ -140,8 +139,8 @@ public class DialogPostComment extends Dialog implements
             Toast.makeText(getContext(), "O comentário deve possuir pelo menos 30 caracteres!", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (commentBox.getText().length() > MAX_COMMENT_SIZE) {
-            Toast.makeText(getContext(), "O comentário deve possuir no máximo " + MAX_COMMENT_SIZE + " caracteres!", Toast.LENGTH_SHORT).show();
+        if (commentBox.getText().length() > Constants.MAX_COMMENT_SIZE) {
+            Toast.makeText(getContext(), "O comentário deve possuir no máximo " + Constants.MAX_COMMENT_SIZE + " caracteres!", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;

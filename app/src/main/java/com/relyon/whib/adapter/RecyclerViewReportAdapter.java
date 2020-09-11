@@ -10,19 +10,26 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.R;
+import com.relyon.whib.modelo.Punishment;
 import com.relyon.whib.modelo.Report;
-import com.relyon.whib.util.Util;
+import com.relyon.whib.modelo.User;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class RecyclerViewReportAdapter extends RecyclerView.Adapter<RecyclerViewReportAdapter.ViewHolder> {
 
-    private List<Report> elements;
+    private List<Report> reports;
 
-    public RecyclerViewReportAdapter(List<Report> elements) {
-        this.elements = elements;
+    public RecyclerViewReportAdapter(List<Report> reports) {
+        this.reports = reports;
     }
 
     @NonNull
@@ -34,7 +41,7 @@ public class RecyclerViewReportAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Report report = elements.get(position);
+        Report report = reports.get(position);
 
         if (Util.getUser().isAdmin() || report.isFair()) {
             holder.reason.setText(report.getReason());
@@ -54,6 +61,7 @@ public class RecyclerViewReportAdapter extends RecyclerView.Adapter<RecyclerView
                 holder.fair.setOnClickListener(v -> {
                     report.setFair(true);
                     Util.mDatabaseRef.child(Constants.DATABASE_REF_REPORT).child(report.getId()).setValue(report);
+                    getUserReportsQuantity(report);
                     notifyDataSetChanged();
                 });
                 holder.unfair.setOnClickListener(v -> {
@@ -68,23 +76,65 @@ public class RecyclerViewReportAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
+    private void getUserReportsQuantity(Report report) {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(report.getUserReceiverUID()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(report.getUserReceiverUID()).removeEventListener(this);
+                User user = snapshot.getValue(User.class);
+                if (user != null) {
+                    Punishment punishment;
+                    if (user.getPunishment() != null) {
+                        punishment = user.getPunishment();
+                        punishment.setReportsAfterLastBlock(punishment.getReportsAfterLastBlock() + 1);
+                        if (punishment.getReportsAfterLastBlock() >= Constants.REPORTS_TO_BE_BLOCKED) {
+                            punishment.setBlocked(true);
+                            blockUser(user.getUserUID(), punishment);
+                        }
+                    } else {
+                        punishment = new Punishment(1, false, 0L);
+                    }
+                    Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(user.getUserUID()).child(Constants.DATABASE_REF_PUNISHMENT).setValue(punishment);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void blockUser(String userReceiverUID, Punishment punishment) {
+        Long aWeekInTheFuture = addAWeek();
+        punishment.setEndDate(aWeekInTheFuture);
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(userReceiverUID).child(Constants.DATABASE_REF_PUNISHMENT).setValue(punishment);
+    }
+
+    private Long addAWeek() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DAY_OF_YEAR, 7);
+        return calendar.getTime().getTime();
+    }
+
     @Override
     public int getItemCount() {
-        return elements.size();
+        return reports.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView reason;
-        TextView text;
-        TextView explanation;
-        TextView sender;
-        TextView receiver;
-        LinearLayout receiverAndSender;
-        LinearLayout explanationLayout;
-        LinearLayout decision;
-        Button fair;
-        Button unfair;
+        private TextView reason;
+        private TextView text;
+        private TextView explanation;
+        private TextView sender;
+        private TextView receiver;
+        private LinearLayout receiverAndSender;
+        private LinearLayout explanationLayout;
+        private LinearLayout decision;
+        private Button fair;
+        private Button unfair;
 
         ViewHolder(View rowView) {
             super(rowView);

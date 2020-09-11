@@ -19,6 +19,7 @@ import com.relyon.whib.R;
 import com.relyon.whib.adapter.AdvantageAdapter;
 import com.relyon.whib.dialog.DialogChooseSubscription;
 import com.relyon.whib.modelo.Advantage;
+import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class TabWhibExtra extends Fragment {
             dialog.show(fm, "");
         });
 
-        Util.mAdvantagesDatabaseRef.addValueEventListener(new ValueEventListener() {
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_ADVANTAGE).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 advantages = new ArrayList<>();

@@ -10,13 +10,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/rounded_primary"
+        android:background="@drawable/rounded_white"
         android:orientation="vertical">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@mipmap/logo2" />
+            android:src="@drawable/logo70" />
 
         <TextView
             android:layout_width="match_parent"
@@ -24,6 +24,7 @@
             android:layout_marginTop="5dp"
             android:fontFamily="@font/baloo"
             android:gravity="center"
+            android:lineSpacingExtra="-10dp"
             android:text="@string/not_reason"
             android:textColor="@color/black"
             android:textSize="@dimen/subtitle" />
@@ -37,7 +38,5 @@
             android:text="@string/reverse_report"
             android:textColor="@color/red"
             android:textSize="@dimen/subtitle" />
-
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

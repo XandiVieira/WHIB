@@ -22,8 +22,8 @@ import com.relyon.whib.modelo.Argument;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Product;
 import com.relyon.whib.modelo.Sending;
-import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -84,7 +84,7 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
         if (isForGallery) {
             Product product = allStickers.get(position);
             holder.title.setText(product.getTitle());
-            if (product.isContained(myStickers) != null) {
+            if (product.isContained(myStickers) != null && product.isContained(myStickers).getQuantity() > 0) {
                 storageReference.child("images/" + product.getItemSKU() + ".png").getDownloadUrl().addOnSuccessListener(uri -> Glide.with(context).load(uri).into(holder.image));
                 for (Product mine : myStickers.values()) {
                     if (mine.getItemSKU().equals(product.getItemSKU())) {
@@ -142,20 +142,20 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
 
             Sending sending = new Sending("text", current_date.getTime(), Util.getUser().getUserName(), Util.getUser().getUserUID(), Util.getSubject());
             Argument argument = new Argument(null, sku, Util.getGroup().getGroupUID(), current_date.getTime(), sending);
-            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE)
+            Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE)
                     .child(Constants.DATABASE_REF_COMMENT_LIST).child(Util.getGroup().getCommentUID())
                     .child(Constants.DATABASE_REF_GROUP).child(Constants.DATABASE_REF_ARGUMENT_LIST).push().setValue(argument);
             Util.getUser().getProducts().get(id).setQuantity(Util.getUser().getProducts().get(id).getQuantity() - 1);
-            Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PRODUCTS).child(id).child(Constants.DATABASE_REF_QUANTITY).setValue(Util.getUser().getProducts().get(id).getQuantity());
+            Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PRODUCTS).child(id).child(Constants.DATABASE_REF_QUANTITY).setValue(Util.getUser().getProducts().get(id).getQuantity());
         }
 
         if (Util.getUser().getProducts().get(id) != null) {
             Product userProduct = Util.getUser().getProducts().get(id);
             if (isForDialog && comment != null) {
-                Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_STICKERS).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_STICKERS).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_STICKERS).child(id).removeEventListener(this);
+                        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_STICKERS).child(id).removeEventListener(this);
                         Product commentProduct = dataSnapshot.getValue(Product.class);
                         if (comment.getStickers() == null) {
                             comment.setStickers(new HashMap<>());
@@ -168,13 +168,13 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
                                 commentProduct.setQuantity(1);
                                 comment.getStickers().put(id, commentProduct);
                             }
-                            Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_STICKERS).child(id).setValue(comment.getStickers().get(id));
+                            Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_STICKERS).child(id).setValue(comment.getStickers().get(id));
                         } else {
                             userProduct.setQuantity(1);
-                            Util.mSubjectDatabaseRef.child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_STICKERS).child(id).setValue(userProduct);
+                            Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_STICKERS).child(id).setValue(userProduct);
                         }
                         Util.getUser().getProducts().get(userProduct.getProductUID()).setQuantity(quantity);
-                        Util.mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PRODUCTS).child(userProduct.getProductUID()).child(Constants.DATABASE_REF_QUANTITY).setValue(quantity);
+                        Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PRODUCTS).child(userProduct.getProductUID()).child(Constants.DATABASE_REF_QUANTITY).setValue(quantity);
                         if (recyclerViewCommentAdapter != null && commentPosition != null) {
                             recyclerViewCommentAdapter.refreshToShowSticker(commentPosition);
                         }
@@ -189,7 +189,7 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
         }
 
         if (argumentList != null && comment == null && argumentList.isEmpty() && !Util.getGroup().isReady() && Util.getUser().getUserUID().equals(Util.getComment().getAuthorsUID())) {
-            Util.mSubjectDatabaseRef.child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE)
+            Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE)
                     .child(Constants.DATABASE_REF_COMMENT_LIST).child(Util.getGroup().getCommentUID())
                     .child(Constants.DATABASE_REF_GROUP).child(Constants.DATABASE_REF_READY).setValue(true);
         }
