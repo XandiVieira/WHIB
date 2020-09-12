@@ -264,6 +264,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                 if (new Date().getTime() >= user.getPunishment().getEndDate()) {
                     user.getPunishment().setBlocked(false);
                     user.getPunishment().setEndDate(0L);
+                    user.getPunishment().setReportsAfterLastBlock(0);
                     Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(user.getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).setValue(user.getPunishment());
                 } else if (user.getPunishment() != null) {
                     showBlockDialog(user.getPunishment().getEndDate());
