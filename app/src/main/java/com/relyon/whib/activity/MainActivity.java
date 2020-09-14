@@ -265,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                     user.getPunishment().setBlocked(false);
                     user.getPunishment().setEndDate(0L);
                     user.getPunishment().setReportsAfterLastBlock(0);
-                    Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(user.getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).setValue(user.getPunishment());
+                    Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(user.getUserUID()).child(Constants.DATABASE_REF_PUNISHMENT).setValue(user.getPunishment());
                 } else if (user.getPunishment() != null) {
                     showBlockDialog(user.getPunishment().getEndDate());
                 }
@@ -284,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         if (firebaseUser.getPhotoUrl() != null) {
             userPhotoPath = firebaseUser.getPhotoUrl().toString();
         }
-        user = new User(firebaseUser.getUid(), firebaseInstanceId, firebaseUser.getDisplayName(), userPhotoPath, setUserValuation(), null, false, true,
+        user = new User(firebaseUser.getUid(), firebaseInstanceId, firebaseUser.getDisplayName(), userPhotoPath, setUserValuation(), null, true,
                 false, null, 0, null, null,
                 false, setUserPreferences(), null, false, new Punishment(0, false, 0L));
 

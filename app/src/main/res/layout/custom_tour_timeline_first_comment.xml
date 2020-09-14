@@ -18,12 +18,11 @@
             android:fontFamily="@font/baloo"
             android:gravity="top"
             android:lineSpacingExtra="-15dp"
-            android:text="Legal! Este é um assunto bem interessante"
+            android:text="@string/cool_this_subject_is_interesting"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="@dimen/subtitle"
             tools:ignore="RtlCompat" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -40,7 +39,7 @@
             android:fontFamily="@font/baloo"
             android:gravity="center_horizontal"
             android:lineSpacingExtra="-5dp"
-            android:text="Aqui você pode ver os comentários que já foram feitos sobre este assunto."
+            android:text="@string/here_you_can_see_the_made_comments_on_this_subject"
             android:textColor="@color/white"
             android:textSize="@dimen/small_text" />
 
@@ -53,7 +52,33 @@
             android:fontFamily="@font/baloo"
             android:gravity="center_horizontal"
             android:lineSpacingExtra="-5dp"
-            android:text="Utilize as estrelas para avaliar o comentário."
+            android:text="@string/use_the_starts_to_valuate_a_comment"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/small_text" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/baloo"
+            android:gravity="center_horizontal"
+            android:lineSpacingExtra="-5dp"
+            android:text="@string/to_send_stickers_is_easy"
+            android:textColor="@color/white"
+            android:textSize="@dimen/small_text" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/baloo"
+            android:gravity="center_horizontal"
+            android:lineSpacingExtra="-5dp"
+            android:text="@string/to_report_an_user_you_just_need"
             android:textColor="@color/colorAccent"
             android:textSize="@dimen/small_text" />
 
@@ -62,6 +87,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:baselineAligned="false"
         android:orientation="horizontal">
 
         <LinearLayout

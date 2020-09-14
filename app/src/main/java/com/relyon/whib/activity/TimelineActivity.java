@@ -245,7 +245,7 @@ public class TimelineActivity extends AppCompatActivity {
             listView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-                    listView.getViewTreeObserver().removeOnGlobalLayoutListener((ViewTreeObserver.OnGlobalLayoutListener) this);
+                    listView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     expandedMenuWidth = listView.getWidth();
                     expandedMenuHeight = listView.getHeight();
                     popupMenu.dismiss();
@@ -445,7 +445,7 @@ public class TimelineActivity extends AppCompatActivity {
     private void callTour() {
         if (user.isFirstTime()) {
             final FancyShowCaseView fancyShowCaseView = new FancyShowCaseView.Builder(this).
-                    customView(R.layout.custom_tour_timeline_comment, view -> view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(user.getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false))).focusBorderSize(10)
+                    customView(R.layout.custom_tour_timeline_first_comment, view -> view.findViewById(R.id.skipTutorial).setOnClickListener(v -> Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(user.getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false))).focusBorderSize(10)
                     .focusRectAtPosition((int) firstCommentX + (firstCommentWidth / 2), (int) firstCommentY + (firstCommentHeight / 4), firstCommentWidth, firstCommentHeight)
                     .build();
 
@@ -513,9 +513,6 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if (Util.getServer() != null) {
-            decreaseServerNumberOfUsers();
-        }
         Util.setServer(null);
         Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(user.getUserUID()).child(Constants.DATABASE_REF_TEMP_INFO).child(Constants.CURRENT_SERVER).setValue(null);
         finish();
@@ -618,13 +615,6 @@ public class TimelineActivity extends AppCompatActivity {
             });
         } else {
             startActivity(new Intent(this, MainActivity.class));
-        }
-    }
-
-    private void decreaseServerNumberOfUsers() {
-        if (Util.getServer() != null) {
-            Util.getServer().getTempInfo().setQtdUsers(Util.getServer().getTempInfo().getQtdUsers() - 1);
-            Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).setValue(Util.getServer().getTempInfo());
         }
     }
 }

@@ -45,7 +45,7 @@
             android:layout_margin="5dp"
             android:fontFamily="@font/baloo"
             android:gravity="center"
-            android:text="@string/our_goal"
+            android:text="@string/mission"
             android:textColor="@color/black"
             android:textSize="22sp" />
 
@@ -55,7 +55,8 @@
             android:layout_marginTop="-5dp"
             android:fontFamily="@font/baloo"
             android:gravity="center"
-            android:text="@string/goal"
+            android:lineSpacingExtra="-5dp"
+            android:text="@string/our_mission_is"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="18sp" />
 
@@ -65,7 +66,7 @@
             android:layout_margin="5dp"
             android:fontFamily="@font/baloo"
             android:gravity="center"
-            android:text="@string/our_mission"
+            android:text="@string/vision"
             android:textColor="@color/black"
             android:textSize="22sp" />
 
@@ -75,7 +76,8 @@
             android:layout_marginTop="-5dp"
             android:fontFamily="@font/baloo"
             android:gravity="center"
-            android:text="@string/mission"
+            android:lineSpacingExtra="-5dp"
+            android:text="@string/our_vision_is"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="18sp" />
     </LinearLayout>

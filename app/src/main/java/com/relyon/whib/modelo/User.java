@@ -11,7 +11,6 @@ public class User {
     private String photoPath;
     private Valuation valuation;
     private List<User> following;
-    private boolean blocked;
     private boolean firstTime;
     private boolean extra;
     private List<String> groupsUIDList;
@@ -29,14 +28,13 @@ public class User {
     public User() {
     }
 
-    public User(String userUID, String token, String userName, String photoPath, Valuation valuation, List<User> following, boolean blocked, boolean firstTime, boolean extra, List<String> groupsUIDList, int followers, List<Complaint> pendingDoubts, List<Product> itemsListUID, boolean changedName, Preferences preferences, String nickName, boolean isAdmin, Punishment punishment) {
+    public User(String userUID, String token, String userName, String photoPath, Valuation valuation, List<User> following, boolean firstTime, boolean extra, List<String> groupsUIDList, int followers, List<Complaint> pendingDoubts, List<Product> itemsListUID, boolean changedName, Preferences preferences, String nickName, boolean isAdmin, Punishment punishment) {
         this.userUID = userUID;
         this.token = token;
         this.userName = userName;
         this.photoPath = photoPath;
         this.valuation = valuation;
         this.following = following;
-        this.blocked = blocked;
         this.firstTime = firstTime;
         this.extra = extra;
         this.groupsUIDList = groupsUIDList;
@@ -96,14 +94,6 @@ public class User {
 
     public void setFollowing(List<User> following) {
         this.following = following;
-    }
-
-    public boolean isBlocked() {
-        return blocked;
-    }
-
-    public void setBlocked(boolean blocked) {
-        this.blocked = blocked;
     }
 
     public boolean isFirstTime() {
