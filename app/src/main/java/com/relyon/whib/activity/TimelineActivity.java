@@ -476,9 +476,7 @@ public class TimelineActivity extends AppCompatActivity {
                         if (menuIcon.isShown()) {
                             menuIcon.performClick();
                         }
-                    }).focusBorderSize(10)
-                    .focusRectAtPosition(((int) (menuX - menuWidth)), (int) (menuY + (menuHeight / 2)) + (expandedMenuHeight / 2), expandedMenuWidth, expandedMenuHeight)
-                    .build();
+                    }).focusBorderSize(10).build();
 
             queue.add(fancyShowCaseView);
             queue.add(fancyShowCaseView2);

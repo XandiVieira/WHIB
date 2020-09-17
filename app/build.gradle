@@ -6,7 +6,7 @@ android {
         applicationId "com.relyon.whib"
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 60
+        versionCode 62
         versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
@@ -34,8 +34,8 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-core:17.5.0' //Firebase Core
     implementation 'com.google.gms:google-services:4.3.3' //Google play services
-    implementation 'com.google.firebase:firebase-ads:19.3.0' //Admob
-    implementation 'com.google.firebase:firebase-auth:19.3.2' //Authentication Firebase
+    implementation 'com.google.firebase:firebase-ads:19.4.0' //Admob
+    implementation 'com.google.firebase:firebase-auth:19.4.0' //Authentication Firebase
     implementation 'com.google.firebase:firebase-firestore:21.6.0' //Cloudstore
     implementation 'com.google.firebase:firebase-messaging:20.2.4' //Cloud messaging
     implementation 'com.google.firebase:firebase-storage:19.2.0' //Cloud storage
@@ -47,7 +47,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:19.4.0' //Realtime database
     implementation 'com.google.firebase:firebase-config:19.2.0' //Remote config
 
-    implementation 'com.google.android.gms:play-services-ads:19.3.0'
+    implementation 'com.google.android.gms:play-services-ads:19.4.0'
     implementation 'com.anjlab.android.iab.v3:library:1.0.44'
     implementation 'com.android.billingclient:billing:3.0.0'
 
