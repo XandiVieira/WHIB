@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     private BillingProcessor billingProcessor;
     private String firebaseInstanceId;
     private DisplayMetrics displayMetrics;
+    private List<String> ownersFriends;
 
     private LinearLayout progressBar;
     private LinearLayout profileIcon;
@@ -91,6 +92,8 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         activity = this;
 
         FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+
+        getOwnersFriends();
 
         setupBillingProcessor();
 
@@ -127,6 +130,23 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                 FragmentTransaction fm = this.getSupportFragmentManager().beginTransaction();
                 DialogChooseSubscription dialogChooseSubscription = DialogChooseSubscription.newInstance();
                 dialogChooseSubscription.show(fm, "");
+            }
+        });
+    }
+
+    private void getOwnersFriends() {
+        ownersFriends = new ArrayList<>();
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_EXTRA).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot snap : snapshot.getChildren()) {
+                    ownersFriends.add(snap.getKey());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
@@ -394,10 +414,9 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     }
 
     private boolean updateUserSubscription(String subscriptionSKU) {
-        TransactionDetails subscriptionTransactionDetails =
-                billingProcessor.getSubscriptionTransactionDetails(subscriptionSKU);
+        TransactionDetails subscriptionTransactionDetails = billingProcessor.getSubscriptionTransactionDetails(subscriptionSKU);
 
-        if (subscriptionTransactionDetails != null && subscriptionTransactionDetails.purchaseInfo.purchaseData.purchaseState == PurchaseState.PurchasedSuccessfully) {
+        if ((subscriptionTransactionDetails != null && subscriptionTransactionDetails.purchaseInfo.purchaseData.purchaseState == PurchaseState.PurchasedSuccessfully) || (ownersFriends != null && ownersFriends.contains(user.getUserUID()))) {
             Util.getUser().setExtra(true);
             mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_EXTRA).setValue(true);
             return true;
