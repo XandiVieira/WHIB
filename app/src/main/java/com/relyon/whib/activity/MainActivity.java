@@ -93,13 +93,13 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
 
         FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
 
+        startFirebaseInstances();
+
         getOwnersFriends();
 
         setupBillingProcessor();
 
         setLayoutAttributes();
-
-        startFirebaseInstances();
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(instanceIdResult -> firebaseInstanceId = instanceIdResult.getToken());

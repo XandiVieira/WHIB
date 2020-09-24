@@ -43,6 +43,9 @@ public class DialogRateComment extends Dialog implements
 
     private TextView ratingTV;
     public Comment comment;
+    private Button rate;
+    private Button cancel;
+    private MaterialRatingBar ratingBar;
 
     public DialogRateComment(Activity activity, float rating, Comment comment, ArrayList<Object> elements, Boolean commentOwnerIsExtra) {
         super(activity);
@@ -60,10 +63,8 @@ public class DialogRateComment extends Dialog implements
         setContentView(R.layout.dialog_rate_comment);
         setTransparentBackground();
 
-        Button rate = findViewById(R.id.rate_Button);
-        Button cancel = findViewById(R.id.cancel_button);
-        MaterialRatingBar ratingBar = findViewById(R.id.ratingBar);
-        ratingTV = findViewById(R.id.ratingTV);
+        setLayoutAttributes();
+
         cancel.setOnClickListener(this);
         ratingTV.setText(String.valueOf(rating));
         rate.setOnClickListener(this);
@@ -74,6 +75,13 @@ public class DialogRateComment extends Dialog implements
             ratingBar1.setRating(rating);
             this.rating = rating;
         });
+    }
+
+    private void setLayoutAttributes() {
+        rate = findViewById(R.id.rate_Button);
+        cancel = findViewById(R.id.cancel_button);
+        ratingBar = findViewById(R.id.ratingBar);
+        ratingTV = findViewById(R.id.ratingTV);
     }
 
     private void setTransparentBackground() {
@@ -181,6 +189,7 @@ public class DialogRateComment extends Dialog implements
         Group group = new Group(UUID.randomUUID().toString(), comment.getSubject(), serverNumber, Util.getServer().getTempInfo().getNumber(),
                 groupTempInfo, "text", new ArrayList<>(), userUIDList, false, comment.getCommentUID());
         comment.setGroup(group);
+        comment.setAGroup(true);
         Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_A_GROUP).setValue(true);
         Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_GROUP).setValue(group);
     }
