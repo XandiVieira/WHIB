@@ -134,7 +134,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/surround_margins"
-            android:background="@drawable/rounded_accent_square"
+            android:background="@drawable/rounded_primary"
             android:elevation="@dimen/elevation1"
             android:fontFamily="@font/baloo"
             android:gravity="center"
@@ -142,6 +142,6 @@
             android:text="@string/choose_next_subject"
             android:textAlignment="center"
             android:textSize="@dimen/normal_text"
-            android:visibility="gone" />
+            android:visibility="visible" />
     </LinearLayout>
 </LinearLayout>
