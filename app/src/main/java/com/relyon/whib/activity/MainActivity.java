@@ -283,6 +283,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
 
     private void changeLayoutForExtraUsers() {
         chooseSubjectButton.setBackgroundResource(R.drawable.rounded_primary);
+        chooseSubjectButton.setPadding(30, 0, 30, 0);
     }
 
     private void handleBlocks(User user) {
