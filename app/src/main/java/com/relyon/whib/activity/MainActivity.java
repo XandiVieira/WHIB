@@ -269,6 +269,9 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                 callWelcomeTour();
                 verifyUserSubscriptionStatus();
                 profileIcon.setVisibility(View.VISIBLE);
+                //if (user.isExtra()) {
+                    changeLayoutForExtraUsers();
+                //}
             }
 
             @Override
@@ -276,6 +279,10 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
 
             }
         });
+    }
+
+    private void changeLayoutForExtraUsers() {
+        chooseSubjectButton.setBackgroundResource(R.color.colorPrimary);
     }
 
     private void handleBlocks(User user) {
