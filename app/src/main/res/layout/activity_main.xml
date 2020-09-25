@@ -134,7 +134,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/surround_margins"
-            android:background="@drawable/rounded_primary"
+            android:background="@drawable/rounded_accent_square"
             android:elevation="@dimen/elevation1"
             android:fontFamily="@font/baloo"
             android:gravity="center"

@@ -19,8 +19,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.relyon.whib.R;
 import com.relyon.whib.modelo.Alternative;
 import com.relyon.whib.modelo.Survey;
-import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +90,7 @@ public class RecyclerViewAlternativeAdapter extends RecyclerView.Adapter<Recycle
             }));
         } else {
             updateUI(holder);
-            holder.percentage.setText(percentage + "%");
+            holder.percentage.setText(String.format("%.02f", percentage) + "%");
             if (alternative.getVotedForMe().contains(Util.getUser().getUserUID())) {
                 holder.check.setVisibility(View.VISIBLE);
             }
