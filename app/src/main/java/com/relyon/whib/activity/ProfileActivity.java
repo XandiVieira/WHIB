@@ -130,6 +130,8 @@ public class ProfileActivity extends AppCompatActivity {
     private void setUserProfile() {
         if (user.getPreferences().isShowPhoto()) {
             Glide.with(this).load(user.getPhotoPath()).apply(RequestOptions.circleCropTransform()).into(photo);
+        } else {
+            photo.setImageDrawable(getResources().getDrawable(R.mipmap.ic_no_pic));
         }
 
         userName.setText(user.getUserName());

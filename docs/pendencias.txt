@@ -100,6 +100,7 @@ LOJA
 
 FUTURO
 - Servidor Internacional
+- Servidor fútil (dividir por categorias: esportes, economia, fofoca, politica)
 - FAQ
 - Login com google
 - Títulos ao receber x selos de um tipo (ex.: Maria - A lacradora, João - O Amado, Joana - A Odiada)... possibilidade de ocultar o título

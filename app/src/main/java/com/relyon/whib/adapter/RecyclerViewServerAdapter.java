@@ -33,11 +33,11 @@ import java.util.UUID;
 public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerViewServerAdapter.ViewHolder> {
 
     private final Context context;
-    private ArrayList<Server> elements;
+    private ArrayList<Server> servers;
 
-    RecyclerViewServerAdapter(@NonNull Context context, ArrayList<Server> elements) {
+    RecyclerViewServerAdapter(@NonNull Context context, ArrayList<Server> servers) {
         this.context = context;
-        this.elements = elements;
+        this.servers = servers;
     }
 
     @NonNull
@@ -49,11 +49,24 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        Server server = elements.get(position);
+        Server server = servers.get(position);
         int numberOfComments = 0;
         if (server.getTimeline() != null && server.getTimeline().getCommentList() != null) {
             numberOfComments = server.getTimeline().getCommentList().size();
         }
+
+        setServerFullness(numberOfComments, holder, position);
+
+        int finalNumberOfComments = numberOfComments;
+        holder.full1.setOnClickListener(v -> callServer(position, holder, finalNumberOfComments, server));
+        holder.full2.setOnClickListener(v -> callServer(position, holder, finalNumberOfComments, server));
+        holder.full3.setOnClickListener(v -> callServer(position, holder, finalNumberOfComments, server));
+        holder.full4.setOnClickListener(v -> callServer(position, holder, finalNumberOfComments, server));
+        holder.serverNumber.setOnClickListener(v -> callServer(position, holder, finalNumberOfComments, server));
+        holder.itemView.setOnClickListener(v -> callServer(position, holder, finalNumberOfComments, server));
+    }
+
+    private void setServerFullness(int numberOfComments, ViewHolder holder, int position) {
         if (numberOfComments > 25) {
             holder.full2.setVisibility(View.VISIBLE);
         } else {
@@ -90,26 +103,18 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
             holder.full3.setBackgroundResource(R.drawable.rounded_red);
             holder.full4.setBackgroundResource(R.drawable.rounded_red);
             holder.serverStatus.setTextColor(Color.rgb(188, 0, 0));
-            elements.get(position).getTempInfo().setActivated(false);
+            servers.get(position).getTempInfo().setActivated(false);
         } else {
             holder.full4.setVisibility(View.GONE);
         }
 
-        holder.serverNumber.setText("Servidor #" + (elements.get(position).getTempInfo().getNumber() + 1));
+        holder.serverNumber.setText("Servidor #" + (servers.get(position).getTempInfo().getNumber() + 1));
 
         if (numberOfComments < 100) {
             holder.serverStatus.setText("Disponível");
         } else {
             holder.serverStatus.setText("Lotado");
         }
-
-        int finalNumberOfComments = numberOfComments;
-        holder.full1.setOnClickListener(v -> callServer(position, holder, finalNumberOfComments, server));
-        holder.full2.setOnClickListener(v -> callServer(position, holder, finalNumberOfComments, server));
-        holder.full3.setOnClickListener(v -> callServer(position, holder, finalNumberOfComments, server));
-        holder.full4.setOnClickListener(v -> callServer(position, holder, finalNumberOfComments, server));
-        holder.serverNumber.setOnClickListener(v -> callServer(position, holder, finalNumberOfComments, server));
-        holder.itemView.setOnClickListener(v -> callServer(position, holder, finalNumberOfComments, server));
     }
 
     private void callServer(int position, ViewHolder holder, int numberOfComments, Server server) {
@@ -124,7 +129,7 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
 
     private void isThereAvailableServers(int numberOfComments) {
         boolean allServersAreFull = true;
-        for (int i = 0; i < elements.size(); i++) {
+        for (int i = 0; i < servers.size(); i++) {
             if (numberOfComments < 95) {
                 allServersAreFull = false;
             }
@@ -157,7 +162,7 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
                         }
                     }
                 }
-                String subject2 = elements.get(0).getSubject();
+                String subject2 = servers.get(0).getSubject();
                 Integer[] number = new Integer[helperList.size()];
                 helperList.toArray(number);
                 Arrays.sort(number);
@@ -177,27 +182,27 @@ public class RecyclerViewServerAdapter extends RecyclerView.Adapter<RecyclerView
 
     private void goTimelineScreen(String serverNumber, String status, int position) {
         Toast.makeText(context, serverNumber + " - " + status, Toast.LENGTH_SHORT).show();
-        Util.setServer(elements.get(position));
+        Util.setServer(servers.get(position));
         User user = Util.getUser();
         Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.getUser().getUserUID()).setValue(user);
         Intent intent = new Intent(context, TimelineActivity.class);
-        intent.putExtra("subject", elements.get(position).getSubject()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("subject", servers.get(position).getSubject()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 
     @Override
     public int getItemCount() {
-        return elements.size();
+        return servers.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView serverNumber;
-        TextView serverStatus;
-        LinearLayout full1;
-        LinearLayout full2;
-        LinearLayout full3;
-        LinearLayout full4;
+        private TextView serverNumber;
+        private TextView serverStatus;
+        private LinearLayout full1;
+        private LinearLayout full2;
+        private LinearLayout full3;
+        private LinearLayout full4;
 
         ViewHolder(View rowView) {
             super(rowView);

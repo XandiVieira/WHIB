@@ -156,6 +156,8 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                                 .load(comment.getUserPhotoURL())
                                 .apply(RequestOptions.circleCropTransform())
                                 .into(holder.photo);
+                    } else {
+                        holder.photo.setImageDrawable(context.getResources().getDrawable(R.mipmap.ic_no_pic));
                     }
                     if (calledFromGroup || Util.getUser().getUserUID().equals(comment.getAuthorsUID())) {
                         holder.report.setVisibility(View.INVISIBLE);
