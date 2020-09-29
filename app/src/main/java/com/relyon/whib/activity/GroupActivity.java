@@ -133,7 +133,7 @@ public class GroupActivity extends AppCompatActivity {
 
         back.setOnClickListener(v -> onBackPressed());
 
-        numberOfRoom.setText("Servidor " + Util.getServer().getTempInfo().getNumber() + " - Sala " + Util.getGroup().getNumber());
+        numberOfRoom.setText("Servidor " + (Util.getServer().getTempInfo().getNumber() + 1) + " - Sala " + Util.getGroup().getNumber());
         subject.setText(Util.getServer().getSubject());
 
         sendLayout.setOnClickListener(v -> {
