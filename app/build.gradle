@@ -6,7 +6,7 @@ android {
         applicationId "com.relyon.whib"
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 67
+        versionCode 68
         versionName "BETA"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true

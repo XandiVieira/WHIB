@@ -54,7 +54,7 @@ import com.relyon.whib.util.Util;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 import me.toptas.fancyshowcase.FancyShowCaseQueue;
@@ -327,7 +327,7 @@ public class TimelineActivity extends AppCompatActivity {
 
     private void initializeAds() {
         if (!user.isFirstTime() && !user.isExtra()) {
-            List<String> testDeviceIds = Collections.singletonList(Constants.TEST_DEVICE_ID);
+            List<String> testDeviceIds = new ArrayList<>(Arrays.asList(Constants.TEST_DEVICE_ID, Constants.TEST_DEVICE_ID2));
             RequestConfiguration configuration =
                     new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
             MobileAds.setRequestConfiguration(configuration);

@@ -118,7 +118,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                 RatingBar.OnRatingBarChangeListener ratingBarChangeListener = (ratingBar, rating, fromTouch) -> {
                     if (fromTouch) {
                         if (!comment.getAlreadyRatedList().contains(Util.getUser().getUserUID()) && !comment.getAuthorsUID().equals(Util.getUser().getUserUID())) {
-                            openRatingDialog(rating, position);
+                            openRatingDialog(rating, holder.getAdapterPosition());
                             holder.ratingTV.setText(String.valueOf(rating));
                             ratingBar.setRating(rating);
                         }
@@ -132,7 +132,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                     }
                 });
                 holder.text.setOnLongClickListener(v -> {
-                    showStickersDialog(position);
+                    showStickersDialog(holder.getAdapterPosition());
                     return true;
                 });
             } else {
