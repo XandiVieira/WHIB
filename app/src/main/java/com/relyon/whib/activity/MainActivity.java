@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -18,6 +19,9 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.PurchaseState;
 import com.anjlab.android.iab.v3.TransactionDetails;
@@ -31,6 +35,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.relyon.whib.R;
@@ -48,6 +53,9 @@ import com.relyon.whib.modelo.Valuation;
 import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.SelectSubscription;
 import com.relyon.whib.util.Util;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -120,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
 
         mFirebaseRemoteConfig.setConfigSettingsAsync(new FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(3600L).build());
 
-        profileIcon.setOnClickListener(view -> goToProfile());
+        profileIcon.setOnClickListener(view -> preNotif());
         logoutLayout.setOnClickListener(view -> logout());
 
         chooseSubjectButton.setOnClickListener(v -> {
@@ -132,6 +140,43 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                 dialogChooseSubscription.show(fm, "");
             }
         });
+    }
+
+    private void preNotif() {
+        FirebaseMessaging.getInstance().subscribeToTopic("/topics/new_subject");
+        String topic = "/topics/new_subject"; //topic has to match what the receiver subscribed to
+
+        JSONObject notification = new JSONObject();
+        JSONObject notifcationBody = new JSONObject();
+
+        try {
+            notifcationBody.put("title", "Temos um novo assunto!");
+            notifcationBody.put("message", "Venha conferir.");   //Enter your notification message
+            notification.put("to", topic);
+            notification.put("data", notifcationBody);
+            Log.e("TAG", "try");
+        } catch (JSONException e) {
+            Log.e("TAG", "onCreate: " + e.getMessage());
+        }
+        sendNotification(notification);
+    }
+
+    private void sendNotification(JSONObject notification) {
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        Log.e("TAG", "sendNotification");
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Constants.FCM_API, notification, response -> Log.i("TAG", "onResponse: $response"), error -> {
+            Toast.makeText(getApplicationContext(), "Request error", Toast.LENGTH_LONG).show();
+            Log.i("TAG", "onErrorResponse: Didn't work");
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+                params.put("Authorization", Constants.serverKey);
+                params.put("Content-Type", Constants.contentType);
+                return params;
+            }
+        };
+        requestQueue.add(jsonObjectRequest);
     }
 
     private void getOwnersFriends() {
