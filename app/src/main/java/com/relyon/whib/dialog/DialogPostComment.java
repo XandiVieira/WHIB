@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -16,15 +17,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.relyon.whib.R;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Sending;
 import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.Util;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import me.toptas.fancyshowcase.FancyShowCaseView;
 
@@ -130,13 +140,14 @@ public class DialogPostComment extends Dialog implements
             Util.getUser().getCommentList().add(comment);
             Toast.makeText(getContext(), "Comentário postado!", Toast.LENGTH_SHORT).show();
             commentBox.setText("");
+            FirebaseMessaging.getInstance().subscribeToTopic("/topics/" + commentUID);
             callTour();
         }
     }
 
     private boolean validateComment() {
-        if (commentBox.getText().length() < 30 && !Util.getUser().isAdmin()) {
-            Toast.makeText(getContext(), "O comentário deve possuir pelo menos 30 caracteres!", Toast.LENGTH_SHORT).show();
+        if (commentBox.getText().length() < Constants.MIN_COMMENT_SIZE && !Util.getUser().isAdmin()) {
+            Toast.makeText(getContext(), "O comentário deve possuir pelo menos" + Constants.MIN_COMMENT_SIZE + "caracteres!", Toast.LENGTH_SHORT).show();
             return false;
         }
         if (commentBox.getText().length() > Constants.MAX_COMMENT_SIZE) {
@@ -144,6 +155,42 @@ public class DialogPostComment extends Dialog implements
             return false;
         }
         return true;
+    }
+
+    private void preNotif(String subject) {
+        String topic = "/topics/new_subject"; //topic has to match what the receiver subscribed to
+
+        JSONObject notification = new JSONObject();
+        JSONObject notifcationBody = new JSONObject();
+
+        try {
+            notifcationBody.put("title", "Temos um novo assunto. Venha conferir!");
+            notifcationBody.put("message", subject);   //Enter your notification message
+            notification.put("to", topic);
+            notification.put("data", notifcationBody);
+            Log.e("TAG", "try");
+        } catch (JSONException e) {
+            Log.e("TAG", "onCreate: " + e.getMessage());
+        }
+        sendNotification(notification);
+    }
+
+    private void sendNotification(JSONObject notification) {
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        Log.e("TAG", "sendNotification");
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Constants.FCM_API, notification, response -> Log.i("TAG", "onResponse: $response"), error -> {
+            Toast.makeText(getContext(), "Request error", Toast.LENGTH_LONG).show();
+            Log.i("TAG", "onErrorResponse: Didn't work");
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+                params.put("Authorization", Constants.serverKey);
+                params.put("Content-Type", Constants.contentType);
+                return params;
+            }
+        };
+        requestQueue.add(jsonObjectRequest);
     }
 
     private void callTour() {

@@ -1,5 +1,12 @@
 package com.relyon.whib.util;
 
+import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.relyon.whib.modelo.Comment;
@@ -7,9 +14,14 @@ import com.relyon.whib.modelo.Group;
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.User;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Util {
 
@@ -105,5 +117,41 @@ public class Util {
         setNumberOfServers(0);
         setServer(null);
         setSubject(null);
+    }
+
+    public static void preNotif(String title, String message, String topicName, Context context) {
+        String topic = "/topics/" + topicName; //topic has to match what the receiver subscribed to
+
+        JSONObject notification = new JSONObject();
+        JSONObject notificationBody = new JSONObject();
+
+        try {
+            notificationBody.put("title", title);
+            notificationBody.put("message", message + ".");
+            notification.put("to", topic);
+            notification.put("data", notificationBody);
+            Log.e("TAG", "try");
+        } catch (JSONException e) {
+            Log.e("TAG", "onCreate: " + e.getMessage());
+        }
+        sendNotification(notification, context);
+    }
+
+    private static void sendNotification(JSONObject notification, Context context) {
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        Log.e("TAG", "sendNotification");
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Constants.FCM_API, notification, response -> Log.i("TAG", "onResponse: $response"), error -> {
+            Toast.makeText(context, "Request error", Toast.LENGTH_LONG).show();
+            Log.i("TAG", "onErrorResponse: Didn't work");
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+                params.put("Authorization", Constants.serverKey);
+                params.put("Content-Type", Constants.contentType);
+                return params;
+            }
+        };
+        requestQueue.add(jsonObjectRequest);
     }
 }

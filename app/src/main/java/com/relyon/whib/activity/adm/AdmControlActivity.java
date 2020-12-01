@@ -138,6 +138,7 @@ public class AdmControlActivity extends AppCompatActivity {
                 final Subject subject = new Subject(newSubject, serversMap,
                         new Date().getTime(), true);
                 Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(server.getSubject()).setValue(subject);
+                Util.preNotif(Constants.NEW_SUBJECT_CHECK_IT_OUT, subject.getTitle(), "new_subject", getApplicationContext());
             }
 
             @Override

@@ -72,10 +72,15 @@ public class Constants {
     //Business Rules
     public static final int COMMENTS_BY_ADD = 4;
     public static final int REPORTS_TO_BE_BLOCKED = 10;
+    public static final int MIN_COMMENT_SIZE = 30;
     public static int MAX_COMMENT_SIZE = 600;
 
     //Notifications
     public static String FCM_API = "https://fcm.googleapis.com/fcm/send";
     public static String serverKey = "key=" + "AAAAh_Lx3Fg:APA91bF6Qwk2g9AOCYQXWgEZFLSWn0-ydqB9LZ3qBOqqDctpEwTZhgvR-Ir3wCZ-CWSaqZPtFmdtft98Q8RZEi1NZNezzV5bHXHokPCyzfO_ApDiM_Mb1pyMMxv3g78BpCMCL6HVbDWI";
     public static String contentType = "application/json";
+    public static String NEW_SUBJECT_CHECK_IT_OUT = "Venha conferir nosso novo assunto!";
+    public static final String CONGRATS_YOUR_COMMENT_IS_A_GROUP = "Parabéns, você tem um novo grupo!";
+    public static final String YOUR_COMMENT_WAS_WELL_RATED = "Seu comentário foi muito bem avaliado";
+    public static final String NEW_SUBJECT = "new_subject";
 }
