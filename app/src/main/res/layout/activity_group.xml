@@ -141,7 +141,7 @@
                         android:background="@drawable/rounded_grey"
                         android:fontFamily="@font/baloo"
                         android:hint="@string/type_your_message"
-                        android:inputType="text"
+                        android:inputType="textCapSentences"
                         android:padding="@dimen/padding_horizontal" />
 
                     <LinearLayout

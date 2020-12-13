@@ -382,9 +382,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                                     if (comment.getGroup().getUserListUID() != null && !comment.getGroup().getUserListUID().contains(Util.getUser().getUserUID())) {
                                         comment.getGroup().getUserListUID().add(Util.getUser().getUserUID());
                                     }
-                                    Util.setComment(comment);
-                                    Util.setGroup(comment.getGroup());
-                                    context.startActivity(new Intent(context, GroupActivity.class).putExtra(Constants.SERVER_ID, comment.getServerUID()).putExtra(Constants.COMMENT_ID, comment.getCommentUID()).putExtra(Constants.CAME_FROM_PROFILE, true).putExtra(Constants.COMMENT_NUMBER, comment.getGroup().getServerNumber()).putExtra(Constants.GROUP_NUMBER, comment.getGroup().getNumber()).putExtra(Constants.SUBJECT, comment.getSubject()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                    context.startActivity(new Intent(context, GroupActivity.class).putExtra(Constants.SERVER_ID, comment.getServerUID()).putExtra(Constants.COMMENT_ID, comment.getCommentUID()).putExtra(Constants.CAME_FROM_PROFILE, true).putExtra(Constants.COMMENT_NUMBER, comment.getGroup().getServerNumber()).putExtra(Constants.GROUP_NUMBER, comment.getGroup().getNumber()).putExtra(Constants.SUBJECT, comment.getSubject()).putExtra(Constants.COMMENT_ID, comment.getCommentUID()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                                     activity.finish();
                                 }
                             }
@@ -398,9 +396,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                         if (comment.getGroup().getUserListUID() != null && !comment.getGroup().getUserListUID().contains(Util.getUser().getUserUID())) {
                             comment.getGroup().getUserListUID().add(Util.getUser().getUserUID());
                         }
-                        Util.setComment(comment);
-                        Util.setGroup(comment.getGroup());
-                        context.startActivity(new Intent(context, GroupActivity.class).putExtra(Constants.SERVER_ID, Util.getServer().getServerUID()).putExtra(Constants.COMMENT_ID, comment.getCommentUID()).putExtra(Constants.COMMENT_NUMBER, comment.getGroup().getServerNumber()).putExtra(Constants.GROUP_NUMBER, comment.getGroup().getNumber()).putExtra(Constants.SUBJECT, comment.getSubject()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        context.startActivity(new Intent(context, GroupActivity.class).putExtra(Constants.SERVER_ID, Util.getServer().getServerUID()).putExtra(Constants.COMMENT_ID, comment.getCommentUID()).putExtra(Constants.COMMENT_NUMBER, comment.getGroup().getServerNumber()).putExtra(Constants.GROUP_NUMBER, comment.getGroup().getNumber()).putExtra(Constants.SUBJECT, comment.getSubject()).putExtra(Constants.COMMENT_ID, comment.getCommentUID()).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                         activity.finish();
                     }
                 } else {

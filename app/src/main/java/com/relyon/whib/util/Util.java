@@ -119,13 +119,23 @@ public class Util {
         setSubject(null);
     }
 
-    public static void preNotif(String title, String message, String topicName, Context context) {
-        String topic = "/topics/" + topicName; //topic has to match what the receiver subscribed to
+    public static void prepareNotification(String title, String message, String topicName, String intent, Comment comment, Context context) {
+        String topic = "/topics/" + topicName; //topic has to match the one the receiver subscribed to
 
         JSONObject notification = new JSONObject();
         JSONObject notificationBody = new JSONObject();
 
         try {
+            if (intent.equals("group") && comment != null) {
+                notificationBody.put("comment", comment);
+                notificationBody.put("intent", "group");
+                notificationBody.put(Constants.SUBJECT, comment.getSubject());
+                notificationBody.put(Constants.GROUP_NUMBER, comment.getGroup().getNumber());
+
+                //notificationBody.put(Constants.SERVER_NUMBER, comment.getS());
+                notificationBody.put(Constants.COMMENT_ID, comment.getCommentUID());
+                notificationBody.put(Constants.SERVER_ID, comment.getServerUID());
+            }
             notificationBody.put("title", title);
             notificationBody.put("message", message + ".");
             notification.put("to", topic);

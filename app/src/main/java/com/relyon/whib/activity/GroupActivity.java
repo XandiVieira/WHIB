@@ -32,6 +32,7 @@ import com.relyon.whib.dialog.DialogStickers;
 import com.relyon.whib.modelo.Argument;
 import com.relyon.whib.modelo.Comment;
 import com.relyon.whib.modelo.Sending;
+import com.relyon.whib.modelo.Server;
 import com.relyon.whib.util.Constants;
 import com.relyon.whib.util.Util;
 import com.vanniktech.emoji.EmojiButton;
@@ -49,6 +50,8 @@ public class GroupActivity extends AppCompatActivity {
     private Activity activity;
     private ArrayList<Argument> arguments;
     private Comment comment;
+    private Server server;
+    private String commentUID;
     private RecyclerViewArgumentAdapter argumentAdapter;
     private boolean isForSticker = true;
     private boolean cameFromProfile = false;
@@ -59,7 +62,7 @@ public class GroupActivity extends AppCompatActivity {
     private EmojiButton emojiButton;
     private TextView empty;
     private TextView numberOfRoom;
-    private TextView subject;
+    private TextView txtSubject;
     private LinearLayout sendLayout;
     private ImageView back;
     private ImageView sendIcon;
@@ -74,97 +77,132 @@ public class GroupActivity extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         activity = this;
-        argumentAdapter = null;
-
-        verifyUserCameFromProfile();
 
         setLayoutAttributes();
 
-        setArgumentAdapter();
+        if (intentContainsNeededParams()) {
+            String subject = getIntent().getStringExtra(Constants.SUBJECT);
+            String serverUID = getIntent().getStringExtra(Constants.SERVER_ID);
+            commentUID = getIntent().getStringExtra(Constants.COMMENT_ID);
+            Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(subject).child(Constants.DATABASE_REF_SERVERS).child(serverUID).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    server = snapshot.getValue(Server.class);
+                    if (server != null) {
+                        snapshot.getRef().child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(commentUID).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                comment = snapshot.getValue(Comment.class);
+                                if (comment != null) {
+                                    verifyUserCameFromProfile();
 
-        if (arguments.isEmpty() && !Util.getGroup().isReady() && Util.getUser().getUserUID().equals(Util.getComment().getAuthorsUID())) {
-            empty.setVisibility(View.VISIBLE);
-        }
+                                    setArgumentAdapter();
 
-        if (getIntent().hasExtra(Constants.SERVER_ID) && getIntent().hasExtra(Constants.COMMENT_ID)) {
-            String serverId = getIntent().getStringExtra(Constants.SERVER_ID);
-            String commentId = getIntent().getStringExtra(Constants.COMMENT_ID);
+                                    if (arguments.isEmpty() && !comment.getGroup().isReady() && Util.getUser().getUserUID().equals(comment.getAuthorsUID())) {
+                                        empty.setVisibility(View.VISIBLE);
+                                    }
 
-            if (serverId != null && commentId != null) {
-                retrieveOwnerComment(serverId, commentId);
-                retrieveArguments(serverId, commentId);
-            }
-        }
+                                    if (getIntent().hasExtra(Constants.SERVER_ID) && getIntent().hasExtra(Constants.COMMENT_ID)) {
+                                        String serverId = getIntent().getStringExtra(Constants.SERVER_ID);
+                                        String commentId = getIntent().getStringExtra(Constants.COMMENT_ID);
 
-        inputMessage.setOnClickListener(v -> {
-            if (emojiPopup != null) {
-                emojiPopup.dismiss();
-            }
-        });
+                                        if (serverId != null && commentId != null) {
+                                            retrieveOwnerComment(serverId, commentId);
+                                            retrieveArguments(serverId, commentId);
+                                        }
+                                    }
+                                }
 
-        inputMessage.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                                inputMessage.setOnClickListener(v -> {
+                                    if (emojiPopup != null) {
+                                        emojiPopup.dismiss();
+                                    }
+                                });
 
-            }
+                                inputMessage.addTextChangedListener(new TextWatcher() {
+                                    @Override
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            @Override
-            public void onTextChanged(CharSequence text, int start, int before, int count) {
-                changeSendButton(text);
-            }
+                                    }
 
-            @Override
-            public void afterTextChanged(Editable s) {
+                                    @Override
+                                    public void onTextChanged(CharSequence text, int start, int before, int count) {
+                                        changeSendButton(text);
+                                    }
 
-            }
-        });
+                                    @Override
+                                    public void afterTextChanged(Editable s) {
 
-        emojiButton.setOnClickListener(v -> {
-            hideKeyboard(this);
-            emojiPopup = EmojiPopup.Builder.fromRootView(inputMessage).setOnEmojiClickListener((emoji, imageView) -> {
-                String text = inputMessage.getText() != null ? inputMessage.getText().toString() : "";
-                if (emoji.getTooltipText() != null) {
-                    inputMessage.setText(text + " " + emoji.getTooltipText().toString());
-                    inputMessage.setSelection(inputMessage.getText().length());
-                }
-            }).build(inputMessage);
-            emojiPopup.toggle();
-        });
+                                    }
+                                });
 
-        back.setOnClickListener(v -> onBackPressed());
+                                emojiButton.setOnClickListener(v -> {
+                                    hideKeyboard(activity);
+                                    emojiPopup = EmojiPopup.Builder.fromRootView(inputMessage).setOnEmojiClickListener((emoji, imageView) -> {
+                                        String text = inputMessage.getText() != null ? inputMessage.getText().toString() : "";
+                                        if (emoji.getTooltipText() != null) {
+                                            inputMessage.setText(text + " " + emoji.getTooltipText().toString());
+                                            inputMessage.setSelection(inputMessage.getText().length());
+                                        }
+                                    }).build(inputMessage);
+                                    emojiPopup.toggle();
+                                });
 
-        numberOfRoom.setText("Servidor " + (Util.getServer().getTempInfo().getNumber() + 1) + " - Sala " + Util.getGroup().getNumber());
-        subject.setText(Util.getServer().getSubject());
+                                back.setOnClickListener(v -> onBackPressed());
 
-        sendLayout.setOnClickListener(v -> {
-            if (isForSticker) {
-                DialogStickers cdd = new DialogStickers(this, Util.getUser().getProducts() != null ? new ArrayList<>(Util.getUser().getProducts().values()) : new ArrayList<>(), arguments, null, null, null);
-                cdd.show();
-            } else {
-                if (inputMessage.getText() != null && !inputMessage.getText().toString().isEmpty()) {
-                    if (emojiPopup != null && emojiPopup.isShowing()) {
-                        emojiPopup.dismiss();
+                                numberOfRoom.setText(server != null ? "Servidor " + (server.getTempInfo().getNumber() + 1) + " - Sala " + comment.getGroup().getNumber() : "Sala " + comment.getGroup().getNumber());
+                                txtSubject.setText(server.getSubject());
+
+                                sendLayout.setOnClickListener(v -> {
+                                    if (isForSticker) {
+                                        DialogStickers cdd = new DialogStickers(activity, Util.getUser().getProducts() != null ? new ArrayList<>(Util.getUser().getProducts().values()) : new ArrayList<>(), arguments, null, null, null);
+                                        cdd.show();
+                                    } else {
+                                        if (inputMessage.getText() != null && !inputMessage.getText().toString().isEmpty()) {
+                                            if (emojiPopup != null && emojiPopup.isShowing()) {
+                                                emojiPopup.dismiss();
+                                            }
+                                            sendMessage();
+                                        }
+                                    }
+                                });
+
+                                showComment.setOnClickListener(v -> showComment());
+
+                                Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(server.getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).child(Constants.DATABASE_REF_ACTIVATED).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        Boolean activated = dataSnapshot.getValue(Boolean.class);
+                                        if (activated != null && !activated) {
+                                            onBackPressed();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
                     }
-                    sendMessage();
                 }
-            }
-        });
-        showComment.setOnClickListener(v -> showComment());
 
-        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TEMP_INFO).child(Constants.DATABASE_REF_ACTIVATED).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Boolean activated = dataSnapshot.getValue(Boolean.class);
-                if (activated != null && !activated) {
-                    onBackPressed();
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
                 }
-            }
+            });
+        }
+    }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+    private boolean intentContainsNeededParams() {
+        return getIntent().hasExtra(Constants.SUBJECT) && getIntent().hasExtra(Constants.SERVER_ID) && getIntent().getStringExtra(Constants.SUBJECT) != null && getIntent().getStringExtra(Constants.SERVER_ID) != null;
     }
 
     private void verifyUserCameFromProfile() {
@@ -178,7 +216,7 @@ public class GroupActivity extends AppCompatActivity {
     private void setLayoutAttributes() {
         back = findViewById(R.id.back);
         numberOfRoom = findViewById(R.id.serverRoom);
-        subject = findViewById(R.id.subject);
+        txtSubject = findViewById(R.id.subject);
         rvArgument = findViewById(R.id.rv_argument);
         inputMessage = findViewById(R.id.input_message);
         empty = findViewById(R.id.empty);
@@ -198,11 +236,11 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void retrieveOwnerComment(String serverId, String commentId) {
-        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(serverId).child(Constants.DATABASE_REF_TIMELINE)
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(serverId).child(Constants.DATABASE_REF_TIMELINE)
                 .child(Constants.DATABASE_REF_COMMENT_LIST).child(commentId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(serverId).child(Constants.DATABASE_REF_TIMELINE)
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(serverId).child(Constants.DATABASE_REF_TIMELINE)
                         .child(Constants.DATABASE_REF_COMMENT_LIST).child(commentId).removeEventListener(this);
                 comment = dataSnapshot.getValue(Comment.class);
                 showComment.setVisibility(View.VISIBLE);
@@ -217,7 +255,7 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void retrieveArguments(String serverId, String commentId) {
-        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(serverId).child(Constants.DATABASE_REF_TIMELINE)
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(serverId).child(Constants.DATABASE_REF_TIMELINE)
                 .child(Constants.DATABASE_REF_COMMENT_LIST).child(commentId).child(Constants.DATABASE_REF_GROUP).child(Constants.DATABASE_REF_ARGUMENT_LIST).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -266,7 +304,7 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void sendMessage() {
-        switch (Util.getGroup().getMode()) {
+        switch (comment.getGroup().getMode()) {
             case "Áudio":
                 createNewArgument("audio", null);
                 break;
@@ -287,15 +325,15 @@ public class GroupActivity extends AppCompatActivity {
         cal.setTime(data);
         Date current_date = cal.getTime();
 
-        Sending sending = new Sending(type, current_date.getTime(), Util.getUser().getUserName(), Util.getUser().getUserUID(), Util.getSubject());
-        Argument argument = new Argument(inputMessage.getText().toString(), audioPath, Util.getGroup().getGroupUID(), current_date.getTime(), sending);
-        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE)
-                .child(Constants.DATABASE_REF_COMMENT_LIST).child(Util.getGroup().getCommentUID())
+        Sending sending = new Sending(type, current_date.getTime(), Util.getUser().getUserName(), Util.getUser().getUserUID(), comment.getSubject());
+        Argument argument = new Argument(inputMessage.getText().toString(), audioPath, comment.getGroup().getGroupUID(), current_date.getTime(), sending);
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(server.getServerUID()).child(Constants.DATABASE_REF_TIMELINE)
+                .child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getGroup().getCommentUID())
                 .child(Constants.DATABASE_REF_GROUP).child(Constants.DATABASE_REF_ARGUMENT_LIST).push().setValue(argument);
 
-        if (arguments.isEmpty() && !Util.getGroup().isReady() && Util.getUser().getUserUID().equals(Util.getComment().getAuthorsUID())) {
-            Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE)
-                    .child(Constants.DATABASE_REF_COMMENT_LIST).child(Util.getGroup().getCommentUID())
+        if (arguments.isEmpty() && !comment.getGroup().isReady() && Util.getUser().getUserUID().equals(comment.getAuthorsUID())) {
+            Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(server.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(server.getServerUID()).child(Constants.DATABASE_REF_TIMELINE)
+                    .child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getGroup().getCommentUID())
                     .child(Constants.DATABASE_REF_GROUP).child(Constants.DATABASE_REF_READY).setValue(true);
             empty.setVisibility(View.GONE);
         }
@@ -313,7 +351,7 @@ public class GroupActivity extends AppCompatActivity {
         Intent intent;
         if (cameFromProfile) {
             intent = new Intent(this, ProfileActivity.class);
-        } else if (Util.getServer() != null) {
+        } else if (server != null) {
             intent = new Intent(this, TimelineActivity.class);
         } else {
             intent = new Intent(this, MainActivity.class);

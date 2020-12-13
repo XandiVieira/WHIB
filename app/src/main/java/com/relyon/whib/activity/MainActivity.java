@@ -96,8 +96,6 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
 
         startFirebaseInstances();
 
-        getOwnersFriends();
-
         setupBillingProcessor();
 
         setLayoutAttributes();
@@ -110,9 +108,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         } else if (user == null) {
             Util.setFbUser(firebaseUser);
             Util.setNumberOfServers(0);
-            getUserDataFromFirebase();
-        } else {
-            verifyUserSubscriptionStatus();
+            getOwnersFriends();
         }
 
         getScreenDimensions();
@@ -135,6 +131,25 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
                 dialogChooseSubscription.show(fm, "");
             }
         });
+
+        if (getIntent().hasExtra("intent") && getIntent().getStringExtra("intent").equals("group")) {
+            String subject = getIntent().getStringExtra(Constants.SUBJECT);
+            String server = getIntent().getStringExtra(Constants.SERVER_ID);
+            if (subject != null && server != null) {
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(subject).child(Constants.DATABASE_REF_SERVERS).child(server).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Util.setServer(snapshot.getValue(Server.class));
+                        startActivity(new Intent(getApplicationContext(), TimelineActivity.class).putExtra(Constants.SUBJECT, subject).putExtra(Constants.COMMENT_ID, getIntent().getStringExtra(Constants.COMMENT_ID)).putExtra("intent", "group").setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        }
     }
 
     private void getOwnersFriends() {
@@ -142,9 +157,11 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         Util.mDatabaseRef.child(Constants.DATABASE_REF_EXTRA).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_EXTRA).removeEventListener(this);
                 for (DataSnapshot snap : snapshot.getChildren()) {
                     ownersFriends.add(snap.getKey());
                 }
+                getUserDataFromFirebase();
             }
 
             @Override
@@ -259,6 +276,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         mUserDatabaseRef.child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mUserDatabaseRef.child(firebaseUser.getUid()).removeEventListener(this);
                 mUserDatabaseRef.removeEventListener(this);
                 user = dataSnapshot.getValue(User.class);
                 if (user == null || user.getUserUID() == null) {
@@ -416,25 +434,27 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
         subscriptionsSKU.add(SKU_WHIB_SIXMONTH);
         subscriptionsSKU.add(SKU_WHIB_YEARLY);
         if (purchaseResult) {
-            for (int i = 0; i < subscriptionsSKU.size(); i++) {
-                if (updateUserSubscription(subscriptionsSKU.get(i))) {
-                    break;
-                }
-            }
+            updateUserSubscription(userHasSubscription(subscriptionsSKU));
         }
     }
 
-    private boolean updateUserSubscription(String subscriptionSKU) {
-        TransactionDetails subscriptionTransactionDetails = billingProcessor.getSubscriptionTransactionDetails(subscriptionSKU);
+    private boolean userHasSubscription(List<String> subscriptionsSKU) {
+        for (int i = 0; i < subscriptionsSKU.size(); i++) {
+            TransactionDetails subscriptionTransactionDetails = billingProcessor.getSubscriptionTransactionDetails(subscriptionsSKU.get(i));
+            if ((subscriptionTransactionDetails != null && subscriptionTransactionDetails.purchaseInfo.purchaseData.purchaseState == PurchaseState.PurchasedSuccessfully) || (ownersFriends != null && ownersFriends.contains(user.getUserUID()))) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-        if ((subscriptionTransactionDetails != null && subscriptionTransactionDetails.purchaseInfo.purchaseData.purchaseState == PurchaseState.PurchasedSuccessfully) || (ownersFriends != null && ownersFriends.contains(user.getUserUID()))) {
+    private void updateUserSubscription(boolean isExtra) {
+        if (isExtra) {
             Util.getUser().setExtra(true);
             mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_EXTRA).setValue(true);
-            return true;
         } else {
             Util.getUser().setExtra(false);
             mUserDatabaseRef.child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_EXTRA).setValue(false);
-            return false;
         }
     }
 

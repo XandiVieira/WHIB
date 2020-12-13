@@ -230,6 +230,10 @@ public class TimelineActivity extends AppCompatActivity {
         back.setOnClickListener(v -> onBackPressed());
         commentBt.setOnClickListener(v -> openCommentBox(activity));
         leaveCommentLayout.setOnClickListener(v -> openCommentBox(activity));
+
+        if (getIntent().hasExtra("intent") && getIntent().getStringExtra("intent").equals("group")) {
+            startActivity(new Intent(getApplicationContext(), GroupActivity.class).putExtra(Constants.SERVER_ID, Util.getServer().getServerUID()).putExtra(Constants.COMMENT_ID, getIntent().getStringExtra(Constants.COMMENT_ID)).putExtra(Constants.SUBJECT, getIntent().getStringExtra(Constants.SUBJECT)).putExtra("intent", "group").setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        }
     }
 
     private void initPopUpMenu() {

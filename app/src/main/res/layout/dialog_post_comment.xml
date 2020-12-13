@@ -24,6 +24,7 @@
         android:background="@drawable/rounded_white"
         android:gravity="top"
         android:hint="@string/comment_hint"
+        android:inputType="textCapSentences"
         android:maxLength="600"
         android:padding="@dimen/right_margin" />
 

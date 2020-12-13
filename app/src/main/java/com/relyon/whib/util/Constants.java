@@ -61,7 +61,9 @@ public class Constants {
     public static final String CAME_FROM_PROFILE = "cameFromProfile";
     public static final String COMMENT_NUMBER = "commentNumber";
     public static final String GROUP_NUMBER = "groupNumber";
+    public static final String SERVER_NUMBER = "serverNumber";
     public static final String SUBJECT = "subject";
+    public static final String SERVER = "server";
     public static final String TOKEN = "token";
     public static final String SHOW_ADVANTAGES = "show_advantages";
 

@@ -91,6 +91,9 @@
 	- CommentDialog abrindo de novo após enviar comentário
 	- isExtra flag mudando sem parar após pagar assinatura
 	- Mudar uma das vantagens da Dialog de subscription (entrar em servidores lotados)
+	- What if: Usuário posta um comentário, se inscreve no tópico, faz logout, e comentário vira grupo? Será notificado?
+	- Tentar direcionar usuário diretamente para o grupo novo (notificação)
+	- Usuário deixando de ser extra as vezes ao logar
 
 
 LOJA
