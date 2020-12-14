@@ -192,6 +192,20 @@ public class DialogRateComment extends Dialog implements
         comment.setAGroup(true);
         Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_A_GROUP).setValue(true);
         Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(comment.getSubject()).child(Constants.DATABASE_REF_SERVERS).child(comment.getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_GROUP).setValue(group);
-        Util.prepareNotification(Constants.CONGRATS_YOUR_COMMENT_IS_A_GROUP, Constants.YOUR_COMMENT_WAS_WELL_RATED, comment.getCommentUID(), "group", comment, getContext());
+        Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(comment.getAuthorsUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(comment.getAuthorsUID()).removeEventListener(this);
+                User user = snapshot.getValue(User.class);
+                if (user != null && user.getPreferences() != null && user.getPreferences().isNotification()) {
+                    Util.prepareNotification(Constants.CONGRATS_YOUR_COMMENT_IS_A_GROUP, Constants.YOUR_COMMENT_WAS_WELL_RATED, comment.getCommentUID(), "group", comment, getContext());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }

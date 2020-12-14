@@ -117,7 +117,9 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
 
         mFirebaseRemoteConfig.setConfigSettingsAsync(new FirebaseRemoteConfigSettings.Builder().setMinimumFetchIntervalInSeconds(3600L).build());
 
-        FirebaseMessaging.getInstance().subscribeToTopic("/topics/" + Constants.NEW_SUBJECT);
+        if (user != null && user.getPreferences() != null && user.getPreferences().isNotification()) {
+            FirebaseMessaging.getInstance().subscribeToTopic("/topics/" + Constants.NEW_SUBJECT);
+        }
 
         profileIcon.setOnClickListener(view -> goToProfile());
         logoutLayout.setOnClickListener(view -> logout());

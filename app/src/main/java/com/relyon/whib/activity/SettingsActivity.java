@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.relyon.whib.R;
 import com.relyon.whib.dialog.DialogConfirmDeleteAccount;
 import com.relyon.whib.dialog.DialogFinalWarn;
@@ -50,10 +51,13 @@ public class SettingsActivity extends AppCompatActivity {
         checkSound.setChecked(Util.getUser().getPreferences().isSound());
         checkVibration.setChecked(Util.getUser().getPreferences().isVibration());
 
-        checkNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> setUserPreferenceProperty(Constants.DATABASE_REF_NOTIFICATION, checkNotifications.isChecked()));
-        checkShowPhoto.setOnCheckedChangeListener((buttonView, isChecked) -> setUserPreferenceProperty(Constants.DATABASE_REF_SHOW_PHOTO, checkShowPhoto.isChecked()));
-        checkSound.setOnCheckedChangeListener((buttonView, isChecked) -> setUserPreferenceProperty(Constants.DATABASE_REF_SOUND, checkSound.isChecked()));
-        checkVibration.setOnCheckedChangeListener((buttonView, isChecked) -> setUserPreferenceProperty(Constants.DATABASE_REF_VIBRATION, checkVibration.isChecked()));
+        checkNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            setUserPreferenceProperty(Constants.DATABASE_REF_NOTIFICATION, isChecked);
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("/topics/" + Constants.NEW_SUBJECT);
+        });
+        checkShowPhoto.setOnCheckedChangeListener((buttonView, isChecked) -> setUserPreferenceProperty(Constants.DATABASE_REF_SHOW_PHOTO, isChecked));
+        checkSound.setOnCheckedChangeListener((buttonView, isChecked) -> setUserPreferenceProperty(Constants.DATABASE_REF_SOUND, isChecked));
+        checkVibration.setOnCheckedChangeListener((buttonView, isChecked) -> setUserPreferenceProperty(Constants.DATABASE_REF_VIBRATION, isChecked));
 
         logout.setOnClickListener(v -> logout());
 

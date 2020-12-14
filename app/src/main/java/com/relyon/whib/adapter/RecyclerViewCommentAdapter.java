@@ -7,6 +7,11 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.LayerDrawable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +29,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.borjabravo.readmoretextview.ReadMoreTextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.ads.formats.NativeAd;
@@ -186,30 +190,78 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
             holder.entrance.setVisibility(View.GONE);
         }
         if (user.isExtra()) {
-            LayerDrawable stars = (LayerDrawable) holder.ratingBar.getProgressDrawable();
-            stars.getDrawable(2).setColorFilter(Color.parseColor("#AFC2D5"), PorterDuff.Mode.SRC_ATOP);
-            stars.getDrawable(1).setColorFilter(Color.parseColor("#2B4162"), PorterDuff.Mode.SRC_ATOP);
-            stars.getDrawable(0).setColorFilter(Color.parseColor("#2B4162"), PorterDuff.Mode.SRC_ATOP);
-            holder.bg.setBackgroundResource(R.drawable.rounded_accent_double);
+            setStarsColor(holder.ratingBar, "#AFC2D5", "#2B4162");
             holder.bg.setBackgroundResource(R.drawable.rounded_accent_double);
             holder.commentLayout.setBackgroundResource(R.drawable.rounded_accent_double);
         } else if (comment.isAGroup()) {
+            setStarsColor(holder.ratingBar, "#FFBD4A", "#FF9800");
             holder.commentLayout.setBackgroundResource(R.drawable.rounded_primary_double);
             holder.bg.setBackgroundResource(R.drawable.rounded_primary_double);
         } else {
+            setStarsColor(holder.ratingBar, "#FFBD4A", "#FF9800");
             holder.commentLayout.setBackgroundResource(R.drawable.rounded_white);
             holder.bg.setBackgroundResource(R.drawable.rounded_white);
         }
     }
 
+    private void setStarsColor(MaterialRatingBar ratingBar, String color1, String color2) {
+        LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
+        stars.getDrawable(2).setColorFilter(Color.parseColor(color1), PorterDuff.Mode.SRC_ATOP);
+        stars.getDrawable(1).setColorFilter(Color.parseColor(color2), PorterDuff.Mode.SRC_ATOP);
+        stars.getDrawable(0).setColorFilter(Color.parseColor(color2), PorterDuff.Mode.SRC_ATOP);
+    }
+
     private void handleText(Comment comment, CommentViewHolder holder) {
-        holder.text.setText(comment.getText());
-        holder.text.setTrimExpandedText(context.getString(R.string.see_less));
-        holder.text.setTrimCollapsedText(context.getString(R.string.see_more));
-        holder.text.setTrimLines(4);
-        holder.text.setColorClickableText(Color.BLUE);
+        String commentText = comment.getText();
+        if (commentText.length() > 270) {
+            addReadMore(commentText, holder.text);
+        } else {
+            holder.text.setText(commentText);
+            Typeface face = ResourcesCompat.getFont(context, R.font.baloo);
+            holder.text.setTypeface(face);
+        }
+    }
+
+    private void addReadMore(final String text, final TextView textView) {
+        SpannableString ss = new SpannableString(text.substring(0, 270) + context.getString(R.string.see_more));
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View view) {
+                addReadLess(text, textView);
+            }
+
+            @Override
+            public void updateDrawState(@NonNull TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+                ds.setColor(Color.BLUE);
+            }
+        };
         Typeface face = ResourcesCompat.getFont(context, R.font.baloo);
-        holder.text.setTypeface(face);
+        textView.setTypeface(face);
+        ss.setSpan(clickableSpan, ss.length() - 10, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        textView.setText(ss);
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    private void addReadLess(final String text, final TextView textView) {
+        SpannableString ss = new SpannableString(text + context.getString(R.string.see_less));
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View view) {
+                addReadMore(text, textView);
+            }
+
+            @Override
+            public void updateDrawState(@NonNull TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+                ds.setColor(Color.BLUE);
+            }
+        };
+        ss.setSpan(clickableSpan, ss.length() - 10, ss.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        textView.setText(ss);
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     private void handleRating(Comment comment, CommentViewHolder holder, int position) {
@@ -549,7 +601,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
 
     private static class CommentViewHolder extends RecyclerView.ViewHolder {
 
-        private ReadMoreTextView text;
+        private TextView text;
         private TextView ratingTV;
         private ImageView photo;
         private MaterialRatingBar ratingBar;

@@ -123,7 +123,6 @@ public class TimelineActivity extends AppCompatActivity {
         setLayoutAttributes();
         initPopUpMenu();
         initRecyclerViewComment();
-        retrieveUser();
         verifyServerIsActive();
 
         this.subject = Util.getServer().getSubject();
@@ -138,7 +137,11 @@ public class TimelineActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int spinnerSelection, long id) {
                 resetTimeline = true;
                 setCommentQuery(spinnerSelection);
-                retrieveCommentList();
+                if (user == null) {
+                    retrieveUser();
+                } else {
+                    retrieveCommentList();
+                }
             }
 
             @Override
@@ -529,6 +532,7 @@ public class TimelineActivity extends AppCompatActivity {
                 if (user != null) {
                     initializeAds();
                     calculateElementsDimensions();
+                    retrieveCommentList();
                 }
             }
 

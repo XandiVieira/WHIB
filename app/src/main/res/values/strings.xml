@@ -187,8 +187,8 @@
     <string name="server_empty_please_select_another">Este servidor está vazio, por favor escolha outro para começar.</string>
     <string name="error">"Error: "</string>
     <string name="full_server">Servidor Lotado</string>
-    <string name="see_less">\" Ver menos\"</string>
-    <string name="see_more">\" Ver mais\"</string>
+    <string name="see_less">  Ver menos</string>
+    <string name="see_more"> …\"Ver mais\"</string>
     <string name="already_valuated_this_comment">Você já avaliou este comentário!</string>
     <string name="can_not_send_stickers_to_yourself">Você não pode enviar figurinhas para seu próprio comentário.</string>
     <string name="owner_has_not_activated_group_yet">O dono ainda não ativou o grupo, Aguarde!</string>
