@@ -155,22 +155,13 @@ public class ProfileActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        if (nick.getText().toString().trim().equals("")) {
-            finish();
-            Intent intent;
-            if (Util.getServer() != null) {
-                intent = new Intent(this, TimelineActivity.class);
-            } else {
-                intent = new Intent(this, MainActivity.class);
-            }
-            startActivity(intent);
-        } else if (user.getNickName() == null && !nick.getText().toString().replace("@", "").equals("")) {
+        Intent intent;
+        if (user != null && (user.getNickName() == null || user.getNickName().trim().equals("")) && !nick.getText().toString().replace("@", "").equals("")) {
             String nickname = nick.getText().toString().replace("@", "");
-            user.setNickName(nickname);
             Util.getmDatabaseRef().child(Constants.DATABASE_REF_NICKNAME).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Util.getmDatabaseRef().child(Constants.DATABASE_REF_NICKNAME).removeEventListener(this);
                     List<String> nicknames = new ArrayList<>();
                     for (DataSnapshot snap : dataSnapshot.getChildren()) {
                         nicknames.add(snap.getValue(String.class));
@@ -178,9 +169,9 @@ public class ProfileActivity extends AppCompatActivity {
                     if (nicknames.contains(nickname)) {
                         Toast.makeText(activity, R.string.username_was_already_taken, Toast.LENGTH_SHORT).show();
                     } else {
-                        Util.getmDatabaseRef().child(Constants.DATABASE_REF_NICKNAME).removeEventListener(this);
+                        user.setNickName(nickname);
                         Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(user.getUserUID()).setValue(user);
-                        Util.getmDatabaseRef().child(Constants.DATABASE_REF_NICKNAME).push().setValue(user.getNickName());
+                        Util.mDatabaseRef.child(Constants.DATABASE_REF_NICKNAME).push().setValue(user.getNickName());
                         onBackPressed();
                     }
                 }
@@ -190,6 +181,13 @@ public class ProfileActivity extends AppCompatActivity {
 
                 }
             });
+        } else {
+            if (Util.getServer() != null) {
+                intent = new Intent(this, TimelineActivity.class);
+            } else {
+                intent = new Intent(this, MainActivity.class);
+            }
+            startActivity(intent);
         }
     }
 

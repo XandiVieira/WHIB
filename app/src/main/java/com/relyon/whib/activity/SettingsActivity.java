@@ -91,6 +91,20 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void setUserPreferenceProperty(String propertyReference, boolean value) {
         Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PREFERENCES).child(propertyReference).setValue(value);
+        switch (propertyReference) {
+            case Constants.DATABASE_REF_NOTIFICATION:
+                Util.getUser().getPreferences().setNotification(value);
+                break;
+            case Constants.DATABASE_REF_SHOW_PHOTO:
+                Util.getUser().getPreferences().setShowPhoto(value);
+                break;
+            case Constants.DATABASE_REF_VIBRATION:
+                Util.getUser().getPreferences().setVibration(value);
+                break;
+            case Constants.DATABASE_REF_SOUND:
+                Util.getUser().getPreferences().setSound(value);
+                break;
+        }
     }
 
     private void logout() {
@@ -112,6 +126,9 @@ public class SettingsActivity extends AppCompatActivity {
         Intent intent;
         if (getIntent().hasExtra(Constants.CAME_FROM_PROFILE) && getIntent().getBooleanExtra(Constants.CAME_FROM_PROFILE, false)) {
             intent = new Intent(this, ProfileActivity.class);
+            if (Util.getUser() != null && Util.getUser().getUserUID() != null) {
+                intent.putExtra(Constants.USER_ID, Util.getUser().getUserUID());
+            }
         } else if (Util.getServer() != null) {
             intent = new Intent(this, TimelineActivity.class);
         } else {
