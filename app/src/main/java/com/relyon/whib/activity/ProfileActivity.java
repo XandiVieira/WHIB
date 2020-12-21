@@ -97,19 +97,19 @@ public class ProfileActivity extends AppCompatActivity {
                 if (Util.getUser().isFirstTime()) {
                     Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_FIRST_TIME).setValue(false);
                 }
-                Intent intent = new Intent();
+                Intent intent = null;
                 if (item.getTitle().equals(getString(R.string.settings))) {
                     intent = new Intent(this, SettingsActivity.class).putExtra(Constants.CAME_FROM_PROFILE, true);
                 } else if (item.getTitle().equals(getString(R.string.store))) {
                     intent = new Intent(this, StoreActivity.class).putExtra(Constants.CAME_FROM_PROFILE, true);
-                } else if (item.getTitle().equals(getString(R.string.profile))) {
-                    intent = new Intent(this, ProfileActivity.class).putExtra(Constants.CAME_FROM_PROFILE, true);
                 } else if (item.getTitle().equals(getString(R.string.tips))) {
                     intent = new Intent(this, TipsActivity.class).putExtra(Constants.CAME_FROM_TIMELINE, false).putExtra(Constants.CAME_FROM_PROFILE, true);
                 } else if (item.getTitle().equals(getString(R.string.about))) {
                     intent = new Intent(this, AboutActivity.class).putExtra(Constants.CAME_FROM_PROFILE, true);
                 }
-                startActivity(intent);
+                if (intent != null) {
+                    startActivity(intent);
+                }
                 return true;
             });
             popup.show();

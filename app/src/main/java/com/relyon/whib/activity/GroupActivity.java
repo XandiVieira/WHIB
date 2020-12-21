@@ -350,7 +350,7 @@ public class GroupActivity extends AppCompatActivity {
         finish();
         Intent intent;
         if (cameFromProfile) {
-            intent = new Intent(this, ProfileActivity.class);
+            intent = new Intent(this, ProfileActivity.class).putExtra(Constants.USER_ID, comment.getAuthorsUID());
         } else if (server != null) {
             intent = new Intent(this, TimelineActivity.class);
         } else {
