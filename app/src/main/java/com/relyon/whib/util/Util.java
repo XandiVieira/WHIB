@@ -10,7 +10,6 @@ import com.android.volley.toolbox.Volley;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.relyon.whib.modelo.Comment;
-import com.relyon.whib.modelo.Group;
 import com.relyon.whib.modelo.Server;
 import com.relyon.whib.modelo.User;
 
@@ -31,8 +30,6 @@ public class Util {
     public static int numberOfServers;
     public static String subject;
     public static Server server;
-    public static Comment comment;
-    public static Group group;
 
     public Util() {
     }
@@ -81,22 +78,6 @@ public class Util {
         Util.server = server;
     }
 
-    public static void setComment(Comment comment) {
-        Util.comment = comment;
-    }
-
-    public static Comment getComment() {
-        return comment;
-    }
-
-    public static Group getGroup() {
-        return group;
-    }
-
-    public static void setGroup(Group group) {
-        Util.group = group;
-    }
-
     public static String formatDate(Long date, String pattern) {
 
         //yyyy/MM/dd - HH:mm:ss
@@ -111,8 +92,6 @@ public class Util {
     public static void restartClass() {
         setUser(null);
         setFbUser(null);
-        setComment(null);
-        setGroup(null);
         setmDatabaseRef(null);
         setNumberOfServers(0);
         setServer(null);

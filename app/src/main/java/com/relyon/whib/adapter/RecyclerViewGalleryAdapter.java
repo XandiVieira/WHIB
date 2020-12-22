@@ -41,23 +41,12 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
     private Dialog dialog;
     private boolean isForDialog;
     private boolean isForGallery;
+    private boolean sendToComment;
     private Comment comment;
     private RecyclerViewCommentAdapter recyclerViewCommentAdapter;
     private Integer commentPosition;
 
-    public RecyclerViewGalleryAdapter(List<Product> allStickers, HashMap<String, Product> myStickers, Context context, boolean isForGallery, boolean isForDialog, List<Argument> argumentList, Dialog dialog, Comment comment) {
-        this.allStickers = allStickers;
-        this.myStickers = myStickers;
-        this.context = context;
-        this.isForDialog = isForDialog;
-        this.argumentList = argumentList;
-        this.dialog = dialog;
-        this.isForGallery = isForGallery;
-        this.comment = comment;
-        storageReference = FirebaseStorage.getInstance().getReference();
-    }
-
-    public RecyclerViewGalleryAdapter(HashMap<String, Product> myStickers, List<Product> allStickers, Context context, boolean isForGallery, boolean isForDialog, boolean isForComment, List<Argument> argumentList, Dialog dialog, Comment comment, RecyclerViewCommentAdapter recyclerViewCommentAdapter, Integer commentPosition) {
+    public RecyclerViewGalleryAdapter(List<Product> allStickers, HashMap<String, Product> myStickers, Context context, boolean isForGallery, boolean isForDialog, List<Argument> argumentList, Dialog dialog, Comment comment, RecyclerViewCommentAdapter recyclerViewCommentAdapter, Integer commentPosition, boolean sendToComment) {
         this.allStickers = allStickers;
         this.myStickers = myStickers;
         this.context = context;
@@ -67,8 +56,9 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
         this.isForGallery = isForGallery;
         this.comment = comment;
         this.recyclerViewCommentAdapter = recyclerViewCommentAdapter;
-        storageReference = FirebaseStorage.getInstance().getReference();
+        this.storageReference = FirebaseStorage.getInstance().getReference();
         this.commentPosition = commentPosition;
+        this.sendToComment = sendToComment;
     }
 
     @NonNull
@@ -133,7 +123,7 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
             return;
         }
 
-        if (isForDialog && comment == null) {
+        if (isForDialog && !sendToComment) {
             Date data = new Date();
 
             Calendar cal = Calendar.getInstance();
@@ -141,9 +131,9 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
             Date current_date = cal.getTime();
 
             Sending sending = new Sending("text", current_date.getTime(), Util.getUser().getUserName(), Util.getUser().getUserUID(), Util.getSubject());
-            Argument argument = new Argument(null, sku, Util.getGroup().getGroupUID(), current_date.getTime(), sending);
+            Argument argument = new Argument(null, sku, comment.getGroup().getGroupUID(), current_date.getTime(), sending);
             Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE)
-                    .child(Constants.DATABASE_REF_COMMENT_LIST).child(Util.getGroup().getCommentUID())
+                    .child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getGroup().getCommentUID())
                     .child(Constants.DATABASE_REF_GROUP).child(Constants.DATABASE_REF_ARGUMENT_LIST).push().setValue(argument);
             Util.getUser().getProducts().get(id).setQuantity(Util.getUser().getProducts().get(id).getQuantity() - 1);
             Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.getUser().getUserUID()).child(Constants.DATABASE_REF_PRODUCTS).child(id).child(Constants.DATABASE_REF_QUANTITY).setValue(Util.getUser().getProducts().get(id).getQuantity());
@@ -151,7 +141,7 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
 
         if (Util.getUser().getProducts().get(id) != null) {
             Product userProduct = Util.getUser().getProducts().get(id);
-            if (isForDialog && comment != null) {
+            if (isForDialog && sendToComment) {
                 Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE).child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getCommentUID()).child(Constants.DATABASE_REF_STICKERS).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -188,9 +178,9 @@ public class RecyclerViewGalleryAdapter extends RecyclerView.Adapter<RecyclerVie
             }
         }
 
-        if (argumentList != null && comment == null && argumentList.isEmpty() && !Util.getGroup().isReady() && Util.getUser().getUserUID().equals(Util.getComment().getAuthorsUID())) {
+        if (argumentList != null && !sendToComment && argumentList.isEmpty() && !comment.getGroup().isReady() && Util.getUser().getUserUID().equals(comment.getAuthorsUID())) {
             Util.mDatabaseRef.child(Constants.DATABASE_REF_SUBJECT).child(Util.getServer().getSubject()).child(Constants.DATABASE_REF_SERVERS).child(Util.getServer().getServerUID()).child(Constants.DATABASE_REF_TIMELINE)
-                    .child(Constants.DATABASE_REF_COMMENT_LIST).child(Util.getGroup().getCommentUID())
+                    .child(Constants.DATABASE_REF_COMMENT_LIST).child(comment.getGroup().getCommentUID())
                     .child(Constants.DATABASE_REF_GROUP).child(Constants.DATABASE_REF_READY).setValue(true);
         }
         if (dialog != null) {

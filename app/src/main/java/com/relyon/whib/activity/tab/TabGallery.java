@@ -65,7 +65,7 @@ public class TabGallery extends Fragment {
 
     private void setProductAdapter() {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
-        RecyclerViewGalleryAdapter adapter = new RecyclerViewGalleryAdapter(stickersList, user.getProducts(), getContext(), true, false, null, null, null);
+        RecyclerViewGalleryAdapter adapter = new RecyclerViewGalleryAdapter(stickersList, user.getProducts(), getContext(), true, false, null, null, null, null, null, false);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvStickers.getContext(),
                 layoutManager.getOrientation());
         rvStickers.addItemDecoration(dividerItemDecoration);

@@ -355,7 +355,7 @@ public class RecyclerViewCommentAdapter extends RecyclerView.Adapter<RecyclerVie
                     }
                 }
             }
-            DialogStickers cdd = new DialogStickers(activity, products, null, comment, this, position);
+            DialogStickers cdd = new DialogStickers(activity, products, null, comment, this, position, true);
             cdd.show();
         } else {
             Toast.makeText(context, R.string.can_not_send_stickers_to_yourself, Toast.LENGTH_SHORT).show();

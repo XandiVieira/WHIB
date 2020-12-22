@@ -155,7 +155,7 @@ public class GroupActivity extends AppCompatActivity {
 
                                 sendLayout.setOnClickListener(v -> {
                                     if (isForSticker) {
-                                        DialogStickers cdd = new DialogStickers(activity, Util.getUser().getProducts() != null ? new ArrayList<>(Util.getUser().getProducts().values()) : new ArrayList<>(), arguments, null, null, null);
+                                        DialogStickers cdd = new DialogStickers(activity, Util.getUser().getProducts() != null ? new ArrayList<>(Util.getUser().getProducts().values()) : new ArrayList<>(), arguments, comment, null, null, false);
                                         cdd.show();
                                     } else {
                                         if (inputMessage.getText() != null && !inputMessage.getText().toString().isEmpty()) {

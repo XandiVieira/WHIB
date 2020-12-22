@@ -40,6 +40,7 @@ public class DialogStickers extends Dialog {
     private List<Product> productList;
     private List<Argument> argumentList;
     private Comment comment;
+    private boolean sendToComment;
     private RecyclerViewCommentAdapter recyclerViewCommentAdapter;
     private Integer position;
 
@@ -47,7 +48,7 @@ public class DialogStickers extends Dialog {
     private LinearLayout emptyLayout;
     private Button getStickers;
 
-    public DialogStickers(Activity activity, List<Product> productList, List<Argument> argumentList, Comment comment, RecyclerViewCommentAdapter recyclerViewCommentAdapter, Integer position) {
+    public DialogStickers(Activity activity, List<Product> productList, List<Argument> argumentList, Comment comment, RecyclerViewCommentAdapter recyclerViewCommentAdapter, Integer position, boolean sendToComment) {
         super(activity);
         List<Product> stickers = new ArrayList<>();
         for (Product sticker : productList) {
@@ -62,6 +63,7 @@ public class DialogStickers extends Dialog {
         this.position = position;
         this.dialog = this;
         this.activity = activity;
+        this.sendToComment = sendToComment;
     }
 
     @Override
@@ -91,7 +93,7 @@ public class DialogStickers extends Dialog {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     Comment comment = snapshot.getValue(Comment.class);
                     if (comment != null) {
-                        adapter[0] = new RecyclerViewGalleryAdapter(Util.getUser().getProducts(), productList, getContext(), false, true, false, argumentList, dialog, comment, recyclerViewCommentAdapter, position);
+                        adapter[0] = new RecyclerViewGalleryAdapter(productList, Util.getUser().getProducts(), getContext(), false, true, argumentList, dialog, comment, recyclerViewCommentAdapter, position, sendToComment);
                         rvSticker.setAdapter(adapter[0]);
                     }
                 }
@@ -102,7 +104,7 @@ public class DialogStickers extends Dialog {
                 }
             });
         } else {
-            adapter[0] = new RecyclerViewGalleryAdapter(Util.getUser().getProducts(), productList, getContext(), false, true, false, argumentList, dialog, null, recyclerViewCommentAdapter, position);
+            adapter[0] = new RecyclerViewGalleryAdapter(productList, Util.getUser().getProducts(), getContext(), false, true, argumentList, dialog, comment,null, position, sendToComment);
             rvSticker.setAdapter(adapter[0]);
         }
     }
