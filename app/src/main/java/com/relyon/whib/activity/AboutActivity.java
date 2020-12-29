@@ -53,7 +53,7 @@ public class AboutActivity extends AppCompatActivity {
         setAppVersion();
 
         aboutUs.setOnClickListener(v -> startActivity(new Intent(this, AboutUsActivity.class)));
-        tips.setOnClickListener(v -> startActivity(new Intent(this, TipsActivity.class)));
+        tips.setOnClickListener(v -> startActivity(new Intent(this, TipsActivity.class).putExtra(Constants.CAME_FROM_PROFILE, getIntent().getBooleanExtra(Constants.CAME_FROM_PROFILE, false))));
         faq.setOnClickListener(v -> startActivity(new Intent(this, FaqActivity.class)));
         terms.setOnClickListener(v -> startActivity(new Intent(this, TermsActivity.class)));
         privacyPolicy.setOnClickListener(v -> startActivity(new Intent(this, PrivacyPolicyActivity.class)));
@@ -74,24 +74,26 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     private void retrieveUser() {
-        Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.fbUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                user = snapshot.getValue(User.class);
-                if (user != null) {
-                    if (getIntent().hasExtra(Constants.SHOW_LAST_WARN) && getIntent().getBooleanExtra(Constants.SHOW_LAST_WARN, false) && Util.getUser().isFirstTime()) {
-                        new DialogFinalWarn(activity).show();
+        if (Util.mDatabaseRef != null) {
+            Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(Util.fbUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    user = snapshot.getValue(User.class);
+                    if (user != null) {
+                        if (getIntent().hasExtra(Constants.SHOW_LAST_WARN) && getIntent().getBooleanExtra(Constants.SHOW_LAST_WARN, false) && Util.getUser().isFirstTime()) {
+                            new DialogFinalWarn(activity).show();
+                        }
+                    } else {
+                        contactUs.setVisibility(View.GONE);
                     }
-                } else {
-                    contactUs.setVisibility(View.GONE);
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     private void setAppVersion() {

@@ -59,7 +59,7 @@ public class ProfileActivity extends AppCompatActivity {
             new DialogFinalWarn(this).show();
         }
 
-        if (getIntent().hasExtra(Constants.USER_ID) && !getIntent().getStringExtra(Constants.USER_ID).equals(Util.getUser().getUserUID())) {
+        if (Util.getUser() != null && getIntent().hasExtra(Constants.USER_ID) && !getIntent().getStringExtra(Constants.USER_ID).equals(Util.getUser().getUserUID())) {
             Util.mDatabaseRef.child(Constants.DATABASE_REF_USER).child(getIntent().getStringExtra(Constants.USER_ID)).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

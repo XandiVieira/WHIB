@@ -12,8 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.relyon.whib.R;
 import com.relyon.whib.dialog.DialogFinalWarn;
-import com.relyon.whib.util.Util;
 import com.relyon.whib.util.Constants;
+import com.relyon.whib.util.Util;
 
 public class TipsActivity extends AppCompatActivity {
 
@@ -31,7 +31,7 @@ public class TipsActivity extends AppCompatActivity {
         back.setOnClickListener(v -> onBackPressed());
         store.setOnClickListener(v -> startActivity(new Intent(this, StoreActivity.class)));
 
-        if (Util.getUser().isFirstTime() || getIntent().hasExtra(Constants.SHOW_LAST_WARN) && getIntent().getBooleanExtra(Constants.SHOW_LAST_WARN, false) && Util.getUser().isFirstTime()) {
+        if ((Util.getUser() != null && Util.getUser().isFirstTime()) || (getIntent().hasExtra(Constants.SHOW_LAST_WARN) && getIntent().getBooleanExtra(Constants.SHOW_LAST_WARN, false))) {
             DialogFinalWarn warn = new DialogFinalWarn(this);
             warn.show();
         }
@@ -62,7 +62,7 @@ public class TipsActivity extends AppCompatActivity {
         } else if (Util.getServer() != null) {
             intent = new Intent(this, TimelineActivity.class);
         } else {
-            intent = new Intent(this, MainActivity.class);
+            intent = new Intent(this, AboutActivity.class);
         }
         startActivity(intent);
     }
