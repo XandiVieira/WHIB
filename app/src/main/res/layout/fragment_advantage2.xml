@@ -34,7 +34,7 @@
         android:gravity="center"
         android:lineSpacingExtra="-15dp"
         android:shadowColor="@color/colorAccent"
-        android:text="@string/choose_next_subject"
+        android:text="@string/vote_next_subject"
         android:textAllCaps="false"
         android:textColor="@color/darkGrey"
         android:textColorHighlight="@color/colorAccent"

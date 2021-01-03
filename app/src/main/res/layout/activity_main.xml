@@ -129,7 +129,7 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/choose_subject_button"
+            android:id="@+id/vote_next_subject_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -139,7 +139,7 @@
             android:fontFamily="@font/baloo"
             android:gravity="center"
             android:paddingHorizontal="15dp"
-            android:text="@string/choose_next_subject"
+            android:text="@string/vote_next_subject"
             android:textAlignment="center"
             android:textSize="@dimen/normal_text"
             android:visibility="visible" />

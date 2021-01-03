@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements BillingProcessor.
     private void setLayoutAttributes() {
         recyclerViewSubject = findViewById(R.id.recycler_view_section);
         progressBar = findViewById(R.id.progress_bar);
-        chooseSubjectButton = findViewById(R.id.choose_subject_button);
+        chooseSubjectButton = findViewById(R.id.vote_next_subject_button);
         profileIcon = findViewById(R.id.profile_layout);
         logoutLayout = findViewById(R.id.logout_layout);
     }

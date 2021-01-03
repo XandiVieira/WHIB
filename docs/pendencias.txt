@@ -102,6 +102,7 @@ LOJA
 	- Itens de avaliação (itens que o usuário pode utilizar para avaliar comentários e mensagens ex.: likes, excelentes, bom argumento, me fez refletir, etc...
 
 FUTURO
+- Notificações para novo assunto em votação (apenas para membros extra)
 - Servidor Internacional
 - Servidor fútil (dividir por categorias: esportes, economia, fofoca, politica)
 - FAQ
@@ -115,7 +116,7 @@ FUTURO
 - Enviar sticker para amigos
 - No modo debate (por tempo) ter um intervalo a cada rodada onde será exibido um anúncio em video.
 	- Chat auxiliar para perguntas direcionadas?
-- Modo debate: 1 pauta e 3 possibilidades (contra, a favor e contra... Mostrar a porcentagem em cada posição). Debatedores discutem e plateia decide de qual lado está, debatedores e plateia podem mudar de lado no meio da discussão. Organizar por rodadas, réplicas e tréplicas. Ou organizar com vários pontos de vista diferentes e usuário decide pra quem deseja perguntar ou contestar a resposta.
+- Modo debate: 1 pauta e 3 possibilidades (contra, a favor e indecisos... Mostrar a porcentagem em cada posição). Debatedores discutem e plateia decide de qual lado está, debatedores e plateia podem mudar de lado no meio da discussão. Organizar por rodadas, réplicas e tréplicas. Ou organizar com vários pontos de vista diferentes e usuário decide pra quem deseja perguntar ou contestar a resposta.
 - Fórum de membros
 - Avaliar com "Agree" ou "disagree"
 - Compartilhar um comentário nas redes sociais (facebook, tt, insta...)

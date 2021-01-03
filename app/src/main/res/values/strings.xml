@@ -41,7 +41,7 @@
 
     <string name="exit_icon">Icone sair</string>
     <string name="right_arrow_icon">Icone seta direita</string>
-    <string name="choose_next_subject">Escolha o próximo assunto</string>
+    <string name="vote_next_subject">Vote no próximo assunto</string>
     <string name="back_icon">Icone seta esquerda</string>
 
     <string name="sair">sair</string>
